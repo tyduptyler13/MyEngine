@@ -5,12 +5,16 @@
  *      Author: tyler
  */
 
-#ifndef MYCRAFT_BLOCK_HPP
-#define MYCRAFT_BLOCK_HPP
+#ifndef MYENGINE_BLOCK_HPP
+#define MYENGINE_BLOCK_HPP
 
+#include <vector>
 #include <string>
+#include <memory>
 
-namespace MyCraft {
+#include "Event.hpp"
+
+namespace MyEngine {
 
 /**
  * A block is a type of material that can hold
@@ -24,36 +28,66 @@ namespace MyCraft {
  */
 class Block {
 
-private:
+protected:
 
 	virtual ~Block(){}
 
 public:
 
-	uint getType() = 0;
-	virtual std::string& getName() = 0;
+	virtual const uint getId() const = 0;
+	virtual const std::string& getName() const = 0;
 
 };
 
-template <uint id>
-class BlockInterface : public Block {
+/**
+ * A block network is a useful structure that reduces memory by linking all
+ * blocks together that share a state. For instance, power levels or network
+ * data. This essentially reduces each blocks state size to the network they
+ * are connected to.
+ */
+class BlockNetwork {
 
-private:
+protected:
 
-	virtual ~BlockInterface(){}
+	//TODO Find a way to make a singleton network manager or connect it to the world.
+
+	std::vector<Block*> blocks; //List of blocks in the network.
+	std::unordered_map<std::string, std::string> data;
 
 public:
 
-	static const uint type = id;
-	static const std::string name;
+	/**
+	 * Merges two networks together.
+	 */
+	BlockNetwork& merge(BlockNetwork& b);
 
-	uint getType(){
-		return type;
-	}
+};
 
-	std::string& getName(){
-		return name;
-	}
+class PoweredBlock : public Block {
+
+protected:
+
+	BlockNetwork* network;
+
+public:
+
+	/**
+	 * Returns if the block is currently providing power.
+	 */
+	virtual const bool isPowered() const = 0;
+
+	/*
+	 * Returns how much power is left to be drawn on this block.
+	 * This information is connected to the network of blocks and is
+	 * based on the total power sources, total power usage, and size of
+	 * the network.
+	 */
+	virtual const double powerAvailable() const = 0;
+
+	/**
+	 * Returns total power on the network.
+	 */
+	virtual const double totalPower() const = 0;
 
 };
 

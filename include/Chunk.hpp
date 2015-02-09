@@ -5,13 +5,23 @@
  *      Author: tyler
  */
 
-#ifndef MYCRAFT_CHUNK_HPP
-#define MYCRAFT_CHUNK_HPP
+#ifndef MYENGINE_CHUNK_HPP
+#define MYENGINE_CHUNK_HPP
 
-namespace MyCraft {
+#include "World.hpp"
 
-class MyCraft {
+namespace MyEngine {
 
+class Chunk {
+
+protected:
+
+	//Marks the world that the chunk exists in.
+	World* world;
+
+	Vector3<int> location;
+
+public:
 
 
 };

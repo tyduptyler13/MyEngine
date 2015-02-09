@@ -7,31 +7,23 @@
 
 namespace MyEngine {
 
-/**
- * Subclasses of this should extend Event<Subclass>.
- * This allows for static polymorphism aka much less work.
- */
-template <class T>
 class Event {
-private:
 
+private:
 	virtual ~Event(){};
 
-	static std::vector<EventHandler<T>> handlers;
+protected:
 
-	bool canceled;
-	bool consumed;
+	bool cancelled = false;
+	bool uncancelable = false;
 
 public:
+	Event(){};
 
-	/**
-	 * Adds an event handler to the templated event.
-	 */
-	static void addHandler(EventHandler<T>& h);
-	static void removeHandler(EventHandler<T>& h);
-
-	void fire(TaskEngine& e){
-		e.addTask(this);
+	virtual bool cancel(){
+		if (!uncancelable){
+			cancelled = true;
+		}
 	}
 
 };
