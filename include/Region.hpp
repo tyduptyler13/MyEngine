@@ -8,6 +8,9 @@
 #ifndef REGION_HPP_
 #define REGION_HPP_
 
+#include "Vector3.hpp"
+#include "MechanismBlock.hpp"
+
 /**
  * A region is an area in the world that allows for non standard placement of blocks.
  * For instance, a rotating dome over a city would have a region mounted
@@ -26,6 +29,15 @@
 namespace MyEngine {
 
 class Region {
+
+private:
+
+	MechanismBlock* mechanism;
+
+	Vector3<int> location;
+
+public:
+
 
 };
 

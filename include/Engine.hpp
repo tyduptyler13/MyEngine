@@ -21,6 +21,7 @@
 #include <OgreRenderWindow.h>
 #include <OgreConfigFile.h>
 #include <OgreOverlaySystem.h>
+#include <OgreWindowEventUtilities.h>
 
 #include <OISEvents.h>
 #include <OISInputManager.h>
@@ -29,7 +30,8 @@
 
 namespace MyEngine {
 
-class Engine {
+class Engine : public Ogre::FrameListener, public Ogre::WindowEventListener,
+public OIS::KeyListener, public OIS::MouseListener {
 
 protected:
 
@@ -112,12 +114,29 @@ public:
 		keyboard = static_cast<OIS::Keyboard*>(inputManager->createInputObject(OIS::OISKeyboard, true));
 		mouse = static_cast<OIS::Mouse*>(inputManager->createInputObject(OIS::OISMouse, true));
 
+		keyboard->setEventCallback(this);
+		mouse->setEventCallback(this);
 
+		Ogre::WindowEventUtilities::addWindowEventListener(window.get(), this);
 
+		root->addFrameListener(this);
 		//Allow the creator to handle loading stuff.
 	}
 
+	// Ogre::FrameListener
+	virtual bool frameRenderingQueued(const Ogre::FrameEvent& evt);
 
+	// OIS::KeyListener
+	virtual bool keyPressed( const OIS::KeyEvent &arg );
+	virtual bool keyReleased( const OIS::KeyEvent &arg );
+	// OIS::MouseListener
+	virtual bool mouseMoved( const OIS::MouseEvent &arg );
+	virtual bool mousePressed( const OIS::MouseEvent &arg, OIS::MouseButtonID id );
+	virtual bool mouseReleased( const OIS::MouseEvent &arg, OIS::MouseButtonID id );
+
+	// Ogre::WindowEventListener
+	virtual void windowResized(Ogre::RenderWindow* rw);
+	virtual void windowClosed(Ogre::RenderWindow* rw);
 
 };
 

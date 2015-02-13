@@ -17,11 +17,12 @@ namespace MyEngine {
 template <typename T>
 class Vector3 {
 
-protected:
+public:
 
 	T x, y, z;
 
-public:
+	Vector3(T x, T y, T z) : x(x), y(y), z(z) {}
+	Vector3(Vector3<T> b) : x(b.x), y(b.y), z(b.z) {}
 
 	T getX(){
 		return x;

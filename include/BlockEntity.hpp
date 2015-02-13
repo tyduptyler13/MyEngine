@@ -8,8 +8,14 @@
 #ifndef BLOCKENTITY_HPP_
 #define BLOCKENTITY_HPP_
 
+namespace MyEngine {
+
+class BlockEntity {
 
 
 
+};
+
+}
 
 #endif /* BLOCKENTITY_HPP_ */

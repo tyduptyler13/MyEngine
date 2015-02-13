@@ -11,6 +11,7 @@
 #include <vector>
 #include <string>
 #include <memory>
+#include <limits>
 
 #include "Event.hpp"
 
@@ -34,60 +35,53 @@ protected:
 
 public:
 
+	/**
+	 * Returns the identifying id of the block.
+	 */
 	virtual const uint getId() const = 0;
+
+	/**
+	 * Returns the name of the block, usually for human readability.
+	 */
 	virtual const std::string& getName() const = 0;
 
-};
-
-/**
- * A block network is a useful structure that reduces memory by linking all
- * blocks together that share a state. For instance, power levels or network
- * data. This essentially reduces each blocks state size to the network they
- * are connected to.
- */
-class BlockNetwork {
-
-protected:
-
-	//TODO Find a way to make a singleton network manager or connect it to the world.
-
-	std::vector<Block*> blocks; //List of blocks in the network.
-	std::unordered_map<std::string, std::string> data;
-
-public:
+	/**
+	 * Returns the hardness of a block. This affects how hard
+	 * it is to mine and how easily it can be destroyed.
+	 */
+	virtual const float getHardness() const = 0;
 
 	/**
-	 * Merges two networks together.
+	 * This function is effectively delete. Functions that need
+	 * to be deleted should override this. Most blocks won't need to
+	 * as most blocks are static singleton blocks.
 	 */
-	BlockNetwork& merge(BlockNetwork& b);
+	virtual void cleanUp(){};
 
 };
 
-class PoweredBlock : public Block {
+template <uint ID>
+class BlockTemplate : public Block {
 
 protected:
 
-	BlockNetwork* network;
+	static const uint id = ID;
+	static const std::string name;
+	static const float hardness;
 
 public:
 
-	/**
-	 * Returns if the block is currently providing power.
-	 */
-	virtual const bool isPowered() const = 0;
+	const uint getId() const {
+		return id;
+	}
 
-	/*
-	 * Returns how much power is left to be drawn on this block.
-	 * This information is connected to the network of blocks and is
-	 * based on the total power sources, total power usage, and size of
-	 * the network.
-	 */
-	virtual const double powerAvailable() const = 0;
+	const std::string& getName() const {
+		return name;
+	}
 
-	/**
-	 * Returns total power on the network.
-	 */
-	virtual const double totalPower() const = 0;
+	const float getHardness() const {
+		return hardness;
+	}
 
 };
 

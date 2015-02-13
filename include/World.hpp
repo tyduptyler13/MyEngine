@@ -18,9 +18,12 @@ class World {
 
 protected:
 
+	Engine* engine;
 
+	KDTree<3, Chunk, int> chunks;
 
 public:
+
 
 
 };
