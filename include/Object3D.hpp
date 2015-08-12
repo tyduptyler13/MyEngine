@@ -4,10 +4,13 @@
 
 #include <string>
 #include <vector>
+#include <functional>
 
 #include "Vector3.hpp"
 #include "Euler.hpp"
 #include "Quanternion.hpp"
+#include "Matrix4.hpp"
+
 
 namespace MyUPlay {
 
@@ -48,10 +51,10 @@ namespace MyUPlay {
 				bool frustumCulled = true;
 				unsigned renderOrder = 0;
 
-				Object3D& applyMatrix(Matrix4);
+				Object3D& applyMatrix(const Matrix4&);
 
-				Object3D& setRotationAxisAngle(Vector3 axis, float angle);
-				Object3D& setRotationFromEuler(Euler);
+				Object3D& setRotationAxisAngle(const Vector3& axis, float angle);
+				Object3D& setRotationFromEuler(const Euler&);
 				Object3D& setRotationFromQuaternion(const Quaternion&);
 
 				Object3D& rotateOnAxis(Vector3 axis, float angle);
@@ -69,7 +72,7 @@ namespace MyUPlay {
 
 				Object3D& lookAt(Vector3);
 
-				Object3D& add(Object3D& );
+				Object3D& add(Object3D);
 				Object3D& remove(Object3D);
 
 				Object3D& getObjectById(uuid id);
@@ -81,9 +84,14 @@ namespace MyUPlay {
 				Vector3* getWorldScale(Vector3* target = new Vector3());
 				Vector3* getWorldDirection(Vector3* target = new Vector3());
 
+				Object3D& traverse(std::function<void(Object3D&)>);
+				Object3D& traverseAnsestors(std::function<void(Object3D&)>);
 
+				Object3D& updateMatrix();
 
+				Object3D& updateMatrixWorld(bool force = false);
 
+				Object3D& clone(Object3D&, bool recursive = false);
 
 
 		};
