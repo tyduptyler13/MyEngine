@@ -3,8 +3,10 @@
 
 AC_PREREQ([2.69])
 AC_INIT(MyEngine, Alpha1)
+AM_INIT_AUTOMAKE
+AC_PROG_CC
+AC_PROG_RANLIB
 AC_CONFIG_SRCDIR([src])
-AC_CONFIG_HEADERS([config.h])
 
 # Checks for programs.
 AC_PROG_CXX
@@ -18,6 +20,4 @@ AC_CHECK_HEADER_STDBOOL
 
 # Checks for library functions.
 
-AC_CONFIG_SUBDIRS([node
-                   xz])
-AC_OUTPUT
+AC_OUTPUT(Makefile src/Makefile)

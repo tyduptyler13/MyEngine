@@ -2,5 +2,7 @@
 !.git*
 *.log
 *.cache
-configure
+*.status
+*.o
+*.a
 
