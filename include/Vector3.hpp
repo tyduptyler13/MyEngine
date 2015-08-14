@@ -93,6 +93,10 @@ namespace MyUPlay {
 				return v;
 			}
 
+			inline Vector3 operator+(T s){
+				return Vector3(x + s, y + s, z + s);
+			}
+
 			Vector3& sub(const Vector3& v){
 				x -= v.x;
 				y -= v.y;
@@ -121,6 +125,14 @@ namespace MyUPlay {
 				y = a.y - b.y;
 				z = a.z - b.z;
 				return *this;
+			}
+
+			Vector3 operator-(T s){
+				Vector3 v;
+				v.x = x * s;
+				v.y = y * s;
+				v.z = z * s;
+				return v;
 			}
 
 			Vector3 operator-(const Vector3& b){
@@ -161,6 +173,14 @@ namespace MyUPlay {
 				return *this;
 			}
 
+			Vector3 operator*(T s){
+				Vector3 v;
+				v.x = x * s;
+				v.y = y * s;
+				v.z = z * s;
+				return v;
+			}
+
 			Vector3 operator*(const Vector3& b){
 				Vector3 v;
 				v.x = x * b.x;
@@ -177,8 +197,66 @@ namespace MyUPlay {
 			Vector3& applyQuaternion(const Quaternion&);
 			Vector3& project(const Camera&);
 			Vector3& unproject(const Camera&);
-			//TODO
+			Vector3& transformDirection(const Matrix4&);
 
+			Vector3& divide(const Vector3& v){
+				x /= v.x;
+				y /= v.y;
+				z /= v.z;
+				return *this;
+			}
+
+			inline Vector3& operator/=(const Vector3& v){
+				return divide(v);
+			}
+
+			Vector3& divide(T scalar){
+				x /= scalar;
+				y /= scalar;
+				z /= scalar;
+				return *this;
+			}
+
+			inline Vector3& operator/=(T scalar){
+				return divide(scalar);
+			}
+
+			Vector3 operator/(const Vector3& v){
+				Vector3 b;
+				b.x = x / v.x;
+				b.y = y / v.y;
+				b.z = z / v.z;
+				return b;
+			}
+
+			Vector3 operator/(T s){
+				Vector3 v;
+				v.x = x / s;
+				v.y = y / s;
+				v.z = z / s;
+				return v;
+			}
+
+			Vector3& min(const Vector3&);
+			Vector3& max(const Vector3&);
+			Vector3& clamp(const Vector3& min, const Vector3& max);
+			Vector3& clampScalar(T min, T max);
+			Vector3& floor();
+			Vector3& ceil();
+			Vector3& round();
+			Vector3& roundToZero();
+			
+			Vector3& negate(){
+
+			}
+
+			inline Vector3 operator-(){
+				
+			}
+			
+			Vector3& dot(const Vector3& v){
+
+			}
 
 		};
 
