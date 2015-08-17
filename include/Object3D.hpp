@@ -20,21 +20,23 @@ namespace MyUPlay {
 
 			public:
 
-				uuid id;
+				static unsigned idCount;
+
+				unsigned id; //Eventually we should use uuids
 				std::string name;
 
 				Object3D* parent;
 
 				std::vector<Object3D*> children;
 
-				Vector3 up;
+				Vector3f up;
 
-				static const Vector3 DefaultUp;
+				static const Vector3f DefaultUp;
 
-				Vector3 position;
+				Vector3f position;
 				Euler rotation;
 				Quaternion quaternion;
-				Vector3 scale;
+				Vector3f scale;
 
 				bool rotationAutoUpdate = true;
 				Matrix4 matrix;
@@ -51,38 +53,41 @@ namespace MyUPlay {
 				bool frustumCulled = true;
 				unsigned renderOrder = 0;
 
+				Object3D();
+				~Object3D();
+
 				Object3D& applyMatrix(const Matrix4&);
 
-				Object3D& setRotationAxisAngle(const Vector3& axis, float angle);
+				Object3D& setRotationAxisAngle(const Vector3f& axis, float angle);
 				Object3D& setRotationFromEuler(const Euler&);
 				Object3D& setRotationFromQuaternion(const Quaternion&);
 
-				Object3D& rotateOnAxis(Vector3 axis, float angle);
+				Object3D& rotateOnAxis(Vector3f axis, float angle);
 				Object3D& rotateX(float angle);
 				Object3D& rotateY(float angle);
 				Object3D& rotateZ(float angle);
 
-				Object3D& translateOnAxis(Vector3 axis, float distance);
+				Object3D& translateOnAxis(Vector3f axis, float distance);
 				Object3D& translateX(float distance);
 				Object3D& translateY(float distance);
 				Object3D& translateZ(float distance);
 				
-				Vector3& localToWorld(Vector3);
-				Vector3& worldToLocal(Vector3);
+				Vector3f& localToWorld(Vector3f);
+				Vector3f& worldToLocal(Vector3f);
 
-				Object3D& lookAt(Vector3);
+				Object3D& lookAt(Vector3f);
 
 				Object3D& add(Object3D);
 				Object3D& remove(Object3D);
 
-				Object3D& getObjectById(uuid id);
+				Object3D& getObjectById(unsigned id);
 				Object3D& getObjectByName(std::string name);
 
-				Vector3* getWorldPosition(Vector3* target = new Vector3());
+				Vector3f* getWorldPosition(Vector3f* target = new Vector3f());
 				Quaternion* getWorldQuaternion(Quaternion* target = new Quaternion());
 				Euler* getWorldRotation(Euler* target = new Euler());
-				Vector3* getWorldScale(Vector3* target = new Vector3());
-				Vector3* getWorldDirection(Vector3* target = new Vector3());
+				Vector3f* getWorldScale(Vector3f* target = new Vector3f());
+				Vector3f* getWorldDirection(Vector3f* target = new Vector3f());
 
 				Object3D& traverse(std::function<void(Object3D&)>);
 				Object3D& traverseAnsestors(std::function<void(Object3D&)>);
@@ -91,7 +96,11 @@ namespace MyUPlay {
 
 				Object3D& updateMatrixWorld(bool force = false);
 
-				Object3D& clone(Object3D&, bool recursive = false);
+				Object3D& clone(const Object3D&, bool recursive = false);
+
+				Object3D& operator=(const Object3D& o){
+					return clone(o);
+				}
 
 
 		};
