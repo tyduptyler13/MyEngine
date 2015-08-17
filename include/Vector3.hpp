@@ -2,6 +2,7 @@
 #define MYUPLAY_MYENGINE_VECTOR3
 
 
+
 namespace MyUPlay {
 
 	namespace MyEngine {
@@ -18,6 +19,10 @@ namespace MyUPlay {
 			T x, y, z;
 
 			Vector3(T x = 0, T y = 0, T z = 0) : x(x), y(y), z(z) {}
+
+			Vector3(const Vector3& v){
+				//TODO
+			}
 
 			Vector3& set(T x, T y, T z){
 				this->x = x;

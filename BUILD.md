@@ -6,7 +6,6 @@ but can be installed or built separately.
 
 __Requirements:__
 
-* Ogre3D
 * Node.js
 
 
