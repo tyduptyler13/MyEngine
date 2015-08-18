@@ -265,6 +265,9 @@ namespace MyUPlay {
 
 		};
 
+		typedef Vector3<> Vector3f;
+		typedef Vector3<double> Vector3d;
+
 	}
 
 }
