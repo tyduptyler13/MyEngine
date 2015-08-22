@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <functional>
+#include <mutex>
 
 #include "Vector3.hpp"
 #include "Euler.hpp"
@@ -17,6 +18,12 @@ namespace MyUPlay {
 	namespace MyEngine {
 
 		class Object3D {
+
+			private:
+
+				std::mutex lock;
+				void lock();
+				void unlock();
 
 			public:
 
