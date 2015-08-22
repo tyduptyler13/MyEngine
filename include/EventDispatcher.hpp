@@ -67,14 +67,14 @@ namespace MyUPlay {
 
 				}
 
-				void dispatchEvent(Events type){
+				void dispatchEvent(Events type, ObjectType& ref){
 
 					if (listeners.find(type) == listeners.end()){
 						return;
 					}
 
 					for (SharedListener& l : listeners[type]){
-						(*l)(*this);
+						(*l)(ref);
 					}
 
 				}
