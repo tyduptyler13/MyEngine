@@ -1,6 +1,7 @@
 #ifndef MYUPLAY_MYENGINE_VECTOR3
 #define MYUPLAY_MYENGINE_VECTOR3
 
+#include <vector>
 #include <cmath>
 
 #include "Matrix3.hpp"
@@ -27,7 +28,9 @@ namespace MyUPlay {
 			Vector3(T x = 0, T y = 0, T z = 0) : x(x), y(y), z(z) {}
 
 			Vector3(const Vector3& v){
-				//TODO
+				x = v.x;
+				y = v.y;
+				z = v.z;
 			}
 
 			Vector3& set(T x, T y, T z){
@@ -200,8 +203,26 @@ namespace MyUPlay {
 				return v;
 			}
 
-			Vector3& applyEuler(const Euler&);
-			Vector3& applyAxisAngle(const Vector3& axis, const T angle);
+			Vector3& applyEuler(const Euler&){
+				  
+				Quaternion q;
+
+				applyQuaternion(q.setFromEuler(e));
+
+				return *this;
+
+			}
+
+			Vector3& applyAxisAngle(const Vector3& axis, const T angle){
+
+				Quaternion q;
+
+				applyQuaternion(q.setFromAxisAngle(axis, angle));
+
+				return *this;
+
+			}
+
 			Vector3& applyMatrix3(const Matrix3&);
 			Vector3& applyMatrix4(const Matrix4&);
 			Vector3& applyProjection(const Matrix4&);
@@ -252,10 +273,44 @@ namespace MyUPlay {
 			Vector3& max(const Vector3&);
 			Vector3& clamp(const Vector3& min, const Vector3& max);
 			Vector3& clampScalar(T min, T max);
-			Vector3& floor();
-			Vector3& ceil();
-			Vector3& round();
-			Vector3& roundToZero();
+			
+			Vector3& floor(){
+
+				x = std::floor(x);
+				y = std::floor(y);
+				z = std::floor(z);
+
+				return *this;
+
+			}
+
+			Vector3& ceil(){
+
+				x = std::ceil(x);
+				y = std::ceil(y);
+				z = std::ceil(z);
+
+				return *this;
+
+			}
+
+			Vector3& round(){
+
+				x = std::round(x);
+				y = std::round(y);
+				z = std::round(z);
+
+			}
+
+			Vector3& roundToZero() {
+
+				x = x < 0 ? std::ceil(x) : std::floor(x);
+				y = y < 0 ? std::ceil(y) : std::floor(y);
+				z = z < 0 ? std::ceil(z) : std::floor(z);
+
+				return *this;
+
+			}
 			
 			Vector3& negate(){
 				x = -x;
@@ -349,15 +404,52 @@ namespace MyUPlay {
 				return dx * dx + dy * dy + dz * dz;
 			}
 
-			Vector3& setFromMatrixPosition(const Matrix4&);
-			Vector3& setFromMatrixScale(const Matrix4&);
-			Vector3& setFromMatrixColumn(unsigned index, const Matrix4&);
+			Vector3& setFromMatrixPosition(const Matrix4& m){
+				x = m.elements[12];
+				y = m.elements[13];
+				z = m.elements[14];
+
+				return this;
+			}
+
+			Vector3& setFromMatrixScale(const Matrix4& m){
+				
+				T e[] = m.elements;
+
+				T sx = set(e[0], e[1], e[2]).length();
+				T sy = set(e[4], e[5], e[6]).length();
+				T sz = set(e[8], e[9], e[10]).length();
+
+				x = sx;
+				y = sy;
+				z = sz;
+
+				return *this;
+			}
+
+			Vector3& setFromMatrixColumn(unsigned index, const Matrix4&) {
+
+				unsigned offset = index * 4;
+
+				x = m.elements[offset];
+				y = m.elements[offset + 1];
+				z = m.elements[offset + 2];
+
+				return *this;
+
+			}
 			
 			bool operator==(const Vector3& v){
 				return ((x == v.x) && (y == v.y) && (z == v.z));
 			}
 
-			//TODO
+			//Disabled until we decide the best method for moving data into an array/vector
+			//std::vector<T>& toArray(T array[], unsigned offset);
+			//Vector3& fromArray(T array[], unsigned offset);
+
+			inline Vector3 clone(){
+				return Vector3(*this);
+			}
 
 		};
 		
