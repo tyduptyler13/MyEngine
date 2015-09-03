@@ -27,7 +27,6 @@ OBJS := \
 	$(obj).target/$(TARGET)/src/AnimationMorphTarget.o \
 	$(obj).target/$(TARGET)/src/AreaLight.o \
 	$(obj).target/$(TARGET)/src/Bone.o \
-	$(obj).target/$(TARGET)/src/Box2.o \
 	$(obj).target/$(TARGET)/src/Box3.o \
 	$(obj).target/$(TARGET)/src/Camera.o \
 	$(obj).target/$(TARGET)/src/Color.o \
