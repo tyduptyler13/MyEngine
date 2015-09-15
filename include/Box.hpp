@@ -2,6 +2,7 @@
 #ifndef MYUPLAY_MYENGINE_BOX
 #define MYUPLAY_MYENGINE_BOX
 
+
 #include <vector>
 #include <limits>
 
@@ -15,13 +16,19 @@ namespace MyUPlay {
 		template <template<typename> class D, typename T, typename B>
 		class Box {
 
+			public:
+			D<T> min;
+			D<T> max;
+
+			private:
+			Box(D<T> min, D<T> max): min(min), max(max) {}
+			Box(const D<T>& min, const D<T>& max) : min(min), max(max) {}
+			Box(const Box& b) : min(b.min), max(b.max) {}
+
 			protected:
 			typedef std::numeric_limits<T> limit;
 
 			public:
-
-			D<T> min;
-			D<T> max;
 
 			B& set(D<T> min, D<T> max){
 				return set(min, max);
