@@ -34,19 +34,19 @@ namespace MyUPlay {
 			
 			Box3(const Box3& b) : B(b) {}
 
-			Box3& makeEmpty() {
+			Box3& makeEmpty() override {
 				min.set(limit::infinity(), limit::infinity(), limit::infinity());
 				max.set(-limit::infinity(), -limit::infinity(), -limit::infinity());
 				return *this;
 			}
 
-			bool empty() {
+			bool empty() override {
 				return (max.x < min.x) || (max.y < min.y) || (max.z < min.z);
 			}
 
-			Box3& setFromObject(const Object3D& object);
+			Box3& setFromObject(Object3D& object);
 
-			bool containsPoint(const Vector3<T>& point) {
+			bool containsPoint(const Vector3<T>& point) override {
 
 				if (point.x < min.x || point.x > max.x ||
 				    point.y < min.y || point.y > max.y ||
@@ -60,7 +60,7 @@ namespace MyUPlay {
 
 			}
 			
-			bool containsBox(const Box3& box) {
+			bool containsBox(const Box3& box) override {
 
 				if (( min.x <= box.min.x ) && ( box.max.x <= max.x ) &&
 				    ( min.y <= box.min.y ) && ( box.max.y <= max.y ) &&
@@ -74,7 +74,7 @@ namespace MyUPlay {
 
 			}
 
-			Vector3<T>& getParameter(const Vector3<T>& point, Vector3<T>& target) {
+			Vector3<T>& getParameter(const Vector3<T>& point, Vector3<T>& target) override {
 
 				return target.set(
 						(point.x - min.x) / (max.x - min.x),
@@ -83,7 +83,7 @@ namespace MyUPlay {
 
 			}
 
-			bool isIntersectionBox(const Box3& box) {
+			bool isIntersectionBox(const Box3& box) override {
 
 				if ( box.max.x < min.x || box.min.x > max.x ||
 				     box.max.y < min.y || box.min.y > max.y ||
