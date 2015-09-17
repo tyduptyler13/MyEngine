@@ -11,23 +11,28 @@ namespace MyUPlay {
 		template <typename T>
 		class Box2 : public Box<Vector2, T, Box2<T> > {
 
+			private:
+			typedef Box<Vector2, T, Box2<T> > B;
+
 			protected:
-			typedef typename Box<Vector2, T, Box2<T> >::limit limit;
+			typedef typename B::limit limit;
+
 
 			public:
-
+			
+			Vector2<T>& min = B::min;
+			Vector2<T>& max = B::max;
+			
+			
 			Box2(){
 				min(limit::infinity(), limit::infinity());
 				max(-limit::infinity(), -limit::infinity());
 
 			}
-			Box2(Vector2<T> min, Vector2<T> max) : Box(min, max) {}
-			Box2(const Vector2<T>& min, const Vector2<T>& max) : Box(min, max) {}
+			Box2(Vector2<T> min, Vector2<T> max) : B(min, max) {}
+			Box2(const Vector2<T>& min, const Vector2<T>& max) : B(min, max) {}
 
-			Box2(const Box2& b) {
-				min = b.min;
-				max = b.max;
-			}
+			Box2(const Box2& b) : B(b) {}
 
 			Box2& makeEmpty(){
 				min.set(limit::infinity(), limit::infinity());
