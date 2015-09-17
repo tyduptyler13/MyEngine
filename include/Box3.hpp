@@ -4,7 +4,7 @@
 #include "Box.hpp"
 #include "Vector3.hpp"
 #include "Object3D.hpp"
-
+#include "Sphere.hpp"
 
 namespace MyUPlay {
 
@@ -98,6 +98,20 @@ namespace MyUPlay {
 			}
 
 			Box3& applyMatrix4(const Matrix4&);
+
+			Sphere getBoundingSphere() {
+				Sphere s;
+				return getBoundingSphere(s);
+			}
+
+			Sphere& getBoundingSphere(Sphere& target) {
+
+				target.center = B::center();
+				target.radius = B::size().length() * .5;
+
+				return target;
+
+			}
 
 
 		};
