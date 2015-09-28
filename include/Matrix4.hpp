@@ -5,6 +5,7 @@ namespace MyUPlay {
 
 	namespace MyEngine {
 
+		template <typename T>
 		class Matrix4 {
 
 		};
