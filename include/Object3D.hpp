@@ -11,7 +11,7 @@
 #include "Euler.hpp"
 #include "Quanternion.hpp"
 #include "Matrix4.hpp"
-
+#include "Math.hpp"
 
 namespace MyUPlay {
 
@@ -19,17 +19,11 @@ namespace MyUPlay {
 
 		class Object3D {
 
-			private:
-
-				std::mutex lock;
-				void lock();
-				void unlock();
-
 			public:
 
 				static unsigned idCount;
 
-				unsigned id; //Eventually we should use uuids
+				const Math::UUID id = Math::generateUUID();
 				std::string name;
 
 				Object3D* parent;
@@ -109,6 +103,9 @@ namespace MyUPlay {
 					return clone(o);
 				}
 
+				bool operator==(const Object3D& o){
+					return id == o.id;
+				}
 
 		};
 
