@@ -8,5 +8,5 @@ hash gyp 2>/dev/null || {
 	PATH=./deps/gyp:$PATH
 }
 
-gyp build.gyp --depth=. -f make
+gyp build.gyp --depth=. -f make --generator-output=./build -Dlibrary=static_library
 

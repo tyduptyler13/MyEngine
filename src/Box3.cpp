@@ -7,13 +7,13 @@ using namespace MyUPlay::MyEngine;
 using namespace std;
 
 template <typename T>
-Box3<T>& Box3<T>::setFromObject(Object3D& object) {
+Box3<T>& Box3<T>::setFromObject(Object3D<T>& object) {
 
 	object.updateMatrixWorld(true);
 
 	makeEmpty();
 
-	object.traverse([this](const Object3D& node) {
+	object.traverse([this](Object3D<T>& node) {
 
 		//This function assumes we don't have BufferGeometry. Everything is already native.
 		for (Vector3<T> vertex : node.geometry.verticies) {
@@ -31,7 +31,7 @@ Box3<T>& Box3<T>::setFromObject(Object3D& object) {
 }
 
 template <typename T>
-Box3<T>& Box3<T>::applyMatrix4(const Matrix4& matrix) {
+Box3<T>& Box3<T>::applyMatrix4(const Matrix4<T>& matrix) {
 
 	vector<Vector3<T> > points(8);
 

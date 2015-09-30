@@ -11,7 +11,7 @@ namespace MyUPlay {
 	namespace MyEngine {
 		
 		template <typename T>
-		class Box3 : public Box<Vector3, T, Box3<T>> {
+		class Box3 : public Box<Vector3, T, Box3<T> > {
 			
 			protected:
 			//Shorthand tricks.
@@ -21,6 +21,7 @@ namespace MyUPlay {
 
 			public:
 
+			//These are required because min/max are commin in std (math headers)
 			Vector3<T>& min = B::min;
 			Vector3<T>& max = B::max;
 
@@ -44,7 +45,7 @@ namespace MyUPlay {
 				return (max.x < min.x) || (max.y < min.y) || (max.z < min.z);
 			}
 
-			Box3& setFromObject(Object3D& object);
+			Box3& setFromObject(Object3D<T>& object);
 
 			bool containsPoint(const Vector3<T>& point) override {
 
@@ -97,14 +98,14 @@ namespace MyUPlay {
 
 			}
 
-			Box3& applyMatrix4(const Matrix4&);
+			Box3& applyMatrix4(const Matrix4<T>&);
 
-			Sphere getBoundingSphere() {
-				Sphere s;
+			Sphere<T> getBoundingSphere() {
+				Sphere<T> s;
 				return getBoundingSphere(s);
 			}
 
-			Sphere& getBoundingSphere(Sphere& target) {
+			Sphere<T>& getBoundingSphere(Sphere<T>& target) {
 
 				target.center = B::center();
 				target.radius = B::size().length() * .5;

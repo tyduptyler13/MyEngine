@@ -1,5 +1,5 @@
 [submodule "node"]
-	path = node
+	path = deps/node
 	url = https://github.com/joyent/node.git
 [submodule "include/glfw"]
 	path = deps/glfw

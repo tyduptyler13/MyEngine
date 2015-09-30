@@ -5,7 +5,6 @@ namespace MyUPlay {
 
 	namespace MyEngine {
 
-
 		class Euler {
 
 		};

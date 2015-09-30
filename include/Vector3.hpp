@@ -6,13 +6,20 @@
 
 #include "Matrix3.hpp"
 #include "Matrix4.hpp"
-#include "Quanternion.hpp"
+#include "Quaternion.hpp"
 #include "Euler.hpp"
 #include "Camera.hpp"
 
 namespace MyUPlay {
 
 	namespace MyEngine {
+
+		#ifndef MATRIX3_DEFINED
+		template <typename> class Matrix3;
+		#endif
+		#ifndef MATRIX4_DEFINED
+		template <typename> class Matrix4;
+		#endif
 
 		/**
 		 * This class supports any numeric type or class that supports
@@ -203,9 +210,9 @@ namespace MyUPlay {
 				return v;
 			}
 
-			Vector3& applyEuler(const Euler&){
+			Vector3& applyEuler(const Euler& e){
 				  
-				Quaternion q;
+				Quaternion<T> q;
 
 				applyQuaternion(q.setFromEuler(e));
 
@@ -215,7 +222,7 @@ namespace MyUPlay {
 
 			Vector3& applyAxisAngle(const Vector3& axis, const T angle){
 
-				Quaternion q;
+				Quaternion<T> q;
 
 				applyQuaternion(q.setFromAxisAngle(axis, angle));
 
@@ -223,13 +230,13 @@ namespace MyUPlay {
 
 			}
 
-			Vector3& applyMatrix3(const Matrix3&);
-			Vector3& applyMatrix4(const Matrix4&);
-			Vector3& applyProjection(const Matrix4&);
-			Vector3& applyQuaternion(const Quaternion&);
+			Vector3& applyMatrix3(const Matrix3<T>&);
+			Vector3& applyMatrix4(const Matrix4<T>&);
+			Vector3& applyProjection(const Matrix4<T>&);
+			Vector3& applyQuaternion(const Quaternion<T>&);
 			Vector3& project(const Camera&);
 			Vector3& unproject(const Camera&);
-			Vector3& transformDirection(const Matrix4&);
+			Vector3& transformDirection(const Matrix4<T>&);
 
 			Vector3& divide(const Vector3& v){
 				x /= v.x;
@@ -404,7 +411,7 @@ namespace MyUPlay {
 				return dx * dx + dy * dy + dz * dz;
 			}
 
-			Vector3& setFromMatrixPosition(const Matrix4& m){
+			Vector3& setFromMatrixPosition(const Matrix4<T>& m){
 				x = m.elements[12];
 				y = m.elements[13];
 				z = m.elements[14];
@@ -412,7 +419,7 @@ namespace MyUPlay {
 				return this;
 			}
 
-			Vector3& setFromMatrixScale(const Matrix4& m){
+			Vector3& setFromMatrixScale(const Matrix4<T>& m){
 				
 				T e[] = m.elements;
 
@@ -427,7 +434,7 @@ namespace MyUPlay {
 				return *this;
 			}
 
-			Vector3& setFromMatrixColumn(unsigned index, const Matrix4&) {
+			Vector3& setFromMatrixColumn(unsigned index, const Matrix4<T>& m) {
 
 				unsigned offset = index * 4;
 
@@ -452,7 +459,9 @@ namespace MyUPlay {
 			}
 
 		};
-		
+
+		#define VECTOR3_DEFINED
+
 		template<typename T>
 		Vector3<T> operator+(const T scalar, Vector3<T> rhs){
 			return rhs + scalar;

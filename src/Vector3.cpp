@@ -1,11 +1,12 @@
 
 #include "Vector3.hpp"
+#include "Math.hpp"
 
 using namespace std;
 using namespace MyUPlay::MyEngine;
 
 template <typename T>
-Vector3<T>& Vector3<T>::applyMatrix3(const Matrix3& m){
+Vector3<T>& Vector3<T>::applyMatrix3(const Matrix3<T>& m){
 
 	T x = this->x, y = this->y, z = this->z;
 
@@ -20,7 +21,7 @@ Vector3<T>& Vector3<T>::applyMatrix3(const Matrix3& m){
 }
 
 template <typename T>
-Vector3<T>& Vector3<T>::applyMatrix4(const Matrix4& m){
+Vector3<T>& Vector3<T>::applyMatrix4(const Matrix4<T>& m){
 
 	T x = this->x, y = this->y, z = this->z;
 
@@ -35,7 +36,7 @@ Vector3<T>& Vector3<T>::applyMatrix4(const Matrix4& m){
 }
 
 template <typename T>
-Vector3<T>& Vector3<T>::applyProjection(const Matrix4& m){
+Vector3<T>& Vector3<T>::applyProjection(const Matrix4<T>& m){
 
 	T x = this->x, y = this->y, z = this->z;
 
@@ -51,7 +52,7 @@ Vector3<T>& Vector3<T>::applyProjection(const Matrix4& m){
 }
 
 template <typename T>
-Vector3<T>& Vector3<T>::applyQuaternion(const Quaternion& q){
+Vector3<T>& Vector3<T>::applyQuaternion(const Quaternion<T>& q){
 
 	T x = this->x, y = this->y, z = this->z;
 
@@ -80,7 +81,7 @@ Vector3<T>& Vector3<T>::applyQuaternion(const Quaternion& q){
 template <typename T>
 Vector3<T>& Vector3<T>::project(const Camera& camera){
 
-	Matrix4 matrix;
+	Matrix4<T> matrix;
 
 	matrix.multiplyMatricies(camera.matrixWorld, matrix.getInverse( camera.projectionMatrix ) );
 	return applyProjection();
@@ -90,7 +91,7 @@ Vector3<T>& Vector3<T>::project(const Camera& camera){
 template <typename T>
 Vector3<T>& Vector3<T>::unproject(const Camera& camera){
 
-	Matrix4 matrix;
+	Matrix4<T> matrix;
 
 	matrix.multiplyMatricies(camera.matrixWorld, matrix.getInverse( camera.projectionMatrix ) );
 	return applyProjection(matrix);
@@ -98,7 +99,7 @@ Vector3<T>& Vector3<T>::unproject(const Camera& camera){
 }
 
 template <typename T>
-Vector3<T>& Vector3<T>::transformDirection(const Matrix4& m) {
+Vector3<T>& Vector3<T>::transformDirection(const Matrix4<T>& m) {
 
 	T x = this->x, y = this->y, z = this->z;
 

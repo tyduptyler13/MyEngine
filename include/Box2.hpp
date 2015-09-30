@@ -17,6 +17,7 @@ namespace MyUPlay {
 
 			public:
 
+			//These are required because min/max is common in std (math headers)
 			Vector2<T>& min = B::min;
 			Vector2<T>& max = B::max;
 

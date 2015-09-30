@@ -4,10 +4,19 @@
 #include <vector>
 
 #include "Vector3.hpp"
+#include "Matrix3.hpp"
 
 namespace MyUPlay {
 
 	namespace MyEngine {
+
+		//If Vector3 is not parsed yet. Circular dependency.
+		#ifndef VECTOR3_DEFINED
+		template <typename T> class Vector3;
+		#endif
+		#ifndef MATRIX4_DEFINED
+		template <typename T> class Matrix4;
+		#endif
 
 		template<typename T = float>
 		class Matrix3 {
@@ -58,7 +67,7 @@ namespace MyUPlay {
 				return *this;
 			}
 
-			std::vector<Vector3<T>> applyToVector3Array(std::vector<Vector3<T>>& array, unsigned offset = 0, unsigned length = 0) const {
+			std::vector<Vector3<T> >& applyToVector3Array(std::vector<Vector3<T> >& array, unsigned offset = 0, unsigned length = 0) const {
 				
 				Vector3<T> v1;
 
@@ -164,6 +173,8 @@ namespace MyUPlay {
 
 
 		};
+
+		#define MATRIX3_DEFINED
 
 		typedef Matrix3<float> Matrix3f;
 		typedef Matrix3<double> Matrix3d;

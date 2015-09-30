@@ -4,6 +4,8 @@
 #include <vector>
 
 #include "Vector3.hpp"
+#include "Euler.hpp"
+#include "Quaternion.hpp"
 
 namespace MyUPlay {
 
@@ -11,6 +13,14 @@ namespace MyUPlay {
 
 		template <typename T>
 		class Matrix4 {
+
+			//Circular Dependencies
+			#ifndef VECTOR3_DEFINED
+			template <typename> class Vector3;
+			#endif
+			#ifndef MATRIX3_DEFINED
+			template <typename> class Matrix3;
+			#endif
 
 		public:
 
@@ -96,7 +106,7 @@ namespace MyUPlay {
 
 			Matrix4& extractBasis(const Matrix4&);
 
-			Matrix4& makeRotationFromEuler(const Euler<T>&);
+			Matrix4& makeRotationFromEuler(const Euler&);
 
 			Matrix4& makeRotationFromQuaternion(const Quaternion<T>&);
 
@@ -134,7 +144,7 @@ namespace MyUPlay {
 
 			}
 
-			std::vector<Vector3<T>> applyToVector3Array(std::vector<Vector3<T>>& array, unsigned offset = 0, unsigned length = 0) {
+			std::vector<Vector3<T> > applyToVector3Array(std::vector<Vector3<T> >& array, unsigned offset = 0, unsigned length = 0) {
 
 				Vector3<T> v1;
 
@@ -156,7 +166,7 @@ namespace MyUPlay {
 
 			std::vector<T> flattenToArrayOffset(std::vector<T>& array, unsigned offset) {
 				for(unsigned i = 0; i < 16; ++i){
-					array[i = offset] = element[i];
+					array[i = offset] = elements[i];
 				}
 			}
 
@@ -170,7 +180,7 @@ namespace MyUPlay {
 
 			Matrix4& getInverse(const Matrix4&, bool throwOnInvertible = false);
 
-			Matrix4& scale(const Vector3& v){
+			Matrix4& scale(const Vector3<T>& v){
 				T* te = elements;
 				T x = v.x, y = v.y, z = v.z;
 
@@ -199,7 +209,7 @@ namespace MyUPlay {
 			Matrix4& makeRotationX(T theta);
 			Matrix4& makeRotationY(T theta);
 			Matrix4& makeRotationZ(T theta);
-			Matrix4& makeRotationAxis(const Vector3& axis, T angle);
+			Matrix4& makeRotationAxis(const Vector3<T>& axis, T angle);
 
 			Matrix4& makeScale(T x, T y, T z) {
 
@@ -264,6 +274,11 @@ namespace MyUPlay {
 			}
 
 		};
+
+		#define MATRIX4_DEFINED
+
+		typedef Matrix4<float> Matrix4f;
+		typedef Matrix4<double> Matrix4d;
 
 	}
 

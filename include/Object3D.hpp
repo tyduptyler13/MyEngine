@@ -9,7 +9,7 @@
 
 #include "Vector3.hpp"
 #include "Euler.hpp"
-#include "Quanternion.hpp"
+#include "Quaternion.hpp"
 #include "Matrix4.hpp"
 #include "Math.hpp"
 
@@ -17,11 +17,10 @@ namespace MyUPlay {
 
 	namespace MyEngine {
 
+		template <typename T>
 		class Object3D {
 
 			public:
-
-				static unsigned idCount;
 
 				const Math::UUID id = Math::generateUUID();
 				std::string name;
@@ -30,18 +29,18 @@ namespace MyUPlay {
 
 				std::vector<Object3D*> children;
 
-				Vector3f up;
+				Vector3<T> up;
 
-				static const Vector3f DefaultUp;
+				static const Vector3<T> DefaultUp;
 
-				Vector3f position;
+				Vector3<T> position;
 				Euler rotation;
-				Quaternion quaternion;
-				Vector3f scale;
+				Quaternion<T> quaternion;
+				Vector3<T> scale;
 
 				bool rotationAutoUpdate = true;
-				Matrix4 matrix;
-				Matrix4 matrixWorld;
+				Matrix4<T> matrix;
+				Matrix4<T> matrixWorld;
 
 				bool matrixAutoUpdate = true;
 				bool matrixWorldNeedsUpdate = false;
@@ -57,50 +56,73 @@ namespace MyUPlay {
 				Object3D();
 				~Object3D();
 
-				Object3D& applyMatrix(const Matrix4&);
+				Object3D& applyMatrix(const Matrix4<T>&);
 
-				Object3D& setRotationAxisAngle(const Vector3f& axis, float angle);
+				Object3D& setRotationAxisAngle(const Vector3<T>& axis, float angle);
 				Object3D& setRotationFromEuler(const Euler&);
-				Object3D& setRotationFromQuaternion(const Quaternion&);
+				Object3D& setRotationFromQuaternion(const Quaternion<T>&);
 
-				Object3D& rotateOnAxis(Vector3f axis, float angle);
+				Object3D& rotateOnAxis(Vector3<T> axis, float angle);
 				Object3D& rotateX(float angle);
 				Object3D& rotateY(float angle);
 				Object3D& rotateZ(float angle);
 
-				Object3D& translateOnAxis(Vector3f axis, float distance);
+				Object3D& translateOnAxis(Vector3<T> axis, float distance);
 				Object3D& translateX(float distance);
 				Object3D& translateY(float distance);
 				Object3D& translateZ(float distance);
 				
-				Vector3f& localToWorld(Vector3f);
-				Vector3f& worldToLocal(Vector3f);
+				Vector3<T>& localToWorld(Vector3<T>&);
+				Vector3<T>& worldToLocal(Vector3<T>&);
 
-				Object3D& lookAt(Vector3f);
+				Object3D& lookAt(const Vector3<T>&);
 
 				Object3D& add(Object3D);
 				Object3D& remove(Object3D);
 
-				Object3D& getObjectById(unsigned id);
-				Object3D& getObjectByName(std::string name);
+				Object3D& getObjectById(std::string id) const;
+				Object3D& getObjectByName(std::string name) const;
+				
+				Vector3<T> getWorldPosition() const{
+					return getWorldPosition(Vector3<T>());
+				}
+				Quaternion<T> getWorldQuaternion() const {
+					return getWorldQuaternion(Quaternion<T>());
+				}
+				Euler getWorldRotation() const {
+					return getWorldRotation(Euler());
+				}
+				Vector3<T> getWorldScale() const {
+					return getWorldScale(Vector3<T>());
+				}
+				Vector3<T> getWorldDirection() const {
+					return getWorldDirection(Vector3<T>());
+				}
 
-				Vector3f* getWorldPosition(Vector3f* target = new Vector3f());
-				Quaternion* getWorldQuaternion(Quaternion* target = new Quaternion());
-				Euler* getWorldRotation(Euler* target = new Euler());
-				Vector3f* getWorldScale(Vector3f* target = new Vector3f());
-				Vector3f* getWorldDirection(Vector3f* target = new Vector3f());
+				Vector3<T>& getWorldPosition(Vector3<T>& target) const;
+				Quaternion<T>& getWorldQuaternion(Quaternion<T>& target) const;
+				Euler& getWorldRotation(Euler& target) const;
+				Vector3<T>& getWorldScale(Vector3<T>& target) const;
+				Vector3<T>& getWorldDirection(Vector3<T>& target) const;
 
 				Object3D& traverse(std::function<void(Object3D&)>);
+				Object3D& traverse(std::function<void(const Object3D&)>) const;
 				Object3D& traverseAnsestors(std::function<void(Object3D&)>);
+				Object3D& traverseAnsestors(std::function<void(const Object3D&)>) const;
 
 				Object3D& updateMatrix();
 
 				Object3D& updateMatrixWorld(bool force = false);
 
-				Object3D& clone(const Object3D&, bool recursive = false);
-
+				Object3D& copy(const Object3D&, bool recursive = false);
+				Object3D clone(bool recursive = false) const {
+					return Object3D().copy(*this, recursive);
+				}
+				Object3D clone(const Object3D& o, bool recursive = false) const {
+					return Object3D().copy(o, recursive);
+				}
 				Object3D& operator=(const Object3D& o){
-					return clone(o);
+					return copy(o);
 				}
 
 				bool operator==(const Object3D& o){
