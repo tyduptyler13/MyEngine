@@ -8,6 +8,8 @@
 #include <mutex>
 #include <atomic>
 
+#include "Log.hpp"
+
 namespace MyUPlay {
 
 	namespace MyEngine {
@@ -15,7 +17,7 @@ namespace MyUPlay {
 		class ThreadPool {
 
 			public:
-				typedef std::function<void(void)> Task;
+				typedef std::function<void()> Task;
 
 			private:
 
@@ -47,7 +49,9 @@ namespace MyUPlay {
 
 						try {
 							t();
-						} catch (...) {}
+						} catch (...) {
+							Log::getInstance() << "Uncaught error in task!";
+						}
 
 					}
 

@@ -4,3 +4,12 @@
 [submodule "include/glfw"]
 	path = deps/glfw
 	url = https://github.com/glfw/glfw
+[submodule "deps/bullet3"]
+	path = deps/bullet3
+	url = https://github.com/bulletphysics/bullet3.git
+[submodule "deps/SFML"]
+	path = deps/SFML
+	url = https://github.com/SFML/SFML.git
+[submodule "deps/capnproto"]
+	path = deps/capnproto
+	url = https://github.com/sandstorm-io/capnproto.git

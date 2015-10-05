@@ -37,7 +37,11 @@ namespace MyUPlay {
 				}
 
 				std::chrono::duration<Accuracy> getElapsedTime() {
-					
+					return elapsedTime;
+				}
+
+				Accuracy getElapsedSeconds() {
+					return elapsedTime.count() * std::chrono::milliseconds::period::num / std::chrono::milliseconds::period::den;
 				}
 
 				std::chrono::duration<Accuracy> getDelta() {
