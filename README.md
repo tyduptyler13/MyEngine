@@ -1,9 +1,16 @@
 MyEngine
 ========
 
-A voxel engine built in Ogre3D with some other goodies.
+This is a completely open source (MIT Lisense) game engine.
 
-Still in development.
+I created this engine because I found a large lackluster of existing game engines and wasn't particularly impressed by the large cost on getting a mainstream engine. This engine is designed after some of the best (also open source) tools in the industry. This engine is special because it is designed to be extremely modular and extremely cross platform. The target operating systems should include unix based systems, windows, and browser technologies like emscripten and nacl. We will eventually support android and iphone but I have very little experience in either of those platforms but would like to learn.
+
+__Graphics__: A ported and enhanced version of [Three.js](http://threejs.org/). I chose this because when I was designing some web technologies and looking for a good graphics engine this was by far the easiest to learn and use. Simple games can be done in about 20-50 lines of code in the entirety. I absolutely love the design of this library and I have baked it into the core of my engine. This increases its modularity because Three was modular from the beginning. To run the engine on various platforms, the part that will need to be changed is the Renderer class. The target renderer will be OpenGL with support for even the latest verions, this can be enhanced to include DirectX, Vulkan (whenever it is released), and really any other graphics implementation if someone writes the interface for it.
+__Physics__: [Bullet](http://bulletphysics.org/wordpress/)
+__Networking__: [Poco](http://pocoproject.org/)/[Nodejs](https://nodejs.org/en/)/[Cap'nProto](https://capnproto.org/) This mixture of networking allows networking to be cross platform, fast, and easy. No matter where the networking is happening.
+__Sound__: [SFML](http://www.sfml-dev.org/)
+__Mod API/Scripting__: [Nodejs](https://nodejs.org/en/). All of our mods will be javascript driven through a shielded api that enforces permissions and reduces security risks. Scripts only get permissions that they are granted by the user running the mods and even then must go through the api defined in the engine to gain access to any external resources.
+
 
 Coding Style
 ============
