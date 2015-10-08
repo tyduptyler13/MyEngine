@@ -4,6 +4,7 @@
 #include <string>
 #include <random>
 #include <cmath>
+#include <cstdarg>
 
 namespace MyUPlay {
 
@@ -101,6 +102,38 @@ namespace MyUPlay {
 				value ++;
 
 				return value;
+			}
+
+			/**
+			 * A magic any length maximum finder.
+			 */
+			template <typename T, typename... Args>
+			T max(T a, Args... b) {
+
+				T max = a;
+
+				for (T next : {b...}){
+					max = std::max(max, next);
+				}
+
+				return max;
+
+			}
+
+			/**
+			 * A magic any length minimum finder.
+			 */
+			template <typename T, typename... Args>
+			T min(T a, Args... b) {
+
+				T min = a;
+
+				for (T next : {b...}) {
+					min = std::min(min, next);
+				}
+
+				return min;
+
 			}
 
 
