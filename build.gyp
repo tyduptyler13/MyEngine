@@ -52,7 +52,6 @@
 				"src/Path.cpp",
 				"src/Shape.cpp",
 				"src/Vector4.cpp",
-				"src/Color.cpp",
 				"src/Geometry.cpp",
 				"src/PerspectiveCamera.cpp",
 				"src/SkinnedMesh.cpp",

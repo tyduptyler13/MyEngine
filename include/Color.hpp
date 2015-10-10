@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <cmath>
 #include <tuple>
+#include <vector>
 
 #include "Math.hpp"
 
@@ -119,13 +120,6 @@ namespace MyUPlay {
 				return *this;
 			}
 
-			bool operator==(const Color& c) const {
-				if (r == c.r && g == c.g && b == c.b){
-					return true;
-				}
-				return false;
-			}
-
 			Color& copyGammaToLinear(const Color& c, float gamma = 2.0){
 
 				r = std::pow(c.r, gamma);
@@ -199,8 +193,106 @@ namespace MyUPlay {
 
 			}
 
-			//TODO
+			Color& offsetHSL(float h, float s, float l) {
+				float h1, s1, l1;
+				std::tie(h1, s1, l1) = getHSL();
+				return setHSL(h + h1, s + s1, l + l1);
+			}
 
+			Color& add(const Color& c){
+				r += c.r;
+				g += c.g;
+				b += c.b;
+				return *this;
+			}
+
+			Color& operator+=(const Color& c){
+				return add(c);
+			}
+
+			Color& addColors(const Color& c1, const Color& c2){
+				r = c1.r + c2.r;
+				g = c1.g + c2.g;
+				b = c1.b + c2.b;
+				return *this;
+			}
+
+			Color operator+(const Color& c) const {
+				return Color(*this).add(c);
+			}
+
+			Color& add(float s){
+				r += s;
+				g += s;
+				b += s;
+				return *this;
+			}
+
+			Color& operator+=(float s){
+				return add(s);
+			}
+
+			Color operator+(float s) const {
+				return Color(*this).add(s);
+			}
+
+			Color& multiply(const Color& c){
+				r *= c.r;
+				g *= c.g;
+				b *= c.b;
+				return *this;
+			}
+
+			Color& operator*=(const Color& c){
+				return multiply(c);
+			}
+
+			Color operator*(const Color& c) const {
+				return Color(*this).multiply(c);
+			}
+
+			Color& multiply(float s){
+				r *= s;
+				g *= s;
+				b *= s;
+				return *this;
+			}
+
+			Color& operator*=(float s){
+				return multiply(s);
+			}
+
+			Color operator*(float s) const {
+				return Color(*this).multiply(s);
+			}
+
+			bool equals(const Color& c) const {
+				return r == c.r && g == c.g && b == c.b;
+			}
+
+			bool operator==(const Color& c) const {
+				return equals(c);
+			}
+
+			std::vector<Byte>& toArray(std::vector<Byte>& array, unsigned offset = 0) const {
+				array.reserve(offset + 2);
+				array[offset] = r;
+				array[offset + 1] = g;
+				array[offset + 2] = b;
+
+				return array;
+			}
+
+			Color& fromArray(const std::vector<Byte>& array) {
+				
+				r = array[0];
+				g = array[1];
+				b = array[2];
+
+				return *this;
+
+			}
+			
 
 		};
 
