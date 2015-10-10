@@ -12,6 +12,18 @@ namespace MyUPlay {
 
 	namespace MyEngine {
 
+		#ifndef EULER_DEFINED
+		template <typename T> class Euler;
+		#endif
+
+		#ifndef VECTOR3_DEFINED
+		template <typename T> class Vector3;
+		#endif
+
+		#ifndef MATRIX4_DEFINED
+		template <typename T> class Matrix4;
+		#endif
+
 		template <typename T>
 		class Quaternion {
 
@@ -94,7 +106,7 @@ namespace MyUPlay {
 			Quaternion& setFromEuler(const Euler<T>&, bool update);
 			Quaternion& setFromAxisAngle(const Vector3<T>& axis, T angle);
 			Quaternion& setFromRotationMatrix(const Matrix4<T>&);
-			Quaternion& setFromUnitVectors(const Vector3& from, const Vector3& to);
+			Quaternion& setFromUnitVectors(const Vector3<T>& from, const Vector3<T>& to);
 
 			Quaternion& inverse() {
 				conjugate().normalize();
@@ -131,7 +143,7 @@ namespace MyUPlay {
 
 			Quaternion& multiplyQuaternions(const Quaternion&, const Quaternion&);
 
-			Quaternion& operator*=(const Quaterion& q){
+			Quaternion& operator*=(const Quaternion& q){
 				return multiply(q);
 			}
 
@@ -175,10 +187,12 @@ namespace MyUPlay {
 			}
 
 			static inline Quaternion& slerp(const Quaternion& a, const Quaternion& b, Quaternion& target, T interpolation){
-				return target(a).slerp(b, t);
+				return target(a).slerp(b, interpolation);
 			}
 
 		};
+
+		#define QUATERNION_DEFINED
 
 	}
 

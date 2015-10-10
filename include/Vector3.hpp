@@ -210,7 +210,7 @@ namespace MyUPlay {
 				return v;
 			}
 
-			Vector3& applyEuler(const Euler& e){
+			Vector3& applyEuler(const Euler<T>& e){
 				  
 				Quaternion<T> q;
 

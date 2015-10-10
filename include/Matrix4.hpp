@@ -106,7 +106,7 @@ namespace MyUPlay {
 
 			Matrix4& extractBasis(const Matrix4&);
 
-			Matrix4& makeRotationFromEuler(const Euler&);
+			Matrix4& makeRotationFromEuler(const Euler<T>&);
 
 			Matrix4& makeRotationFromQuaternion(const Quaternion<T>&);
 

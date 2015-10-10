@@ -12,6 +12,16 @@ namespace MyUPlay {
 
 	namespace MyEngine {
 
+		#ifndef MATRIX4_DEFINED
+		template<typename T> class Matrix4;
+		#endif
+		#ifndef VECTOR3_DEFINED
+		template<typename T> class Vector3;
+		#endif
+		#ifndef QUATERNION_DEFINED
+		template<typename T> class Quaternion;
+		#endif
+
 		template <typename T>
 		class Euler {
 
@@ -92,6 +102,43 @@ namespace MyUPlay {
 
 			Euler& setFromRotationMatrix(const Matrix4<T>&, Order, bool update = false);
 
+			Euler& setFromQuaternion(const Quaternion<T>& q, Order order, bool update = false){
+				Matrix4<T> matrix;
+				matrix.makeRotationFromQuaternion(q);
+				setFromRotationMatrix(matrix, order, update);
+
+				return *this;
+			}
+
+			Euler& setFromVector3(const Vector3<T>& v, Order o) {
+				return set(v.x, v.y, v.z, o);
+			}
+
+			void reorder(Order newOrder) {
+				Quaternion<T> q;
+				q.setFromEuler(*this);
+				setFromQuaternion(q, newOrder);
+			}
+
+			bool equals(const Euler& euler) const {
+				return x == euler.x && y == euler.y && z == euler.z && order == euler.order;
+			}
+
+			bool operator==(const Euler& euler) const {
+				return equals(euler);
+			}
+
+			//fromArray and toArray don't make sense in C. They would require a dataStructure which is redundant to this class.
+			
+			Vector3<T>& toVector3(Vector3<T>& target) const {
+				return target.set(x, y, z);
+			}
+
+			Vector3<T> toVector3() const {
+				Vector3<T> v;
+				return toVector3(v);
+			}
+
 			Euler& onChange(std::function<void()> callback) {
 				onChangeCallback = callback;
 
@@ -100,6 +147,8 @@ namespace MyUPlay {
 
 
 		};
+
+		#define EULER_DEFINED
 
 	}
 
