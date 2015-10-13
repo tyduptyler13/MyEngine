@@ -46,7 +46,7 @@ namespace MyUPlay {
 			}
 
 			Matrix4& set(T n11, T n12, T n13, T n14, T n21, T n22, T n23, T n24, T n31, T n32, T n33, T n34, T n41, T n42, T n43, T n44) {
-				T* te = elements;
+				T& te = elements;
 
 				te[ 0 ] = n11; te[ 4 ] = n12; te[ 8 ] = n13; te[ 12 ] = n14;
 				te[ 1 ] = n21; te[ 5 ] = n22; te[ 9 ] = n23; te[ 13 ] = n24;
@@ -82,7 +82,7 @@ namespace MyUPlay {
 
 			Matrix4& extractBasis(Vector3<T>& xAxis, Vector3<T>& yAxis, Vector3<T>& zAxis) const {
 
-				T* e = elements;
+				T& e = elements;
 
 				xAxis.set(e[0], e[1], e[2]);
 				yAxis.set(e[4], e[5], e[6]);
@@ -104,7 +104,7 @@ namespace MyUPlay {
 
 			}
 
-			Matrix4& extractBasis(const Matrix4&);
+			Matrix4& extractRotation(const Matrix4&);
 
 			Matrix4& makeRotationFromEuler(const Euler<T>&);
 
@@ -128,12 +128,16 @@ namespace MyUPlay {
 
 			Matrix4& multiplyMatricies(const Matrix4& a, const Matrix4& b);
 
-			std::vector<T> multiplyToArray(const Matrix4& a, const Matrix4& b, std::vector<T>& array = std::vector<T>(16));
+			std::vector<T>& multiplyToArray(const Matrix4& a, const Matrix4& b, std::vector<T>& array);
+			std::vector<T> multiplyToArray(const Matrix4& a, const Matrix4& b){
+				std::vector<T> array(16);
+				return multiplyToArray(a, b, array);
+			}
 
 
 			Matrix4& multiplyScalar(T s) {
 
-				T* te = elements;
+				T& te = elements;
 
 				te[ 0 ] *= s; te[ 4 ] *= s; te[ 8 ] *= s; te[ 12 ] *= s;
 				te[ 1 ] *= s; te[ 5 ] *= s; te[ 9 ] *= s; te[ 13 ] *= s;
@@ -181,7 +185,7 @@ namespace MyUPlay {
 			Matrix4& getInverse(const Matrix4&, bool throwOnInvertible = false);
 
 			Matrix4& scale(const Vector3<T>& v){
-				T* te = elements;
+				T& te = elements;
 				T x = v.x, y = v.y, z = v.z;
 
 				te[ 0 ] *= x; te[ 4 ] *= y; te[ 8 ] *= z;
@@ -230,7 +234,7 @@ namespace MyUPlay {
 				setPosition(position);
 			}
 
-			Matrix4& decompose(Vector3<T>& position, Quaternion<T>& quaternion, Vector3<T>& scale);
+			Matrix4& decompose(Vector3<T>& position, Quaternion<T>& quaternion, Vector3<T>& scale) const;
 
 			Matrix4& makeFrustrum(T left, T right, T bottom, T top, T near, T far);
 			Matrix4& makePerspective(T fov, T aspect, T near, T far);
