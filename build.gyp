@@ -57,9 +57,7 @@
 				"src/SkinnedMesh.cpp",
 				"src/CompressedTexture.cpp",
 				"src/GLES2Renderer.cpp",
-				"src/Material.cpp",
-				"src/Plane.cpp",
-				"src/Sphere.cpp"
+				"src/Material.cpp"
 			],
 			"include_dirs": [
 				"include"
