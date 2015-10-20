@@ -13,7 +13,7 @@ namespace MyUPlay {
 
 	namespace MyEngine {
 
-		template <typename T>
+		template <typename T = float>
 		class Plane {
 
 		public:
@@ -169,6 +169,9 @@ namespace MyUPlay {
 			}
 
 		};
+
+		typedef Plane<float> Planef;
+		typedef Plane<double> Planed;
 
 	}
 

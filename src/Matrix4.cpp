@@ -14,8 +14,8 @@ Matrix4<T>& Matrix4<T>::extractRotation(const Matrix4<T>& m) {
 
 	Vector3<T> v1;
 
-	T& te = elements;
-	T& me = m.elements;
+	auto& te = elements;
+	auto& me = m.elements;
 
 	T scaleX = 1 / v1.set(me[0], me[1], me[2]).length();
 	T scaleY = 1 / v1.set(me[4], me[5], me[6]).length();
@@ -41,7 +41,7 @@ Matrix4<T>& Matrix4<T>::extractRotation(const Matrix4<T>& m) {
 template <typename T>
 Matrix4<T>& Matrix4<T>::makeRotationFromEuler(const Euler<T>& euler) {
 
-	T& te = elements;
+	auto& te = elements;
 
 	T x = euler.x, y = euler.y, z = euler.z;
 	T a = cos(x), b = sin(x),
@@ -164,7 +164,7 @@ Matrix4<T>& Matrix4<T>::makeRotationFromEuler(const Euler<T>& euler) {
 template <typename T>
 Matrix4<T>& Matrix4<T>::makeRotationFromQuaternion(const Quaternion<T>& q){
 
-	T& te = elements;
+	auto& te = elements;
 
 	T x = q.x, y = q.y, z = q.z, w = q.w;
 	T x2 = x + x, y2 = y + y, z2 = z + z;
@@ -203,7 +203,7 @@ template <typename T>
 Matrix4<T>& Matrix4<T>::lookAt(const Vector3<T>& eye, const Vector3<T>& target, const Vector3<T>& up){
 
 	Vector3<T> x, y, z;
-	T& te = elements;
+	auto& te = elements;
 
 	z.subVectors(eye, target).normalize();
 
@@ -231,19 +231,19 @@ Matrix4<T>& Matrix4<T>::lookAt(const Vector3<T>& eye, const Vector3<T>& target, 
 template <typename T>
 Matrix4<T>& Matrix4<T>::multiplyMatricies(const Matrix4<T>& a, const Matrix4<T>& b){
 
-	T& ae = a.elements;
-	T& be = b.elements;
-	T& te = elements;
+	auto& ae = a.elements;
+	auto& be = b.elements;
+	auto& te = elements;
 
-	T& a11 = ae[ 0 ], a12 = ae[ 4 ], a13 = ae[ 8 ], a14 = ae[ 12 ];
-	T& a21 = ae[ 1 ], a22 = ae[ 5 ], a23 = ae[ 9 ], a24 = ae[ 13 ];
-	T& a31 = ae[ 2 ], a32 = ae[ 6 ], a33 = ae[ 10 ], a34 = ae[ 14 ];
-	T& a41 = ae[ 3 ], a42 = ae[ 7 ], a43 = ae[ 11 ], a44 = ae[ 15 ];
+	auto& a11 = ae[ 0 ], a12 = ae[ 4 ], a13 = ae[ 8 ], a14 = ae[ 12 ];
+	auto& a21 = ae[ 1 ], a22 = ae[ 5 ], a23 = ae[ 9 ], a24 = ae[ 13 ];
+	auto& a31 = ae[ 2 ], a32 = ae[ 6 ], a33 = ae[ 10 ], a34 = ae[ 14 ];
+	auto& a41 = ae[ 3 ], a42 = ae[ 7 ], a43 = ae[ 11 ], a44 = ae[ 15 ];
 
-	T& b11 = be[ 0 ], b12 = be[ 4 ], b13 = be[ 8 ], b14 = be[ 12 ];
-	T& b21 = be[ 1 ], b22 = be[ 5 ], b23 = be[ 9 ], b24 = be[ 13 ];
-	T& b31 = be[ 2 ], b32 = be[ 6 ], b33 = be[ 10 ], b34 = be[ 14 ];
-	T& b41 = be[ 3 ], b42 = be[ 7 ], b43 = be[ 11 ], b44 = be[ 15 ];
+	auto& b11 = be[ 0 ], b12 = be[ 4 ], b13 = be[ 8 ], b14 = be[ 12 ];
+	auto& b21 = be[ 1 ], b22 = be[ 5 ], b23 = be[ 9 ], b24 = be[ 13 ];
+	auto& b31 = be[ 2 ], b32 = be[ 6 ], b33 = be[ 10 ], b34 = be[ 14 ];
+	auto& b41 = be[ 3 ], b42 = be[ 7 ], b43 = be[ 11 ], b44 = be[ 15 ];
 
 	te[ 0 ] = a11 * b11 + a12 * b21 + a13 * b31 + a14 * b41;
 	te[ 4 ] = a11 * b12 + a12 * b22 + a13 * b32 + a14 * b42;
@@ -271,12 +271,12 @@ Matrix4<T>& Matrix4<T>::multiplyMatricies(const Matrix4<T>& a, const Matrix4<T>&
 
 template <typename T>
 T Matrix4<T>::det() const {
-	T& te = elements;
+	auto& te = elements;
 
-	T& n11 = te[ 0 ], n12 = te[ 4 ], n13 = te[ 8 ], n14 = te[ 12 ];
-	T& n21 = te[ 1 ], n22 = te[ 5 ], n23 = te[ 9 ], n24 = te[ 13 ];
-	T& n31 = te[ 2 ], n32 = te[ 6 ], n33 = te[ 10 ], n34 = te[ 14 ];
-	T& n41 = te[ 3 ], n42 = te[ 7 ], n43 = te[ 11 ], n44 = te[ 15 ];
+	auto& n11 = te[ 0 ], n12 = te[ 4 ], n13 = te[ 8 ], n14 = te[ 12 ];
+	auto& n21 = te[ 1 ], n22 = te[ 5 ], n23 = te[ 9 ], n24 = te[ 13 ];
+	auto& n31 = te[ 2 ], n32 = te[ 6 ], n33 = te[ 10 ], n34 = te[ 14 ];
+	auto& n41 = te[ 3 ], n42 = te[ 7 ], n43 = te[ 11 ], n44 = te[ 15 ];
 
 	//TODO: make this more efficient
 	//( based on http://www.euclideanspace.com/maths/algebra/matrix/functions/inverse/fourD/index.htm )
@@ -322,7 +322,7 @@ T Matrix4<T>::det() const {
 template <typename T>
 Matrix4<T>& Matrix4<T>::transpose(){
 
-	T& te = elements;
+	auto& te = elements;
 	T tmp;
 
 	tmp = te[ 1 ]; te[ 1 ] = te[ 4 ]; te[ 4 ] = tmp;
@@ -341,13 +341,13 @@ template <typename T>
 Matrix4<T>& Matrix4<T>::getInverse(const Matrix4<T>& m, bool throwOnInvertible) {
 
 	// based on http://www.euclideanspace.com/maths/algebra/matrix/functions/inverse/fourD/index.htm
-	T& te = elements;
-	T& me = m.elements;
+	auto& te = elements;
+	auto& me = m.elements;
 
-	T& n11 = me[ 0 ], n12 = me[ 4 ], n13 = me[ 8 ], n14 = me[ 12 ];
-	T& n21 = me[ 1 ], n22 = me[ 5 ], n23 = me[ 9 ], n24 = me[ 13 ];
-	T& n31 = me[ 2 ], n32 = me[ 6 ], n33 = me[ 10 ], n34 = me[ 14 ];
-	T& n41 = me[ 3 ], n42 = me[ 7 ], n43 = me[ 11 ], n44 = me[ 15 ];
+	auto& n11 = me[ 0 ], n12 = me[ 4 ], n13 = me[ 8 ], n14 = me[ 12 ];
+	auto& n21 = me[ 1 ], n22 = me[ 5 ], n23 = me[ 9 ], n24 = me[ 13 ];
+	auto& n31 = me[ 2 ], n32 = me[ 6 ], n33 = me[ 10 ], n34 = me[ 14 ];
+	auto& n41 = me[ 3 ], n42 = me[ 7 ], n43 = me[ 11 ], n44 = me[ 15 ];
 
 	te[ 0 ] = n23 * n34 * n42 - n24 * n33 * n42 + n24 * n32 * n43 - n22 * n34 * n43 - n23 * n32 * n44 + n22 * n33 * n44;
 	te[ 4 ] = n14 * n33 * n42 - n13 * n34 * n42 - n14 * n32 * n43 + n12 * n34 * n43 + n13 * n32 * n44 - n12 * n33 * n44;
@@ -449,7 +449,7 @@ Matrix4<T>& Matrix4<T>::makeRotationAxis(const Vector3<T>& axis, T angle) {
 	T c = cos(angle);
 	T s = sin(angle);
 	T t = 1 - c;
-	T& x = axis.x, y= axis.y, z = axis.z;
+	auto& x = axis.x, y= axis.y, z = axis.z;
 	T tx = t * x, ty = t * y;
 
 	set(
@@ -469,7 +469,7 @@ Matrix4<T>& Matrix4<T>::decompose(Vector3<T>& position, Quaternion<T>& quaternio
 	Vector3<T> vector;
 	Matrix4<T> matrix;
 
-	T& te = elements;
+	auto& te = elements;
 
 	T sx = vector.set( te[ 0 ], te[ 1 ], te[ 2 ] ).length();
 	T sy = vector.set( te[ 4 ], te[ 5 ], te[ 6 ] ).length();
@@ -520,7 +520,7 @@ Matrix4<T>& Matrix4<T>::decompose(Vector3<T>& position, Quaternion<T>& quaternio
 template <typename T>
 Matrix4<T>& Matrix4<T>::makeFrustrum(T left, T right, T bottom, T top, T near, T far) {
 
-	T& te = elements;
+	auto& te = elements;
 	T x = 2 * near / ( right - left );
 	T y = 2 * near / ( top - bottom );
 
@@ -553,7 +553,7 @@ Matrix4<T>& Matrix4<T>::makePerspective(T fov, T aspect, T near, T far){
 template <typename T>
 Matrix4<T>& Matrix4<T>::makeOrthographic(T left, T right, T top, T bottom, T near, T far) {
 
-	T& te = elements;
+	auto& te = elements;
 	T w = right - left;
 	T h = top - bottom;
 	T p = far - near;

@@ -31,7 +31,6 @@
 				"src/Texture.cpp",
 				"src/AreaLight.cpp",
 				"src/Euler.cpp",
-				"src/Line.cpp",
 				"src/Object3D.cpp",
 				"src/RayTraceRenderer.cpp",
 				"src/Triangle.cpp",

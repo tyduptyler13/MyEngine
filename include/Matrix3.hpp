@@ -2,6 +2,7 @@
 #define MYUPLAY_MYENGINE_MATRIX3
 
 #include <vector>
+#include <array>
 
 #include "Vector3.hpp"
 #include "Matrix3.hpp"
@@ -22,7 +23,7 @@ namespace MyUPlay {
 		class Matrix3 {
 
 		public:
-			T elements[9] = {
+			std::array<T,9> elements = {
 				1, 0, 0,
 				0, 1, 0,
 				0, 0, 1
@@ -123,8 +124,10 @@ namespace MyUPlay {
 
 			std::vector<T> flattenToArrayOffset(std::vector<T>& array, unsigned offset) const {
 
+				array.reserve(offset + 8);
+
 				for (unsigned i = 0; i < 9; ++i){
-					array.assign(offset + i, elements[i]);
+					array[offset + i] = elements[i];
 				}
 
 			}
@@ -153,21 +156,13 @@ namespace MyUPlay {
 
 			}
 
-			Matrix3& fromArray(const std::vector<T>& array){
-				for (unsigned i = 0; i < 9; ++i){
-					elements[i] = array[i];
-				}
+			Matrix3& fromArray(const std::array<T, 9>& array){
+				elements = array;
 			}
 
-			std::vector<T> toArray() const {
+			std::array<T, 9> toArray() const {
 
-				std::vector<T> array(9);
-
-				for (unsigned i = 0; i < 9; ++i){
-					array[i] = elements[i];
-				}
-
-				return array;
+				return elements; //This will be copied.
 
 			}
 
