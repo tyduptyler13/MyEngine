@@ -13,3 +13,6 @@
 [submodule "deps/capnproto"]
 	path = deps/capnproto
 	url = https://github.com/sandstorm-io/capnproto.git
+[submodule "deps/xz"]
+	path = deps/xz
+	url = http://git.tukaani.org/xz.git
