@@ -106,7 +106,7 @@ namespace MyUPlay {
 				return *this;
 			}
 
-			Vector3 operator+(const Vector3& b){
+			Vector3 operator+(const Vector3& b) const {
 				Vector3 v;
 				v.x = x + b.x;
 				v.y = y + b.y;
@@ -114,7 +114,7 @@ namespace MyUPlay {
 				return v;
 			}
 
-			inline Vector3 operator+(T s){
+			inline Vector3 operator+(T s) const {
 				return Vector3(x + s, y + s, z + s);
 			}
 
@@ -148,7 +148,7 @@ namespace MyUPlay {
 				return *this;
 			}
 
-			Vector3 operator-(T s){
+			Vector3 operator-(T s) const {
 				Vector3 v;
 				v.x = x * s;
 				v.y = y * s;
@@ -156,7 +156,7 @@ namespace MyUPlay {
 				return v;
 			}
 
-			Vector3 operator-(const Vector3& b){
+			Vector3 operator-(const Vector3& b) const {
 				Vector3 v;
 				v.x = x - b.x;
 				v.y = y - b.y;
@@ -194,7 +194,7 @@ namespace MyUPlay {
 				return *this;
 			}
 
-			Vector3 operator*(T s){
+			Vector3 operator*(T s) const {
 				Vector3 v;
 				v.x = x * s;
 				v.y = y * s;
@@ -202,7 +202,7 @@ namespace MyUPlay {
 				return v;
 			}
 
-			Vector3 operator*(const Vector3& b){
+			Vector3 operator*(const Vector3& b) const {
 				Vector3 v;
 				v.x = x * b.x;
 				v.y = y * b.y;
@@ -260,7 +260,7 @@ namespace MyUPlay {
 				return divide(scalar);
 			}
 
-			Vector3 operator/(const Vector3& v){
+			Vector3 operator/(const Vector3& v) const {
 				Vector3 b;
 				b.x = x / v.x;
 				b.y = y / v.y;
@@ -268,7 +268,7 @@ namespace MyUPlay {
 				return b;
 			}
 
-			Vector3 operator/(T s){
+			Vector3 operator/(T s) const {
 				Vector3 v;
 				v.x = x / s;
 				v.y = y / s;
@@ -307,6 +307,8 @@ namespace MyUPlay {
 				y = std::round(y);
 				z = std::round(z);
 
+				return *this;
+
 			}
 
 			Vector3& roundToZero() {
@@ -327,23 +329,23 @@ namespace MyUPlay {
 				return *this;
 			}
 
-			inline Vector3 operator-(){
-				negate();
+			inline Vector3 operator-() const {
+				return Vector3(*this).negate();
 			}
 			
-			T dot(const Vector3& v){
+			T dot(const Vector3& v) const {
 				return x * v.x + y * v.y + z * v.z;
 			}
 
-			T lengthSq(){
+			T lengthSq() const {
 				return x * x + y * y + z * z;
 			}
 
-			T length(){
+			T length() const {
 				return std::sqrt(lengthSq());
 			}
 
-			T lenghtManhattan(){
+			T lenghtManhattan() const {
 				return std::abs(x) + std::abs(y) + std::abs(z);
 			}
 
@@ -397,13 +399,13 @@ namespace MyUPlay {
 			Vector3& projectOnVector(const Vector3&);
 			Vector3& projectOnPlane(const Vector3& normal);
 			Vector3& reflect(const Vector3& normal);
-			T angleTo(const Vector3&);
+			T angleTo(const Vector3&) const ;
 			
-			T distanceTo(const Vector3& v){
+			T distanceTo(const Vector3& v) const {
 				return std::sqrt(distanceToSquared(v));
 			}
 
-			T distanceToSquared(const Vector3& v){
+			T distanceToSquared(const Vector3& v) const {
 				T dx = x - v.x;
 				T dy = y - v.y;
 				T dz = z - v.z;
@@ -446,7 +448,7 @@ namespace MyUPlay {
 
 			}
 			
-			bool operator==(const Vector3& v){
+			bool operator==(const Vector3& v) const {
 				return ((x == v.x) && (y == v.y) && (z == v.z));
 			}
 
@@ -454,7 +456,7 @@ namespace MyUPlay {
 			//std::vector<T>& toArray(T array[], unsigned offset);
 			//Vector3& fromArray(T array[], unsigned offset);
 
-			inline Vector3 clone(){
+			inline Vector3 clone() const {
 				return Vector3(*this);
 			}
 
