@@ -4,7 +4,7 @@
 
 
 namespace MyUPlay {
-	
+
 	namespace MyEngine {
 
 		/**
@@ -16,7 +16,7 @@ namespace MyUPlay {
 
 		public:
 			T x, y;
-			
+
 			Vector2(T x = 0, T y = 0) : x(x), y(y) {}
 
 			Vector2& set(T x, T y){
@@ -38,7 +38,7 @@ namespace MyUPlay {
 				this->y = y;
 				return *this;
 			}
-			
+
 			Vector2& copy(const Vector2& v){
 				x = v.x;
 				y = v.y;
@@ -113,19 +113,51 @@ namespace MyUPlay {
 				return *this;
 			}
 
+            Vector2& floor(){
+
+                x = floor(x);
+                y = floor(y);
+
+                return *this;
+
+            }
+
+            Vector2& ceil(){
+
+                x = ceil(x);
+                y = ceil(y);
+
+                return *this;
+
+            }
+
+            Vector2& round(){
+
+                x = round(x);
+                y = round(y);
+
+                return *this;
+
+            }
+
+            Vector2& roundToZero() {
+
+                x = x < 0 ? ceil(x) : floor(x);
+                y = y < 0 ? ceil(y) : floor(y);
+
+                return *this;
+
+            }
+
 			Vector2& min(const Vector2&);
 			Vector2& max(const Vector2&);
 			Vector2& clamp(const Vector2& min, const Vector2& max);
 			Vector2& clampScalar(T min, T max);
-			Vector2& floor();
-			Vector2& ceil();
-			Vector2& round();
-			Vector2& roundToZero();
 
 		};
 	}
 }
-				
+
 
 
 

@@ -102,7 +102,7 @@ namespace MyUPlay {
 				x = a.x + b.x;
 				y = a.y + b.y;
 				z = a.z + b.z;
-				
+
 				return *this;
 			}
 
@@ -122,7 +122,7 @@ namespace MyUPlay {
 				x -= v.x;
 				y -= v.y;
 				z -= v.z;
-				
+
 				return *this;
 			}
 
@@ -211,7 +211,7 @@ namespace MyUPlay {
 			}
 
 			Vector3& applyEuler(const Euler<T>& e){
-				  
+
 				Quaternion<T> q;
 
 				applyQuaternion(q.setFromEuler(e));
@@ -280,7 +280,7 @@ namespace MyUPlay {
 			Vector3& max(const Vector3&);
 			Vector3& clamp(const Vector3& min, const Vector3& max);
 			Vector3& clampScalar(T min, T max);
-			
+
 			Vector3& floor(){
 
 				x = std::floor(x);
@@ -320,7 +320,7 @@ namespace MyUPlay {
 				return *this;
 
 			}
-			
+
 			Vector3& negate(){
 				x = -x;
 				y = -y;
@@ -332,7 +332,7 @@ namespace MyUPlay {
 			inline Vector3 operator-() const {
 				return Vector3(*this).negate();
 			}
-			
+
 			T dot(const Vector3& v) const {
 				return x * v.x + y * v.y + z * v.z;
 			}
@@ -400,7 +400,7 @@ namespace MyUPlay {
 			Vector3& projectOnPlane(const Vector3& normal);
 			Vector3& reflect(const Vector3& normal);
 			T angleTo(const Vector3&) const ;
-			
+
 			T distanceTo(const Vector3& v) const {
 				return std::sqrt(distanceToSquared(v));
 			}
@@ -422,7 +422,7 @@ namespace MyUPlay {
 			}
 
 			Vector3& setFromMatrixScale(const Matrix4<T>& m){
-				
+
 				T e[] = m.elements;
 
 				T sx = set(e[0], e[1], e[2]).length();
@@ -447,7 +447,7 @@ namespace MyUPlay {
 				return *this;
 
 			}
-			
+
 			bool operator==(const Vector3& v) const {
 				return ((x == v.x) && (y == v.y) && (z == v.z));
 			}

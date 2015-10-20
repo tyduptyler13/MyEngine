@@ -31,7 +31,7 @@ Vector3<T>& Vector3<T>::applyMatrix4(const Matrix4<T>& m){
 	this->y = e[ 1 ] * x + e[ 5 ] * y + e[ 9 ]  * z + e[ 13 ];
 	this->z = e[ 2 ] * x + e[ 6 ] * y + e[ 10 ] * z + e[ 14 ];
 
-	return *this;	
+	return *this;
 
 }
 
@@ -74,7 +74,7 @@ Vector3<T>& Vector3<T>::applyQuaternion(const Quaternion<T>& q){
 	this->y = iy * qw + iw * - qy + iz * - qx - ix * - qz;
 	this->z = iz * qw + iw * - qz + ix * - qy - iy * - qx;
 
-	return this;	
+	return this;
 
 }
 
@@ -160,7 +160,7 @@ Vector3<T>& Vector3<T>::clamp(const Vector3<T>& min, const Vector3<T>& max){
 		x = min.x;
 	} else if (x > max.x) {
 		x = max.x;
-	}	
+	}
 
 	if (y < min.y) {
 		y = min.y;
