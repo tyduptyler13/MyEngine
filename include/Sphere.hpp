@@ -13,6 +13,10 @@ namespace MyUPlay {
 
 	namespace MyEngine {
 
+		#ifndef BOX3_DEFINED
+		template <typename T> class Box3;
+		#endif
+
 		template <typename T>
 		class Sphere {
 
@@ -52,6 +56,7 @@ namespace MyUPlay {
 				Box3<T>().setFromPoints(points, center);
 
 				return setFromPoints(points, center);
+
 
 			}
 
@@ -145,6 +150,11 @@ namespace MyUPlay {
 			}
 
 		};
+
+		typedef Sphere<float> Spheref;
+		typedef Sphere<double> Sphered;
+
+		#define SPHERE_DEFINED
 
 	}
 

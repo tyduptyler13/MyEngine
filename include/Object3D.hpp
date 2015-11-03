@@ -34,7 +34,7 @@ namespace MyUPlay {
 				static const Vector3<T> DefaultUp;
 
 				Vector3<T> position;
-				Euler rotation;
+				Euler<T> rotation;
 				Quaternion<T> quaternion;
 				Vector3<T> scale;
 
@@ -59,7 +59,7 @@ namespace MyUPlay {
 				Object3D& applyMatrix(const Matrix4<T>&);
 
 				Object3D& setRotationAxisAngle(const Vector3<T>& axis, float angle);
-				Object3D& setRotationFromEuler(const Euler&);
+				Object3D& setRotationFromEuler(const Euler<T>&);
 				Object3D& setRotationFromQuaternion(const Quaternion<T>&);
 
 				Object3D& rotateOnAxis(Vector3<T> axis, float angle);
@@ -89,8 +89,8 @@ namespace MyUPlay {
 				Quaternion<T> getWorldQuaternion() const {
 					return getWorldQuaternion(Quaternion<T>());
 				}
-				Euler getWorldRotation() const {
-					return getWorldRotation(Euler());
+				Euler<T> getWorldRotation() const {
+					return getWorldRotation(Euler<T>());
 				}
 				Vector3<T> getWorldScale() const {
 					return getWorldScale(Vector3<T>());
@@ -101,7 +101,7 @@ namespace MyUPlay {
 
 				Vector3<T>& getWorldPosition(Vector3<T>& target) const;
 				Quaternion<T>& getWorldQuaternion(Quaternion<T>& target) const;
-				Euler& getWorldRotation(Euler& target) const;
+				Euler<T>& getWorldRotation(Euler<T>& target) const;
 				Vector3<T>& getWorldScale(Vector3<T>& target) const;
 				Vector3<T>& getWorldDirection(Vector3<T>& target) const;
 

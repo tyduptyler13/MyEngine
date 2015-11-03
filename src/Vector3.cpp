@@ -222,7 +222,7 @@ Vector3<T>& Vector3<T>::reflect(const Vector3<T>& normal) {
 }
 
 template <typename T>
-T Vector3<T>::angleTo(const Vector3<T>& v){
+T Vector3<T>::angleTo(const Vector3<T>& v) const {
 
 	T theta = dot(v) / (length() * v.length());
 
