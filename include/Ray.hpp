@@ -238,11 +238,12 @@ namespace MyUPlay {
 
 			std::unique_ptr<Vector3<T>> intersectTriangle(const Vector3<T>& a, const Vector3<T>& b, const Vector3<T>& c, bool backfaceCulling = false) const;
 
-			Ray applyMatrix4(const Matrix4<T>& matrix4) {
+			Ray& applyMatrix4(const Matrix4<T>& matrix4) {
 				direction.add(origin).applyMatrix4(matrix4);
 				origin.applyMatrix4(matrix4);
 				direction.sub(origin);
 				direction.normalize();
+				return *this;
 			}
 
 			bool equals(const Ray& ray) const {

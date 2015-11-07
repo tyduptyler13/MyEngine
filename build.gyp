@@ -46,7 +46,6 @@
 				"src/OrthographicCamera.cpp",
 				"src/Scene.cpp",
 				"src/Vector3.cpp",
-				"src/Camera.cpp",
 				"src/FoxExp2.cpp",
 				"src/Path.cpp",
 				"src/Shape.cpp",
