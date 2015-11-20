@@ -38,6 +38,18 @@ namespace MyUPlay {
 
 			}
 
+			void setViewOffset (float fullWidth, float fullHeight, float x, float y, float width, float height){
+				this->fullWidth = fullWidth;
+				this->fullHeight = fullHeight;
+				this->x = x;
+				this->y = y;
+				this->width = width;
+				this->height = height;
+
+				updateProjectionMatrix();
+
+			}
+
 			void setLens(float focalLength, float frameHeight);
 			void updateProjectionMatrix();
 
