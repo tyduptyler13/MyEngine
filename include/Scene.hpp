@@ -4,18 +4,22 @@
 #define MYUPlay_MyEngine_Scene
 
 #include "Object3D.hpp"
+#include "Material.hpp"
+#include "Fog.hpp"
+
+#include <memory>
 
 namespace MyUPlay {
 
 	namespace MyEngine {
 
-
-		class Scene : public Object3D {
+		template <typename T>
+		class Scene : public Object3D<T> {
 
 			private:
 
-			Material* overrideMaterial = NULL;
-			Fog* fog = NULL;
+			std::unique_ptr<Material> overrideMaterial = NULL;
+			std::unique_ptr<Fog> fog = NULL;
 
 			public:
 

@@ -53,7 +53,7 @@ namespace MyUPlay {
 			    OneFactor = 201,
 			    SrcColorFactor = 202,
 			    OneMinusSrcColorFactor = 203,
-			    SrsAlphaFactor = 204,
+			    SrcAlphaFactor = 204,
 			    OneMinusSrcAlphaFactor = 205,
 			    DstAlphaFactor = 206,
 			    OneMinusDstAlphaFactor = 207;
@@ -113,7 +113,7 @@ namespace MyUPlay {
 		const short UnsignedShort4444Type = 1016,
 			    UnsignedShort5551Type = 1017,
 			    UnsignedShort565type = 1018;
-		
+
 		//Pixel formats
 		const short AlphaFormat = 1019,
 			    RGBFormat = 1020,
