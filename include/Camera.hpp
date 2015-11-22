@@ -9,39 +9,44 @@ namespace MyUPlay {
 
 	namespace MyEngine {
 
-		class Camera : public Object3D<float> {
+		#ifndef OBJECT3D_DEFINED
+		template <typename> class Object3D;
+		#endif
+
+		template <typename T>
+		class Camera : public Object3D<T> {
 
 		public:
 
-			Matrix4<float> matrixWorldInverse;
-			Matrix4<float> projectionMatrix;
+			Matrix4<T> matrixWorldInverse;
+			Matrix4<T> projectionMatrix;
 
-			Camera() : Object3D<float>() {}
+			Camera() : Object3D<T>() {}
 
-			Camera(const Camera& camera) : Object3D<float>(camera) {
+			Camera(const Camera& camera) : Object3D<T>(camera) {
 				matrixWorldInverse = camera.matrixWorldInverse;
 				projectionMatrix = camera.projectionMatrix;
 			}
 
-			Vector3<float> getWorldDirection() const {
+			Vector3<T> getWorldDirection() const {
 
-				Quaternion<float> quaternion;
+				Quaternion<T> quaternion;
 
 				getWorldQuaternion(quaternion);
 
-				return Vector3<float>(0,0,-1).applyQuaternion(quaternion);
+				return Vector3<T>(0,0,-1).applyQuaternion(quaternion);
 
 			}
 
-			void lookAt(const Vector3<float>& point) {
-				Matrix4<float> m1;
+			void lookAt(const Vector3<T>& point) {
+				Matrix4<T> m1;
 				m1.lookAt(this->position, point, this->up);
 				this->quaternion.setFromRotationMatrix(m1);
 			}
 
 			Camera& copy(const Camera& camera) {
 
-				Object3D<float>::copy(camera);
+				Object3D<T>::copy(camera);
 
 				matrixWorldInverse = camera.matrixWorldInverse;
 				projectionMatrix = camera.projectionMatrix;
@@ -55,6 +60,8 @@ namespace MyUPlay {
 			}
 
 		};
+
+		#define CAMERA_DEFINED
 
 	}
 

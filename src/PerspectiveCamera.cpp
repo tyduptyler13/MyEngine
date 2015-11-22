@@ -5,28 +5,30 @@
 
 using namespace MyUPlay::MyEngine;
 
-void PerspectiveCamera::setLens(float focalLength, float frameHeight) {
+template <typename T>
+void PerspectiveCamera<T>::setLens(T focalLength, T frameHeight) {
 
-	fov = 2 * Math::radToDeg<float>(std::atan(frameHeight / (focalLength * 2)));
+	fov = 2 * Math::radToDeg<T>(std::atan(frameHeight / (focalLength * 2)));
 	updateProjectionMatrix();
 
 }
 
-void PerspectiveCamera::updateProjectionMatrix(){
+template <typename T>
+void PerspectiveCamera<T>::updateProjectionMatrix(){
 
-	float fov = Math::radToDeg<float>(2 * std::atan(std::tan( Math::degToRad<float>(this->fov) * 0.5) / zoom ));
+	T fov = Math::radToDeg<T>(2 * std::atan(std::tan( Math::degToRad<T>(this->fov) * 0.5) / zoom ));
 
 	if (fullWidth != -1){
 
-		float aspect = fullWidth / fullHeight;
-		float top = std::tan(Math::degToRad<float>(fov * 0.5) ) * near;
-		float bottom = -top;
-		float left = aspect * bottom;
-		float right = aspect * top;
-		float width = std::abs(right - left);
-		float height = std::abs(top - bottom);
+		T aspect = fullWidth / fullHeight;
+		T top = std::tan(Math::degToRad<T>(fov * 0.5) ) * near;
+		T bottom = -top;
+		T left = aspect * bottom;
+		T right = aspect * top;
+		T width = std::abs(right - left);
+		T height = std::abs(top - bottom);
 
-		projectionMatrix.makeFrustrum(
+		this->projectionMatrix.makeFrustrum(
 				left + x * width / fullWidth,
 				left + (x + width) * width / fullWidth,
 				top - (y + height) * height / fullHeight,
@@ -37,7 +39,7 @@ void PerspectiveCamera::updateProjectionMatrix(){
 
 	} else {
 
-		projectionMatrix.makePerspective(fov, aspect, near, far);
+		this->projectionMatrix.makePerspective(fov, aspect, near, far);
 
 	}
 

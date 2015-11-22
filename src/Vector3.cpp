@@ -79,7 +79,7 @@ Vector3<T>& Vector3<T>::applyQuaternion(const Quaternion<T>& q){
 }
 
 template <typename T>
-Vector3<T>& Vector3<T>::project(const Camera& camera){
+Vector3<T>& Vector3<T>::project(const Camera<T>& camera){
 
 	Matrix4<T> matrix;
 
@@ -89,7 +89,7 @@ Vector3<T>& Vector3<T>::project(const Camera& camera){
 }
 
 template <typename T>
-Vector3<T>& Vector3<T>::unproject(const Camera& camera){
+Vector3<T>& Vector3<T>::unproject(const Camera<T>& camera){
 
 	Matrix4<T> matrix;
 

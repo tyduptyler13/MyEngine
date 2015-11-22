@@ -20,6 +20,9 @@ namespace MyUPlay {
 		#ifndef MATRIX4_DEFINED
 		template <typename> class Matrix4;
 		#endif
+		#ifndef CAMERA_DEFINED
+		template <typename> class Camera;
+		#endif
 
 		/**
 		 * This class supports any numeric type or class that supports
@@ -237,8 +240,8 @@ namespace MyUPlay {
 			Vector3& applyMatrix4(const Matrix4<T>&);
 			Vector3& applyProjection(const Matrix4<T>&);
 			Vector3& applyQuaternion(const Quaternion<T>&);
-			Vector3& project(const Camera&);
-			Vector3& unproject(const Camera&);
+			Vector3& project(const Camera<T>&);
+			Vector3& unproject(const Camera<T>&);
 			Vector3& transformDirection(const Matrix4<T>&);
 
 			Vector3& divide(const Vector3& v){

@@ -7,27 +7,28 @@ namespace MyUPlay {
 
 	namespace MyEngine {
 
-		class PerspectiveCamera : public Camera {
+		template <typename T>
+		class PerspectiveCamera : public Camera<T> {
 
-			float zoom = 1;
+			T zoom = 1;
 
-			float fov = 50;
-			float aspect = 1;
-			float near = 0.1;
-			float far = 2000;
+			T fov = 50;
+			T aspect = 1;
+			T near = 0.1;
+			T far = 2000;
 
-			float fullWidth = -1;
-			float fullHeight = -1;
-			float x = -1;
-			float y = -1;
-			float width = -1;
-			float height = -1;
+			T fullWidth = -1;
+			T fullHeight = -1;
+			T x = -1;
+			T y = -1;
+			T width = -1;
+			T height = -1;
 
-			PerspectiveCamera() : Camera() {
+			PerspectiveCamera() : Camera<T>() {
 				updateProjectionMatrix();
 			}
 
-			PerspectiveCamera(const PerspectiveCamera& c) : Camera(c) {
+			PerspectiveCamera(const PerspectiveCamera& c) : Camera<T>(c) {
 
 				zoom = c.zoom;
 
@@ -38,7 +39,7 @@ namespace MyUPlay {
 
 			}
 
-			void setViewOffset (float fullWidth, float fullHeight, float x, float y, float width, float height){
+			void setViewOffset (T fullWidth, T fullHeight, T x, T y, T width, T height){
 				this->fullWidth = fullWidth;
 				this->fullHeight = fullHeight;
 				this->x = x;
@@ -50,12 +51,12 @@ namespace MyUPlay {
 
 			}
 
-			void setLens(float focalLength, float frameHeight);
+			void setLens(T focalLength, T frameHeight);
 			void updateProjectionMatrix();
 
 			PerspectiveCamera& copy(const PerspectiveCamera& c) {
 
-				Camera::copy(c);
+				Camera<T>::copy(c);
 
 				fov = c.fov;
 				aspect = c.fov;
@@ -72,7 +73,7 @@ namespace MyUPlay {
 				copy(c);
 			}
 
-		}
+		};
 
 	}
 

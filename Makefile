@@ -13,6 +13,8 @@ compile: ./build
 
 ./build: autogen.sh build.gyp
 	./autogen.sh
+	@echo "Generating ShaderChunk.hpp"
+	$(MAKE) -C ./include/ShaderChunk
 
 clean:
 	rm -rf ./build
