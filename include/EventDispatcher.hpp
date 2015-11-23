@@ -17,67 +17,67 @@ namespace MyUPlay {
 		/// statements return things without casting, two, is a list of
 		/// valid events that can be passed to the methods in the form
 		/// of an enum.
-		template <typename ObjectType, typename Events>
+		template <typename ObjectType, typename Event>
 		class EventDispatcher {
 
-			public:
-				typedef std::function<void(ObjectType&)> Listener;
-				typedef std::shared_ptr<Listener> SharedListener;
+		public:
+			typedef std::function<void(ObjectType&)> Listener;
+			typedef std::shared_ptr<Listener> SharedListener;
 
-			private:
-				std::unordered_map<Events, std::vector<SharedListener>> listeners;
+		private:
+			std::unordered_map<Event, std::vector<SharedListener>> listeners;
 
-			public:
+		public:
 
-				void addEventListener(Events type, SharedListener& l){
-					
-					if (listeners.find(type) == listeners.end() ) {
-						listeners.emplace(std::vector<SharedListener>());
-					}
+			void addEventListener(Event type, SharedListener& l){
 
-					listeners[type].push(l);
-
+				if (listeners.find(type) == listeners.end() ) {
+					listeners.emplace(std::vector<SharedListener>());
 				}
 
-				bool hasEventListener(Events type, SharedListener& l){
-					if (listeners.find(type) == listeners.end()){
-						return false;
-					}
+				listeners[type].push(l);
 
-					std::vector<SharedListener>& list = listeners[type];
-					if (std::find(list.begin(), list.end(), l) != list.end()){
-						return true;
-					}
+			}
 
+			bool hasEventListener(Event type, SharedListener& l){
+				if (listeners.find(type) == listeners.end()){
 					return false;
-
 				}
 
-				void removeEventListener(Events type, SharedListener& l){
-
-					if (listeners.find(type) == listeners.end()){
-						return;
-					}
-
-					std::vector<SharedListener>& list = listeners[type];
-					auto pointer = std::find(list.begin(), list.end(), l);
-					if (pointer != list.end()){
-						list.erase(pointer);
-					}
-
+				std::vector<SharedListener>& list = listeners[type];
+				if (std::find(list.begin(), list.end(), l) != list.end()){
+					return true;
 				}
 
-				void dispatchEvent(Events type, ObjectType& ref){
+				return false;
 
-					if (listeners.find(type) == listeners.end()){
-						return;
-					}
+			}
 
-					for (SharedListener& l : listeners[type]){
-						(*l)(ref);
-					}
+			void removeEventListener(Event type, SharedListener& l){
 
+				if (listeners.find(type) == listeners.end()){
+					return;
 				}
+
+				std::vector<SharedListener>& list = listeners[type];
+				auto pointer = std::find(list.begin(), list.end(), l);
+				if (pointer != list.end()){
+					list.erase(pointer);
+				}
+
+			}
+
+			void dispatchEvent(Event type, ObjectType& ref){
+
+				if (listeners.find(type) == listeners.end()){
+					return;
+				}
+
+				for (SharedListener& l : listeners[type]){
+					(*l)(ref);
+				}
+
+			}
 
 		};
 

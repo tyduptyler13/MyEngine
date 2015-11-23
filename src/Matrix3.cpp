@@ -11,8 +11,8 @@ using namespace std;
 template <typename T>
 Matrix3<T>& Matrix3<T>::getInverse(const Matrix4<T>& m, bool throwOnInvertable){
 
-	T* me = m.elements;
-	T te[9] = elements;
+	auto& me = m.elements;
+	auto& te = elements;
 
 	te[ 0 ] =   me[ 10 ] * me[ 5 ] - me[ 6 ] * me[ 9 ];
 	te[ 1 ] = - me[ 10 ] * me[ 1 ] + me[ 2 ] * me[ 9 ];

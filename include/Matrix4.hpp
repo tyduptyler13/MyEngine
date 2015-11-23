@@ -2,6 +2,7 @@
 #define MYUPLAY_MYENGINE_MATRIX4
 
 #include <vector>
+#include <array>
 
 #include "Vector3.hpp"
 #include "Euler.hpp"
@@ -24,7 +25,7 @@ namespace MyUPlay {
 
 		public:
 
-			T elements[16] = {
+			std::array<T, 16> elements = {
 				1, 0, 0, 0,
 				0, 1, 0, 0,
 				0, 0, 1, 0,
@@ -34,19 +35,15 @@ namespace MyUPlay {
 			Matrix4(){}
 
 			Matrix4(const Matrix4& m){
-				for (unsigned i = 0; i < 16; ++i){
-					elements[i] = m.elements[i];
-				}
+				elements = m.elements;
 			}
 
 			Matrix4& operator=(const Matrix4& m){
-				for (unsigned i = 0; i < 16; ++i){
-					elements[i] = m.elements[i];
-				}
+				elements = m.elements;
 			}
 
 			Matrix4& set(T n11, T n12, T n13, T n14, T n21, T n22, T n23, T n24, T n31, T n32, T n33, T n34, T n41, T n42, T n43, T n44) {
-				T& te = elements;
+				auto& te = elements;
 
 				te[ 0 ] = n11; te[ 4 ] = n12; te[ 8 ] = n13; te[ 12 ] = n14;
 				te[ 1 ] = n21; te[ 5 ] = n22; te[ 9 ] = n23; te[ 13 ] = n24;
@@ -82,7 +79,7 @@ namespace MyUPlay {
 
 			Matrix4& extractBasis(Vector3<T>& xAxis, Vector3<T>& yAxis, Vector3<T>& zAxis) const {
 
-				T& e = elements;
+				auto& e = elements;
 
 				xAxis.set(e[0], e[1], e[2]);
 				yAxis.set(e[4], e[5], e[6]);
@@ -137,7 +134,7 @@ namespace MyUPlay {
 
 			Matrix4& multiplyScalar(T s) {
 
-				T& te = elements;
+				auto& te = elements;
 
 				te[ 0 ] *= s; te[ 4 ] *= s; te[ 8 ] *= s; te[ 12 ] *= s;
 				te[ 1 ] *= s; te[ 5 ] *= s; te[ 9 ] *= s; te[ 13 ] *= s;
@@ -185,7 +182,7 @@ namespace MyUPlay {
 			Matrix4& getInverse(const Matrix4&, bool throwOnInvertible = false);
 
 			Matrix4& scale(const Vector3<T>& v){
-				T& te = elements;
+				auto& te = elements;
 				T x = v.x, y = v.y, z = v.z;
 
 				te[ 0 ] *= x; te[ 4 ] *= y; te[ 8 ] *= z;

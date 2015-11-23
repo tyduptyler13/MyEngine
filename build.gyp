@@ -31,7 +31,6 @@
 				"src/Texture.cpp",
 				"src/AreaLight.cpp",
 				"src/Euler.cpp",
-				"src/Line.cpp",
 				"src/Object3D.cpp",
 				"src/RayTraceRenderer.cpp",
 				"src/Triangle.cpp",
@@ -47,7 +46,6 @@
 				"src/OrthographicCamera.cpp",
 				"src/Scene.cpp",
 				"src/Vector3.cpp",
-				"src/Camera.cpp",
 				"src/FoxExp2.cpp",
 				"src/Path.cpp",
 				"src/Shape.cpp",
@@ -57,9 +55,7 @@
 				"src/SkinnedMesh.cpp",
 				"src/CompressedTexture.cpp",
 				"src/GLES2Renderer.cpp",
-				"src/Material.cpp",
-				"src/Plane.cpp",
-				"src/Sphere.cpp"
+				"src/Material.cpp"
 			],
 			"include_dirs": [
 				"include"

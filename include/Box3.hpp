@@ -9,7 +9,11 @@
 namespace MyUPlay {
 
 	namespace MyEngine {
-		
+
+		#ifndef SPHERE_DEFINED
+		template <typename T> class Sphere;
+		#endif
+
 		template <typename T>
 		class Box3 : public Box<Vector3, T, Box3<T> > {
 			
@@ -119,6 +123,8 @@ namespace MyUPlay {
 
 		typedef Box3<float> Box3f;
 		typedef Box3<double> Box3d;
+
+		#define BOX3_DEFINED
 
 	}
 
