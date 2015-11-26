@@ -14,7 +14,12 @@ namespace MyUPlay {
 
 	namespace MyEngine {
 
-		class Texture : EventDispatcher<Texture, std::string> {
+		template <typename T>
+		class Texture : EventDispatcher<Texture<T>, std::string> {
+
+		private:
+
+			void loadImage();
 
 		public:
 
@@ -41,8 +46,8 @@ namespace MyUPlay {
 			short format = RGBAFormat;
 			short type = UnsignedByteType;
 
-			Vector2<float> offset = Vector2<float>(0,0);
-			Vector2<float> repeat = Vector2<float>(1,1);
+			Vector2<T> offset = Vector2<T>(0,0);
+			Vector2<T> repeat = Vector2<T>(1,1);
 
 			bool generateMipmaps = true,
 			    premultiplyAlpha = false,
@@ -52,9 +57,27 @@ namespace MyUPlay {
 
 			unsigned version = 0;
 
+			Texture(){}
+			Texture(const std::string& image, short mapping = DEFAULT_MAPPING, short wrapS = ClampToEdgeWrapping, short wrapT = ClampToEdgeWrapping, short magFilter = LinearFilter, short minFilter = LinearMipMapLinearFilter, short format = RGBAFormat, short type = UnsignedByteType, short anisotropy = 1)
+				: sourceFile(image), mapping(mapping), wrapS(wrapS), wrapT(wrapT), magFilter(magFilter), minFilter(minFilter), format(format), type(type), anisotropy(anisotropy){
+
+				loadImage();
+
+			}
+			~Texture(){}
+			Texture(const Texture& t);
+
+			void copy(const Texture& t);
+			void operator=(const Texture& t){
+				copy(t);
+			}
+
+			void transformUv(const Vector2<T>& uv);
+
 		};
 
-		short Texture::DEFAULT_MAPPING = UVMapping;
+		template <typename T>
+		short Texture<T>::DEFAULT_MAPPING = UVMapping;
 
 	}
 
