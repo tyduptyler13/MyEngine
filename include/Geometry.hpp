@@ -159,7 +159,7 @@ namespace MyUPlay {
 
 			void mergeMesh(const Mesh<T>& mesh);
 
-			void mergeVertices();
+			unsigned mergeVertices();
 			void sortFacesByMaterialIndex();
 
 			Geometry(const Geometry& geometry){
