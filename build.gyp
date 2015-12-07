@@ -43,7 +43,6 @@
 				"src/Box3.cpp",
 				"src/Fog.cpp",
 				"src/LOD.cpp",
-				"src/OrthographicCamera.cpp",
 				"src/Scene.cpp",
 				"src/Vector3.cpp",
 				"src/FoxExp2.cpp",
