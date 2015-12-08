@@ -10,6 +10,16 @@ namespace MyUPlay {
 
 	namespace MyEngine {
 
+		#ifndef OBJECT3D_DEFINED
+		template <typename T> class Object3D;
+		#endif
+		#ifndef RAY_DEFINED
+		template <typename T> class Ray;
+		#endif
+		#ifndef PERSPECTIVECAMERA_DEFINED
+		template <typename T> class PerspectiveCamera;
+		#endif
+
 		template <typename T>
 		struct Intersection {
 			T distance;

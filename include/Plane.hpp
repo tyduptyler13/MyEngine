@@ -13,6 +13,10 @@ namespace MyUPlay {
 
 	namespace MyEngine {
 
+		#ifndef MATRIX3_DEFINED
+		template <typename T> class Matrix3;
+		#endif
+
 		template <typename T = float>
 		class Plane {
 

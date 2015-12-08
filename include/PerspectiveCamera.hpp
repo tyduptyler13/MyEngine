@@ -7,6 +7,10 @@ namespace MyUPlay {
 
 	namespace MyEngine {
 
+		#ifndef CAMERA_DEFINED
+		template <typename T> class Camera;
+		#endif
+
 		template <typename T>
 		class PerspectiveCamera : public Camera<T> {
 
@@ -74,6 +78,8 @@ namespace MyUPlay {
 			}
 
 		};
+
+		#define PERSPECTIVECAMERA_DEFINED
 
 	}
 

@@ -4,6 +4,10 @@ namespace MyUPlay {
 
 	namespace MyEngine {
 
+		#ifndef CAMERA_DEFINED
+		template <typename T> class Camera;
+		#endif
+
 		template <typename T>
 		class OrthographicCamera : public Camera<T> {
 

@@ -13,6 +13,9 @@ namespace MyUPlay {
 		#ifndef SPHERE_DEFINED
 		template <typename T> class Sphere;
 		#endif
+		#ifndef OBJECT3D_DEFINED
+		template <typename T> class Object3D;
+		#endif
 
 		template <typename T>
 		class Box3 : public Box<Vector3, T, Box3<T> > {
