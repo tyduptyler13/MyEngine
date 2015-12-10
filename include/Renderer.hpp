@@ -2,6 +2,7 @@
 #define MYUPLAY_MYENGINE_RENDERER
 
 #include <memory>
+#include <vector>
 
 #include "Color.hpp"
 #include "Constants.hpp"
@@ -12,9 +13,16 @@ namespace MyUPlay {
 
 	namespace MyEngine {
 
+		template <typename T>
 		class Renderer {
 
 		public:
+
+			std::vector<Light*> lights;
+			std::vector<Object3D<T>*> opaqueObjects, transparentObjects;
+			int opaqueObjectsLastIndex = -1, transparentObjectsLastIndex = -1;
+
+
 			bool autoClear = true,
 			     autoClearColor = true,
 			     autoClearDepth = true,
