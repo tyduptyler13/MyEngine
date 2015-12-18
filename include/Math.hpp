@@ -53,6 +53,16 @@ namespace MyUPlay {
 				return ( ( n % m ) + m ) % m;
 			}
 
+			template <>
+			float euclideanModulo(float n, float m) {
+				return fmod(fmod(n,m) + m, m); //Needed specialization for float.
+			}
+
+			template <>
+			double euclideanModulo(double n, double m) {
+				return fmod(fmod(n,m) + m, m); //Needed specialization for double.
+			}
+
 			template <typename T>
 			T mapLinear(T x, T a1, T a2, T b1, T b2) {
 				return b1 + ( x - a1 ) * ( b2 - b1 ) / ( a2 - a1 );

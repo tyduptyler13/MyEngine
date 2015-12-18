@@ -12,6 +12,7 @@
 #include "Quaternion.hpp"
 #include "Matrix4.hpp"
 #include "Math.hpp"
+#include "Raycaster.hpp"
 
 namespace MyUPlay {
 
@@ -128,6 +129,8 @@ namespace MyUPlay {
 			bool operator==(const Object3D& o){
 				return id == o.id;
 			}
+
+			virtual void raycast(const Raycaster<T>&, std::vector<Intersection<T> >&) const {}
 
 		};
 

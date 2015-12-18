@@ -167,7 +167,7 @@ namespace MyUPlay {
 				Byte max = Math::max<Byte>(r, g, b);
 				Byte min = Math::min<Byte>(r, g, b);
 
-				float hue, saturation;
+				float hue = 0, saturation;
 				float lightness = (min + max) / 2.0;
 
 				if (min == max) {
