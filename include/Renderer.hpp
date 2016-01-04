@@ -3,6 +3,8 @@
 
 #include <memory>
 #include <vector>
+#include <array>
+#include <unordered_map>
 
 #include "Color.hpp"
 #include "Constants.hpp"
@@ -17,6 +19,36 @@ namespace MyUPlay {
 
 		template <typename T = float>
 		class Renderer {
+
+		protected:
+			std::array<uint8_t, 16> newAttributes;
+			std::array<uint8_t, 16> enabledAttributes;
+			std::array<uint8_t, 16> attributeDivisors;
+
+			short currentBlending;
+			short currentBlendEquation;
+			short currentBlendSrc;
+			short currentBlendDst;
+			short currentBlendEquationAlpha;
+			short currentBlendSrcAlpha;
+			short currentBlendDstAlpha;
+
+			short currentDepthFunc;
+			short currentDepthWrite;
+
+			short currentColorWrite;
+
+			short currentFlipSided;
+
+			short currentLineWidth;
+
+			short currentPolygonOffsetFactor;
+			short currentPolygonOffsetUnits;
+
+			const unsigned short maxTextures;
+
+			short currentTextureSlot;
+			//currentBoundTextures;
 
 		private:
 			Color mClearColor;
@@ -90,12 +122,43 @@ namespace MyUPlay {
 			virtual void clearDepth() = 0;
 			virtual void clearStencil() = 0;
 			virtual void clearTarget(RenderTarget& target, bool color = true, bool depth = true, bool stencil = true) = 0;
-			
+
 			virtual bool supportsFloatTextures() const = 0;
 			virtual bool supportsStandardDerivatives() const = 0;
 			virtual bool supportsCompressedTextureS3TC() const = 0;
 
 			virtual unsigned getMaxAnisotripy() const = 0;
+
+			virtual void init() = 0;
+
+			virtual void initAttributes(){
+				newAttributes.fill(0);
+			}
+
+			virtual void enableAttribute(uint8_t attribute) = 0;
+
+			virtual void enableAttributeAndDivisor(uint8_t attribute, uint8_t meshPerAttribute) = 0;//Extension?
+
+			virtual void disableUnusedAttributes() = 0;
+
+			virtual void setBlending(short blending, short blendEquation, short blendSrc, short blendDst, short blendEquationAlpha, short blendSrcAlpha, short blendDstAlpha) = 0;
+
+			virtual void setDepthFunction(short) = 0;
+			virtual void setDepthTest(bool) = 0;
+			virtual void setDepthWrite(short) = 0;
+
+			virtual void setColorWrite(short) = 0;
+
+			virtual void setFlipSided(short) = 0;
+
+			virtual void setLineWidth(unsigned short) = 0;
+
+			virtual void setPolygonOffset(short polygonOffset, T factor, T units) = 0;
+
+			virtual void setScissorTest(short) = 0;
+
+			virtual void activeTexture() = 0;
+			virtual void activeTexture(unsigned short slot) = 0;
 
 		};
 

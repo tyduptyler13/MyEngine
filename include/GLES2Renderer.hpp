@@ -28,16 +28,6 @@ namespace MyUPlay {
 			SDL_GLContext* gl;
 			Log& log = Log::getInstance();
 
-			template <typename T>
-			static bool checkExtension(std::string name){
-				if (T){
-					return true;
-				} else {
-					log << name + " is not available.";
-					return false;
-				}
-			}
-
 			GLuint mCurrentProgram,
 			       mCurrentFramebuffer;
 			int mCurrentMaterialId = -1;
@@ -83,19 +73,29 @@ namespace MyUPlay {
 
 				SDL_Init(SDL_INIT_VIDEO);
 
-				window = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_OPENGL);
+				window = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_OPENGL|SDL_WINDOW_RESIZABLE);
 
 				if (!window) {
 					log << "Failed to create a window!";
 					throw new std::runtime_error("Could not create window.");
 				}
 
+				gl = SDL_GL_CreateContext(window);
+
 				if (!gl){
 					log << "Failed to load opengl!";
 					throw new std::runtime_error("Could not get opengl handle.");
 				}
 
-				checkExtension<GLEW_OES_texture_float>("OES_texture_float");
+				if (GLEW_OK != glewInit()){
+					log << "Failed to load glew!";
+				}
+
+				if (!GLEW_OES_texture_float){
+					log << "OES_texture_float is required but missing";
+				}
+
+				if (!
 
 				//TODO capabilities, state, properties, objects, programcache?
 				//
@@ -123,6 +123,8 @@ namespace MyUPlay {
 
 				glClearColor(r, g, b, a);
 			}
+
+			void init() override;
 
 		};
 
