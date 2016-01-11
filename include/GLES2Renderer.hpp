@@ -19,7 +19,7 @@ namespace MyUPlay {
 
 	namespace MyEngine {
 
-		template <typename T>
+		template <typename T = float>
 		class GLES2Renderer : public Renderer<T> {
 
 		private:
@@ -36,14 +36,10 @@ namespace MyUPlay {
 
 			unsigned mUsedTextureUnits = 0;
 
-			unsigned mViewportX = 0,
-				 mViewportY = 0,
-				 mViewportWidth,
-				 mViewportHeight,
-				 mCurrentWidth = 0,
+			unsigned mCurrentWidth = 0,
 				 mCurrentHeight = 0;
 
-			Frustum<float> mFrustum;
+			Frustum<T> mFrustum;
 
 			Matrix4f mProjScreenMatrix;
 
@@ -91,11 +87,11 @@ namespace MyUPlay {
 					log << "Failed to load glew!";
 				}
 
-				if (!GLEW_OES_texture_float){
-					log << "OES_texture_float is required but missing";
+				if (!GLEW_ARB_texture_float){
+					log << "Float textures are not supported!";
 				}
 
-				if (!
+				if (!GLEW_
 
 				//TODO capabilities, state, properties, objects, programcache?
 				//
@@ -106,10 +102,6 @@ namespace MyUPlay {
 
 			~GLES2Renderer(){
 				SDL_GL_DeleteContext(gl);
-			}
-
-			void setSize(unsigned width, unsigned height){
-				SDL_SetWindowSize(window, width, height);
 			}
 
 			void clearColor(){
@@ -125,6 +117,36 @@ namespace MyUPlay {
 			}
 
 			void init() override;
+
+			float getMaxAnisotropy(){
+				float aniso = 0;
+				glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &aniso);
+				return aniso;
+			}
+
+			float getPixelRatio() const {
+				return mPixelRatio;
+			}
+
+			void setPixelRatio(float p){
+				mPixelRatio = p;
+			}
+
+			/**
+			 * Returns width and height in a std::tuple
+			 */
+			std::tuple<unsigned, unsigned> getSize() override {
+				return std::make_tuple(width, height);
+			}
+
+			void setSize(unsigned width, unsigned height) override {
+				this->width = width;
+				this->height = height;
+
+				SDL_SetWindowSize(window, width, height);
+
+				setViewport(0,0,width,height);
+			}
 
 		};
 

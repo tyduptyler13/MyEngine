@@ -5,6 +5,7 @@
 #include <vector>
 #include <array>
 #include <unordered_map>
+#include <tuple>
 
 #include "Color.hpp"
 #include "Constants.hpp"
@@ -55,6 +56,13 @@ namespace MyUPlay {
 			float mClearAlpha;
 
 			unsigned width, height;
+
+			float mPixelRatio;
+
+			int mViewportX = 0,
+			    mViewportY = 0;
+			unsigned mViewportWidth,
+				 mViewportHeight;
 
 			bool alpha = false,
 			     depth = true,
@@ -159,6 +167,15 @@ namespace MyUPlay {
 
 			virtual void activeTexture() = 0;
 			virtual void activeTexture(unsigned short slot) = 0;
+
+			virtual float getPixelRatio() const = 0;
+			virtual void setPixelRatio(float) = 0;
+
+			virtual std::tuple<unsigned, unsigned> getSize() = 0;
+			virtual void setSize(unsigned width, unsigned height) = 0;
+
+			virtual void setViewport(int x, int y, unsigned width, unsigned height) = 0;
+			virtual std::tuple<int, int, unsigned, unsigned> getViewport() = 0;
 
 		};
 
