@@ -115,9 +115,7 @@ namespace MyUPlay {
 			std::unique_ptr<RenderPlugin> shadowMapPlugin;
 
 			virtual bool supportsVertexTextures() const = 0;
-			virtual void setSize(unsigned width, unsigned height) = 0;
-			virtual void setViewPort(unsigned x, unsigned y, unsigned width, unsigned height) = 0;
-			virtual void setScissor(unsigned x, unsigned y, unsigned width, unsigned height) = 0;
+			virtual void setScissor(int x, int y, unsigned width, unsigned height) = 0;
 			virtual void enableScissorTest(bool enable = true) = 0;
 
 			virtual void setClearColor(const Color&, float alpha) = 0;
@@ -137,6 +135,10 @@ namespace MyUPlay {
 
 			virtual unsigned getMaxAnisotripy() const = 0;
 
+		private: //This section will likely be removed. Serves little point here. 
+			//Not meant to be called by people.
+			
+			//GL state manager functions
 			virtual void init() = 0;
 
 			virtual void initAttributes(){
@@ -153,20 +155,24 @@ namespace MyUPlay {
 
 			virtual void setDepthFunction(short) = 0;
 			virtual void setDepthTest(bool) = 0;
-			virtual void setDepthWrite(short) = 0;
+			virtual void setDepthWrite(bool) = 0;
 
-			virtual void setColorWrite(short) = 0;
+			virtual void setColorWrite(bool) = 0;
 
-			virtual void setFlipSided(short) = 0;
+			virtual void setFlipSided(bool) = 0;
 
 			virtual void setLineWidth(unsigned short) = 0;
 
-			virtual void setPolygonOffset(short polygonOffset, T factor, T units) = 0;
+			virtual void setPolygonOffset(bool polygonOffset, T factor, T units) = 0;
 
-			virtual void setScissorTest(short) = 0;
+			virtual void setScissorTest(bool) = 0;
 
 			virtual void activeTexture() = 0;
 			virtual void activeTexture(unsigned short slot) = 0;
+
+			virtual void reset() = 0;
+
+		public:
 
 			virtual float getPixelRatio() const = 0;
 			virtual void setPixelRatio(float) = 0;

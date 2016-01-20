@@ -3,9 +3,9 @@
 
 #include <string>
 #include <stdexcept>
+#include <unordered_map>
 
 #include <SDL2/SDL.h>
-#include <GL/glew.h>
 #include <SDL2/SDL_opengles2.h>
 
 #include "Renderer.hpp"
@@ -19,13 +19,12 @@ namespace MyUPlay {
 
 	namespace MyEngine {
 
-		template <typename T = float>
-		class GLES2Renderer : public Renderer<T> {
+		class GLES2Renderer : public Renderer<float> {
 
 		private:
 
 			SDL_Window* window;
-			SDL_GLContext* gl;
+			SDL_GLContext gl;
 			Log& log = Log::getInstance();
 
 			GLuint mCurrentProgram,
@@ -39,7 +38,9 @@ namespace MyUPlay {
 			unsigned mCurrentWidth = 0,
 				 mCurrentHeight = 0;
 
-			Frustum<T> mFrustum;
+			std::unordered_map<GLenum, unsigned> capabilities; //0 false, 1+ true or other value.
+
+			Frustum<float> mFrustum;
 
 			Matrix4f mProjScreenMatrix;
 
@@ -56,18 +57,56 @@ namespace MyUPlay {
 			void setDefaultGLState(){
 				//state?
 				//TODO SDL set window size / set fullscreen size.
-				glClearColor(this->mClearColor.r, this->mClearColor.g, this->mClearColor.b, this->mClearAlpha);
+				clearColor(this->mClearColor.r, this->mClearColor.g, this->mClearColor.b, this->mClearAlpha);
 			}
 
 			void resetGLState() {
 
 			}
 
+			void enable(GLenum cap){
+				if (capabilities[cap] == 0){ //If its disabled or just discovered.
+					glEnable(cap);
+					capabilities[cap] = 1; //Show its enabled
+				}
+			}
+
+			void disable(GLenum cap){
+				if (capabilities[cap] != 0){ //Is it already enabled?
+					glDisable(cap);
+					capabilities[cap] = 0; //Show its disabled.
+				}
+			}
+
+			void setBlending(short blending, short blendEquation, short blendSrc, short blendDst,
+					short blendEquationAlpha, short blendSrcAlpha, short blendDstAlpha);
+
+			//TODO getCompressedTextureFormats
+			
+			void enableAttribute(uint8_t attribute);
+			void enableAttributeAndDivisor(uint8_t attribute, uint8_t meshPerAttribute);
+			void disableUnusedAttributes();
+			void setDepthFunc(short depthFunc);
+			void setDepthTest(bool);
+			void setDepthWrite(bool);
+			void setColorwrite(bool);
+			void setFlipSided(bool);
+			void setLineWidth(float width);
+			void setPolygonOffset(bool, float factor, float units);
+			void setScissorTest(bool);
+			void activeTexture(unsigned short slot = 0);
+			void bindTexture(GLenum type, Gluint texture);
+			void reset();
+
 		public:
 
 			GLES2Renderer(const std::string& title, unsigned width, unsigned height){
 
 				SDL_Init(SDL_INIT_VIDEO);
+
+				SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
+				SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
+				SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
 
 				window = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, SDL_WINDOW_OPENGL|SDL_WINDOW_RESIZABLE);
 
@@ -83,16 +122,6 @@ namespace MyUPlay {
 					throw new std::runtime_error("Could not get opengl handle.");
 				}
 
-				if (GLEW_OK != glewInit()){
-					log << "Failed to load glew!";
-				}
-
-				if (!GLEW_ARB_texture_float){
-					log << "Float textures are not supported!";
-				}
-
-				if (!GLEW_
-
 				//TODO capabilities, state, properties, objects, programcache?
 				//
 				//buffer renderer, indexedBufferRenderer?
@@ -102,13 +131,15 @@ namespace MyUPlay {
 
 			~GLES2Renderer(){
 				SDL_GL_DeleteContext(gl);
+				SDL_DestroyWindow(window);
+				SDL_Quit();
 			}
 
 			void clearColor(){
 				clearColor(mClearColor.r, mClearColor.g, mClearColor.b, 0);
 			}
 
-			void clearColor(short r, short g, short b, short a){
+			void clearColor(float r, float g, float b, float a){
 				if (this->premultipliedAlpha){
 					r *= a; g *= a; b *= a;
 				}
@@ -146,6 +177,37 @@ namespace MyUPlay {
 				SDL_SetWindowSize(window, width, height);
 
 				setViewport(0,0,width,height);
+			}
+
+			void setViewport(int x, int y, unsigned widht, unsigned height) {
+				mViewportX = x * mPixelRatio;
+				mViewportY = y * mPixelRatio;
+				mViewportWidth = width * mPixelRatio;
+				mViewportHeight = height * mPixelRatio;
+
+				glViewport(mViewportX, mViewportY, mViewportWidth, mViewportHeight);
+			}
+
+			std::tuple<int, int, unsigned, unsigned> getViewport(){
+				return std::make_tuple<int, int, unsigned, unsigned>(
+						mViewportX / mPixelRatio,
+						mViewportY / mPixelRatio,
+						mViewportWidth / mPixelRatio,
+						mViewportHeight / mPixelRatio
+				);
+			}
+
+			void setScissor(int x, int y, unsigned width, unsigned height) {
+				glScissor(
+						x * mPixelRatio,
+						y * mPixelRatio,
+						width * mPixelRatio,
+						height * mPixelRatio
+				);
+			}
+
+			void enableScissorTest(bool value){
+				
 			}
 
 		};
