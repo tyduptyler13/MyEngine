@@ -13,6 +13,8 @@
 #include "RenderTarget.hpp"
 #include "Light.hpp"
 #include "Object3D.hpp"
+#include "Camera.hpp"
+#include "Material.hpp"
 
 namespace MyUPlay {
 
@@ -51,7 +53,6 @@ namespace MyUPlay {
 			short currentTextureSlot;
 			//currentBoundTextures;
 
-		private:
 			Color mClearColor;
 			float mClearAlpha;
 
@@ -135,45 +136,6 @@ namespace MyUPlay {
 
 			virtual unsigned getMaxAnisotripy() const = 0;
 
-		private: //This section will likely be removed. Serves little point here. 
-			//Not meant to be called by people.
-			
-			//GL state manager functions
-			virtual void init() = 0;
-
-			virtual void initAttributes(){
-				newAttributes.fill(0);
-			}
-
-			virtual void enableAttribute(uint8_t attribute) = 0;
-
-			virtual void enableAttributeAndDivisor(uint8_t attribute, uint8_t meshPerAttribute) = 0;//Extension?
-
-			virtual void disableUnusedAttributes() = 0;
-
-			virtual void setBlending(short blending, short blendEquation, short blendSrc, short blendDst, short blendEquationAlpha, short blendSrcAlpha, short blendDstAlpha) = 0;
-
-			virtual void setDepthFunction(short) = 0;
-			virtual void setDepthTest(bool) = 0;
-			virtual void setDepthWrite(bool) = 0;
-
-			virtual void setColorWrite(bool) = 0;
-
-			virtual void setFlipSided(bool) = 0;
-
-			virtual void setLineWidth(unsigned short) = 0;
-
-			virtual void setPolygonOffset(bool polygonOffset, T factor, T units) = 0;
-
-			virtual void setScissorTest(bool) = 0;
-
-			virtual void activeTexture() = 0;
-			virtual void activeTexture(unsigned short slot) = 0;
-
-			virtual void reset() = 0;
-
-		public:
-
 			virtual float getPixelRatio() const = 0;
 			virtual void setPixelRatio(float) = 0;
 
@@ -182,6 +144,16 @@ namespace MyUPlay {
 
 			virtual void setViewport(int x, int y, unsigned width, unsigned height) = 0;
 			virtual std::tuple<int, int, unsigned, unsigned> getViewport() = 0;
+
+			virtual void renderBufferImmediate(const Object3D<T>& object, const ShaderProgram& program, const Material<T>& material) = 0;
+			virtual void renderBufferDirect(const Camera<T>& camera, const std::vector<Light<T> >& lights, const Fog<T>& fog, const Material<T>& material, const Object3D<T>& object, const Object3D<T>& objectGroup) = 0;
+
+			virtual void render(const Scene<T>& scene, const Camera<T>& camera, RenderTarget* renderTarget = NULL, bool forceClear = false) = 0;
+
+			virtual void setFaceCulling(short cullFace, short frontFaceDirection) = 0;
+			virtual void setTexture(const Texture<T>& texture, unsigned slot = 0);
+			virtual void setRenderTarget(RenderTarget& target) = 0;
+			virtual void readRenderTargetPixels(RenderTarget& target, int x, int y, unsigned width, unsigned height, void** buffer) = 0; //TODO Find type for buffer
 
 		};
 
