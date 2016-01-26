@@ -10,16 +10,19 @@
 
 #include "Renderer.hpp"
 #include "Log.hpp"
-#include "Frustrum.hpp"
 #include "Camera.hpp"
 #include "Vector3.hpp"
 #include "Matrix4.hpp"
+#include "Frustum.hpp"
 
 namespace MyUPlay {
 
 	namespace MyEngine {
 
 		class GLES2Renderer : public Renderer<float> {
+
+			//Determine if this is needed.
+			//friend class GLES2Program;
 
 		private:
 
@@ -30,8 +33,8 @@ namespace MyUPlay {
 			GLuint mCurrentProgram,
 			       mCurrentFramebuffer;
 			int mCurrentMaterialId = -1;
-			//TODO mCurrentGeometryProgram
-			int mCurrentCamera -1;
+			GLint mCurrentGeometryProgram;
+			int mCurrentCamera = -1;
 
 			unsigned mUsedTextureUnits = 0;
 
@@ -95,7 +98,7 @@ namespace MyUPlay {
 			void setPolygonOffset(bool, float factor, float units);
 			void setScissorTest(bool);
 			void activeTexture(unsigned short slot = 0);
-			void bindTexture(GLenum type, Gluint texture);
+			void bindTexture(GLenum type, GLuint texture);
 			void reset();
 
 		public:
@@ -147,8 +150,6 @@ namespace MyUPlay {
 				glClearColor(r, g, b, a);
 			}
 
-			void init() override;
-
 			float getMaxAnisotropy(){
 				float aniso = 0;
 				glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &aniso);
@@ -166,11 +167,11 @@ namespace MyUPlay {
 			/**
 			 * Returns width and height in a std::tuple
 			 */
-			std::tuple<unsigned, unsigned> getSize() override {
+			virtual std::tuple<unsigned, unsigned> getSize() override {
 				return std::make_tuple(width, height);
 			}
 
-			void setSize(unsigned width, unsigned height) override {
+			virtual void setSize(unsigned width, unsigned height) override {
 				this->width = width;
 				this->height = height;
 
@@ -179,7 +180,7 @@ namespace MyUPlay {
 				setViewport(0,0,width,height);
 			}
 
-			void setViewport(int x, int y, unsigned widht, unsigned height) {
+			virtual void setViewport(int x, int y, unsigned widht, unsigned height) override {
 				mViewportX = x * mPixelRatio;
 				mViewportY = y * mPixelRatio;
 				mViewportWidth = width * mPixelRatio;
@@ -188,7 +189,7 @@ namespace MyUPlay {
 				glViewport(mViewportX, mViewportY, mViewportWidth, mViewportHeight);
 			}
 
-			std::tuple<int, int, unsigned, unsigned> getViewport(){
+			virtual std::tuple<int, int, unsigned, unsigned> getViewport() override {
 				return std::make_tuple<int, int, unsigned, unsigned>(
 						mViewportX / mPixelRatio,
 						mViewportY / mPixelRatio,
@@ -197,7 +198,7 @@ namespace MyUPlay {
 				);
 			}
 
-			void setScissor(int x, int y, unsigned width, unsigned height) {
+			virtual void setScissor(int x, int y, unsigned width, unsigned height) override {
 				glScissor(
 						x * mPixelRatio,
 						y * mPixelRatio,

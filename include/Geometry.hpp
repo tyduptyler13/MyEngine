@@ -177,6 +177,8 @@ namespace MyUPlay {
 
 		};
 
+#define GeometryDefined
+
 	}
 
 }

@@ -5,6 +5,7 @@
 			"product_name": "MyEngine",
 			"type": "<(library)",
 			"sources": [
+				"src/Log.cpp",
 				"src/AmbientLight.cpp",
 				"src/Curve.cpp",
 				"src/Gyroscope.cpp",

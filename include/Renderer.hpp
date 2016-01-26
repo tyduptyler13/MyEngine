@@ -15,6 +15,7 @@
 #include "Object3D.hpp"
 #include "Camera.hpp"
 #include "Material.hpp"
+#include "ShaderProgram.hpp"
 
 namespace MyUPlay {
 
@@ -54,11 +55,11 @@ namespace MyUPlay {
 			//currentBoundTextures;
 
 			Color mClearColor;
-			float mClearAlpha;
+			T mClearAlpha;
 
 			unsigned width, height;
 
-			float mPixelRatio;
+			T mPixelRatio;
 
 			int mViewportX = 0,
 			    mViewportY = 0;
@@ -113,7 +114,7 @@ namespace MyUPlay {
 				} renderer;
 			} info;
 
-			std::unique_ptr<RenderPlugin> shadowMapPlugin;
+			std::unique_ptr<RenderPlugin<T> > shadowMapPlugin;
 
 			virtual bool supportsVertexTextures() const = 0;
 			virtual void setScissor(int x, int y, unsigned width, unsigned height) = 0;
@@ -128,7 +129,7 @@ namespace MyUPlay {
 			virtual void clearColor() = 0;
 			virtual void clearDepth() = 0;
 			virtual void clearStencil() = 0;
-			virtual void clearTarget(RenderTarget& target, bool color = true, bool depth = true, bool stencil = true) = 0;
+			virtual void clearTarget(RenderTarget<T>& target, bool color = true, bool depth = true, bool stencil = true) = 0;
 
 			virtual bool supportsFloatTextures() const = 0;
 			virtual bool supportsStandardDerivatives() const = 0;
@@ -148,12 +149,12 @@ namespace MyUPlay {
 			virtual void renderBufferImmediate(const Object3D<T>& object, const ShaderProgram& program, const Material<T>& material) = 0;
 			virtual void renderBufferDirect(const Camera<T>& camera, const std::vector<Light<T> >& lights, const Fog<T>& fog, const Material<T>& material, const Object3D<T>& object, const Object3D<T>& objectGroup) = 0;
 
-			virtual void render(const Scene<T>& scene, const Camera<T>& camera, RenderTarget* renderTarget = NULL, bool forceClear = false) = 0;
+			virtual void render(const Scene<T>& scene, const Camera<T>& camera, RenderTarget<T>* renderTarget = NULL, bool forceClear = false) = 0;
 
 			virtual void setFaceCulling(short cullFace, short frontFaceDirection) = 0;
 			virtual void setTexture(const Texture<T>& texture, unsigned slot = 0);
-			virtual void setRenderTarget(RenderTarget& target) = 0;
-			virtual void readRenderTargetPixels(RenderTarget& target, int x, int y, unsigned width, unsigned height, void** buffer) = 0; //TODO Find type for buffer
+			virtual void setRenderTarget(RenderTarget<T>& target) = 0;
+			virtual void readRenderTargetPixels(RenderTarget<T>& target, int x, int y, unsigned width, unsigned height, void** buffer) = 0; //TODO Find type for buffer
 
 		};
 
