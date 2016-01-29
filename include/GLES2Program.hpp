@@ -4,8 +4,11 @@
 #include <vector>
 #include <utility>
 #include <string>
+#include <memory>
 
 #include "GLES2Renderer.hpp"
+#include "Texture.hpp"
+#include "Color.hpp"
 
 namespace MyUPlay {
 
@@ -23,7 +26,51 @@ namespace MyUPlay {
 
 			public:
 
-				GLES2Program(GLES2Renderer*);
+				struct RenderParam {
+					short shadowMapType;
+
+					std::string precision;
+					bool supportsVertexTextures;
+					unsigned maxDirLights,
+						 maxPointLights,
+						 maxSpotLights,
+						 maxHemiLights,
+						 maxShadows,
+						 maxBones;
+					
+					std::shared_ptr<Texture<float> > 
+						map,
+						envMap,
+						lightMap,
+						aoMap,
+						emissiveMap,
+						bumpMap,
+						normalMap,
+						displacementMap,
+						specularMap,
+						alphaMap;
+
+					std::shared_ptr<std::vector<Color> > vertexColors;
+					
+					bool flatShading,
+					     skinning,
+					     useVertexTexture,
+					     morphTargets, //Type?
+					     morphNormals,
+					     doubleSized,
+					     flipSided,
+					     shadowMapEnabled,
+					     shadowMapDebug;
+
+					std::shared_ptr<Texture<float> > pointLightShadows;
+
+					float sizeAttenuation; //Type?
+
+					bool logarithmicDepthBuffer;
+
+				};
+
+				GLES2Program(GLES2Renderer& renderer, const std::string& code, const Material<float>& material, const RenderParam& parameters);
 				~GLES2Program();
 				std::vector<std::pair<std::string, GLint> > getAttributes();
 				std::vector<std::pair<std::string, GLint> > getUniforms();

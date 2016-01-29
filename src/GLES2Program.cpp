@@ -1,4 +1,5 @@
 #include "GLES2Program.hpp"
+#include "Constants.hpp"
 
 #include <sstream>
 #include <regex>
@@ -88,6 +89,31 @@ vector<pair<string, GLint> > GLES2Program::fetchAttributeLocations(GLuint progra
 	delete[] name;
 
 	return attributes;
+
+}
+
+GLES2Program::GLES2Program(GLES2Renderer& renderer, const string& code, const Material<float>& material, const RenderParam& parameters){
+
+	const vector<pair<string,string> > defines = material.defines;
+
+	//vertexShader
+	//fragmentShader
+	
+	string shadowMapTypeDefine = "SHADOWMAP_TYPE_BASIC";
+
+	if (parameters.shadowMapType == PCFShadowMap){
+	 	shadowMapTypeDefine = "SHADOWMAP_TYPE_PCF";
+	} else if (parameters.shadowMapType == PCFSoftShadowMap){
+		shadowMapTypeDefine = "SHADOWMAP_TYPE_PCF_SOFT";
+	}
+
+	string envMapTypeDefine = "ENVMAP_TYPE_CUBE";
+	string envMapModeDefine = "ENVMAP_MODE_REFLECTION";
+	string envMapBlendingDefine = "ENVMAP_BLEEDING_MULTIPLY";
+
+	if (parameters.envMap) {
+
+	}
 
 }
 
