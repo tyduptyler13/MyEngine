@@ -51,13 +51,11 @@ namespace MyUPlay {
 
 		public:
 
-			typedef unsigned char Byte;
+			float r = 1,
+			      g = 1,
+			      b = 1;
 
-			Byte r = 1,
-			     g = 1,
-			     b = 1;
-
-						Color(){}
+			Color(){}
 			Color(const Color& c) : r(c.r), g(c.g), b(c.b){}
 
 			Color& set(const Color& c){
@@ -105,7 +103,7 @@ namespace MyUPlay {
 
 			}
 
-			Color& setRGB(Byte r, Byte g, Byte b) {
+			Color& setRGB(float r, float g, float b) {
 				this->r = r;
 				this->g = g;
 				this->b = b;
@@ -164,8 +162,8 @@ namespace MyUPlay {
 
 			std::tuple<float, float, float> getHSL() const {
 
-				Byte max = Math::max<Byte>(r, g, b);
-				Byte min = Math::min<Byte>(r, g, b);
+				float max = Math::max<float>(r, g, b);
+				float min = Math::min<float>(r, g, b);
 
 				float hue = 0, saturation;
 				float lightness = (min + max) / 2.0;
@@ -174,7 +172,7 @@ namespace MyUPlay {
 					hue = 0;
 					saturation = 0;
 				} else {
-					int delta = max - min;
+					float delta = max - min;
 					saturation = lightness <= 0.5 ? delta / (max + min) : delta / ( 2 - max - min);
 
 					if (r == max){
@@ -274,7 +272,7 @@ namespace MyUPlay {
 				return equals(c);
 			}
 
-			std::vector<Byte>& toArray(std::vector<Byte>& array, unsigned offset = 0) const {
+			std::vector<float>& toArray(std::vector<float>& array, unsigned offset = 0) const {
 				array.reserve(offset + 2);
 				array[offset] = r;
 				array[offset + 1] = g;
@@ -283,8 +281,8 @@ namespace MyUPlay {
 				return array;
 			}
 
-			Color& fromArray(const std::vector<Byte>& array) {
-				
+			Color& fromArray(const std::vector<float>& array) {
+
 				r = array[0];
 				g = array[1];
 				b = array[2];
@@ -292,7 +290,6 @@ namespace MyUPlay {
 				return *this;
 
 			}
-			
 
 		};
 

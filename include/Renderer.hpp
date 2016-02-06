@@ -8,20 +8,34 @@
 #include "Constants.hpp"
 #include "RenderPlugin.hpp"
 #include "RenderTarget.hpp"
+#include "Light.hpp"
+#include "Object3D.hpp"
 
 namespace MyUPlay {
 
 	namespace MyEngine {
 
-		template <typename T>
+		template <typename T = float>
 		class Renderer {
 
-		public:
+		private:
+			Color mClearColor;
+			float mClearAlpha;
 
-			std::vector<Light*> lights;
+			unsigned width, height;
+
+			bool alpha = false,
+			     depth = true,
+			     stencil = true,
+			     antialias = false,
+			     premultipliedAlpha = true,
+			     preserveDrawingBuffer = false;
+
+			std::vector<Light<T>*> lights;
 			std::vector<Object3D<T>*> opaqueObjects, transparentObjects;
 			int opaqueObjectsLastIndex = -1, transparentObjectsLastIndex = -1;
 
+		public:
 
 			bool autoClear = true,
 			     autoClearColor = true,
@@ -29,7 +43,7 @@ namespace MyUPlay {
 			     autoClearStencil = true,
 			     sortObjects = true;
 
-			float gammaFactor = 2.0;
+			T gammaFactor = 2.0;
 			bool gammaInput = false,
 			     gammaOutput = false;
 
