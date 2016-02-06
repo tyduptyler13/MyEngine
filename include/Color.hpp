@@ -5,6 +5,7 @@
 #include <cmath>
 #include <tuple>
 #include <vector>
+#include <array>
 
 #include "Math.hpp"
 
@@ -40,7 +41,7 @@ namespace MyUPlay {
 		class Color {
 
 		private:
-			unsigned char inline static hue2rgb(float p, float q, float t) {
+			float inline static hue2rgb(float p, float q, float t) {
 				if (t < 0) t += 1;
 				if (t > 1) t -= 1;
 				if (t < 1 / 6) return p + (q - p) * 6 * t;
@@ -65,18 +66,18 @@ namespace MyUPlay {
 				return *this;
 			}
 
-			Color& set(int32_t hex){
+			Color& set(uint32_t hex){
 
-				r = (hex >> 16 & 255) / 255;
-				g = (hex >> 8 & 255) / 255;
-				b = (hex & 255) / 255;
+				r = float(hex >> 16 & 255) / 255;
+				g = float(hex >> 8 & 255) / 255;
+				b = float(hex & 255) / 255;
 
 				return *this;
 
 			}
 
 			Color& set(ColorKeyword c){
-				set(int32_t(c));
+				set(uint32_t(c));
 				return *this;
 			}
 
@@ -156,8 +157,8 @@ namespace MyUPlay {
 				return *this;
 			}
 
-			int32_t getHex() const {
-				return ( r * 255 ) << 16 ^ ( g * 255 ) << 8 ^ ( b * 255 ) << 0;
+			uint32_t getHex() const {
+				return uint32_t( r * 255 ) << 16 ^ uint32_t( g * 255 ) << 8 ^ uint32_t( b * 255 ) << 0;
 			}
 
 			std::tuple<float, float, float> getHSL() const {
@@ -281,7 +282,7 @@ namespace MyUPlay {
 				return array;
 			}
 
-			Color& fromArray(const std::vector<float>& array) {
+			Color& fromArray(const std::array<float, 3>& array) {
 
 				r = array[0];
 				g = array[1];

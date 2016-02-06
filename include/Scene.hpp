@@ -1,7 +1,5 @@
-
-
 #ifndef MyUPlay_MyEngine_Scene
-#define MYUPlay_MyEngine_Scene
+#define MyUPlay_MyEngine_Scene
 
 #include "Object3D.hpp"
 #include "Material.hpp"
@@ -16,30 +14,19 @@ namespace MyUPlay {
 		template <typename T>
 		class Scene : public Object3D<T> {
 
-			private:
-
-			std::unique_ptr<Material> overrideMaterial = NULL;
-			std::unique_ptr<Fog> fog = NULL;
-
 			public:
+
+			std::shared_ptr<Material<T> > overrideMaterial = NULL;
+			std::shared_ptr<Fog<T> > fog = NULL;
 
 			bool autoUpdate = true;
 
+			Scene() : Object3D<T>() {}
 
-			Scene() : Object3D() {}
-
-			Scene(const Scene* scene) : Object3D(scene) {
-				overrideMaterial = scene->overrideMaterial;
-				fog = scene->fog;
-				autoUpdate = scene->autoUpdate;
-			}
-
-			Scene* clone(){
-				return new Scene(this);
-			}
-
-			Scene* clone(const Scene* scene){
-				return new Scene(scene);
+			Scene(const Scene& scene) : Object3D<T>(scene) {
+				overrideMaterial = scene.overrideMaterial;
+				fog = scene.fog;
+				autoUpdate = scene.autoUpdate;
 			}
 
 		};

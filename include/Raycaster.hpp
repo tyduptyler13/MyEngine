@@ -1,3 +1,6 @@
+#ifndef MYUPLAY_MYENGINE_RAYCASTER
+#define MYUPLAY_MYENGINE_RAYCASTER
+
 #include "Ray.hpp"
 #include "Vector3.hpp"
 #include "Vector2.hpp"
@@ -71,4 +74,6 @@ namespace MyUPlay {
 	}
 
 }
+
+#endif
 

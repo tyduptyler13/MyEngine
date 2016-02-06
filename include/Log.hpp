@@ -33,14 +33,14 @@ namespace MyUPlay {
 			}
 
 			static std::string getTime(){
-				return "[" + std::to_string(clock.getElapsedSeconds()) + "] ";
+				return "[" + std::to_string(clock.getElapsedSeconds()) + "]";
 			}
 
 			friend Log& operator<<(Log& log, const std::string s){
 
 				lock.lock();
 
-				std::cout << getTime() << s << "\n";
+				std::cout << getTime() << " " << s << "\n";
 
 				lock.unlock();
 
@@ -52,7 +52,7 @@ namespace MyUPlay {
 
 				lock.lock();
 
-				std::cout << getTime() << ss.str() << "\n";
+				std::cout << getTime() << " " << ss.str() << "\n";
 				ss.clear();
 				ss.str(std::string());
 
@@ -60,6 +60,26 @@ namespace MyUPlay {
 
 				return log;
 
+			}
+
+			Log& error(const std::string s) {
+				lock.lock();
+
+				std::cerr << getTime() << "[ERROR] " << s << "\n";
+
+				lock.unlock();
+
+				return *this;
+			}
+
+			Log& warn(const std::string s) {
+				lock.lock();
+
+				std::cout << getTime() << "[Warn] " << s << "\n";
+
+				lock.unlock();
+
+				return *this;
 			}
 
 		};

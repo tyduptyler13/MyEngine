@@ -10,6 +10,7 @@ namespace MyUPlay {
 
 	namespace MyEngine {
 
+		template <typename T>
 		class RenderTarget {
 
 		public:
@@ -17,7 +18,7 @@ namespace MyUPlay {
 			
 			unsigned width, height;
 
-			Texture texture;
+			Texture<T> texture;
 
 			bool depthBuffer = true,
 			     stencilBuffer = true;

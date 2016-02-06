@@ -1,3 +1,6 @@
+#ifndef MYUPLAY_MYENGINE_ORTHOGRAPHICCAMERA
+#define MYUPLAY_MYENGINE_ORTHOGRAPHICCAMERA
+
 #include "Camera.hpp"
 
 namespace MyUPlay {
@@ -62,3 +65,6 @@ namespace MyUPlay {
 	}
 
 }
+
+#endif
+
