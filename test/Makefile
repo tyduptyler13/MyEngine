@@ -1,14 +1,21 @@
-CFLAGS=-O2 -Wall -Wextra -pedantic -L../deps/googletest -lgtest -lgtest_main
+CFLAGS=-O2 -Wall -Wextra -pedantic -I../deps/googletest/include -pthread --std=c++11
+LFLAGS=../deps/googletest/libgtest.a ../deps/googletest/libgtest_main.a
 CXX=clang++
 
-default: tests
+FILES=$(wildcard *.cc)
 
-tests: $(wildcard *.cc:.cc=.test)
+test: $(FILES:.cc=.o)
+	$(CXX) $(CFLAGS) $(FILES:.cc=.o) $(LFLAGS) -o test
 
-%.test: %.cc
-	$(CXX) $(CFLAGS) $< -o $@
-	./$@
+check: test
+	./test
+
+%.o: %.cc
+	$(CXX) $(CFLAGS) -c $< -o $@
 
 clean:
-	$(RM) *.test
+	$(RM) *.o test
+
+default: check
+
 

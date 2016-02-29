@@ -13,9 +13,6 @@
 [submodule "deps/SDL-mirror"]
 	path = deps/sdl
 	url = https://github.com/spurious/SDL-mirror
-[submodule "deps/glew"]
-	path = deps/glew
-	url = https://github.com/nigels-com/glew
 [submodule "deps/poco"]
 	path = deps/poco
 	url = https://github.com/pocoproject/poco
