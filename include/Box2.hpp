@@ -2,37 +2,59 @@
 #define MYUPLAY_MYENGINE_BOX2
 
 #include "Vector2.hpp"
-#include "Box.hpp"
+#include <limits>
+#include <vector>
 
 namespace MyUPlay {
 
 	namespace MyEngine {
 
 		template <typename T>
-		class Box2 : public Box<Vector2, T, Box2<T> > {
+		class Box2 {
 
 			protected:
-			typedef Box<Vector2, T, Box2<T> > B;
-			typedef typename B::limit limit;
+
+			typedef std::numeric_limits<T> limit;
 
 			public:
 
 			//These are required because min/max is common in std (math headers)
-			Vector2<T>& min = B::min;
-			Vector2<T>& max = B::max;
+			Vector2<T> min;
+			Vector2<T> max;
 
 			Box2(){
 				min(limit::infinity(), limit::infinity());
 				max(-limit::infinity(), -limit::infinity());
-
 			}
-			Box2(const Vector2<T>& min, const Vector2<T>& max) : B(min, max) {}
 
-			Box2(const Box2& b) : B(b) {}
+			Box2(const Vector2<T>& min, const Vector2<T>& max) : min(min), max(max) {}
+
+			Box2(const Box2& b) : min(b.min), max(b.max) {}
 
 			Box2& makeEmpty(){
 				min.set(limit::infinity(), limit::infinity());
 				max.set(-limit::infinity(), -limit::infinity());
+				return *this;
+			}
+
+			Box2& set(const Vector2<T>& min, const Vector2<T>& max) {
+				this->min = min;
+				this->max = max;
+				return *this;
+			}
+
+			Box2& setFromPoints(const std::vector<Vector2<T> >& points){
+				makeEmpty();
+				for (const Vector2<T>& point : points){
+					expandByPoint(point);
+				}
+				return *this;
+			}
+
+			Box2& setFromCenterAndSize(const Vector2<T>& center, const Vector2<T>& size){
+				Vector2<T> halfSize = size * 0.5;
+				min = center - halfSize;
+				max = center + halfSize;
 				return *this;
 			}
 
@@ -82,6 +104,110 @@ namespace MyUPlay {
 				return true;
 
 			}
+
+			inline Box2& operator=(const Box2& b){
+                return copy(b);
+            }
+
+            Box2& copy(const Box2& b){
+                min(b.min);
+                max(b.max);
+                return *this;
+            }
+
+            inline Vector2<T> center(){
+                return center(Vector2<T>());
+            }
+
+            Vector2<T>& center(Vector2<T>& target){
+                return target.addVectors(min, max).mupltiply(.5);
+            }
+
+            inline Vector2<T> size(){
+                return size(Vector2<T>());
+            }
+
+            Vector2<T>& size(Vector2<T> target){
+                return target.subVectors(min, max);
+            }
+
+            Box2& expandByPoint(const Vector2<T>& point){
+
+
+                min.min(point);
+                max.max(point);
+                return *this;
+
+            }
+
+            Box2& expandByVector(const Vector2<T>& vector){
+
+                min -= vector;
+                max += vector;
+                return *this;
+
+            }
+
+            Box2& expandByScalar(T scalar){
+
+                min -= scalar;
+                max += scalar;
+
+                return *this;
+
+            }
+
+            inline Box2<T> getParameter(const Vector2<T>& point) const {
+                return getParameter(point, Vector2<T>());
+            }
+
+			inline Vector2<T> clampPoint(const Vector2<T>& point) const {
+ 				return clampPoint(point, Vector2<T>());
+            }
+
+            Vector2<T>& clampPoint(const Vector2<T>& point, Vector2<T>& target){
+                return target.copy(point).clamp(min, max);
+            }
+
+            T distanceToPoint(Vector2<T> point) const {
+                return point.clamp(min, max).sub(point).length();
+            }
+
+            Box2& intersect(const Box2& box){
+
+                min.max(box.min);
+                max.min(box.max);
+
+                return *this;
+
+            }
+
+            //union is a reserved word
+            Box2& boxUnion(const Box2& box){
+
+                min.min(box.min);
+                max.max(box.max);
+
+                return *this;
+
+            }
+
+            Box2& translate(const Vector2<T>& offset){
+
+                min += offset;
+                max += offset;
+
+                return *this;
+
+            }
+
+            inline bool operator==(const Box2& b) const {
+                return equals(b);
+            }
+
+            bool equals(const Box2& b) const {
+                return b.min == min && b.max == max;
+            }
 
 		};
 

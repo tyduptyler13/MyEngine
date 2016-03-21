@@ -2,7 +2,6 @@
 #include "Vector2.hpp"
 #include "Vector3.hpp"
 
-
 float posInf = std::numeric_limits<float>::infinity();
 float negInf = -std::numeric_limits<float>::infinity();
 

@@ -7,7 +7,7 @@
 #include "Vector3.hpp"
 #include "Sphere.hpp"
 #include "Plane.hpp"
-#include "Box.hpp"
+#include "Box3.hpp"
 #include "Matrix4.hpp"
 
 namespace MyUPlay {

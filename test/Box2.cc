@@ -2,19 +2,16 @@
 #include "unit_test_constants.hpp"
 #include "Box2.hpp"
 
-
 using namespace std;
+using namespace MyUPlay::MyEngine;
 
-
-typedef MyUPlay::MyEngine::Vector2<float> Vector2f;
-typedef MyUPlay::MyEngine::Box2<float> Box2f;
 
 TEST(Box2, constructor){
    Box2f a;
    EXPECT_EQ(posInf2, a.min);
    EXPECT_EQ(negInf2, a.max);
 
-   a (zero2, zero2);
+   a = Box2f(zero2, zero2);
    EXPECT_TRUE( a.min == zero2 );
    EXPECT_TRUE( a.max == zero2 );
 

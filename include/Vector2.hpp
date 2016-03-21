@@ -26,10 +26,6 @@ namespace MyUPlay {
 				return *this;
 			}
 
-			inline Vector2& operator=(const Vector2& v){
-				return copy(v);
-			}
-
 			Vector2& setX(T x){
 				this->x = x;
 				return *this;
@@ -52,10 +48,6 @@ namespace MyUPlay {
 				return *this;
 			}
 
-			inline Vector2& operator+=(const Vector2& v){
-				return add(v);
-			}
-
 			Vector2& addVectors(const Vector2& a, const Vector2& b){
 				x = a.x + b.x;
 				y = a.y + a.y;
@@ -72,10 +64,6 @@ namespace MyUPlay {
 				x -= v.x;
 				y -= v.y;
 				return *this;
-			}
-
-			inline Vector2& operator -=(const Vector2& v){
-				return sub(v);
 			}
 
 			Vector2 subVectors(const Vector2& a, const Vector2& b){
@@ -154,16 +142,8 @@ namespace MyUPlay {
                 return Vector2(*this).negate();
             }
 
-            bool operator==(const Vector2& v) const {
-                return ((x ==v.x) && (y == v.y));
-            }
-
-            Vector2 operator+(const T scalar, Vector2 rhs){
-                return rhs + scalar;
-            }
-
-            Vector2 operator*(const T scalar, Vector2 rhs){
-                return rhs * scalar;
+            Vector2 operator+(const T scalar) const {
+                return Vector2(this).add(scalar);
             }
 
             inline Vector2& operator=(const Vector2& v){
@@ -175,19 +155,14 @@ namespace MyUPlay {
             }
 
             inline Vector2& operator +=(T scalar){
-                return add(scalar)
+                return add(scalar);
             }
-
 
             Vector2 operator+(const Vector2& b) const{
                 Vector2 v;
                 v.x = x + b.x;
                 v.y = y + b.y;
                 return v;
-            }
-
-            inline Vector2 operator+(T s) const{
-                return Vector2(x + s, y + s);
             }
 
             inline Vector2& operator-=(const Vector2& v){
@@ -250,11 +225,11 @@ namespace MyUPlay {
 			Vector2& clamp(const Vector2& min, const Vector2& max);
 			Vector2& clampScalar(T min, T max);
 
-            bool equals(const Vector2& v)const{
+            bool equals(const Vector2& v) const {
                 return x = v.x && y = v.y;
             }
 
-            bool operator==(const Vector2& v)const{
+            bool operator==(const Vector2& v) const {
                 return equals(v);
             }
 		};
