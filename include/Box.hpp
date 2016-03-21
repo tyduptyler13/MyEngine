@@ -30,9 +30,6 @@ namespace MyUPlay {
 
 			public:
 
-			B& set(D<T> min, D<T> max){
-				return set(min, max);
-			}
 
 			B& set(const D<T>& min, const D<T>& max){
 				this->min(min);
@@ -40,7 +37,7 @@ namespace MyUPlay {
 				return *this;
 			}
 
-			B& setFromPoints(const std::vector<D<T> >& points){
+			B& setFromPoints(const std::vector< D<T> >& points){
 
 				makeEmpty();
 
