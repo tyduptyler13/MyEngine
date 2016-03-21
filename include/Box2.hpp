@@ -22,10 +22,11 @@ namespace MyUPlay {
 			Vector2<T> min;
 			Vector2<T> max;
 
-			Box2(){
-				min(limit::infinity(), limit::infinity());
-				max(-limit::infinity(), -limit::infinity());
-			}
+			Box2() :
+				min(limit::infinity(), limit::infinity()),
+				max(-limit::infinity(), -limit::infinity())
+			{}
+			
 
 			Box2(const Vector2<T>& min, const Vector2<T>& max) : min(min), max(max) {}
 
@@ -110,17 +111,17 @@ namespace MyUPlay {
             }
 
             Box2& copy(const Box2& b){
-                min(b.min);
-                max(b.max);
+                min = b.min;
+                max = b.max;
                 return *this;
             }
 
-            inline Vector2<T> center(){
-                return center(Vector2<T>());
+            inline Vector2<T> center() const {
+				return (min + max) * 0.5f;
             }
 
-            Vector2<T>& center(Vector2<T>& target){
-                return target.addVectors(min, max).mupltiply(.5);
+            Vector2<T>& center(Vector2<T>& target) const {
+                return target.addVectors(min, max).multiply(0.5f);
             }
 
             inline Vector2<T> size(){

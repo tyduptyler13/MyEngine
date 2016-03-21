@@ -18,11 +18,18 @@ namespace MyUPlay {
 		public:
 			T x, y;
 
-			Vector2(T x = 0, T y = 0) : x(x), y(y) {}
+			Vector2() : x(0), y(0) {}
+			Vector2(T x, T y) : x(x), y(y) {}
 
 			Vector2& set(T x, T y){
 				this->x = x;
 				this->y = y;
+				return *this;
+			}
+
+			Vector2& set(T s){
+				this->x = s;
+				this->y = s;
 				return *this;
 			}
 
@@ -75,6 +82,12 @@ namespace MyUPlay {
 			Vector2& sub(T scalar){
 				x -= scalar;
 				y -= scalar;
+				return *this;
+			}
+
+			Vector2& multiply(const Vector2& v){
+				x *= v.x;
+				y *= v.y;
 				return *this;
 			}
 
@@ -143,7 +156,7 @@ namespace MyUPlay {
             }
 
             Vector2 operator+(const T scalar) const {
-                return Vector2(this).add(scalar);
+                return Vector2(*this).add(scalar);
             }
 
             inline Vector2& operator=(const Vector2& v){
@@ -173,8 +186,12 @@ namespace MyUPlay {
                 return sub(scalar);
             }
 
-            inline Vector2 operator*=(const Vector2& v){
-                return multiply(v);
+			inline Vector2 operator*=(T s) const {
+				return Vector2(*this).multiplyScalar(s);
+			}
+
+            inline Vector2 operator*=(const Vector2& v) const {
+                return Vector2(*this).multiply(v);
             }
 
             Vector2 operator*(T s) const{
@@ -226,13 +243,17 @@ namespace MyUPlay {
 			Vector2& clampScalar(T min, T max);
 
             bool equals(const Vector2& v) const {
-                return x = v.x && y = v.y;
+                return x == v.x && y == v.y;
             }
 
             bool operator==(const Vector2& v) const {
                 return equals(v);
             }
 		};
+
+		typedef Vector2<float> Vector2f;
+		typedef Vector2<double> Vector2d;
+
 	}
 }
 
