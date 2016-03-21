@@ -250,6 +250,13 @@ namespace MyUPlay {
 			Vector2& clamp(const Vector2& min, const Vector2& max);
 			Vector2& clampScalar(T min, T max);
 
+            bool equals(const Vector2& v)const{
+                return x = v.x && y = v.y;
+            }
+
+            bool operator==(const Vector2& v)const{
+                return equals(v);
+            }
 		};
 	}
 }

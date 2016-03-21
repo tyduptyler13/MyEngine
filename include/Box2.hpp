@@ -26,7 +26,6 @@ namespace MyUPlay {
 				max(-limit::infinity(), -limit::infinity());
 
 			}
-			Box2(Vector2<T> min, Vector2<T> max) : B(min, max) {}
 			Box2(const Vector2<T>& min, const Vector2<T>& max) : B(min, max) {}
 
 			Box2(const Box2& b) : B(b) {}
