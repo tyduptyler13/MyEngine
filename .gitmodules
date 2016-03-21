@@ -1,6 +1,3 @@
-[submodule "node"]
-	path = deps/node
-	url = https://github.com/nodejs/node.git
 [submodule "deps/bullet3"]
 	path = deps/bullet3
 	url = https://github.com/bulletphysics/bullet3.git
@@ -19,3 +16,6 @@
 [submodule "deps/googletest"]
 	path = deps/googletest
 	url = https://github.com/google/googletest.git
+[submodule "deps/cef"]
+	path = deps/cef
+	url = https://bitbucket.org/chromiumembedded/cef.git
