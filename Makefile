@@ -7,6 +7,11 @@ all: compile
 
 configure: ./build
 
+test:
+	$(MAKE) -C ./test
+
+check: test
+
 compile: ./build
 	@echo Entering build directory
 	$(MAKE) -C ./build
