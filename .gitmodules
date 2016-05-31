@@ -4,15 +4,9 @@
 [submodule "deps/capnproto"]
 	path = deps/capnproto
 	url = https://github.com/sandstorm-io/capnproto.git
-[submodule "deps/xz"]
-	path = deps/xz
-	url = http://git.tukaani.org/xz.git
 [submodule "deps/SDL-mirror"]
 	path = deps/sdl
 	url = https://github.com/spurious/SDL-mirror
-[submodule "deps/poco"]
-	path = deps/poco
-	url = https://github.com/pocoproject/poco
 [submodule "deps/googletest"]
 	path = deps/googletest
 	url = https://github.com/google/googletest.git
