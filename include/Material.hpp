@@ -6,6 +6,8 @@
 #include "EventDispatcher.hpp"
 
 #include <string>
+#include <vector>
+#include <map>
 
 namespace MyUPlay {
 
@@ -16,8 +18,29 @@ namespace MyUPlay {
 
 		public:
 
+			enum MaterialType { //Must be caps to avoid name clash
+				LINEBASICMATERIAL,
+				LINEDASHEDMATERIAL,
+				MATERIAL,
+				MESHBASICMATERIAL,
+				MESHDEPTHMATERIAL,
+				MESHFACEMATERIAL,
+				MESHLAMBERTMATERIAL,
+				MESHNORMALMATERIAL,
+				MESHPHONGMATERIAL,
+				POINTSMATERIAL,
+				RAWSHADERMATERIAL,
+				SHADERMATERIAL,
+				SPRITEMATERIAL
+			};
+
+			MaterialType type = MATERIAL;
+
 			unsigned id;
 			Math::UUID uuid = Math::generateUUID();
+
+			std::map<std::string, std::map<std::string, std::string> > shaderData;
+			std::vector<std::pair<std::string, std::string> > defines;
 
 			std::string name;
 
