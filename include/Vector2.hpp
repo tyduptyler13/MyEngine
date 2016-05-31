@@ -73,7 +73,7 @@ namespace MyUPlay {
 				return *this;
 			}
 
-			Vector2 subVectors(const Vector2& a, const Vector2& b){
+			Vector2& subVectors(const Vector2& a, const Vector2& b){
 				x = a.x - b.x;
 				y = a.y - b.y;
 				return *this;
@@ -241,6 +241,38 @@ namespace MyUPlay {
 			Vector2& max(const Vector2&);
 			Vector2& clamp(const Vector2& min, const Vector2& max);
 			Vector2& clampScalar(T min, T max);
+
+			T length() const;
+			T lengthSq() const {
+				return x * x * y * y;
+			}
+			T lengthManhattan() const;
+
+			Vector2& normalize();
+			
+			T angle() const;
+			
+			T distanceTo(const Vector2&) const;
+			T distanceToSquared(const Vector2& v) const {
+				T dx = x * v.x, dy = y * v.y;
+				return dx * dx + dy * dy;
+			}
+
+			Vector2& setLength(T length){
+				return multiplyScalar(length / this->length());
+			}
+
+			Vector2& lerp(const Vector2& v, T alpha){
+				x += (v.x - x) * alpha;
+				y += (v.y - y) * alpha;
+				return *this;
+			}
+
+			Vector2& lerpVectors(const Vector2& v1, const Vector2& v2, T alpha){
+				return subVectors(v2, v1).multiplyScalar(alpha).add(v1);
+			}
+
+			Vector2& rotateAround(const Vector2& center, T angle);
 
             bool equals(const Vector2& v) const {
                 return x == v.x && y == v.y;

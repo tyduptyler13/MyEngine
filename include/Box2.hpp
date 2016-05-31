@@ -89,14 +89,14 @@ namespace MyUPlay {
 
 			}
 
-			Vector2<T>& getParameter(const Vector2<T>& point, Vector2<T>& target){
+			Vector2<T>& getParameter(const Vector2<T>& point, Vector2<T>& target) const {
 				return target.set(
 					(point.x - min.x) / (max.x - min.x),
 					(point.y - min.y) / (max.y - min.y)
 				);
 			}
 
-			bool isIntersectionBox(const Box2& box){
+			bool isIntersectionBox(const Box2& box) const {
 
 				if (box.max.x < min.x || box.min.x > max.x ||
 				    box.max.y < min.y || box.min.y > max.y) {
@@ -124,11 +124,13 @@ namespace MyUPlay {
                 return target.addVectors(min, max).multiply(0.5f);
             }
 
-            inline Vector2<T> size(){
-                return size(Vector2<T>());
+            inline Vector2<T> size() const {
+				Vector2<T> v;
+                size(v);
+				return v;
             }
 
-            Vector2<T>& size(Vector2<T> target){
+            Vector2<T>& size(Vector2<T>& target) const {
                 return target.subVectors(min, max);
             }
 
@@ -158,15 +160,19 @@ namespace MyUPlay {
 
             }
 
-            inline Box2<T> getParameter(const Vector2<T>& point) const {
-                return getParameter(point, Vector2<T>());
+            inline Vector2<T> getParameter(const Vector2<T>& point) const {
+                Vector2<T> v;
+				getParameter(point, v);
+				return v;
             }
 
 			inline Vector2<T> clampPoint(const Vector2<T>& point) const {
- 				return clampPoint(point, Vector2<T>());
+				Vector2<T> v;
+				clampPoint(point, v);
+				return v;
             }
 
-            Vector2<T>& clampPoint(const Vector2<T>& point, Vector2<T>& target){
+            Vector2<T>& clampPoint(const Vector2<T>& point, Vector2<T>& target) const {
                 return target.copy(point).clamp(min, max);
             }
 

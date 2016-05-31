@@ -16,6 +16,3 @@
 [submodule "deps/googletest"]
 	path = deps/googletest
 	url = https://github.com/google/googletest.git
-[submodule "deps/cef"]
-	path = deps/cef
-	url = https://bitbucket.org/chromiumembedded/cef.git
