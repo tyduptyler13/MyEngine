@@ -458,8 +458,9 @@ namespace MyUPlay {
 				return ((x == v.x) && (y == v.y) && (z == v.z));
 			}
 
-			//Disabled until we decide the best method for moving data into an array/vector
-			//std::vector<T>& toArray(T array[], unsigned offset);
+			std::array<T, 3> toArray(){
+				return {x, y, z};
+			};
 			//Vector3& fromArray(T array[], unsigned offset);
 
 		};

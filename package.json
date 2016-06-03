@@ -1,0 +1,9 @@
+{
+  "name": "MyEngine",
+  "description": "A powerful mixture of nodejs, chrome, and a game engine.",
+  "version": "0.0.1",
+  "dev-dependencies": {
+    "electron-prebuilt": "^1.2.1"
+  },
+  "main": "game.js"
+}

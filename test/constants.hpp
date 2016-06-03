@@ -3,24 +3,24 @@
 
 namespace Test {
 
-	extern float posInf;
-	extern float negInf;
+	extern const float posInf;
+	extern const float negInf;
 
-	extern MyUPlay::MyEngine::Vector2<float> zero2;
-	extern MyUPlay::MyEngine::Vector2<float> one2;
-	extern MyUPlay::MyEngine::Vector2<float> two2;
-	extern MyUPlay::MyEngine::Vector2<float> negInf2;
-	extern MyUPlay::MyEngine::Vector2<float> posInf2;
+	extern const MyUPlay::MyEngine::Vector2<float> zero2;
+	extern const MyUPlay::MyEngine::Vector2<float> one2;
+	extern const MyUPlay::MyEngine::Vector2<float> two2;
+	extern const MyUPlay::MyEngine::Vector2<float> negInf2;
+	extern const MyUPlay::MyEngine::Vector2<float> posInf2;
 
-	extern MyUPlay::MyEngine::Vector3<float> zero3;
-	extern MyUPlay::MyEngine::Vector3<float> one3;
-	extern MyUPlay::MyEngine::Vector3<float> two3;
-	extern MyUPlay::MyEngine::Vector3<float> negInf3;
-	extern MyUPlay::MyEngine::Vector3<float> posInf3;
+	extern const MyUPlay::MyEngine::Vector3<float> zero3;
+	extern const MyUPlay::MyEngine::Vector3<float> one3;
+	extern const MyUPlay::MyEngine::Vector3<float> two3;
+	extern const MyUPlay::MyEngine::Vector3<float> negInf3;
+	extern const MyUPlay::MyEngine::Vector3<float> posInf3;
 
-	extern float x;
-	extern float y;
-	extern float z;
-	extern float w;
+	extern const float x;
+	extern const float y;
+	extern const float z;
+	extern const float w;
 
 }

@@ -46,14 +46,14 @@ namespace MyUPlay {
 				if (f.vertexNormals != NULL){
 					vertexNormals = new std::array<Vector3<T>, 3>();
 					for (unsigned i = 0; i < 3; ++i){
-						vertexNormals[i] = f.vertexNormals[i];
+						vertexNormals.get()[i] = f.vertexNormals[i];
 					}
 				}
 
 				if (f.vertexColors != NULL){
-					vertexColors = new std::array<Vector3<T>, 3>();
+					vertexColors = new std::array<Color, 3>();
 					for (unsigned i = 0; i < 3; ++i){
-						vertexColors[i] = f.vertexColors[i];
+						vertexColors.get()[i] = f.vertexColors[i];
 					}
 				}
 
@@ -65,7 +65,6 @@ namespace MyUPlay {
 				return copy(f);
 			}
 
-
 		};
 
 	}
@@ -73,4 +72,3 @@ namespace MyUPlay {
 }
 
 #endif
-

@@ -39,7 +39,6 @@
 				"src/Loader.cpp",
 				"src/OpenGLRenderer.cpp",
 				"src/Renderer.cpp",
-				"src/Vector2.cpp",
 				"src/Box3.cpp",
 				"src/LOD.cpp",
 				"src/Scene.cpp",
@@ -53,7 +52,8 @@
 				"src/SkinnedMesh.cpp",
 				"src/CompressedTexture.cpp",
 				"src/GLES2Renderer.cpp",
-				"src/Material.cpp"
+				"src/Material.cpp",
+				"src/Math.cpp"
 			],
 			"include_dirs": [
 				"include"

@@ -20,7 +20,7 @@ namespace MyUPlay {
 		public:
 
 			Geometry<T> geometry;
-			Material<T> Material;
+			Material<T> material;
 
 			void updateMorphTargets();
 			unsigned getMorphTargetIndexByName(const std::string& s) const;
@@ -31,4 +31,3 @@ namespace MyUPlay {
 	}
 
 }
-

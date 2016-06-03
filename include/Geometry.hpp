@@ -24,6 +24,11 @@ namespace MyUPlay {
 	namespace MyEngine {
 
 		template <typename T>
+		struct FaceNormal {
+			Vector3<T> a, b, c;
+		};
+
+		template <typename T>
 		struct MorphTargets {
 			std::string name;
 			std::vector<Vector3<T> > vertices;
@@ -32,7 +37,8 @@ namespace MyUPlay {
 		template <typename T>
 		struct MorphNormals {
 			std::string name;
-			std::vector<Vector3<T> > normals;
+			std::vector<Vector3<T> > faceNormals;
+			std::vector<FaceNormal<T> > vertexNormals;
 		};
 
 		template <typename T>

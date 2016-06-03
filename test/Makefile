@@ -1,6 +1,6 @@
-CFLAGS=-O2 -Wall -Wextra -pedantic -I../include -I../deps/googletest/include -pthread --std=c++11
-LFLAGS=../deps/googletest/libgtest.a ../deps/googletest/libgtest_main.a
-CXX=clang++
+CFLAGS=-g -Wall -Wextra -pedantic -I../include -I../deps/googletest/include -pthread --std=c++11
+LFLAGS=-lpthread -L../deps/googletest -lgtest -lgtest_main -L../build/out/Default/obj.target -lMyEngine 
+CXX=g++
 
 FILES=$(wildcard *.cc)
 
