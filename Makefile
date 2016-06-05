@@ -1,7 +1,7 @@
 .PHONY: configure all clean compile
 
-export CC=clang
-export CXX=clang++
+#export CC=clang
+#export CXX=clang++
 
 all: compile
 
