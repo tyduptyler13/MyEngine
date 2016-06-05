@@ -113,7 +113,7 @@ namespace MyUPlay {
 				return *this;
 			}
 
-			Vector3 operator+(const Vector3& b) const {
+			inline Vector3 operator+(const Vector3& b) const {
 				Vector3 v;
 				v.x = x + b.x;
 				v.y = y + b.y;
@@ -182,7 +182,7 @@ namespace MyUPlay {
 				return multiply(v);
 			}
 
-			Vector3& mutliply(T scalar){
+			Vector3& multiply(T scalar){
 				x *= scalar;
 				y *= scalar;
 				z *= scalar;
@@ -385,7 +385,7 @@ namespace MyUPlay {
 				}
 
 				if (y > v.y){
-					x = v.y;
+					y = v.y;
 				}
 
 				if (z > v.z){
@@ -489,7 +489,7 @@ namespace MyUPlay {
 			Vector3& negate(){
 				x = -x;
 				y = -y;
-				z = -x;
+				z = -z;
 
 				return *this;
 			}
@@ -514,8 +514,8 @@ namespace MyUPlay {
 				return std::abs(x) + std::abs(y) + std::abs(z);
 			}
 
-			T normalize(){
-				divide(length());
+			Vector3& normalize(){
+				return divide(length());
 			}
 
 			Vector3& setLength(T l){
@@ -525,7 +525,7 @@ namespace MyUPlay {
 					multiply(l / oldLength);
 				}
 
-				return this;
+				return *this;
 			}
 
 			Vector3& lerp(const Vector3& v, T alpha){
@@ -567,7 +567,7 @@ namespace MyUPlay {
 
 				v1.normalize();
 
-				T dot = dot(v1);
+				T dot = this->dot(v1);
 
 				return copy(v1).multiply(dot);
 
@@ -587,7 +587,7 @@ namespace MyUPlay {
 
 				Vector3 v1(normal);
 
-				return sub(v1.multiplyScalar(2 * dot(normal)));
+				return sub(v1.multiply(2 * dot(normal)));
 
 			}
 
@@ -595,7 +595,7 @@ namespace MyUPlay {
 
 				T theta = dot(v) / (length() * v.length());
 
-				return acos(Math::clamp(theta, -1, 1));
+				return acos(Math::clamp<T>(theta, -1, 1));
 
 			}
 
@@ -646,8 +646,16 @@ namespace MyUPlay {
 
 			}
 
-			bool operator==(const Vector3& v) const {
+			bool equals(const Vector3& v) const {
 				return ((x == v.x) && (y == v.y) && (z == v.z));
+			}
+
+			bool operator==(const Vector3& v) const {
+				return equals(v);
+			}
+
+			bool operator!=(const Vector3& v) const {
+				return !equals(v);
 			}
 
 			std::array<T, 3> toArray(){

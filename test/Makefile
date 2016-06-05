@@ -10,7 +10,7 @@ test: $(FILES:.cc=.o)
 check: test
 	./test
 
-%.o: %.cc
+%.o: %.cc ../include/%.hpp
 	$(CXX) $(CFLAGS) -c $< -o $@
 
 clean:
