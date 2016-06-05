@@ -9,7 +9,6 @@
 				"src/AmbientLight.cpp",
 				"src/Curve.cpp",
 				"src/Gyroscope.cpp",
-				"src/Matrix3.cpp",
 				"src/PointCloud.cpp",
 				"src/Spline.cpp",
 				"src/Animation.cpp",

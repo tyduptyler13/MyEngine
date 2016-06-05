@@ -3,6 +3,9 @@
 
 #include <vector>
 #include <array>
+#include <string>
+#include <stdexcept>
+#include <iostream>
 
 #include "Vector3.hpp"
 #include "Matrix3.hpp"
@@ -48,7 +51,7 @@ namespace MyUPlay {
 
 			Matrix3& set(T n11, T n12, T n13, T n21, T n22, T n23, T n31, T n32, T n33){
 
-				T* te = elements;
+				auto& te = elements;
 
 				te[ 0 ] = n11; te[ 3 ] = n12; te[ 6 ] = n13;
 				te[ 1 ] = n21; te[ 4 ] = n22; te[ 7 ] = n23;
@@ -64,12 +67,12 @@ namespace MyUPlay {
 					0, 1, 0,
 					0, 0, 1
 				   );
-				
+
 				return *this;
 			}
 
 			std::vector<Vector3<T> >& applyToVector3Array(std::vector<Vector3<T> >& array, unsigned offset = 0, unsigned length = 0) const {
-				
+
 				Vector3<T> v1;
 
 				if ( length == 0 ) length = array.size();
@@ -103,17 +106,56 @@ namespace MyUPlay {
 
 				T& a = elements[ 0 ], b = elements[ 1 ], c = elements[ 2 ],
 				   d = elements[ 3 ], e = elements[ 4 ], f = elements[ 5 ],
-				   g = elements[ 6 ], h = elements[ 7 ], i = elements[ 8 ]; 
+				   g = elements[ 6 ], h = elements[ 7 ], i = elements[ 8 ];
 
 				return a * e * i - a * f * h - b * d * i + b * f * g + c * d * h - c * e * g;
 
 			}
 
-			Matrix3& getInverse(const Matrix4<T>&, bool throwOnInvertible);
-			
+			Matrix3& getInverse(const Matrix4<T>& m, bool throwOnInvertible){
+
+				auto& me = m.elements;
+				auto& te = elements;
+
+				te[ 0 ] =   me[ 10 ] * me[ 5 ] - me[ 6 ] * me[ 9 ];
+				te[ 1 ] = - me[ 10 ] * me[ 1 ] + me[ 2 ] * me[ 9 ];
+				te[ 2 ] =   me[ 6 ] * me[ 1 ] - me[ 2 ] * me[ 5 ];
+				te[ 3 ] = - me[ 10 ] * me[ 4 ] + me[ 6 ] * me[ 8 ];
+				te[ 4 ] =   me[ 10 ] * me[ 0 ] - me[ 2 ] * me[ 8 ];
+				te[ 5 ] = - me[ 6 ] * me[ 0 ] + me[ 2 ] * me[ 4 ];
+				te[ 6 ] =   me[ 9 ] * me[ 4 ] - me[ 5 ] * me[ 8 ];
+				te[ 7 ] = - me[ 9 ] * me[ 0 ] + me[ 1 ] * me[ 8 ];
+				te[ 8 ] =   me[ 5 ] * me[ 0 ] - me[ 1 ] * me[ 4 ];
+
+				T det = me[ 0 ] * te[ 0 ] + me[ 1 ] * te[ 3 ] + me[ 2 ] * te[ 6 ];
+
+				//no inverse
+
+				if (det == 0){
+
+					const std::string msg = "Matrix3.getInverse(): can't invert matrix, determinant is 0";
+
+					if (throwOnInvertible) {
+						throw std::logic_error(msg);
+					} else {
+						std::cerr << msg << std::endl;
+					}
+
+					identity();
+
+					return *this;
+
+				}
+
+				multiply( 1.0 / det );
+
+				return *this;
+
+			}
+
 			Matrix3& transpose(){
 				T tmp;
-				T* m = elements;
+				auto& m = elements;
 
 				tmp = m[ 1 ]; m[ 1 ] = m[ 3 ]; m[ 3 ] = tmp;
 				tmp = m[ 2 ]; m[ 2 ] = m[ 6 ]; m[ 6 ] = tmp;
@@ -140,7 +182,7 @@ namespace MyUPlay {
 
 			Matrix3& transposeIntoArray(std::vector<T>& r) const {
 
-				T* m = elements;
+				auto& m = elements;
 
 				r[ 0 ] = m[ 0 ];
 				r[ 1 ] = m[ 3 ];

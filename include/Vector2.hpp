@@ -187,6 +187,14 @@ namespace MyUPlay {
 						return sub(scalar);
 					}
 
+					Vector2 operator-(const Vector2& v) const {
+						return Vector2(*this).sub(v);
+					}
+
+					Vector2 operator-(T scalar) const {
+						return Vector2(*this).sub(scalar);
+					}
+
 					inline Vector2 operator*=(T s) const {
 						return Vector2(*this).multiplyScalar(s);
 					}
@@ -297,7 +305,7 @@ namespace MyUPlay {
 
 					}
 					T lengthSq() const {
-						return x * x * y * y;
+						return x * x + y * y;
 					}
 					T lengthManhattan() const {
 						return abs(x) + abs(y);
@@ -317,7 +325,7 @@ namespace MyUPlay {
 						return sqrt(distanceToSquared(v));
 					}
 					T distanceToSquared(const Vector2& v) const {
-						T dx = x * v.x, dy = y * v.y;
+						T dx = x - v.x, dy = y - v.y;
 						return dx * dx + dy * dy;
 					}
 
@@ -349,12 +357,20 @@ namespace MyUPlay {
 
 					}
 
+					T dot(const Vector2& v) const {
+						return x * v.x + y * v.y;
+					}
+
 					bool equals(const Vector2& v) const {
 						return x == v.x && y == v.y;
 					}
 
 					bool operator==(const Vector2& v) const {
 						return equals(v);
+					}
+
+					bool operator!=(const Vector2& v) const {
+						return !equals(v);
 					}
 			};
 

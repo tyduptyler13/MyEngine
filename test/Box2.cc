@@ -14,12 +14,12 @@ TEST(Box2, constructor){
    EXPECT_EQ(negInf2, a.max);
 
    a = Box2f(zero2, zero2);
-   EXPECT_TRUE( a.min == zero2 );
-   EXPECT_TRUE( a.max == zero2 );
+   EXPECT_EQ( a.min, zero2 );
+   EXPECT_EQ( a.max, zero2 );
 
    a = Box2f( zero2, one2 );
-   EXPECT_TRUE( a.min == zero2 );
-   EXPECT_TRUE( a.max == one2 );
+   EXPECT_EQ( a.min, zero2 );
+   EXPECT_EQ( a.max, one2 );
 }
 
 TEST(Box2 , copy ){
@@ -186,15 +186,15 @@ TEST(Box2 , distanceToPoint ){
    Box2f a = Box2f( zero2, zero2 );
    Box2f b = Box2f( -one2, one2 );
 
-   EXPECT_TRUE( a.distanceToPoint( Vector2f( 0, 0 ) ) == 0 );
-   EXPECT_TRUE( a.distanceToPoint( Vector2f( 1, 1 ) ) == sqrt( 2 ) );
-   EXPECT_TRUE( a.distanceToPoint( Vector2f( -1, -1 ) ) == sqrt( 2 ) );
+   EXPECT_EQ( a.distanceToPoint( Vector2f( 0, 0 ) ), 0 );
+   EXPECT_EQ( a.distanceToPoint( Vector2f( 1, 1 ) ), sqrt( 2.0f ) );
+   EXPECT_EQ( a.distanceToPoint( Vector2f( -1, -1 ) ), sqrt( 2.0f ) );
 
-   EXPECT_TRUE( b.distanceToPoint( Vector2f( 2, 2 ) ) == sqrt( 2 ) );
-   EXPECT_TRUE( b.distanceToPoint( Vector2f( 1, 1 ) ) == 0 );
-   EXPECT_TRUE( b.distanceToPoint( Vector2f( 0, 0 ) ) == 0 );
-   EXPECT_TRUE( b.distanceToPoint( Vector2f( -1, -1 ) ) == 0 );
-   EXPECT_TRUE( b.distanceToPoint( Vector2f( -2, -2 ) ) == sqrt( 2 ) );
+   EXPECT_EQ( b.distanceToPoint( Vector2f( 2, 2 ) ), sqrt( 2.0f ) );
+   EXPECT_EQ( b.distanceToPoint( Vector2f( 1, 1 ) ), 0 );
+   EXPECT_EQ( b.distanceToPoint( Vector2f( 0, 0 ) ), 0 );
+   EXPECT_EQ( b.distanceToPoint( Vector2f( -1, -1 ) ), 0 );
+   EXPECT_EQ( b.distanceToPoint( Vector2f( -2, -2 ) ), sqrt( 2.0f ) );
 }
 
 TEST(Box2 , isIntersectionBox ){
@@ -246,8 +246,8 @@ TEST(Box2 , translate ){
    //Box2f c = Box2f( one2.negate(), one2 ); Unused
    Box2f d = Box2f( -one2, zero2 );
 
-   EXPECT_EQ( a.translate( one2 ) ,  Box2f( one2, one2 ) );
-   EXPECT_EQ( a.translate( one2 ).translate( -one2 ) ,  a );
-   EXPECT_EQ( d.translate( one2 ) ,  b );
-   EXPECT_EQ( b.translate( -one2 ) ,  d );
+   EXPECT_EQ( Box2f(a).translate( one2 ) ,  Box2f( one2, one2 ) );
+   EXPECT_EQ( Box2f(a).translate( one2 ).translate( -one2 ) ,  a );
+   EXPECT_EQ( Box2f(d).translate( one2 ) ,  b );
+   EXPECT_EQ( Box2f(b).translate( -one2 ) ,  d );
 }

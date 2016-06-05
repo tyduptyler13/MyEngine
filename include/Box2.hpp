@@ -176,7 +176,7 @@ namespace MyUPlay {
 					}
 
 					T distanceToPoint(Vector2<T> point) const {
-						return point.clamp(min, max).sub(point).length();
+						return Vector2<T>(point).clamp(min, max).sub(point).length();
 					}
 
 					Box2& intersect(const Box2& box){

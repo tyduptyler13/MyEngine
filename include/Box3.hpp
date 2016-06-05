@@ -1,12 +1,12 @@
 #ifndef MYUPLAY_MYENGINE_BOX3
 #define MYUPLAY_MYENGINE_BOX3
 
+#include <limits>
+#include <vector>
+
 #include "Vector3.hpp"
 #include "Object3D.hpp"
 #include "Sphere.hpp"
-
-#include <limits>
-#include <vector>
 
 namespace MyUPlay {
 
@@ -17,6 +17,9 @@ namespace MyUPlay {
 		#endif
 		#ifndef OBJECT3D_DEFINED
 		template <typename T> class Object3D;
+		#endif
+		#ifndef VECTOR3_DEFINED
+		template <typename T> class Vector3;
 		#endif
 
 		template <typename T>
@@ -149,7 +152,7 @@ namespace MyUPlay {
 
 			Box3& applyMatrix4(const Matrix4<T>& matrix){
 
-				vector<Vector3<T> > points(8);
+				std::vector<Vector3<T> > points(8);
 
 				points[ 0 ].set( min.x, min.y, min.z ).applyMatrix4( matrix ); // 000
 				points[ 1 ].set( min.x, min.y, max.z ).applyMatrix4( matrix ); // 001
