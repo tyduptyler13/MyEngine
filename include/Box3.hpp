@@ -21,7 +21,7 @@ namespace MyUPlay {
 
 		template <typename T>
 		class Box3 {
-			
+
 			protected:
 			//Shorthand tricks.
 
@@ -39,7 +39,7 @@ namespace MyUPlay {
 
 			Box3(Vector3<T> min, Vector3<T> max) : min(min), max(max) {}
 			Box3(const Vector3<T>& min, const Vector3<T>& max) : min(min), max(max){}
-			
+
 			Box3(const Box3& b) : min(b.min), max(b.max) {}
 
 			Box3& makeEmpty()  {
@@ -73,22 +73,43 @@ namespace MyUPlay {
 				return (max.x < min.x) || (max.y < min.y) || (max.z < min.z);
 			}
 
-			Box3& setFromObject(Object3D<T>& object);
+			Box3& setFromObject(Object3D<T>& object){
+
+				object.updateMatrixWorld(true);
+
+				makeEmpty();
+
+				object.traverse([this](Object3D<T>& node) {
+
+					//This function assumes we don't have BufferGeometry. Everything is already native.
+					for (Vector3<T> vertex : node.geometry.verticies) {
+
+						vertex.applyMatrix4( node.matrixWorld );
+
+						expandByPoint( vertex );
+
+					}
+
+				});
+
+				return *this;
+
+			}
 
 			bool containsPoint(const Vector3<T>& point)  {
 
 				if (point.x < min.x || point.x > max.x ||
 				    point.y < min.y || point.y > max.y ||
 				    point.z < min.z || point.z > max.z) {
-				
+
 					return false;
-				
+
 				}
 
 				return true;
 
 			}
-			
+
 			bool containsBox(const Box3& box)  {
 
 				if (( min.x <= box.min.x ) && ( box.max.x <= max.x ) &&
@@ -126,7 +147,25 @@ namespace MyUPlay {
 
 			}
 
-			Box3& applyMatrix4(const Matrix4<T>&);
+			Box3& applyMatrix4(const Matrix4<T>& matrix){
+
+				vector<Vector3<T> > points(8);
+
+				points[ 0 ].set( min.x, min.y, min.z ).applyMatrix4( matrix ); // 000
+				points[ 1 ].set( min.x, min.y, max.z ).applyMatrix4( matrix ); // 001
+				points[ 2 ].set( min.x, max.y, min.z ).applyMatrix4( matrix ); // 010
+				points[ 3 ].set( min.x, max.y, max.z ).applyMatrix4( matrix ); // 011
+				points[ 4 ].set( max.x, min.y, min.z ).applyMatrix4( matrix ); // 100
+				points[ 5 ].set( max.x, min.y, max.z ).applyMatrix4( matrix ); // 101
+				points[ 6 ].set( max.x, max.y, min.z ).applyMatrix4( matrix ); // 110
+				points[ 7 ].set( max.x, max.y, max.z ).applyMatrix4( matrix );  // 111
+
+				makeEmpty();
+				setFromPoints( points );
+
+				return *this;
+
+			}
 
 			Sphere<T> getBoundingSphere() {
 				Sphere<T> s;

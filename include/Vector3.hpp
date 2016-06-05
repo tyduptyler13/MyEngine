@@ -9,6 +9,7 @@
 #include "Quaternion.hpp"
 #include "Euler.hpp"
 #include "Camera.hpp"
+#include "Math.hpp"
 
 namespace MyUPlay {
 
@@ -236,13 +237,108 @@ namespace MyUPlay {
 
 			}
 
-			Vector3& applyMatrix3(const Matrix3<T>&);
-			Vector3& applyMatrix4(const Matrix4<T>&);
-			Vector3& applyProjection(const Matrix4<T>&);
-			Vector3& applyQuaternion(const Quaternion<T>&);
-			Vector3& project(const Camera<T>&);
-			Vector3& unproject(const Camera<T>&);
-			Vector3& transformDirection(const Matrix4<T>&);
+			Vector3& applyMatrix3(const Matrix3<T>& m){
+
+				T x = this->x, y = this->y, z = this->z;
+
+				auto& e = m.elements;
+
+				this->x = e[0] * x + e[3] * y + e[6] * z;
+				this->y = e[1] * x + e[4] * y + e[7] * z;
+				this->z = e[2] * x + e[5] * y + e[8] * z;
+
+				return *this;
+
+			}
+
+			Vector3& applyMatrix4(const Matrix4<T>& m){
+
+				T x = this->x, y = this->y, z = this->z;
+
+				auto& e = m.elements;
+
+				this->x = e[ 0 ] * x + e[ 4 ] * y + e[ 8 ]  * z + e[ 12 ];
+				this->y = e[ 1 ] * x + e[ 5 ] * y + e[ 9 ]  * z + e[ 13 ];
+				this->z = e[ 2 ] * x + e[ 6 ] * y + e[ 10 ] * z + e[ 14 ];
+
+				return *this;
+
+			}
+
+			Vector3& applyProjection(const Matrix4<T>& m){
+
+				T x = this->x, y = this->y, z = this->z;
+
+				auto& e = m.elements;
+				T d = 1 / ( e[ 3 ] * x + e[ 7 ] * y + e[ 11 ] * z + e[ 15 ] ); // perspective divide
+
+				this->x = ( e[ 0 ] * x + e[ 4 ] * y + e[ 8 ]  * z + e[ 12 ] ) * d;
+				this->y = ( e[ 1 ] * x + e[ 5 ] * y + e[ 9 ]  * z + e[ 13 ] ) * d;
+				this->z = ( e[ 2 ] * x + e[ 6 ] * y + e[ 10 ] * z + e[ 14 ] ) * d;
+
+				return *this;
+
+			}
+
+			Vector3& applyQuaternion(const Quaternion<T>& q){
+
+				T x = this->x, y = this->y, z = this->z;
+
+				T& qx = q.x;
+				T& qy = q.y;
+				T& qz = q.z;
+				T& qw = q.w;
+
+				// calculate quat * vector
+
+				T ix =  qw * x + qy * z - qz * y;
+				T iy =  qw * y + qz * x - qx * z;
+				T iz =  qw * z + qx * y - qy * x;
+				T iw = - qx * x - qy * y - qz * z;
+
+				// calculate result * inverse quat
+
+				this->x = ix * qw + iw * - qx + iy * - qz - iz * - qy;
+				this->y = iy * qw + iw * - qy + iz * - qx - ix * - qz;
+				this->z = iz * qw + iw * - qz + ix * - qy - iy * - qx;
+
+				return this;
+
+			}
+
+			Vector3& project(const Camera<T>& camera){
+
+				Matrix4<T> matrix;
+
+				matrix.multiplyMatricies(camera.matrixWorld, matrix.getInverse( camera.projectionMatrix ) );
+				return applyProjection();
+
+			}
+
+			Vector3& unproject(const Camera<T>& camera){
+
+				Matrix4<T> matrix;
+
+				matrix.multiplyMatricies(camera.matrixWorld, matrix.getInverse( camera.projectionMatrix ) );
+				return applyProjection(matrix);
+
+			}
+
+			Vector3& transformDirection(const Matrix4<T>& m){
+
+				T x = this->x, y = this->y, z = this->z;
+
+				auto& e = m.elements;
+
+				this->x = e[ 0 ] * x + e[ 4 ] * y + e[ 8 ]  * z;
+				this->y = e[ 1 ] * x + e[ 5 ] * y + e[ 9 ]  * z;
+				this->z = e[ 2 ] * x + e[ 6 ] * y + e[ 10 ] * z;
+
+				normalize();
+
+				return *this;
+
+			}
 
 			Vector3& divide(const Vector3& v){
 				x /= v.x;
@@ -282,10 +378,73 @@ namespace MyUPlay {
 				return v;
 			}
 
-			Vector3& min(const Vector3&);
-			Vector3& max(const Vector3&);
-			Vector3& clamp(const Vector3& min, const Vector3& max);
-			Vector3& clampScalar(T min, T max);
+			Vector3& min(const Vector3& v){
+
+				if (x > v.x){
+					x = v.x;
+				}
+
+				if (y > v.y){
+					x = v.y;
+				}
+
+				if (z > v.z){
+					z = v.z;
+				}
+
+				return *this;
+
+			}
+
+			Vector3& max(const Vector3& v){
+
+				if (x < v.x){
+					x = v.x;
+				}
+
+				if (y < v.y){
+					y = v.y;
+				}
+
+				if (z < v.z){
+					z = v.z;
+				}
+
+				return *this;
+
+			}
+
+			Vector3& clamp(const Vector3& min, const Vector3& max){
+
+				if (x < min.x) {
+					x = min.x;
+				} else if (x > max.x) {
+					x = max.x;
+				}
+
+				if (y < min.y) {
+					y = min.y;
+				} else if (y > max.y) {
+					y = max.y;
+				}
+
+				if (z < min.z) {
+					z = min.z;
+				} else if (z > max.z) {
+					z = max.z;
+				}
+
+				return *this;
+
+			}
+
+			Vector3& clampScalar(T min, T max){
+
+				Vector3 low(min, min, min), high(max, max, max);
+
+				return clamp(low, high);
+
+			}
 
 			Vector3& floor(){
 
@@ -402,10 +561,43 @@ namespace MyUPlay {
 
 			}
 
-			Vector3& projectOnVector(const Vector3&);
-			Vector3& projectOnPlane(const Vector3& normal);
-			Vector3& reflect(const Vector3& normal);
-			T angleTo(const Vector3&) const ;
+			Vector3& projectOnVector(const Vector3& vector){
+
+				Vector3 v1(vector);
+
+				v1.normalize();
+
+				T dot = dot(v1);
+
+				return copy(v1).multiply(dot);
+
+			}
+
+			Vector3& projectOnPlane(const Vector3& normal){
+
+				Vector3 v1(*this);
+
+				v1.projectOnVector(normal);
+
+				return sub(v1);
+
+			}
+
+			Vector3& reflect(const Vector3& normal){
+
+				Vector3 v1(normal);
+
+				return sub(v1.multiplyScalar(2 * dot(normal)));
+
+			}
+
+			T angleTo(const Vector3& v) const {
+
+				T theta = dot(v) / (length() * v.length());
+
+				return acos(Math::clamp(theta, -1, 1));
+
+			}
 
 			T distanceTo(const Vector3& v) const {
 				return std::sqrt(distanceToSquared(v));
