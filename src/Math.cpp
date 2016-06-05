@@ -8,11 +8,12 @@ namespace MyUPlay {
 	namespace MyEngine {
 		namespace Math {
 
-			static const std::string characters = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+			static const char[] characters = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
 			const UUID generateUUID(){
 
 				UUID uuid(36, ' ');
+				std::random_device rand;
 
 				for ( unsigned i = 0; i < 36; ++i ) {
 
@@ -21,8 +22,7 @@ namespace MyUPlay {
 					} else if (i == 14) {
 						uuid[i] = '4';
 					} else {
-						std::random_device rand;
-						uuid[i] = characters[ rand() % characters.size() ];
+						uuid[i] = characters[ rand() % 62 ];
 					}
 
 				}
@@ -32,14 +32,14 @@ namespace MyUPlay {
 			}
 
 			template <>
-				float euclideanModulo(float n, float m) {
-					return fmod(fmod(n,m) + m, m); //Needed specialization for float.
-				}
+			float euclideanModulo(float n, float m) {
+				return fmod(fmod(n,m) + m, m); //Needed specialization for float.
+			}
 
 			template <>
-				double euclideanModulo(double n, double m) {
-					return fmod(fmod(n,m) + m, m); //Needed specialization for double.
-				}
+			double euclideanModulo(double n, double m) {
+				return fmod(fmod(n,m) + m, m); //Needed specialization for double.
+			}
 
 			const double PI = std::acos( -1.0 );
 

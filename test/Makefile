@@ -3,6 +3,7 @@ LFLAGS=-lpthread -L../deps/googletest -lgtest -lgtest_main -L../build/out/Defaul
 CXX=g++
 
 FILES=$(wildcard *.cc)
+HEADERS=$(wildcard ../include/*.hpp)
 
 test: $(FILES:.cc=.o)
 	$(CXX) $(CFLAGS) $(FILES:.cc=.o) $(LFLAGS) -o test
@@ -10,7 +11,7 @@ test: $(FILES:.cc=.o)
 check: test
 	./test
 
-%.o: %.cc ../include/%.hpp
+%.o: %.cc $(HEADERS)
 	$(CXX) $(CFLAGS) -c $< -o $@
 
 clean:

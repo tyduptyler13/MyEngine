@@ -1,3 +1,6 @@
+#ifndef MYUPLAY_MYENGINE_TEST_CONSTANTS
+#define MYUPLAY_MYENGINE_TEST_CONSTANTS
+
 #include "Vector2.hpp"
 #include "Vector3.hpp"
 
@@ -24,3 +27,5 @@ namespace Test {
 	extern const float w;
 
 }
+
+#endif
