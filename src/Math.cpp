@@ -8,7 +8,7 @@ namespace MyUPlay {
 	namespace MyEngine {
 		namespace Math {
 
-			static const char[] characters = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+			static const char characters[63] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
 			const UUID generateUUID(){
 

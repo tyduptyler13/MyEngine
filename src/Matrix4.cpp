@@ -378,8 +378,9 @@ Matrix4<T>& Matrix4<T>::getInverse(const Matrix4<T>& m, bool throwOnInvertible) 
 
 		} else {
 
-			Log& l = Log::getInstance();
-			l << msg;
+			//TODO
+			//Log& l = Log::getInstance();
+			//l << msg;
 
 		}
 
