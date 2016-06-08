@@ -2,6 +2,7 @@
 #include <mutex>
 
 #include "Log.hpp"
+#include "Clock.hpp"
 
 using namespace std;
 using namespace MyUPlay::MyEngine;
@@ -14,25 +15,11 @@ static string getTime(){
 	return "[" + to_string(c.getElapsedSeconds()) + "]";
 }
 
-Log& Log::operator<<(const std::string s) {
+Log& Log::log(const std::string s) {
 
 	l.lock();
 
 	std::cout << getTime() << "[Log][" << klass << "] " << s << "\n";
-
-	l.unlock();
-
-	return *this;
-
-}
-
-Log& Log::operator<<(std::ostringstream& ss) {
-
-	l.lock();
-
-	std::cout << getTime() << "[Log][" << klass << "] " << ss.str() << "\n";
-	ss.clear();
-	ss.str(std::string());
 
 	l.unlock();
 

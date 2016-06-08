@@ -19,12 +19,10 @@ TEST(Log, output){
 
 	Log log("test");
 
-	log << "Single";
+	log.log("Single");
 
 	string output = testing::internal::GetCapturedStdout();
 
-	cerr << "[Debug] " << output << endl;
-
-	EXPECT_TRUE(regex_match(output, regex("\\[.+\\]\\[Log\\]\\[test\\] Single.+")));
+	EXPECT_TRUE(regex_match(output, regex("\\[.+\\]\\[Log\\]\\[test\\] Single\n")));
 
 }

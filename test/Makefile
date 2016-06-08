@@ -1,6 +1,5 @@
-CFLAGS=-g -Og -Wall -Wextra -pedantic -I../include -I../deps/googletest/include -pthread --std=c++11
+CFLAGS=-O2 -Wall -Wextra -pedantic -I../include -I../deps/googletest/include -pthread --std=c++11
 LFLAGS=-lpthread -L../deps/googletest -lgtest -lgtest_main -L../build/out/Default/obj.target -lMyEngine
-CXX=g++
 
 FILES=$(wildcard *.cc)
 HEADERS=$(wildcard ../include/*.hpp)

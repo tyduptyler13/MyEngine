@@ -1,7 +1,5 @@
 
 all: ShaderChunk.hpp
 
-
-ShaderChunk.hpp: *.glsl
+ShaderChunk.hpp: *.glsl generate.sh
 	./generate.sh
-

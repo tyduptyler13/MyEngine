@@ -147,6 +147,9 @@ namespace MyUPlay {
 
 
 		};
+		
+		typedef Euler<float> Eulerf;
+		typedef Euler<double> Eulerd;
 
 		#define EULER_DEFINED
 

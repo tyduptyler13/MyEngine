@@ -5,3 +5,5 @@ out
 build
 deps/gyp
 node_modules
+src/ShaderChunk.cpp
+include/ShaderChunk/ShaderChunk.hpp

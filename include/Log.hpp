@@ -1,10 +1,7 @@
 #ifndef MYUPLAY_MYENGINE_LOG
 #define MYUPLAY_MYENGINE_LOG
 
-#include <sstream>
 #include <string>
-
-#include "Clock.hpp"
 
 namespace MyUPlay {
 
@@ -22,11 +19,10 @@ namespace MyUPlay {
 
 			std::string klass;
 
+			Log() = delete; //Must have a name
 			Log(std::string s) : klass(s) {}
 
-			Log& operator<<(const std::string s);
-
-			Log& operator<<(std::ostringstream& ss);
+			Log& log(const std::string s);
 
 			Log& error(const std::string s);
 

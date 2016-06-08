@@ -10,10 +10,10 @@
  # 				"src/Geometry.cpp",
   				"src/Log.cpp",
   				"src/Math.cpp",
-  				"src/Matrix4.cpp",
  # 				"src/Object3D.cpp",
   				"src/PerspectiveCamera.cpp",
-  				"src/Ray.cpp"
+  				"src/Ray.cpp",
+  				"src/ShaderChunk.cpp"
 			],
 			"include_dirs": [
 				"include"
@@ -27,7 +27,8 @@
 				"-pedantic",
 				"-std=c++11",
 				"-g",
-				"-Og"
+#				"-O",
+#				"-flto"
 			]
 		}
 	]

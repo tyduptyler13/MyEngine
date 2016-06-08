@@ -27,12 +27,11 @@ namespace MyUPlay {
 		template <typename T>
 		class Quaternion {
 
-		private:
+		public:
+		
 			T x, y, z, w;
 
 			std::function<void()> onChangeCallback = [](){return 0;}; //Does nothing but can be overwritten.
-
-		public:
 
 			Quaternion(T x = 0, T y = 0, T z = 0, T w = 1)
 				:x(x), y(y), z(z), w(w){
@@ -103,7 +102,7 @@ namespace MyUPlay {
 				return Quaternion(*this);
 			}
 
-			Quaternion& setFromEuler(const Euler<T>&, bool update);
+			Quaternion& setFromEuler(const Euler<T>&, bool update = true);
 			Quaternion& setFromAxisAngle(const Vector3<T>& axis, T angle);
 			Quaternion& setFromRotationMatrix(const Matrix4<T>&);
 			Quaternion& setFromUnitVectors(const Vector3<T>& from, const Vector3<T>& to);
@@ -191,6 +190,9 @@ namespace MyUPlay {
 			}
 
 		};
+		
+		typedef Quaternion<float> Quaternionf;
+		typedef Quaternion<double> Quaterniond;
 
 		#define QUATERNION_DEFINED
 
