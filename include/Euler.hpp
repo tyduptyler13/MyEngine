@@ -5,7 +5,6 @@
 #include <functional>
 
 #include "Matrix4.hpp"
-#include "Quaternion.hpp"
 #include "Vector3.hpp"
 
 namespace MyUPlay {
@@ -22,23 +21,23 @@ namespace MyUPlay {
 		template<typename T> class Quaternion;
 		#endif
 
+		enum Order {
+			XYZ,
+			YZX,
+			ZXY,
+			XZY,
+			YXZ,
+			ZYX
+		};
+
 		template <typename T>
 		class Euler {
 
 		public:
-
-			enum Order {
-				XYZ,
-				YZX,
-				ZXY,
-				XZY,
-				YXZ,
-				ZYX
-			};
-
-		private:
 			T x, y, z;
 			Order order;
+
+		private:
 
 			std::function<void()> onChangeCallback = [](){return 0;};
 
@@ -129,7 +128,7 @@ namespace MyUPlay {
 			}
 
 			//fromArray and toArray don't make sense in C. They would require a dataStructure which is redundant to this class.
-			
+
 			Vector3<T>& toVector3(Vector3<T>& target) const {
 				return target.set(x, y, z);
 			}
@@ -147,7 +146,7 @@ namespace MyUPlay {
 
 
 		};
-		
+
 		typedef Euler<float> Eulerf;
 		typedef Euler<double> Eulerd;
 
@@ -157,5 +156,7 @@ namespace MyUPlay {
 
 }
 
-#endif
+//Strange but had to be done, Euler must load before anything that uses Order.
+#include "Quaternion.hpp"
 
+#endif

@@ -7,14 +7,18 @@
 #include "Euler.hpp"
 #include "Vector3.hpp"
 #include "Matrix4.hpp"
+#include "Math.hpp"
 
 namespace MyUPlay {
 
 	namespace MyEngine {
 
+		//Euler must be completely loaded, it cannot be forward declared due to Order enum.
+		/*
 		#ifndef EULER_DEFINED
 		template <typename T> class Euler;
 		#endif
+		*/
 
 		#ifndef VECTOR3_DEFINED
 		template <typename T> class Vector3;
@@ -28,7 +32,7 @@ namespace MyUPlay {
 		class Quaternion {
 
 		public:
-		
+
 			T x, y, z, w;
 
 			std::function<void()> onChangeCallback = [](){return 0;}; //Does nothing but can be overwritten.
@@ -102,10 +106,169 @@ namespace MyUPlay {
 				return Quaternion(*this);
 			}
 
-			Quaternion& setFromEuler(const Euler<T>&, bool update = true);
-			Quaternion& setFromAxisAngle(const Vector3<T>& axis, T angle);
-			Quaternion& setFromRotationMatrix(const Matrix4<T>&);
-			Quaternion& setFromUnitVectors(const Vector3<T>& from, const Vector3<T>& to);
+			Quaternion& setFromEuler(const Euler<T>& euler, bool update = true){
+				T c1 = cos(euler.x / 2);
+				T c2 = cos(euler.y / 2);
+				T c3 = cos(euler.z / 2);
+				T s1 = sin(euler.x / 2);
+				T s2 = sin(euler.y / 2);
+				T s3 = sin(euler.z / 2);
+
+				const Order& order = euler.order;
+
+				if ( order == Order::XYZ ) {
+
+					x = s1 * c2 * c3 + c1 * s2 * s3;
+					y = c1 * s2 * c3 - s1 * c2 * s3;
+					z = c1 * c2 * s3 + s1 * s2 * c3;
+					w = c1 * c2 * c3 - s1 * s2 * s3;
+
+				} else if ( order == Order::YXZ ) {
+
+					x = s1 * c2 * c3 + c1 * s2 * s3;
+					y = c1 * s2 * c3 - s1 * c2 * s3;
+					z = c1 * c2 * s3 - s1 * s2 * c3;
+					w = c1 * c2 * c3 + s1 * s2 * s3;
+
+				} else if ( order == Order::ZXY ) {
+
+					x = s1 * c2 * c3 - c1 * s2 * s3;
+					y = c1 * s2 * c3 + s1 * c2 * s3;
+					z = c1 * c2 * s3 + s1 * s2 * c3;
+					w = c1 * c2 * c3 - s1 * s2 * s3;
+
+				} else if ( order == Order::ZYX ) {
+
+					x = s1 * c2 * c3 - c1 * s2 * s3;
+					y = c1 * s2 * c3 + s1 * c2 * s3;
+					z = c1 * c2 * s3 - s1 * s2 * c3;
+					w = c1 * c2 * c3 + s1 * s2 * s3;
+
+				} else if ( order == Order::YZX ) {
+
+					x = s1 * c2 * c3 + c1 * s2 * s3;
+					y = c1 * s2 * c3 + s1 * c2 * s3;
+					z = c1 * c2 * s3 - s1 * s2 * c3;
+					w = c1 * c2 * c3 - s1 * s2 * s3;
+
+				} else if ( order == Order::XZY ) {
+
+					x = s1 * c2 * c3 - c1 * s2 * s3;
+					y = c1 * s2 * c3 - s1 * c2 * s3;
+					z = c1 * c2 * s3 + s1 * s2 * c3;
+					w = c1 * c2 * c3 + s1 * s2 * s3;
+
+				}
+
+				if (update) onChangeCallback();
+
+				return *this;
+
+			}
+
+			Quaternion& setFromAxisAngle(const Vector3<T>& axis, T angle){
+				T halfAngle = angle / 2;
+				T s = sin(halfAngle);
+
+				x = axis.x * s;
+				y = axis.y * s;
+				z = axis.z * s;
+				w = cos(halfAngle);
+
+				onChangeCallback();
+
+				return *this;
+
+			}
+
+			Quaternion& setFromRotationMatrix(const Matrix4<T>& m) {
+				const auto& te = m.elements;
+				const T& m11 = te[ 0 ], m12 = te[ 4 ], m13 = te[ 8 ],
+					 m21 = te[ 1 ], m22 = te[ 5 ], m23 = te[ 9 ],
+					 m31 = te[ 2 ], m32 = te[ 6 ], m33 = te[ 10 ];
+
+				T trace = m11 + m22 + m33;
+				T s;
+
+				if ( trace > 0 ) {
+
+					s = 0.5 / sqrt( trace + 1.0 );
+
+					w = 0.25 / s;
+					x = ( m32 - m23 ) * s;
+					y = ( m13 - m31 ) * s;
+					z = ( m21 - m12 ) * s;
+
+				} else if ( m11 > m22 && m11 > m33 ) {
+
+					s = 2.0 * sqrt( 1.0 + m11 - m22 - m33 );
+
+					w = ( m32 - m23 ) / s;
+					x = 0.25 * s;
+					y = ( m12 + m21 ) / s;
+					z = ( m13 + m31 ) / s;
+
+				} else if ( m22 > m33 ) {
+
+					s = 2.0 * sqrt( 1.0 + m22 - m11 - m33 );
+
+					w = ( m13 - m31 ) / s;
+					x = ( m12 + m21 ) / s;
+					y = 0.25 * s;
+					z = ( m23 + m32 ) / s;
+
+				} else {
+
+					s = 2.0 * sqrt( 1.0 + m33 - m11 - m22 );
+
+					w = ( m21 - m12 ) / s;
+					x = ( m13 + m31 ) / s;
+					y = ( m23 + m32 ) / s;
+					z = 0.25 * s;
+
+				}
+
+				onChangeCallback();
+
+				return *this;
+
+			}
+
+			Quaternion& setFromUnitVectors(const Vector3<T>& from, const Vector3<T>& to){
+
+				Vector3<T> v1;
+				const T EPS = 0.000001;
+
+				T r = from.dot( to ) + 1;
+
+				if ( r < EPS ) {
+
+					r = 0;
+
+					if ( abs( from.x ) > abs( from.z ) ) {
+
+						v1.set( - from.y, from.x, 0 );
+
+					} else {
+
+						v1.set( 0, - from.z, from.y );
+
+					}
+
+				} else {
+
+					v1.crossVectors( from, to );
+
+				}
+
+				x = v1.x;
+				y = v1.y;
+				z = v1.z;
+				w = r;
+
+				return normalize();
+
+			}
 
 			Quaternion& inverse() {
 				conjugate().normalize();
@@ -190,7 +353,7 @@ namespace MyUPlay {
 			}
 
 		};
-		
+
 		typedef Quaternion<float> Quaternionf;
 		typedef Quaternion<double> Quaterniond;
 
@@ -201,4 +364,3 @@ namespace MyUPlay {
 }
 
 #endif
-

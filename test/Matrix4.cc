@@ -195,17 +195,16 @@ TEST(Matrix4f, getInverse) {
         Matrix4f mSelfInverse = Matrix4f(m);
         mSelfInverse.getInverse( mSelfInverse );
 
-
         // self-inverse should the same as inverse
         EXPECT_TRUE(matrixEquals4( mSelfInverse, mInverse ));
 
         // the determinant of the inverse should be the reciprocal
-        EXPECT_TRUE(abs( m.det() * mInverse.det() - 1 ) < 0.0001);
+        EXPECT_LT(abs( m.det() * mInverse.det() - 1 ), 0.0001);
 
         Matrix4f mProduct = Matrix4f().multiplyMatrices( m, mInverse );
 
         // the determinant of the identity matrix is 1
-        EXPECT_TRUE(abs( mProduct.det() - 1 ) < 0.0001);
+        EXPECT_LT(abs( mProduct.det() - 1 ), 0.0001);
         EXPECT_TRUE(matrixEquals4( mProduct, identity ));
     }
 }
@@ -224,7 +223,7 @@ TEST(Matrix4f, makeBasis_extractBasis) {
         // check what goes in, is what comes out.
         for(unsigned j = 0; j < 3; j ++ ) {
             //console.log( outBasis[j], testBasis[j] );
-            EXPECT_TRUE(outBasis[j].equals( testBasis[j] ));        
+            EXPECT_TRUE(outBasis[j].equals( testBasis[j] ));
         }
 
         // get the basis out the hard war
@@ -234,9 +233,9 @@ TEST(Matrix4f, makeBasis_extractBasis) {
         }
         // did the multiply method of basis extraction work?
         for(unsigned j = 0; j < 3; j ++ ) {
-            EXPECT_TRUE(outBasis[j].equals( testBasis[j] ));        
+            EXPECT_TRUE(outBasis[j].equals( testBasis[j] ));
         }
-    }   
+    }
 }
 
 TEST(Matrix4f, transpose) {
@@ -246,9 +245,9 @@ TEST(Matrix4f, transpose) {
 
     b = Matrix4f().set( 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 );
     Matrix4f c = Matrix4f(b).transpose();
-    EXPECT_TRUE(! matrixEquals4( b, c )); 
+    EXPECT_TRUE(! matrixEquals4( b, c ));
     c.transpose();
-    EXPECT_TRUE(matrixEquals4( b, c )); 
+    EXPECT_TRUE(matrixEquals4( b, c ));
 }
 
 TEST(Matrix4f, clone) {
@@ -307,7 +306,7 @@ TEST(Matrix4f, compose_decompose) {
                 m.decompose( t2, r2, s2 );
 
                 Matrix4f m2 = Matrix4f().compose( t2, r2, s2 );
-            
+
                 //bool matrixIsSame = matrixEquals4( m, m2 );
                 /* debug code
                 if( ! matrixIsSame ) {
