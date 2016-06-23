@@ -62,6 +62,14 @@ namespace MyUPlay {
 				return w;
 			}
 
+			void set(T x, T y, T z, T w) {
+				this->x = x;
+				this->y = y;
+				this->z = z;
+				this->w = w;
+				onChangeCallback();
+			}
+
 			void setX(T n) {
 				x = n;
 				onChangeCallback();

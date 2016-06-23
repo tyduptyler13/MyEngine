@@ -1,0 +1,224 @@
+#include "gtest/gtest.h"
+#include "constants.hpp"
+#include "Vector3.hpp"
+#include "Euler.hpp"
+#include "Quaternion.hpp"
+#include "Matrix4.hpp"
+#include "Math.hpp"
+
+#include <vector>
+
+using namespace std;
+using namespace MyUPlay::MyEngine;
+using namespace Test;
+
+const vector<Order> orders = { { Order::XYZ, Order::YXZ, Order::ZXY, Order::ZYX, Order::YZX, Order::XZY } };
+const Eulerf eulerAngles( 0.1, -0.3, 0.25 );
+
+Quaternionf qSub(const Quaternionf& a, const Quaternionf& b ) {
+    Quaternionf result(a);
+
+    result.x -= b.x;
+    result.y -= b.y;
+    result.z -= b.z;
+    result.w -= b.w;
+
+    return result;
+
+}
+
+TEST(Quaternion, constructor) {
+    Quaternionf a;
+    EXPECT_TRUE( a.x == 0);
+    EXPECT_TRUE( a.y == 0);
+    EXPECT_TRUE( a.z == 0);
+    EXPECT_TRUE( a.w == 1);
+
+    a = Quaternionf( x, y, z, w );
+    EXPECT_TRUE( a.x == x);
+    EXPECT_TRUE( a.y == y);
+    EXPECT_TRUE( a.z == z);
+    EXPECT_TRUE( a.w == w);
+}
+
+TEST(Quaternion, copy) {
+    Quaternionf a( x, y, z, w );
+    Quaternionf b = Quaternionf( a );
+    EXPECT_TRUE( b.x == x);
+    EXPECT_TRUE( b.y == y);
+    EXPECT_TRUE( b.z == z);
+    EXPECT_TRUE( b.w == w);
+
+    // ensure that it is a true copy
+    a.x = 0;
+    a.y = -1;
+    a.z = 0;
+    a.w = -1;
+    EXPECT_EQ( b.x, x);
+    EXPECT_EQ( b.y, y);
+}
+
+TEST(Quaternion, set) {
+    Quaternionf a;
+    EXPECT_EQ( a.x, 0);
+    EXPECT_EQ( a.y, 0);
+    EXPECT_EQ( a.z, 0);
+    EXPECT_EQ( a.w, 1);
+
+    a.set( x, y, z, w );
+    EXPECT_EQ( a.x, x);
+    EXPECT_EQ( a.y, y);
+    EXPECT_EQ( a.z, z);
+    EXPECT_EQ( a.w, w);
+}
+
+TEST(Quaternion, setFromAxisAngle) {
+
+    // TODO: find cases to validate.
+    //ok( true, "Passed!" );
+
+    Quaternionf zero;
+
+    Quaternionf a = Quaternionf().setFromAxisAngle( Vector3f( 1, 0, 0 ), 0 );
+    EXPECT_EQ( a, zero );
+    a = Quaternionf().setFromAxisAngle( Vector3f( 0, 1, 0 ), 0 );
+    EXPECT_EQ( a, zero );
+    a = Quaternionf().setFromAxisAngle( Vector3f( 0, 0, 1 ), 0 );
+    EXPECT_EQ( a, zero );
+
+    Quaternionf b1 = Quaternionf().setFromAxisAngle( Vector3f( 1, 0, 0 ), Math::PI );
+    EXPECT_NE( a, b1 );
+    Quaternionf b2 = Quaternionf().setFromAxisAngle( Vector3f( 1, 0, 0 ), -Math::PI );
+    EXPECT_NE( a, b2 );
+
+    b1.multiply( b2 );
+    EXPECT_EQ( a, b1 );
+}
+
+
+TEST(Quaternion, setFromEuler_setFromQuaternion) {
+
+    vector<Vector3f> angles = {{ Vector3f( 1, 0, 0 ), Vector3f( 0, 1, 0 ), Vector3f( 0, 0, 1 ) }};
+
+    // ensure euler conversion to_from Quaternion matches.
+    for( unsigned i = 0; i < orders.size(); i ++ ) {
+        for( unsigned j = 0; j < angles.size(); j ++ ) {
+            Eulerf eulers2 = Eulerf().setFromQuaternion( Quaternionf().setFromEuler( Eulerf( angles[j].x, angles[j].y, angles[j].z, orders[i] ) ), orders[i] );
+            Vector3f newAngle = Vector3f( eulers2.x, eulers2.y, eulers2.z );
+            EXPECT_LT(newAngle.distanceTo( angles[j] ) , 0.001);
+        }
+    }
+
+}
+
+TEST(Quaternion, setFromEuler_setFromRotationMatrix) {
+
+    // ensure euler conversion for Quaternion matches that of Matrix4
+    for( unsigned i = 0; i < orders.size(); i ++ ) {
+        Quaternionf q = Quaternionf().setFromEuler( eulerAngles, orders[i] );
+        Matrix4f m = Matrix4f().makeRotationFromEuler( eulerAngles, orders[i] );
+        Quaternionf q2 = Quaternionf().setFromRotationMatrix( m );
+
+        EXPECT_LT(qSub( q, q2 ).length() , 0.001);
+    }
+
+}
+
+TEST(Quaternion, normalize_length_lengthSq) {
+    Quaternionf a( x, y, z, w );
+    Quaternionf b = Quaternionf( -x, -y, -z, -w );
+
+    EXPECT_NE( a.length(), 1);
+    EXPECT_NE( a.lengthSq(), 1);
+    a.normalize();
+    EXPECT_EQ( a.length(), 1);
+    EXPECT_EQ( a.lengthSq(), 1);
+
+    a.set( 0, 0, 0, 0 );
+    EXPECT_EQ( a.lengthSq(), 0);
+    EXPECT_EQ( a.length(), 0);
+    a.normalize();
+    EXPECT_EQ( a.lengthSq(), 1);
+    EXPECT_EQ( a.length(), 1);
+}
+
+TEST(Quaternion, inverse_conjugate) {
+    Quaternionf a( x, y, z, w );
+
+    // TODO: add better validation here.
+
+    Quaternionf b = Quaternionf(a).conjugate();
+
+    EXPECT_EQ( a.x, -b.x);
+    EXPECT_EQ( a.y, -b.y);
+    EXPECT_EQ( a.z, -b.z);
+    EXPECT_EQ( a.w, b.w);
+}
+
+
+TEST(Quaternion, multiplyQuaternions_multiply) {
+
+    const vector<Eulerf> angles = { Eulerf( 1, 0, 0 ), Eulerf( 0, 1, 0 ), Eulerf( 0, 0, 1 ) };
+
+    Quaternionf q1 = Quaternionf().setFromEuler( angles[0], Order::XYZ );
+    Quaternionf q2 = Quaternionf().setFromEuler( angles[1], Order::XYZ );
+    Quaternionf q3 = Quaternionf().setFromEuler( angles[2], Order::XYZ );
+
+    Quaternionf q = Quaternionf().multiplyQuaternions( q1, q2 ).multiply( q3 );
+
+    Matrix4f m1 = Matrix4f().makeRotationFromEuler( angles[0], Order::XYZ );
+    Matrix4f m2 = Matrix4f().makeRotationFromEuler( angles[1], Order::XYZ );
+    Matrix4f m3 = Matrix4f().makeRotationFromEuler( angles[2], Order::XYZ );
+
+    Matrix4f m = Matrix4f().multiplyMatrices( m1, m2 ).multiply( m3 );
+
+    Quaternionf qFromM = Quaternionf().setFromRotationMatrix( m );
+
+    EXPECT_LT(qSub( q, qFromM ).length() , 0.001);
+}
+
+TEST(Quaternion, multiplyVector3) {
+
+    const vector<Eulerf> angles = { { Eulerf( 1, 0, 0 ), Eulerf( 0, 1, 0 ), Eulerf( 0, 0, 1 ) } };
+
+    // ensure euler conversion for Quaternion matches that of Matrix4
+    for( unsigned i = 0; i < orders.size(); i ++ ) {
+        for( unsigned j = 0; j < angles.size(); j ++ ) {
+            Quaternionf q = Quaternionf().setFromEuler( angles[j], orders[i] );
+            Matrix4f m = Matrix4f().makeRotationFromEuler( angles[j], orders[i] );
+
+            Vector3f v0 = Vector3f(1, 0, 0);
+            Vector3f qv = Vector3f(v0).applyQuaternion( q );
+            Vector3f mv = Vector3f(v0).applyMatrix4( m );
+
+            EXPECT_LT(qv.distanceTo( mv ) , 0.001);
+        }
+    }
+
+}
+
+TEST(Quaternion, equals) {
+    Quaternionf a( x, y, z, w );
+    Quaternionf b = Quaternionf( -x, -y, -z, -w );
+
+    EXPECT_NE(a.x , b.x);
+    EXPECT_NE(a.y , b.y);
+
+    EXPECT_EQ( ! a, b );
+    EXPECT_EQ( ! b, a );
+
+    a.copy( b );
+    EXPECT_EQ( a.x, b.x);
+    EXPECT_EQ( a.y, b.y);
+
+    EXPECT_EQ( a, b );
+    EXPECT_EQ( b, a );
+}
+
+TEST(Quaternion, slerp) {
+    Quaternionf a = Quaternionf( 0.675341, 0.408783, 0.328567, 0.518512 );
+    Quaternionf b = Quaternionf( 0.660279, 0.436474, 0.35119, 0.500187 );
+
+    EXPECT_EQ(a.slerp( b, 0 ), a );
+    EXPECT_EQ(a.slerp( b, 1 ), b );
+}
