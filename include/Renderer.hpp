@@ -25,10 +25,6 @@ namespace MyUPlay {
 		class Renderer {
 
 		protected:
-			std::array<uint8_t, 16> newAttributes;
-			std::array<uint8_t, 16> enabledAttributes;
-			std::array<uint8_t, 16> attributeDivisors;
-
 			short currentBlending;
 			short currentBlendEquation;
 			short currentBlendSrc;
@@ -118,7 +114,7 @@ namespace MyUPlay {
 
 			virtual bool supportsVertexTextures() const = 0;
 			virtual void setScissor(int x, int y, unsigned width, unsigned height) = 0;
-			virtual void enableScissorTest(bool enable = true) = 0;
+			virtual void setScissorTest(bool enable = true) = 0;
 
 			virtual void setClearColor(const Color&, float alpha) = 0;
 			virtual Color getClearColor() const = 0;
@@ -154,6 +150,7 @@ namespace MyUPlay {
 			virtual void setFaceCulling(short cullFace, short frontFaceDirection) = 0;
 			virtual void setTexture(const Texture<T>& texture, unsigned slot = 0);
 			virtual void setRenderTarget(RenderTarget<T>& target) = 0;
+			virtual void RenderTarget<T>& getRenderTarget() = 0;
 			virtual void readRenderTargetPixels(RenderTarget<T>& target, int x, int y, unsigned width, unsigned height, void** buffer) = 0; //TODO Find type for buffer
 
 		};

@@ -6,6 +6,7 @@
 #include <vector>
 #include <functional>
 #include <mutex>
+#include <memory>
 
 #include "Vector3.hpp"
 #include "Euler.hpp"
@@ -26,9 +27,9 @@ namespace MyUPlay {
 			const Math::UUID id = Math::generateUUID();
 			std::string name;
 
-			Object3D* parent;
+			weak_ptr<Object3D> parent; //If the parent is destroyed, we probably will be too.
 
-			std::vector<Object3D*> children;
+			std::vector<shared_ptr<Object3D> > children;
 
 			Vector3<T> up;
 

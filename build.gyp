@@ -5,15 +5,10 @@
 			"product_name": "MyEngine",
 			"type": "<(library)",
 			"sources": [
-				"src/Euler.cpp",
  # 				"src/GLES2Program.cpp",
  # 				"src/Geometry.cpp",
   				"src/Log.cpp",
-  				"src/Math.cpp",
- # 				"src/Object3D.cpp",
-  				"src/PerspectiveCamera.cpp",
-  				"src/Ray.cpp",
-  				"src/ShaderChunk.cpp"
+  				"src/Math.cpp"
 			],
 			"include_dirs": [
 				"include"
