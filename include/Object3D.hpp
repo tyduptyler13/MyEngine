@@ -24,6 +24,8 @@ namespace MyUPlay {
 
 		public:
 
+			~Object3D(){}
+
 			const Math::UUID id = Math::generateUUID();
 			std::string name;
 
@@ -73,18 +75,18 @@ namespace MyUPlay {
 			Object3D& translateX(float distance);
 			Object3D& translateY(float distance);
 			Object3D& translateZ(float distance);
-			
+
 			Vector3<T>& localToWorld(Vector3<T>&);
 			Vector3<T>& worldToLocal(Vector3<T>&);
 
 			Object3D& lookAt(const Vector3<T>&);
 
-			Object3D& add(Object3D);
-			Object3D& remove(Object3D);
+			virtual Object3D& add(Object3D);
+			virtual Object3D& remove(Object3D);
 
 			Object3D& getObjectById(std::string id) const;
 			Object3D& getObjectByName(std::string name) const;
-			
+
 			Vector3<T> getWorldPosition() const{
 				return getWorldPosition(Vector3<T>());
 			}

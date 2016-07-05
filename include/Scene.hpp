@@ -14,6 +14,11 @@ namespace MyUPlay {
 		template <typename T>
 		class Scene : public Object3D<T> {
 
+			private:
+
+			std::vector<std::weak_ptr<Light<T> > > lights;
+			std::vector<std::weak_ptr<Object3D<T> > > opaqueObjects, transparentObjects;
+
 			public:
 
 			std::shared_ptr<Material<T> > overrideMaterial = NULL;
@@ -28,6 +33,9 @@ namespace MyUPlay {
 				fog = scene.fog;
 				autoUpdate = scene.autoUpdate;
 			}
+
+			virtual Scene& add(Object3D&) override;
+			virtual Scene& remove(Object3D&) override;
 
 		};
 

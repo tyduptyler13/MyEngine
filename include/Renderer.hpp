@@ -69,8 +69,6 @@ namespace MyUPlay {
 			     premultipliedAlpha = true,
 			     preserveDrawingBuffer = false;
 
-			std::vector<Light<T>*> lights;
-			std::vector<Object3D<T>*> opaqueObjects, transparentObjects;
 			int opaqueObjectsLastIndex = -1, transparentObjectsLastIndex = -1;
 
 		public:
@@ -136,11 +134,11 @@ namespace MyUPlay {
 			virtual float getPixelRatio() const = 0;
 			virtual void setPixelRatio(float) = 0;
 
-			virtual std::tuple<unsigned, unsigned> getSize() = 0;
+			virtual std::tuple<unsigned, unsigned> getSize() const = 0;
 			virtual void setSize(unsigned width, unsigned height) = 0;
 
 			virtual void setViewport(int x, int y, unsigned width, unsigned height) = 0;
-			virtual std::tuple<int, int, unsigned, unsigned> getViewport() = 0;
+			virtual std::tuple<int, int, unsigned, unsigned> getViewport() const = 0;
 
 			virtual void renderBufferImmediate(const Object3D<T>& object, const ShaderProgram& program, const Material<T>& material) = 0;
 			virtual void renderBufferDirect(const Camera<T>& camera, const std::vector<Light<T> >& lights, const Fog<T>& fog, const Material<T>& material, const Object3D<T>& object, const Object3D<T>& objectGroup) = 0;
