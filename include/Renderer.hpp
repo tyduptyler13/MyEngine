@@ -15,7 +15,6 @@
 #include "Object3D.hpp"
 #include "Camera.hpp"
 #include "Material.hpp"
-#include "ShaderProgram.hpp"
 
 namespace MyUPlay {
 
@@ -36,14 +35,7 @@ namespace MyUPlay {
 			short currentDepthFunc;
 			short currentDepthWrite;
 
-			short currentColorWrite;
-
-			short currentFlipSided;
-
 			short currentLineWidth;
-
-			short currentPolygonOffsetFactor;
-			short currentPolygonOffsetUnits;
 
 			const unsigned short maxTextures;
 
@@ -108,8 +100,6 @@ namespace MyUPlay {
 				} renderer;
 			} info;
 
-			std::unique_ptr<RenderPlugin<T> > shadowMapPlugin;
-
 			virtual bool supportsVertexTextures() const = 0;
 			virtual void setScissor(int x, int y, unsigned width, unsigned height) = 0;
 			virtual void setScissorTest(bool enable = true) = 0;
@@ -158,4 +148,3 @@ namespace MyUPlay {
 }
 
 #endif
-

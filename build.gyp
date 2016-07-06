@@ -8,7 +8,8 @@
  # 				"src/GLES2Program.cpp",
  # 				"src/Geometry.cpp",
   				"src/Log.cpp",
-  				"src/Math.cpp"
+  				"src/Math.cpp",
+				"src/Texture.cpp"
 			],
 			"include_dirs": [
 				"include"
@@ -28,4 +29,3 @@
 		}
 	]
 }
-

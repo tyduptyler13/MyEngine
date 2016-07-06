@@ -4,9 +4,9 @@
 [submodule "deps/capnproto"]
 	path = deps/capnproto
 	url = https://github.com/sandstorm-io/capnproto.git
-[submodule "deps/SDL-mirror"]
-	path = deps/sdl
-	url = https://github.com/spurious/SDL-mirror
 [submodule "deps/googletest"]
 	path = deps/googletest
 	url = https://github.com/google/googletest.git
+[submodule "deps/sdl2"]
+	path = deps/sdl2
+	url = https://github.com/spurious/SDL-mirror
