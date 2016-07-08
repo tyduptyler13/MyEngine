@@ -32,8 +32,8 @@ namespace MyUPlay {
 			std::string name;
 			std::string sourceFile;
 
-			unique_ptr<SDL_Texture, decltype(&SDL_DestroyTexture)> texture; //vram
-			unique_ptr<SDL_Surface, decltype(&SDL_FreeSurface)> image; //Ram
+			std::unique_ptr<SDL_Texture> texture; //vram
+			std::unique_ptr<SDL_Surface> image; //Ram
 			//TODO mipmaps
 
 			short mapping = DEFAULT_MAPPING;
@@ -58,7 +58,7 @@ namespace MyUPlay {
 
 			short unpackAlignment = 4;
 
-			unique_ptr<function<void(Texture*)> > onUpdate = NULL;
+			std::unique_ptr<std::function<void(Texture*)> > onUpdate = NULL;
 
 			Texture(){}
 			Texture(const std::string& image, short mapping = DEFAULT_MAPPING, short wrapS = ClampToEdgeWrapping, short wrapT = ClampToEdgeWrapping, short magFilter = LinearFilter, short minFilter = LinearMipMapLinearFilter, short format = RGBAFormat, short type = UnsignedByteType, short anisotropy = 1)

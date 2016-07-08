@@ -1,5 +1,6 @@
 #include <stdexcept>
 #include <GLES3/gl3.h>
+#include <GLES3/gl3ext.h>
 #include <SDL2/SDL_opengles.h>
 
 #include "Log.hpp"
@@ -42,36 +43,63 @@ GLES3Renderer::~GLES3Renderer(){
 
 }
 
-bool GLES3Renderer::supportsVertexTextures() const override {
-
-
-
+void GLES3Renderer::setScissor(int x, int y, unsigned width, unsigned height) override {
+	glScissor(x, y, width, height);
+}
+void GLES3Renderer::setScissorTest(bool enable = true) override {
+	if (enable){
+		glEnable(GL_SCISSOR_TEST);
+	} else {
+		glDisable(GL_SCISSOR_TEST);
+	}
 }
 
-void setScissor(int x, int y, unsigned width, unsigned height) override;
-void setScissorTest(bool enable = true) override;
+void GLES3Renderer::setClearColor(const Color& c, float alpha) override {
+	glClearColor(c.r, c.g, c.b, alpha);
+}
+Color GLES3Renderer::getClearColor() const override {
+	GLfloat bkColor[4];
+	glGetFloatv(GL_COLOR_CLEAR_VALUE, bkColor);
+	Color c;
+	c.setRGB(bkColor[0], bkColor[1], bkColor[2]);
+	return color;
+}
+float GLES3Renderer::getClearAlpha() const override {
+	GLfloat bkColor[4];
+	glGetFloatv(GL_COLOR_CLEAR_VALUE, bkColor);
+	return bkColor[3];
+}
 
-void setClearColor(const Color&, float alpha) override;
-Color getClearColor() const override;
-float getClearAlpha() const override;
+void GLES3Renderer::GLclear(bool color = true, bool depth = true, bool stencil = true) override {
+	GLbitfield mask;
+	mask |= color ? GL_COLOR_BUFFER_BIT : 0;
+	mask |= depth ? GL_DEPTH_BUFFER_BIT : 0;
+	mask |= stencil ? GL_STENCIL_BUFFER_BIT : 0;
+	glClear(mask);
+}
 
-void clear(bool color = true, bool depth = true, bool stencil = true) override;
+void GLES3Renderer::clearColor() override {
+	glClear(GL_COLOR_BUFFER_BIT);
+}
+void GLES3Renderer::clearDepth() override {
+	glClear(GL_DEPTH_BUFFER_BIT);
+}
+void GLES3Renderer::clearStencil() override {
+	glClear(GL_STENCIL_BUFFER_BIT);
+}
+void GLES3Renderer::clearTarget(RenderTarget<T>& target, bool color = true, bool depth = true, bool stencil = true) override {
+	log.warn("TODO: Implement clearTarget");
+}
 
-void clearColor() override;
-void clearDepth() override;
-void clearStencil() override;
-void clearTarget(RenderTarget<T>& target, bool color = true, bool depth = true, bool stencil = true) override;
+unsigned GLES3Renderer::getMaxAnisotripy() const override {
+	GLint i;
+	glGetIntegerv(GL_TEXTURE_MAX_ANISOTROPY_EXT, &i);
+	return i;
+}
 
-bool supportsFloatTextures() const override;
-bool supportsStandardDerivatives() const override;
-bool supportsCompressedTextureS3TC() const override;
-
-unsigned getMaxAnisotripy() const override;
-
-float getPixelRatio() const override;
-void setPixelRatio(float) override;
-
-std::tuple<unsigned, unsigned> getSize() const override;
+std::tuple<unsigned, unsigned> GLES3Renderer::getSize() const override {
+	
+}
 void setSize(unsigned width, unsigned height) override;
 
 void setViewport(int x, int y, unsigned width, unsigned height) override;

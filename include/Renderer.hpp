@@ -7,6 +7,8 @@
 #include <unordered_map>
 #include <tuple>
 
+#include <SDL2/SDL.h>
+
 #include "Color.hpp"
 #include "Constants.hpp"
 #include "RenderPlugin.hpp"
@@ -42,17 +44,15 @@ namespace MyUPlay {
 			short currentTextureSlot;
 			//currentBoundTextures;
 
-			Color mClearColor;
-			T mClearAlpha;
+			Color clearColor;
+			T clearAlpha;
 
 			unsigned width, height;
 
-			T mPixelRatio;
-
-			int mViewportX = 0,
-			    mViewportY = 0;
-			unsigned mViewportWidth,
-				 mViewportHeight;
+			int viewportX = 0,
+			    viewportY = 0;
+			unsigned viewportWidth,
+				 viewportHeight;
 
 			bool alpha = false,
 			     depth = true,
@@ -62,6 +62,8 @@ namespace MyUPlay {
 			     preserveDrawingBuffer = false;
 
 			int opaqueObjectsLastIndex = -1, transparentObjectsLastIndex = -1;
+
+      SDL_Window* window;
 
 		public:
 
@@ -115,14 +117,7 @@ namespace MyUPlay {
 			virtual void clearStencil() = 0;
 			virtual void clearTarget(RenderTarget<T>& target, bool color = true, bool depth = true, bool stencil = true) = 0;
 
-			virtual bool supportsFloatTextures() const = 0;
-			virtual bool supportsStandardDerivatives() const = 0;
-			virtual bool supportsCompressedTextureS3TC() const = 0;
-
 			virtual unsigned getMaxAnisotripy() const = 0;
-
-			virtual float getPixelRatio() const = 0;
-			virtual void setPixelRatio(float) = 0;
 
 			virtual std::tuple<unsigned, unsigned> getSize() const = 0;
 			virtual void setSize(unsigned width, unsigned height) = 0;
@@ -140,6 +135,55 @@ namespace MyUPlay {
 			virtual void setRenderTarget(RenderTarget<T>& target) = 0;
 			virtual void RenderTarget<T>& getRenderTarget() = 0;
 			virtual void readRenderTargetPixels(RenderTarget<T>& target, int x, int y, unsigned width, unsigned height, void** buffer) = 0; //TODO Find type for buffer
+
+			/**
+			 * Use this function to get a list of display modes for all monitors.
+			 * The top level vector is the monitors
+			 * The second level is a list of display modes for that monitor
+			 */
+			vector<vector<SDL_DisplayMode> > getDisplayModes() const {
+
+				unsigned monitors = SDL_GetNumVideoDisplays();
+
+				vector<vector<SDL_DisplayMode> > monitorList(monitors);
+
+				for (unsigned i = 0; i < monitors; ++i){
+
+					unsigned displayModes = SDL_GetNumDisplayModes(i);
+
+					monitorList[i].reserve(displayModes);
+
+					for (unsigned j = 0; j < displayModes; ++j){
+						SDL_GetDisplayMode(i, j, &monitorList[i][j]);
+					}
+				}
+			}
+
+			/**
+			 * This mode alters screen resolution and settings for this program.
+			 * This is what most people consider real full screen.
+			 */
+			void setFullScreen(){
+				SDL_SetWindowFullScreen(window, SDL_WINDOW_FULLSCREEN);
+				SDL_GetWindowSize(window, &viewportWidth, &viewportHeight);
+				SDL_GetWindowPosition(window, &viewportX, &viewportY);
+			}
+
+			/**
+			 * In this mode no resolution change is made and the window will take the size of the desktop.
+			 * This is useful for quickly changing the window to desktop size without a border.
+			 */
+			void setFakeFullScreen(){
+				SDL_SetWindowFullScreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+				SDL_GetWindowSize(window, &viewportWidth, &viewportHeight);
+				SDL_GetWindowPosition(window, &viewportX, &viewportY);
+			}
+
+			void setWindowed(){
+				SDL_SetWindowFullScreen(window, 0);
+				SDL_GetWindowSize(window, &viewportWidth, &viewportHeight);
+				SDL_GetWindowPosition(window, &viewportX, &viewportY);
+			}
 
 		};
 

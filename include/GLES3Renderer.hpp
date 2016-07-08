@@ -1,7 +1,6 @@
 #ifndef MYUPLAY_MYENGINE_GLES3RENDERER
 #define MYUPLAY_MYENGINE_GLES3RENDERER
 
-#include <SDL2/SDL.h>
 #include <vector>
 
 #include "Renderer.hpp"
@@ -15,7 +14,6 @@ namespace MyUPlay {
 
     private:
 
-      SDL_Window* window;
       SDL_GLContext* context;
       vector<shared_ptr<Texture> > textures;
 
@@ -24,7 +22,6 @@ namespace MyUPlay {
       GLES3Renderer();
       ~GLES3Renderer();
 
-      bool supportsVertexTextures() const override;
       void setScissor(int x, int y, unsigned width, unsigned height) override;
       void setScissorTest(bool enable = true) override;
 
