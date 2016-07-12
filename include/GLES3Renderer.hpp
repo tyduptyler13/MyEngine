@@ -12,11 +12,6 @@ namespace MyUPlay {
 
     class GLES3Renderer : Renderer<float> {
 
-    private:
-
-      SDL_GLContext* context;
-      vector<shared_ptr<Texture> > textures;
-
     public:
 
       GLES3Renderer();
@@ -42,25 +37,30 @@ namespace MyUPlay {
 
       unsigned getMaxAnisotripy() const override;
 
-      float getPixelRatio() const override;
-      void setPixelRatio(float) override;
-
-      std::tuple<unsigned, unsigned> getSize() const override;
-      void setSize(unsigned width, unsigned height) override;
-
       void setViewport(int x, int y, unsigned width, unsigned height) override;
       std::tuple<int, int, unsigned, unsigned> getViewport() const override;
+      void setDefaultViewport() override;
 
       void renderBufferImmediate(const Object3D<T>& object, const ShaderProgram& program, const Material<T>& material) override;
       void renderBufferDirect(const Camera<T>& camera, const std::vector<Light<T> >& lights, const Fog<T>& fog, const Material<T>& material, const Object3D<T>& object, const Object3D<T>& objectGroup) override;
 
       void render(const Scene<T>& scene, const Camera<T>& camera, RenderTarget<T>* renderTarget = NULL, bool forceClear = false) override;
 
-      void setFaceCulling(short cullFace, short frontFaceDirection) override;
-      void setTexture(const Texture<T>& texture, unsigned slot override);
-      void setRenderTarget(RenderTarget<T>& target) override;
+      void setFaceCulling(CullConstant cullFace, CullDirection frontFaceDirection) override;
+      void setTexture(const Texture& texture, unsigned slot = 0) override;
+      void setRenderTarget(RenderTarget& target) override;
       void RenderTarget<T>& getRenderTarget() override;
       void readRenderTargetPixels(RenderTarget<T>& target, int x, int y, unsigned width, unsigned height, void** buffer) override; //TODO Find type for buffer
+
+    private:
+
+      SDL_GLContext* context;
+
+      struct GPUText {
+        unsigned id;
+        unique_ptr<Texture> texture;
+
+      }
 
     };
 

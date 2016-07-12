@@ -97,21 +97,64 @@ unsigned GLES3Renderer::getMaxAnisotripy() const override {
 	return i;
 }
 
-std::tuple<unsigned, unsigned> GLES3Renderer::getSize() const override {
-	
+void GLES3Renderer::setViewport(int x, int y, unsigned width, unsigned height) override {
+	glViewport(x, y, width, height);
 }
-void setSize(unsigned width, unsigned height) override;
+std::tuple<int, int, unsigned, unsigned> GLES3Renderer::getViewport() const override {
+	int viewport[4];
+	glGetIntegerv(GL_VIEWPORT, &viewport);
+	return make_tuple(viewport[0], viewport[1], viewport[2], viewport[3]);
+}
+void GLES3Renderer::setDefaultViewport() {
+	int w, h;
+	SDL_GL_GetDrawableSize(window, &w, &h);
+	setViewport(0, 0, w, h);
+}
 
-void setViewport(int x, int y, unsigned width, unsigned height) override;
-std::tuple<int, int, unsigned, unsigned> getViewport() const override;
+void GLES3Renderer::renderBufferImmediate(const Object3D<T>& object, const ShaderProgram& program, const Material<T>& material) override {
 
-void renderBufferImmediate(const Object3D<T>& object, const ShaderProgram& program, const Material<T>& material) override;
-void renderBufferDirect(const Camera<T>& camera, const std::vector<Light<T> >& lights, const Fog<T>& fog, const Material<T>& material, const Object3D<T>& object, const Object3D<T>& objectGroup) override;
+}
+void GLES3Renderer::renderBufferDirect(const Camera<T>& camera, const std::vector<Light<T> >& lights,
+	 const Fog<T>& fog, const Material<T>& material, const Object3D<T>& object, const Object3D<T>& objectGroup) override {
 
-void render(const Scene<T>& scene, const Camera<T>& camera, RenderTarget<T>* renderTarget = NULL, bool forceClear = false) override;
+}
 
-void setFaceCulling(short cullFace, short frontFaceDirection) override;
-void setTexture(const Texture<T>& texture, unsigned slot override);
+void GLES3Renderer::render(const Scene<T>& scene, const Camera<T>& camera, RenderTarget<T>* renderTarget = NULL, bool forceClear = false) override {
+
+}
+
+void GLES3Renderer::setFaceCulling(CullConstant cullFace, CullDirection frontFaceDirection) override {
+
+	if (cullFace == CullFaceNone) {
+		glDisable(GL_CULL_FACE);
+	} else {
+		glEnable(GL_CULL_FACE);
+
+		switch(cullFace){
+			case CullFaceBack:
+			glCullFace(GL_BACK);
+			break;
+			case CullFaceFront:
+			glCullFace(GL_FRONT);
+			break;
+			case CullFaceFrontBack:
+			glCullFace(GL_FRONT_AND_BACK);
+		}
+
+	}
+
+	if (frontFaceDirection == FrontFaceDirectionCW){
+		glFrontFace(GL_CW);
+	} else {
+		glFrontFace(GL_CCW);
+	}
+
+}
+
+void GLES3Renderer::setTexture(const Texture& texture, unsigned slot) override {
+
+}
+
 void setRenderTarget(RenderTarget<T>& target) override;
 void RenderTarget<T>& getRenderTarget() override;
 void readRenderTargetPixels(RenderTarget<T>& target, int x, int y, unsigned width, unsigned height, void** buffer) override; //TODO Find type for buffer

@@ -3,9 +3,9 @@
 
 #include <string>
 #include <memory>
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
 #include <functional>
+
+#include <SOIL/SOIl.h>
 
 #include "Math.hpp"
 #include "Constants.hpp"
@@ -17,11 +17,7 @@ namespace MyUPlay {
 
 		class Texture {
 
-		private:
-
-			static int load;
-
-			void loadImage();
+			char* data = NULL;
 
 		public:
 
@@ -32,9 +28,8 @@ namespace MyUPlay {
 			std::string name;
 			std::string sourceFile;
 
-			std::unique_ptr<SDL_Texture> texture; //vram
-			std::unique_ptr<SDL_Surface> image; //Ram
-			//TODO mipmaps
+			unsigned width, height;
+			unsigned format;
 
 			short mapping = DEFAULT_MAPPING;
 
@@ -45,9 +40,6 @@ namespace MyUPlay {
 			      minFilter = LinearMipMapLinearFilter;
 
 			unsigned short anisotropy = 1;
-
-			short format = RGBAFormat;
-			short type = UnsignedByteType;
 
 			Vector2<float> offset = Vector2<float>(0,0);
 			Vector2<float> repeat = Vector2<float>(1,1);
@@ -61,13 +53,22 @@ namespace MyUPlay {
 			std::unique_ptr<std::function<void(Texture*)> > onUpdate = NULL;
 
 			Texture(){}
-			Texture(const std::string& image, short mapping = DEFAULT_MAPPING, short wrapS = ClampToEdgeWrapping, short wrapT = ClampToEdgeWrapping, short magFilter = LinearFilter, short minFilter = LinearMipMapLinearFilter, short format = RGBAFormat, short type = UnsignedByteType, short anisotropy = 1)
-				: sourceFile(image), mapping(mapping), wrapS(wrapS), wrapT(wrapT), magFilter(magFilter), minFilter(minFilter), format(format), type(type), anisotropy(anisotropy){
+			Texture(const std::string& image, short mapping = DEFAULT_MAPPING,
+				 short wrapS = ClampToEdgeWrapping, short wrapT = ClampToEdgeWrapping,
+				 short magFilter = LinearFilter, short minFilter = LinearMipMapLinearFilter,
+				 short anisotropy = 1)
+				: sourceFile(image), mapping(mapping), wrapS(wrapS), wrapT(wrapT),
+				magFilter(magFilter), minFilter(minFilter), anisotropy(anisotropy){
 
-				loadImage();
+				sourceFile = image;
+				data = SOIL_load_image(image.c_str(), &width, &height, &format, SOIL_LOAD_AUTO);
 
 			}
-			~Texture(){}
+			~Texture(){
+				if (data != NULL){
+					SOIL_free_image_data(data);
+				}
+			}
 			Texture(const Texture& t){
 				copy(t);
 			}

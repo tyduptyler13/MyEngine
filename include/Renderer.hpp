@@ -17,6 +17,7 @@
 #include "Object3D.hpp"
 #include "Camera.hpp"
 #include "Material.hpp"
+#include "Texture.hpp"
 
 namespace MyUPlay {
 
@@ -26,33 +27,30 @@ namespace MyUPlay {
 		class Renderer {
 
 		protected:
-			short currentBlending;
-			short currentBlendEquation;
-			short currentBlendSrc;
-			short currentBlendDst;
-			short currentBlendEquationAlpha;
-			short currentBlendSrcAlpha;
-			short currentBlendDstAlpha;
+			//TODO type? currentBlending;
+			BlendingEquation currentBlendEquation;
+			BlendingSource currentBlendSrc;
+			BlendingDestination currentBlendDst;
+			BlendingEquation currentBlendEquationAlpha;
+			BlendingSource currentBlendSrcAlpha;
+			BlendingDestination currentBlendDstAlpha;
 
-			short currentDepthFunc;
-			short currentDepthWrite;
+			DepthMode currentDepthFunc;
+			DepthMode currentDepthWrite;
 
-			short currentLineWidth;
+			unsigned currentLineWidth;
 
 			const unsigned short maxTextures;
-
-			short currentTextureSlot;
-			//currentBoundTextures;
 
 			Color clearColor;
 			T clearAlpha;
 
 			unsigned width, height;
 
-			int viewportX = 0,
-			    viewportY = 0;
-			unsigned viewportWidth,
-				 viewportHeight;
+			int windowX = 0,
+			    windowY = 0;
+			unsigned windowWidth,
+				 windowHeight;
 
 			bool alpha = false,
 			     depth = true,
@@ -78,8 +76,8 @@ namespace MyUPlay {
 			     gammaOutput = false;
 
 			bool shadowMapEnabled = false;
-			short shadowMapType = PCFShadowMap,
-			      shadowMapCullFace = CullFaceFront;
+			ShadowMapType shadowMapType = PCFShadowMap;
+			CullConstant shadowMapCullFace = CullFaceFront;
 			bool shadowMapDebug = false,
 			     shadowMapCascade = false;
 
@@ -102,7 +100,6 @@ namespace MyUPlay {
 				} renderer;
 			} info;
 
-			virtual bool supportsVertexTextures() const = 0;
 			virtual void setScissor(int x, int y, unsigned width, unsigned height) = 0;
 			virtual void setScissorTest(bool enable = true) = 0;
 
@@ -119,19 +116,29 @@ namespace MyUPlay {
 
 			virtual unsigned getMaxAnisotripy() const = 0;
 
-			virtual std::tuple<unsigned, unsigned> getSize() const = 0;
-			virtual void setSize(unsigned width, unsigned height) = 0;
+			std::tuple<unsigned, unsigned> getSize() const {
+				unsigned width, height;
+				SDL_GetWindowSize(window, &width, &height);
+				return std::make_tuple(width, height);
+			}
+			void setSize(unsigned width, unsigned height){
+				SDL_SetWindowSize(window, width, height);
+			}
+			void setPos(unsigned x, unsigned y){
+				SDL_SetWindowPosition(window, x, y);
+			}
 
 			virtual void setViewport(int x, int y, unsigned width, unsigned height) = 0;
 			virtual std::tuple<int, int, unsigned, unsigned> getViewport() const = 0;
+			virtual void setDefaultViewport() = 0;
 
 			virtual void renderBufferImmediate(const Object3D<T>& object, const ShaderProgram& program, const Material<T>& material) = 0;
 			virtual void renderBufferDirect(const Camera<T>& camera, const std::vector<Light<T> >& lights, const Fog<T>& fog, const Material<T>& material, const Object3D<T>& object, const Object3D<T>& objectGroup) = 0;
 
 			virtual void render(const Scene<T>& scene, const Camera<T>& camera, RenderTarget<T>* renderTarget = NULL, bool forceClear = false) = 0;
 
-			virtual void setFaceCulling(short cullFace, short frontFaceDirection) = 0;
-			virtual void setTexture(const Texture<T>& texture, unsigned slot = 0);
+			virtual void setFaceCulling(CullConstant cullFace, CullDirection frontFaceDirection) = 0;
+			virtual void setTexture(const Texture& texture, unsigned slot = 0) = 0;
 			virtual void setRenderTarget(RenderTarget<T>& target) = 0;
 			virtual void RenderTarget<T>& getRenderTarget() = 0;
 			virtual void readRenderTargetPixels(RenderTarget<T>& target, int x, int y, unsigned width, unsigned height, void** buffer) = 0; //TODO Find type for buffer
@@ -165,8 +172,7 @@ namespace MyUPlay {
 			 */
 			void setFullScreen(){
 				SDL_SetWindowFullScreen(window, SDL_WINDOW_FULLSCREEN);
-				SDL_GetWindowSize(window, &viewportWidth, &viewportHeight);
-				SDL_GetWindowPosition(window, &viewportX, &viewportY);
+				SDL_GetWindowPosition(window, &windowX, &windowY);
 			}
 
 			/**
@@ -175,14 +181,14 @@ namespace MyUPlay {
 			 */
 			void setFakeFullScreen(){
 				SDL_SetWindowFullScreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
-				SDL_GetWindowSize(window, &viewportWidth, &viewportHeight);
-				SDL_GetWindowPosition(window, &viewportX, &viewportY);
+				SDL_GetWindowSize(window, &windowWidth, &windowHeight);
+				SDL_GetWindowPosition(window, &windowX, &windowY);
 			}
 
 			void setWindowed(){
 				SDL_SetWindowFullScreen(window, 0);
-				SDL_GetWindowSize(window, &viewportWidth, &viewportHeight);
-				SDL_GetWindowPosition(window, &viewportX, &viewportY);
+				SDL_GetWindowSize(window, &windowWidth, &windowHeight);
+				SDL_GetWindowPosition(window, &windowX, &windowY);
 			}
 
 		};

@@ -10,3 +10,6 @@
 [submodule "deps/sdl2"]
 	path = deps/sdl2
 	url = https://github.com/spurious/SDL-mirror
+[submodule "deps/Simple-OpenGL-Image-Library"]
+	path = deps/Simple-OpenGL-Image-Library
+	url = https://github.com/kbranigan/Simple-OpenGL-Image-Library.git

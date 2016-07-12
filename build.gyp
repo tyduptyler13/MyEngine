@@ -14,13 +14,12 @@
 			"include_dirs": [
 				"include",
 				"<!@(<(pkg-config) --cflags sdl2)",
-				"<!@(<(pkg-config) --cflags SDL2_image)"
+				"deps/Simple-OpenGL-Image_Library/src"
 			],
 			"direct_dependent_settings": {
 				"include_dirs": [
-					"include/",
-					"<!@(<(pkg-config) --cflags sdl2)",
-					"<!@(<(pkg-config) --cflags SDL2_image)"
+					"include",
+					"<!@(<(pkg-config) --cflags sdl2)"
 				]
 			},
 			"variables": {
@@ -36,12 +35,10 @@
 #				"-flto"
 			],
 			"libraries": [
-				"<!@(<(pkg-config) --libs-only-l sdl2)",
-				"<!@(<(pkg-config) --libs-only-l SDL2_image)"
+				"<!@(<(pkg-config) --libs-only-l sdl2)"
 			],
 			"ldflags": [
-				"<!@(<(pkg-config) --libs-only-L --libs-only-other sdl2)",
-				"<!@(<(pkg-config) --libs-only-L --libs-only-other SDL2_image)"
+				"<!@(<(pkg-config) --libs-only-L --libs-only-other sdl2)"
 			]
 		}
 	]
