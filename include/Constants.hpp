@@ -5,6 +5,13 @@ namespace MyUPlay {
 
 	namespace MyEngine {
 
+		//Renderer sort order
+		enum SortOrder {
+			FrontToBack, //Default option, sorts all objects by distance from camera
+			MaterialSort, //Sorts first by material, then by distance from camera (minimize state changes)
+			NoSort //Disables sorting, objects will be rendered in an implementation defined way
+		};
+
 		//GL State constants
 		enum CullConstant {
 			CullFaceNone = 0,

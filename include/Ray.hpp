@@ -112,7 +112,7 @@ namespace MyUPlay {
 
 				if (t0 < 0 && t1 < 0) return NULL;
 
-				if (t0 < 0) return Vector3<T>(at(t1)));
+				if (t0 < 0) return Vector3<T>(at(t1));
 
 				return Vector3<T>(at(t0));
 
@@ -422,4 +422,3 @@ namespace MyUPlay {
 }
 
 #endif
-

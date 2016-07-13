@@ -5,7 +5,7 @@
 #include <memory>
 #include <functional>
 
-#include <SOIL/SOIl.h>
+#include <SOIL/SOIL.h>
 
 #include "Math.hpp"
 #include "Constants.hpp"
@@ -17,7 +17,7 @@ namespace MyUPlay {
 
 		class Texture {
 
-			char* data = NULL;
+			std::shared_ptr<unsigned char*> data = NULL;
 
 		public:
 
@@ -28,8 +28,8 @@ namespace MyUPlay {
 			std::string name;
 			std::string sourceFile;
 
-			unsigned width, height;
-			unsigned format;
+			int width, height;
+			int format;
 
 			short mapping = DEFAULT_MAPPING;
 
@@ -46,29 +46,27 @@ namespace MyUPlay {
 
 			bool generateMipmaps = true,
 			    premultiplyAlpha = false,
-			    flipY = true;
+			    flipY = true,
+					compress = false; //Enables DXT compression
 
 			short unpackAlignment = 4;
 
 			std::unique_ptr<std::function<void(Texture*)> > onUpdate = NULL;
 
-			Texture(){}
 			Texture(const std::string& image, short mapping = DEFAULT_MAPPING,
 				 short wrapS = ClampToEdgeWrapping, short wrapT = ClampToEdgeWrapping,
 				 short magFilter = LinearFilter, short minFilter = LinearMipMapLinearFilter,
-				 short anisotropy = 1)
+				 short anisotropy = 1, int forceFormat = SOIL_LOAD_AUTO)
 				: sourceFile(image), mapping(mapping), wrapS(wrapS), wrapT(wrapT),
 				magFilter(magFilter), minFilter(minFilter), anisotropy(anisotropy){
 
 				sourceFile = image;
-				data = SOIL_load_image(image.c_str(), &width, &height, &format, SOIL_LOAD_AUTO);
+				data = std::shared_ptr<unsigned char*>(
+						SOIL_load_image(image.c_str(), &width, &height, &format, forceFormat),
+						std::default_delete<unsigned char[]>()); //Delete array, not single char
 
 			}
-			~Texture(){
-				if (data != NULL){
-					SOIL_free_image_data(data);
-				}
-			}
+
 			Texture(const Texture& t){
 				copy(t);
 			}
@@ -77,7 +75,7 @@ namespace MyUPlay {
 				name = t.name;
 				sourceFile = t.sourceFile;
 
-				image = t.image;
+				data = t.data;
 
 				mapping = t.mapping;
 				wrapS = t.wrapS;
@@ -89,7 +87,6 @@ namespace MyUPlay {
 				anisotropy = t.anisotropy;
 
 				format = t.format;
-				type = t.type;
 
 				offset = t.offset;
 				repeat = t.repeat;
@@ -106,7 +103,7 @@ namespace MyUPlay {
 			}
 
 			void transformUv(Vector2<float> uv){
-				if (this.mapping == UVMapping) return;
+				if (mapping == UVMapping) return;
 
 				uv *= repeat;
 				uv += offset;
@@ -118,7 +115,7 @@ namespace MyUPlay {
 						break;
 
 						case ClampToEdgeWrapping:
-						uv.x = uv.x < 0 : ? 0 : 1;
+						uv.x = uv.x < 0 ? 0 : 1;
 						break;
 
 						case MirroredRepeatWrapping:
@@ -138,7 +135,7 @@ namespace MyUPlay {
 						break;
 
 						case ClampToEdgeWrapping:
-						uv.y = uv.y < 0 : ? 0 : 1;
+						uv.y = uv.y < 0 ? 0 : 1;
 						break;
 
 						case MirroredRepeatWrapping:
@@ -150,6 +147,15 @@ namespace MyUPlay {
 					}
 				}
 
+			}
+
+			const unsigned char * const getData() const {
+				return data;
+			}
+
+			int getDataLength() const {
+
+				return width * height * sizeof(char);
 			}
 
 		};

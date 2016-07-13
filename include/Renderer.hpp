@@ -27,6 +27,24 @@ namespace MyUPlay {
 		class Renderer {
 
 		protected:
+
+			const unsigned short maxTextures;
+
+			unsigned width, height;
+
+			int windowX = 0,
+			    windowY = 0;
+			unsigned windowWidth,
+				 windowHeight;
+
+			int opaqueObjectsLastIndex = -1, transparentObjectsLastIndex = -1;
+
+      SDL_Window* window;
+
+		public:
+
+			SortOrder currentSortOrder = FrontToBack;
+
 			//TODO type? currentBlending;
 			BlendingEquation currentBlendEquation;
 			BlendingSource currentBlendSrc;
@@ -40,36 +58,20 @@ namespace MyUPlay {
 
 			unsigned currentLineWidth;
 
-			const unsigned short maxTextures;
-
 			Color clearColor;
 			T clearAlpha;
-
-			unsigned width, height;
-
-			int windowX = 0,
-			    windowY = 0;
-			unsigned windowWidth,
-				 windowHeight;
-
-			bool alpha = false,
-			     depth = true,
-			     stencil = true,
-			     antialias = false,
-			     premultipliedAlpha = true,
-			     preserveDrawingBuffer = false;
-
-			int opaqueObjectsLastIndex = -1, transparentObjectsLastIndex = -1;
-
-      SDL_Window* window;
-
-		public:
 
 			bool autoClear = true,
 			     autoClearColor = true,
 			     autoClearDepth = true,
-			     autoClearStencil = true,
-			     sortObjects = true;
+			     autoClearStencil = true;
+
+			bool alpha = false,
+					 depth = true,
+					 stencil = true,
+					 antialias = false,
+					 premultipliedAlpha = true,
+					 preserveDrawingBuffer = false;
 
 			T gammaFactor = 2.0;
 			bool gammaInput = false,
@@ -82,7 +84,7 @@ namespace MyUPlay {
 			     shadowMapCascade = false;
 
 			unsigned maxMorphTargets = 8,
-				 maxMorphNormals = 4;
+				 			 maxMorphNormals = 4;
 
 			bool autoScaleCubeMaps = true;
 

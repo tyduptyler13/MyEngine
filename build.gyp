@@ -5,11 +5,9 @@
 			"product_name": "MyEngine",
 			"type": "<(library)",
 			"sources": [
- # 				"src/GLES2Program.cpp",
- # 				"src/Geometry.cpp",
+ 				"src/GLES3Renderer.cpp",
   				"src/Log.cpp",
-  				"src/Math.cpp",
-				"src/Texture.cpp"
+  				"src/Math.cpp"
 			],
 			"include_dirs": [
 				"include",

@@ -4,6 +4,7 @@
 #include "Object3D.hpp"
 #include "Material.hpp"
 #include "Fog.hpp"
+#include "Light.hpp"
 
 #include <memory>
 
@@ -34,8 +35,8 @@ namespace MyUPlay {
 				autoUpdate = scene.autoUpdate;
 			}
 
-			virtual Scene& add(Object3D&) override;
-			virtual Scene& remove(Object3D&) override;
+			Object3D<T>& add(Object3D<T>&) override;
+			Object3D<T>& remove(Object3D<T>&) override;
 
 		};
 
@@ -44,4 +45,3 @@ namespace MyUPlay {
 }
 
 #endif
-

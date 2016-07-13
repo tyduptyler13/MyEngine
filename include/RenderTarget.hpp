@@ -10,15 +10,14 @@ namespace MyUPlay {
 
 	namespace MyEngine {
 
-		template <typename T>
 		class RenderTarget {
 
 		public:
 			Math::UUID uuid = Math::generateUUID();
-			
+
 			unsigned width, height;
 
-			Texture<T> texture;
+			Texture texture;
 
 			bool depthBuffer = true,
 			     stencilBuffer = true;
@@ -32,4 +31,3 @@ namespace MyUPlay {
 }
 
 #endif
-

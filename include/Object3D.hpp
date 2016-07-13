@@ -24,14 +24,12 @@ namespace MyUPlay {
 
 		public:
 
-			~Object3D(){}
-
 			const Math::UUID id = Math::generateUUID();
 			std::string name;
 
-			weak_ptr<Object3D> parent; //If the parent is destroyed, we probably will be too.
+			std::weak_ptr<Object3D> parent; //If the parent is destroyed, we probably will be too.
 
-			std::vector<shared_ptr<Object3D> > children;
+			std::vector<std::shared_ptr<Object3D> > children;
 
 			Vector3<T> up;
 
@@ -57,8 +55,8 @@ namespace MyUPlay {
 			bool frustumCulled = true;
 			unsigned renderOrder = 0;
 
-			Object3D();
-			~Object3D();
+			Object3D(){}
+			~Object3D(){}
 
 			Object3D& applyMatrix(const Matrix4<T>&);
 
@@ -144,4 +142,3 @@ namespace MyUPlay {
 }
 
 #endif
-

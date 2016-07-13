@@ -183,10 +183,10 @@ namespace MyUPlay {
 						y = 0;
 					}
 				} else {
-					throw logic_error("Illegal state!");
+					throw new std::logic_error("Illegal state!");
 				}
 
-				order = o;
+				this->order = order;
 
 				if (update) onChangeCallback();
 
