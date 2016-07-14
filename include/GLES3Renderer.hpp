@@ -11,7 +11,7 @@ namespace MyUPlay {
 
 namespace MyEngine {
 
-class GLES3Renderer : Renderer<GLES3Renderer, float> {
+class GLES3Renderer : Renderer<float> {
 
 public:
 
@@ -38,7 +38,7 @@ public:
 	std::tuple<int, int, unsigned, unsigned> getViewport() const override;
 	void setDefaultViewport() override;
 
-	void renderBufferImmediate(const Object3D<float>& object, const Shader::Shader<GLES3Renderer>& program, const Material<float>& material) override;
+	void renderBufferImmediate(const Object3D<float>& object, const Shader::Shader& program, const Material<float>& material) override;
 	void renderBufferDirect(const Camera<float>& camera, const std::vector<Light<float> >& lights, const Fog<float>& fog, const Material<float>& material, const Object3D<float>& object, const Object3D<float>& objectGroup) override;
 
 	void render(const Scene<float>& scene, const Camera<float>& camera, RenderTarget* renderTarget = NULL, bool forceClear = false) override;

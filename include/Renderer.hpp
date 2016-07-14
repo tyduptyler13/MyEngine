@@ -24,7 +24,7 @@ namespace MyUPlay {
 
 namespace MyEngine {
 
-template <typename Base, typename T = float>
+template <typename T = float>
 class Renderer {
 
 protected:
@@ -137,7 +137,7 @@ public:
 	virtual std::tuple<int, int, unsigned, unsigned> getViewport() const = 0;
 	virtual void setDefaultViewport() = 0;
 
-	virtual void renderBufferImmediate(const Object3D<T>& object, const Shader::Shader<Base>& shader, const Material<T>& material) = 0;
+	virtual void renderBufferImmediate(const Object3D<T>& object, const Shader::Shader& shader, const Material<T>& material) = 0;
 	virtual void renderBufferDirect(const Camera<T>& camera, const std::vector<Light<T> >& lights, const Fog<T>& fog, const Material<T>& material, const Object3D<T>& object, const Object3D<T>& objectGroup) = 0;
 
 	virtual void render(const Scene<T>& scene, const Camera<T>& camera, RenderTarget* renderTarget = NULL, bool forceClear = false) = 0;

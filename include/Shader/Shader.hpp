@@ -4,20 +4,21 @@
 #include <vector>
 #include <memory>
 
+#include "Shader/Attribute.hpp"
 #include "Shader/ShaderComponent.hpp"
 
 namespace MyUPlay {
 namespace MyEngine {
 namespace Shader {
 
-template <typename R>
 class Shader {
 
 private:
 
 	bool dirty = true;
-	ShaderComponent<R> vertexShader;
-	ShaderComponent<R> fragmentShader;
+	std::vector<IAttribute> attributes;
+	ShaderComponent vertexShader;
+	ShaderComponent fragmentShader;
 
 	void onChangeFunc(){
 		dirty = true;
@@ -25,17 +26,23 @@ private:
 
 public:
 
+	bool optimize = true;
+	bool debug = false;
+
 	Shader(){
 
 	}
 	virtual ~Shader(){}
 
-
 	bool isDirty(){
 		return dirty;
 	}
 
-	virtual void bind() = 0;
+	template <typename R>
+	void compile();
+
+	template <typename R>
+	void bind();
 
 };
 

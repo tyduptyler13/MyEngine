@@ -14,15 +14,26 @@ namespace MyUPlay{
 namespace MyEngine {
 namespace Shader {
 
+class IAttribute {
+public:
+	std::string uuid = Math::generateUUID();
+	std::string name;
+
+	virtual ~IAttribute(){}
+
+	template <typename T>
+	virtual void set(T* value, unsigned size = 0) = 0;
+
+	virtual std::string get() = 0;
+}
+
 /**
  * Renderer followed by the type the class holds.
  * This will be automatically converted thanks to specializations in each render class
  */
 template <typename R, typename T>
-class Attribute {
+class Attribute : IAttribute {
 public:
-	std::string uuid = Math::generateUUID();
-	std::string name;
 	T* value = NULL;
 	unsigned size = 0; //Set this to a non zero value an the shader will use an array implementation instead. (1 is a single point array)
 	std::unique_ptr<std::function<void(T*)> > update = NULL; //Override this if you want the value updated every frame
@@ -32,7 +43,7 @@ public:
 
 	Attribute(const std::string& name, T* value = NULL) : name(name), value(value) {}
 	Attribute(std::string&& name, T* value = NULL) : name(name), value(value) {}
-	virtual ~Attribute(){
+	~Attribute(){
 		if (value == NULL) return;
 		if (size == 0){
 			delete value;
@@ -70,7 +81,7 @@ public:
 	 * Expect that the value you pass in will be managed from now on
 	 * If this object is deleted or set is called again, the existing memory will be freed.
 	 */
-	void set(T* value, unsigned size = 0){
+	void set(T* value, unsigned size = 0) override {
 		if (value != NULL){
 			if (size == 0){
 				delete value;
@@ -82,7 +93,7 @@ public:
 		this->size = size;
 	}
 
-	virtual void get();
+	std::string get();
 
 
 };
