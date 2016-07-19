@@ -4,7 +4,7 @@ LFLAGS=-flto -lpthread -L../deps/googletest -lgtest -lgtest_main -L../build/out/
 FILES=$(wildcard *.cc)
 HEADERS=$(wildcard ../include/*.hpp)
 
-test: $(FILES:.cc=.o)
+test: $(FILES:.cc=.o) gtest
 	$(CXX) $(FILES:.cc=.o) $(LFLAGS) -o test
 
 check: test
@@ -16,6 +16,16 @@ check: test
 clean:
 	$(RM) *.o test
 
-default: check
+default: check gtest
+
+../deps/googletest/Makefile: ../deps/googletest/CMakeLists.txt
+	cd ../deps/googletest; cmake .
+
+../deps/googletest:
+	git submodule init ../deps/googletest && git submodule update ../deps/googletest
+
+gtest: ../deps/googletest ../deps/googletest/Makefile
+	$(MAKE) -C ../deps/googletest
+
 
 

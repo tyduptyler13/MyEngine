@@ -1,5 +1,5 @@
-#ifndef MYUPLAY_MYENGINE_GLES3RENDERER
-#define MYUPLAY_MYENGINE_GLES3RENDERER
+#ifndef MYUPLAY_MYENGINE_GLES2RENDERER
+#define MYUPLAY_MYENGINE_GLES2RENDERER
 
 #include <string>
 #include <unordered_map>
@@ -11,12 +11,15 @@ namespace MyUPlay {
 
 namespace MyEngine {
 
-class GLES3Renderer : Renderer<float> {
+class GLES2Renderer : Renderer<float> {
 
 public:
 
-	GLES3Renderer();
-	virtual ~GLES3Renderer();
+	/**
+	 * Antialias should be set to a value 0 (off), or 2-4 for varying samples (on).
+	 */ 
+	GLES2Renderer(unsigned antialias = 0);
+	virtual ~GLES2Renderer();
 
 	void setScissor(int x, int y, unsigned width, unsigned height) override;
 	void setScissorTest(bool enable = true) override;

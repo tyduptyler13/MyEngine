@@ -6,6 +6,7 @@
 
 #include "Shader/Attribute.hpp"
 #include "Shader/ShaderComponent.hpp"
+#include "Math.hpp"
 
 namespace MyUPlay {
 namespace MyEngine {
@@ -25,6 +26,8 @@ private:
 	}
 
 public:
+
+	const Math::UUID = Math::GenerateUUID();
 
 	bool optimize = true;
 	bool debug = false;
