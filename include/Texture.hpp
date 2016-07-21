@@ -10,155 +10,150 @@
 #include "Math.hpp"
 #include "Constants.hpp"
 #include "Vector2.hpp"
+#include "CacheManager.hpp"
 
 namespace MyUPlay {
 
-namespace MyEngine {
+	namespace MyEngine {
 
-class Texture {
+		class Texture {
 
-	std::shared_ptr<unsigned char> data = NULL;
+			std::shared_ptr<CacheHandle<unsigned char> > fileData;
 
-public:
+			void loadImage();
 
-	static MappingMode DEFAULT_MAPPING;
+		public:
 
-	Math::UUID uuid = Math::generateUUID();
+			static MappingMode DEFAULT_MAPPING;
 
-	std::string name;
-	std::string sourceFile;
+			Math::UUID uuid = Math::generateUUID();
 
-	int width, height;
-	int format;
+			std::string name;
+			std::string sourceFile;
 
-	MappingMode mapping = DEFAULT_MAPPING;
+			int format;
 
-	WrappingMode wrapS = ClampToEdgeWrapping,
-			wrapT = ClampToEdgeWrapping;
+			MappingMode mapping = DEFAULT_MAPPING;
 
-	FilterConstant magFilter = LinearFilter,
-			minFilter = LinearMipMapLinearFilter;
+			WrappingMode wrapS = ClampToEdgeWrapping,
+					wrapT = ClampToEdgeWrapping;
 
-	unsigned short anisotropy = 1;
+			FilterConstant magFilter = LinearFilter,
+					minFilter = LinearMipMapLinearFilter;
 
-	Vector2<float> offset = Vector2<float>(0,0);
-	Vector2<float> repeat = Vector2<float>(1,1);
+			unsigned short anisotropy = 1;
 
-	bool generateMipmaps = true,
-			premultiplyAlpha = false,
-			flipY = true,
-			compress = false, //Enables DXT compression
-			enableRepeat = true;
+			Vector2<float> offset = Vector2<float>(0,0);
+			Vector2<float> repeat = Vector2<float>(1,1);
 
-	std::unique_ptr<std::function<void(Texture*)> > onUpdate = NULL;
+			bool generateMipmaps = true,
+					premultiplyAlpha = false,
+					flipY = true,
+					compress = false, //Enables DXT compression
+					enableRepeat = true;
 
-	Texture(const std::string& image, MappingMode mapping = DEFAULT_MAPPING,
-			WrappingMode wrapS = ClampToEdgeWrapping, WrappingMode wrapT = ClampToEdgeWrapping,
-			FilterConstant magFilter = LinearFilter, FilterConstant minFilter = LinearMipMapLinearFilter,
-			short anisotropy = 1, int forceFormat = SOIL_LOAD_AUTO)
-	: sourceFile(image), mapping(mapping), wrapS(wrapS), wrapT(wrapT),
-	  magFilter(magFilter), minFilter(minFilter), anisotropy(anisotropy){
+			std::unique_ptr<std::function<void(Texture*)> > onUpdate = NULL;
 
-		sourceFile = image;
-		data = std::shared_ptr<unsigned char>(
-				SOIL_load_image(image.c_str(), &width, &height, &format, forceFormat),
-				std::default_delete<unsigned char[]>()); //Delete array, not single char
-
-	}
-
-	Texture(const Texture& t){
-		copy(t);
-	}
-
-	void copy(const Texture& t){
-		name = t.name;
-		sourceFile = t.sourceFile;
-
-		data = t.data;
-
-		mapping = t.mapping;
-		wrapS = t.wrapS;
-		wrapT = t.wrapT;
-
-		magFilter = t.magFilter;
-		minFilter = t.minFilter;
-
-		anisotropy = t.anisotropy;
-
-		format = t.format;
-
-		offset = t.offset;
-		repeat = t.repeat;
-
-		generateMipmaps = t.generateMipmaps;
-		premultiplyAlpha = t.premultiplyAlpha;
-		flipY = t.flipY;
-
-	}
-	void operator=(const Texture& t){
-		copy(t);
-	}
-
-	void transformUv(Vector2<float> uv){
-		if (mapping == UVMapping) return;
-
-		uv *= repeat;
-		uv += offset;
-
-		if (uv.x < 0 || uv.x > 1){
-			switch(wrapS){
-			case RepeatWrapping:
-				uv.x = uv.x - floor(uv.x);
-				break;
-
-			case ClampToEdgeWrapping:
-				uv.x = uv.x < 0 ? 0 : 1;
-				break;
-
-			case MirroredRepeatWrapping:
-				if (abs(fmod(floor(uv.x), 2)) == 1){
-					uv.x = ceil(uv.x) - uv.x;
-				} else {
-					uv.x = uv.x - floor(uv.x);
-				}
+			Texture(const std::string& image, MappingMode mapping = DEFAULT_MAPPING,
+					WrappingMode wrapS = ClampToEdgeWrapping, WrappingMode wrapT = ClampToEdgeWrapping,
+					FilterConstant magFilter = LinearFilter, FilterConstant minFilter = LinearMipMapLinearFilter,
+					short anisotropy = 1, int format = SOIL_LOAD_AUTO)
+			: sourceFile(image), format(format), mapping(mapping), wrapS(wrapS), wrapT(wrapT),
+			  magFilter(magFilter), minFilter(minFilter), anisotropy(anisotropy) {
+				loadImage();
 			}
 
-		}
-
-		if (uv.y < 0 || uv.y > 1){
-			switch(wrapS){
-			case RepeatWrapping:
-				uv.y = uv.y - floor(uv.y);
-				break;
-
-			case ClampToEdgeWrapping:
-				uv.y = uv.y < 0 ? 0 : 1;
-				break;
-
-			case MirroredRepeatWrapping:
-				if (abs(fmod(floor(uv.y), 2)) == 1){
-					uv.y = ceil(uv.y) - uv.y;
-				} else {
-					uv.y = uv.y - floor(uv.y);
-				}
+			Texture(const Texture& t){
+				copy(t);
 			}
-		}
+
+			void copy(const Texture& t){
+				name = t.name;
+				sourceFile = t.sourceFile;
+
+				fileData = t.fileData;
+
+				mapping = t.mapping;
+				wrapS = t.wrapS;
+				wrapT = t.wrapT;
+
+				magFilter = t.magFilter;
+				minFilter = t.minFilter;
+
+				anisotropy = t.anisotropy;
+
+				offset = t.offset;
+				repeat = t.repeat;
+
+				generateMipmaps = t.generateMipmaps;
+				premultiplyAlpha = t.premultiplyAlpha;
+				flipY = t.flipY;
+
+			}
+			void operator=(const Texture& t){
+				copy(t);
+			}
+
+			void transformUv(Vector2<float> uv){
+				if (mapping == UVMapping) return;
+
+				uv *= repeat;
+				uv += offset;
+
+				if (uv.x < 0 || uv.x > 1){
+					switch(wrapS){
+					case RepeatWrapping:
+						uv.x = uv.x - floor(uv.x);
+						break;
+
+					case ClampToEdgeWrapping:
+						uv.x = uv.x < 0 ? 0 : 1;
+						break;
+
+					case MirroredRepeatWrapping:
+						if (abs(fmod(floor(uv.x), 2)) == 1){
+							uv.x = ceil(uv.x) - uv.x;
+						} else {
+							uv.x = uv.x - floor(uv.x);
+						}
+					}
+
+				}
+
+				if (uv.y < 0 || uv.y > 1){
+					switch(wrapS){
+					case RepeatWrapping:
+						uv.y = uv.y - floor(uv.y);
+						break;
+
+					case ClampToEdgeWrapping:
+						uv.y = uv.y < 0 ? 0 : 1;
+						break;
+
+					case MirroredRepeatWrapping:
+						if (abs(fmod(floor(uv.y), 2)) == 1){
+							uv.y = ceil(uv.y) - uv.y;
+						} else {
+							uv.y = uv.y - floor(uv.y);
+						}
+					}
+				}
+
+			}
+
+			std::shared_ptr<const std::vector<unsigned char>> getData() const {
+				return fileData->get();
+			}
+
+			int getDataLength() const {
+				return fileData->get()->size();
+			}
+
+		};
+
+		MappingMode Texture::DEFAULT_MAPPING = UVMapping;
 
 	}
-
-	const unsigned char * const getData() const {
-		return data.get();
-	}
-
-	int getDataLength() const {
-		return width * height * sizeof(char);
-	}
-
-};
-
-MappingMode Texture::DEFAULT_MAPPING = UVMapping;
-
-}
 
 }
 

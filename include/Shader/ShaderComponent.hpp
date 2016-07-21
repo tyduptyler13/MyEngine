@@ -3,71 +3,85 @@
 
 #include <vector>
 #include <string>
-#include <map>
-#include <stdexcept>
 
 #include "Math.hpp"
 
 namespace MyUPlay {
-namespace MyEngine {
-namespace Shader {
+	namespace MyEngine {
 
-class Connector {
-public:
-	weak_ptr<ShaderComponent> component;
-	std::string type;
-	std::string name;
-};
+		class GLES2Renderer;
 
-class Output;
+		namespace Shader {
 
-/**
- * A Connector graph is marched from output and follows dependent (input) functions. This removes
- * dead code naturally by ref counting only Input sources. This also prevents circular dependencies.
- */
-class Input : Connector {
-public:
-	/**
-	 * If a ShaderComponent can function without the input either by default values
-	 * or because there are multiple definitions of the function then set this to false.
-	 */
-	bool required = true;
-	shared_ptr<Output> source;
-};
+			struct Return {
+				const std::string type;
+				Return(std::string type) : type(type) {}
+			};
 
-class Output : Connector {
-public:
-	std::vector<std::weak_ptr<Input>> dest;
-};
+			struct Output {
+				const std::string type;
+				const std::string name;
+				Output(std::string type, std::string name) : type(type), name(name) {}
+			};
 
-class ShaderComponent {
+			template <typename R>
+			class ShaderComponent;
 
-public:
+			template <typename R>
+			struct Input {
+				const std::string type;
+				const bool required = true;
+				std::shared_ptr<ShaderComponent<R>> source;
+				Input(std::string type, bool required = true) : type(type), required(required) {}
+			};
 
-	const Math::UUID = Math::GenerateUUID();
+			template <typename R>
+			class ShaderComponent {
+			protected:
+				ShaderComponent(std::vector<Input<R>> inputs, std::vector<Output> outputs, Output ret, std::string name = "CustomShaderComponent")
+				: name(name), inputs(inputs), outputs(outputs), ret(ret) {}
+			public:
 
-	const std::string name; //This should exactly match the functions name in the code. The code may not compile otherwise.
-	/**
-	 * Only add an input here if code MUST set its value before the shader is run.
-	 * If it is a varying type variable then don't put it here, glsl will handle it.
-	 */
-	const std::map<std::string, IOin> inputs; //Input variables.
-	const std::map<std::string, IOout> outputs; //Output of this function. (only used in node graph)
+				virtual ~ShaderComponent(){};
 
-	const std::string code;
+				const Math::UUID uuid = Math::generateUUID();
+				std::string name;
 
-	virtual ~ShaderComponent(){}
-	ShaderComponent(const std::string& name, const std::vector<Input>& inputs, const std::vector<Output>& outputs, const std::string& code)
-	: name(name), inputs(inputs), outputs(outputs), code(code) {}
-	ShaderComponent(std::string&& name, std::vector<IO>&& inputs, std::vector<IO>&& outputs, std::string&& code)
-	: name(name), inputs(inputs), outputs(outputs), code(code) {}
-	ShaderComponent(ShaderComponent&& c) : name(c.name), inputs(c.inputs), outputs(c.outputs), code(c.code) {}
+				const std::vector<Input<R>> inputs;
+				const std::vector<Output> outputs;
+				const Return ret; //Type will be "void" if no return.
 
-};
+				virtual std::string getCode() const = 0;
+			};
 
+			/**
+			 * This is a very basic shader Component that simply declares a variable.
+			 */
+			template <typename R>
+			class NameComponent : ShaderComponent<R> {
+			public:
+				std::string value;
 
-}
-}
+				//Create a shaderComponent with no inputs or outputs, a return value, and an optional initial value.
+				NameComponent(std::string name, std::string type, std::string value = "")
+				: ShaderComponent<R>({}, {}, Return(type), name), value(value){};
+
+				std::string getCode() const override;
+			};
+
+			//Example implementation of NameComponent getCode for GLES2
+			template <>
+			std::string NameComponent<GLES2Renderer>::getCode() const {
+				std::string r = ret.type + " " + name;
+				if (value.size() > 0){
+					r += " = " + value; //Add the initial value if it was specified.
+				}
+				r += ";"; //Terminate the statement.
+				return r;
+			}
+
+		}
+	}
 }
 
 

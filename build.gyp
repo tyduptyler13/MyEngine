@@ -5,14 +5,13 @@
 			"product_name": "MyEngine",
 			"type": "<(library)",
 			"sources": [
- 				"src/GLES3Renderer.cpp",
+ 				"src/GLES2Renderer.cpp",
   				"src/Log.cpp",
   				"src/Math.cpp"
 			],
 			"include_dirs": [
 				"include",
-				"<!@(<(pkg-config) --cflags sdl2)",
-				"deps/Simple-OpenGL-Image_Library/src"
+				"<!@(<(pkg-config) --cflags sdl2)"
 			],
 			"direct_dependent_settings": {
 				"include_dirs": [
@@ -33,7 +32,8 @@
 #				"-flto"
 			],
 			"libraries": [
-				"<!@(<(pkg-config) --libs-only-l sdl2)"
+				"<!@(<(pkg-config) --libs-only-l sdl2)",
+				"-lSOIL"
 			],
 			"ldflags": [
 				"<!@(<(pkg-config) --libs-only-L --libs-only-other sdl2)"

@@ -1,9 +1,13 @@
 #include <stdexcept>
 #include <SDL2/SDL_opengles2.h>
 
+#include <SOIL/SOIL.h>
+
 #include "Log.hpp"
 #include "GLES2Renderer.hpp"
 #include "Vector4.hpp"
+#include "Shader/ShaderUtil.hpp"
+
 
 using namespace std;
 using namespace MyUPlay::MyEngine;
@@ -142,6 +146,8 @@ void GLES2Renderer::setFaceCulling(CullConstant cullFace, CullDirection frontFac
 			break;
 		case CullFaceFrontBack:
 			glCullFace(GL_FRONT_AND_BACK);
+		default:
+			break;
 		}
 
 	}
@@ -172,14 +178,15 @@ void GLES2Renderer::setTexture(shared_ptr<Texture> texture, unsigned slot)  {
 		flags |= texture->flipY ? SOIL_FLAG_INVERT_Y : 0;
 		flags |= texture->compress ? SOIL_FLAG_COMPRESS_TO_DXT : 0;
 
-		gt.id = SOIL_load_OGL_texture_from_memory(texture->getData(), texture->getDataLength(), channels, SOIL_CREATE_NEW_ID, flags);
+		gt.id = SOIL_load_OGL_texture_from_memory(texture->getData()->data(), texture->getDataLength(), channels, SOIL_CREATE_NEW_ID, flags);
 
 		textures.insert(make_pair(texture->uuid, gt));
 	}
 
 	GPUTexture& t = textures[texture->uuid];
 
-	glBindTexture(GL_TEXTURE_2D, slot);
+	glActiveTexture(GL_TEXTURE0 + slot);
+	glBindTexture(GL_TEXTURE_2D, t.id);
 
 }
 
@@ -194,21 +201,21 @@ void GLES2Renderer::readRenderTargetPixels(RenderTarget& target, int x, int y, u
 }
 
 //Specializations for shaders (Allows a renderer to work
-template <> const char* Shader::Attribute<GLES2Renderer, bool>::type = "bool";
-template <> const char* Shader::Attribute<GLES2Renderer, int>::type = "int";
-template <> const char* Shader::Attribute<GLES2Renderer, unsigned>::type = "uint";
-template <> const char* Shader::Attribute<GLES2Renderer, float>::type = "float";
-template <> const char* Shader::Attribute<GLES2Renderer, Vector2<float>>::type = "vec2";
-template <> const char* Shader::Attribute<GLES2Renderer, Vector3<float>>::type = "vec3";
-template <> const char* Shader::Attribute<GLES2Renderer, Vector4<float>>::type = "vec4";
-template <> const char* Shader::Attribute<GLES2Renderer, Vector2<int>>::type = "ivec2";
-template <> const char* Shader::Attribute<GLES2Renderer, Vector3<int>>::type = "ivec3";
-template <> const char* Shader::Attribute<GLES2Renderer, Vector4<int>>::type = "ivec3";
-template <> const char* Shader::Attribute<GLES2Renderer, Vector2<unsigned>>::type = "uvec2";
-template <> const char* Shader::Attribute<GLES2Renderer, Vector3<unsigned>>::type = "uvec3";
-template <> const char* Shader::Attribute<GLES2Renderer, Vector4<unsigned>>::type = "uvec4";
-template <> const char* Shader::Attribute<GLES2Renderer, Matrix3<float>>::type = "mat3";
-template <> const char* Shader::Attribute<GLES2Renderer, Matrix4<float>>::type = "mat4";
-template <> const char* Shader::Attribute<GLES2Renderer, Texture>::type = "sampler2D";
+template <> const char* Shader::Utility<GLES2Renderer, bool>::Type = "bool";
+template <> const char* Shader::Utility<GLES2Renderer, int>::Type = "int";
+template <> const char* Shader::Utility<GLES2Renderer, unsigned>::Type = "uint";
+template <> const char* Shader::Utility<GLES2Renderer, float>::Type = "float";
+template <> const char* Shader::Utility<GLES2Renderer, Vector2<float>>::Type = "vec2";
+template <> const char* Shader::Utility<GLES2Renderer, Vector3<float>>::Type = "vec3";
+template <> const char* Shader::Utility<GLES2Renderer, Vector4<float>>::Type = "vec4";
+template <> const char* Shader::Utility<GLES2Renderer, Vector2<int>>::Type = "ivec2";
+template <> const char* Shader::Utility<GLES2Renderer, Vector3<int>>::Type = "ivec3";
+template <> const char* Shader::Utility<GLES2Renderer, Vector4<int>>::Type = "ivec3";
+template <> const char* Shader::Utility<GLES2Renderer, Vector2<unsigned>>::Type = "uvec2";
+template <> const char* Shader::Utility<GLES2Renderer, Vector3<unsigned>>::Type = "uvec3";
+template <> const char* Shader::Utility<GLES2Renderer, Vector4<unsigned>>::Type = "uvec4";
+template <> const char* Shader::Utility<GLES2Renderer, Matrix3<float>>::Type = "mat3";
+template <> const char* Shader::Utility<GLES2Renderer, Matrix4<float>>::Type = "mat4";
+template <> const char* Shader::Utility<GLES2Renderer, Texture>::Type = "sampler2D";
 //Other specializations left out for now.
 
