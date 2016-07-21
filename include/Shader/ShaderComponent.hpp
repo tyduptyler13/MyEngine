@@ -51,7 +51,19 @@ namespace MyUPlay {
 				const std::vector<Output> outputs;
 				const Return ret; //Type will be "void" if no return.
 
+				/**
+				 * This function is called once per use. It defines all variables not already
+				 * declared (like optional outputs/inputs) and places the actual call to the
+				 * function.
+				 */
 				virtual std::string getCode() const = 0;
+				/**
+				 * This function is called once when defining anything the component needs globally.
+				 * All components that define a function will define most of their code here.
+				 */
+				virtual std::string getDeclaration() const {
+					return ""; //By default things won't have a global declaration.
+				}
 			};
 
 			/**
