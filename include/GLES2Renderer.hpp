@@ -52,6 +52,8 @@ namespace MyUPlay {
 			RenderTarget& getRenderTarget() override;
 			void readRenderTargetPixels(RenderTarget& target, int x, int y, unsigned width, unsigned height, void** buffer) override; //TODO Find type for buffer
 
+
+
 		private:
 
 			SDL_GLContext context;

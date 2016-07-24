@@ -19,6 +19,7 @@
 #include "Material.hpp"
 #include "Texture.hpp"
 #include "Shader/Shader.hpp"
+#include "Quaternion.hpp"
 
 namespace MyUPlay {
 
@@ -27,42 +28,14 @@ namespace MyEngine {
 template <typename R, typename T = float>
 class Renderer {
 
-protected:
-
-	int maxTextures;
-
-	int windowX = 0,
-			windowY = 0;
-	int windowWidth,
-	windowHeight;
-
-	int opaqueObjectsLastIndex = -1, transparentObjectsLastIndex = -1;
-
-	SDL_Window* window;
-
-	Color clearColorv;
-	T clearAlpha;
-
 public:
 
 	virtual ~Renderer(){}
 
-	SortOrder currentSortOrder = FrontToBack;
-
-	//TODO type? currentBlending;
-	BlendingEquation currentBlendEquation;
-	BlendingSource currentBlendSrc;
-	BlendingDestination currentBlendDst;
-	BlendingEquation currentBlendEquationAlpha;
-	BlendingSource currentBlendSrcAlpha;
-	BlendingDestination currentBlendDstAlpha;
-
-	DepthMode currentDepthFunc;
-	DepthMode currentDepthWrite;
+	T sortEpsilon = 0.1;
+	T frustumEpsilon = 0.1;
 
 	unsigned currentLineWidth;
-
-
 
 	bool autoClear = true,
 			autoClearColor = true,
@@ -85,9 +58,6 @@ public:
 	CullConstant shadowMapCullFace = CullFaceFront;
 	bool shadowMapDebug = false,
 			shadowMapCascade = false;
-
-	unsigned maxMorphTargets = 8,
-			maxMorphNormals = 4;
 
 	bool autoScaleCubeMaps = true;
 
@@ -197,6 +167,44 @@ public:
 		SDL_GetWindowSize(window, &windowWidth, &windowHeight);
 		SDL_GetWindowPosition(window, &windowX, &windowY);
 	}
+
+protected:
+
+	int maxTextures;
+
+	int windowX = 0,
+			windowY = 0;
+	int windowWidth,
+	windowHeight;
+
+	int opaqueObjectsLastIndex = -1, transparentObjectsLastIndex = -1;
+
+	SDL_Window* window;
+
+	Color clearColorv;
+	T clearAlpha;
+
+	//TODO type? currentBlending;
+	BlendingEquation currentBlendEquation;
+	BlendingSource currentBlendSrc;
+	BlendingDestination currentBlendDst;
+	BlendingEquation currentBlendEquationAlpha;
+	BlendingSource currentBlendSrcAlpha;
+	BlendingDestination currentBlendDstAlpha;
+
+	/**
+	 * This variable is for tracking the last known good sorting of objects for the camera.
+	 * As long as the camera doesn't move beyond some epsilon and the scene doesn't have
+	 * any new changes then we can skip sorting and use previous sortings. Rotation won't
+	 * matter because it is distance sorted anyways. Frustum will use lastSortedRotation.
+	 */
+	Vector3f lastSortedPos;
+
+	/**
+	 * This is the same type of variable as above except it triggers a new check for
+	 * objects that have left/entered the frustum. Sorting stays the same.
+	 */
+	Quaternionf lastSortedRot;
 
 };
 

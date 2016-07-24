@@ -119,6 +119,8 @@ void GLES2Renderer::setDefaultViewport() {
 
 void GLES2Renderer::renderBufferImmediate(const Object3D<float>& object, const Shader::Shader<GLES2Renderer>& program, const Material<float>& material)  {
 
+	if (!object.visible) return; //Immediately skip non visible objects.
+
 }
 
 void GLES2Renderer::renderBufferDirect(const Camera<float>& camera, const std::vector<Light<float> >& lights,
@@ -127,6 +129,18 @@ void GLES2Renderer::renderBufferDirect(const Camera<float>& camera, const std::v
 }
 
 void GLES2Renderer::render(const Scene<float>& scene, const Camera<float>& camera, RenderTarget* renderTarget, bool forceClear)  {
+
+	if (scene.autoUpdate) scene.updateMatrixWorld();
+
+	if (camera.parent == NULL) camera.updateMatrixWorld();
+
+	camera.matrixWorldInverse = camera.matrixWorld.getInverse();
+
+	Matrix4f projScreenMatrix = camera.projectionMatrix * camera.matrixWorldInverse;
+	Frustumf frustum;
+	frustum.setFromMatrix(projScreenMatrix);
+
+
 
 }
 

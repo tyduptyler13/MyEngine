@@ -303,15 +303,49 @@ namespace MyUPlay {
 				return x * x + y * y + z * z + w * w;
 			}
 
-			T length() const; //Avoiding including math.h in header.
+			T length() const {
+				return std::sqrt(lengthSq());
+			}
 
-			Quaternion& normalize();
+			Quaternion& normalize(){
+
+				T len = length();
+
+				if (len == 0){
+					x = y = z = 0;
+					w = 1;
+				} else {
+					len = 1 / len;
+					x = x * len;
+					y = y * len;
+					z = z * len;
+					w = w * len;
+				}
+
+				onChangeCallback();
+
+				return *this;
+			}
 
 			Quaternion& multiply(const Quaternion& q) {
 				return multiplyQuaternions(*this, q);
 			}
 
-			Quaternion& multiplyQuaternions(const Quaternion&, const Quaternion&);
+			Quaternion& multiplyQuaternions(const Quaternion& a, const Quaternion& b) {
+				// from http://www.euclideanspace.com/maths/algebra/realNormedAlgebra/quaternions/code/index.htm
+
+				T qax = a.x, qay = a.y, qaz = a.z, qaw = a.w;
+				T qbx = b.x, qby = b.y, qbz = b.z, qbw = b.w;
+
+				x = qax * qbw + qaw * qbx + qay * qbz - qaz * qby;
+				y = qay * qbw + qaw * qby + qaz * qbx - qax * qbz;
+				z = qaz * qbw + qaw * qbz + qax * qby - qay * qbx;
+				w = qaw * qbw - qax * qbx - qay * qby - qaz * qbz;
+
+				onChangeCallback();
+
+				return *this;
+			}
 
 			Quaternion& operator*=(const Quaternion& q){
 				return multiply(q);
@@ -321,7 +355,68 @@ namespace MyUPlay {
 				return Quaternion(*this).multiply(q);
 			}
 
-			Quaternion& slerp(const Quaternion&, T interpolation);
+			Quaternion& slerp(const Quaternion& qb, T interpolation){
+				if ( t == 0 ) return *this;
+				if ( t == 1 ) return copy( qb );
+
+				T x = this->x, y = this->y, z = this->z, w = this->w;
+
+				// http://www.euclideanspace.com/maths/algebra/realNormedAlgebra/quaternions/slerp/
+
+				T cosHalfTheta = w * qb.w + x * qb.x + y * qb.y + z * qb.z;
+
+				if ( cosHalfTheta < 0 ) {
+
+					this->w = - qb.w;
+					this->x = - qb.x;
+					this->y = - qb.y;
+					this->z = - qb.z;
+
+					cosHalfTheta = - cosHalfTheta;
+
+				} else {
+
+					copy( qb );
+
+				}
+
+				if ( cosHalfTheta >= 1.0 ) {
+
+					this->w = w;
+					this->x = x;
+					this->y = y;
+					this->z = z;
+
+					return this;
+
+				}
+
+				T sinHalfTheta = std::sqrt( 1.0 - cosHalfTheta * cosHalfTheta );
+
+				if ( std::abs( sinHalfTheta ) < 0.001 ) {
+
+					this->w = 0.5 * ( w + this->w );
+					this->x = 0.5 * ( x + this->x );
+					this->y = 0.5 * ( y + this->y );
+					this->z = 0.5 * ( z + this->z );
+
+					return this;
+
+				}
+
+				T halfTheta = std::atan2( sinHalfTheta, cosHalfTheta );
+				T ratioA = std::sin( ( 1 - t ) * halfTheta ) / sinHalfTheta,
+				ratioB = std::sin( t * halfTheta ) / sinHalfTheta;
+
+				this->w = ( w * ratioA + this->w * ratioB );
+				this->x = ( x * ratioA + this->x * ratioB );
+				this->y = ( y * ratioA + this->y * ratioB );
+				this->z = ( z * ratioA + this->z * ratioB );
+
+				onChangeCallback();
+
+				return this;
+			}
 
 			bool equals(const Quaternion& q) const {
 				return x == q.x && y == q.y && z == q.z && w == q.w;

@@ -35,8 +35,8 @@ namespace MyUPlay {
 				autoUpdate = scene.autoUpdate;
 			}
 
-			Object3D<T>& add(Object3D<T>&) override;
-			Object3D<T>& remove(Object3D<T>&) override;
+			Object3D<T>& add(std::shared_ptr<Object3D<T>>) override;
+			Object3D<T>& remove(std::shared_ptr<Object3D<T>>) override;
 
 		};
 
