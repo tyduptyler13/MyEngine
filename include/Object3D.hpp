@@ -21,27 +21,37 @@ namespace MyUPlay {
 
 	namespace MyEngine {
 
+		enum ObjectType { //TODO Expand this to the rest of the types.
+			BASIC,
+			LIGHT,
+			SCENE,
+			CAMERA,
+			DRAWABLE
+		};
+
 		template <typename T>
 		class Object3D {
 		private:
 
-			Log logger("Object3D");
+			Log logger = Log("Object3D");
 
 		public:
+
+			ObjectType type;
 
 			const Math::UUID id = Math::generateUUID();
 			std::string name;
 
-			std::weak_ptr<Object3D> parent; //If the parent is destroyed, we probably will be too.
+			std::weak_ptr<Object3D> parent; //We don't want to keep a ref count on something that also owns us.
 
 			std::vector<std::shared_ptr<Object3D> > children;
 
-			Vector3<T> up(0, 1, 0);
+			Vector3<T> up = Vector3<T>(0, 1, 0);
 
 			Vector3<T> position;
 			Euler<T> rotation;
 			Quaternion<T> quaternion;
-			Vector3<T> scale(1, 1, 1);
+			Vector3<T> scale = Vector3<T>(1, 1, 1);
 
 			bool rotationAutoUpdate = true;
 			Matrix4<T> matrix;
@@ -58,10 +68,10 @@ namespace MyUPlay {
 			bool frustumCulled = true;
 			unsigned renderOrder = 0;
 
-			Object3D(){}
-			~Object3D(){}
+			Object3D(ObjectType t = BASIC) : type(t) {}
+			virtual ~Object3D(){}
 
-			Object3D(std::shared_ptr<Object3D> o){
+			Object3D(const Object3D& o){
 				copy(o);
 			}
 
@@ -89,9 +99,9 @@ namespace MyUPlay {
 			}
 
 			Object3D& rotateOnAxis(Vector3<T> axis, float angle) {
-				Quaternion q1;
+				Quaternion<T> q1;
 				q1.setFromAxisAngle(axis, angle);
-				quaterion *= q1;
+				quaternion *= q1;
 				return *this;
 			}
 			Object3D& rotateX(float angle) {
@@ -111,7 +121,7 @@ namespace MyUPlay {
 			}
 
 			Object3D& translateOnAxis(Vector3<T> axis, float distance){
-				Vector3 v1(axis);
+				Vector3<T> v1(axis);
 				v1.applyQuaternion(quaternion);
 				position += v1 * distance;
 				return *this;
@@ -148,9 +158,10 @@ namespace MyUPlay {
 			/**
 			 * A helper function for easily adding multiple objects.
 			 */
-			Object3D& add(std::shared_ptr<Object3D> self, std::shared_ptr<Object3D> object, std::shared_ptr<Object3D>... objects){
-				add(self, Object); //Add first object
-				add(self, objects); //Repeat without the first object.
+			Object3D& add(std::shared_ptr<Object3D> self, std::vector<std::shared_ptr<Object3D>> objects){
+				for (std::shared_ptr<Object3D>& o : objects){
+					add(self, o);
+				}
 				return *this;
 			}
 
@@ -159,7 +170,7 @@ namespace MyUPlay {
 			 * the function. All of the objects added must reference the correct
 			 * shared_ptr to avoid early deletion.
 			 */
-			virtual Object3D& add(std::shared_ptr<Object3D> self, std::shared_ptr<Object3D> object){
+			Object3D& add(std::shared_ptr<Object3D> self, std::shared_ptr<Object3D> object){
 				if (object == this){
 					logger.error("Add: Object cannot be added to itself.");
 					return *this;
@@ -175,13 +186,14 @@ namespace MyUPlay {
 				return *this;
 			}
 
-			Object3D& add(std::shared_ptr<Object3D> self, std::shared_ptr<Object3D> object, std::shared_ptr<Object3D>... objects){
-				add(self, object);
-				add(self, objects);
+			Object3D& remove(std::shared_ptr<Object3D> self, std::vector<std::shared_ptr<Object3D>> objects){
+				for (std::shared_ptr<Object3D>& o : objects){
+					add(self, o);
+				}
 				return *this;
 			}
 
-			virtual Object3D& remove(sdt::shared_ptr<Object3D> self, std::shared_ptr<Object3D> object){
+			Object3D& remove(std::shared_ptr<Object3D> self, std::shared_ptr<Object3D> object){
 
 				auto loc = std::find(children.begin(), children.end(), object);
 
@@ -196,7 +208,7 @@ namespace MyUPlay {
 
 			std::shared_ptr<Object3D> getObjectById(const Math::UUID& id) const {
 				for (auto o : children) {
-					if (o->uuid = id){
+					if (o->uuid == id){
 						return o;
 					}
 
@@ -213,7 +225,7 @@ namespace MyUPlay {
 			}
 			Object3D& getObjectByName(const std::string& name) const {
 				for (auto o : children) {
-					if (o->name = name){
+					if (o->name == name){
 						return o;
 					}
 
@@ -259,7 +271,7 @@ namespace MyUPlay {
 			}
 			Euler<T>& getWorldRotation(Euler<T>& target) {
 				Quaternion<T> q = getWorldQuaternion();
-				return result.setFromQuaternion(q, rotation.order, false);
+				return target.setFromQuaternion(q, rotation.order, false);
 			}
 			Vector3<T>& getWorldScale(Vector3<T>& target) {
 				Quaternion<T> q;
@@ -270,17 +282,17 @@ namespace MyUPlay {
 			}
 			Vector3<T>& getWorldDirection(Vector3<T>& target) {
 				Quaternion<T> q = getWorldQuaternion();
-				return result.set(0, 0, 1).applyQuaternion(q);
+				return target.set(0, 0, 1).applyQuaternion(q);
 			}
 
-			Object3D& traverse(std::function<void(std::shared_ptr<Object3D> self, std::shared_ptr<Object3D>)> func){
+			Object3D& traverse(std::shared_ptr<Object3D> self, std::function<void(std::shared_ptr<Object3D>)> func){
 				func(self);
 				for (auto o : children){
 					o.traverse(o, func);
 				}
 				return *this;
 			}
-			Object3D& traverseVisible(std::function<void(std::shared_ptr<Object3D> self, std::shared_ptr<Object3D>)> func){
+			Object3D& traverseVisible(std::shared_ptr<Object3D> self, std::function<void(std::shared_ptr<Object3D>)> func){
 				if (visible){
 					func(self);
 					for (auto o : children){
@@ -289,7 +301,7 @@ namespace MyUPlay {
 				}
 				return *this;
 			}
-			Object3D& traverseAnsestors(std::function<void(std::shared_ptr<Object3D> self, std::shared_ptr<Object3D>)> func){
+			Object3D& traverseAnsestors(std::shared_ptr<Object3D> self, std::function<void(std::shared_ptr<Object3D>)> func){
 				func(self);
 				for (auto o : children){
 					o->traverseAnsestors(o, func);
@@ -326,14 +338,14 @@ namespace MyUPlay {
 				}
 
 				for (auto o : children) {
-					o.updateMatrixWorld(force);
+					o->updateMatrixWorld(force);
 				}
 
 				return *this;
 
 			}
 
-			Object3D& copy(std::shared_ptr<Object3D> o, bool recursive = true) {
+			virtual Object3D& copy(const Object3D& o, bool recursive = true) {
 				name = o->name;
 				up = o->up;
 
@@ -364,12 +376,6 @@ namespace MyUPlay {
 				return *this;
 
 			}
-			Object3D clone(bool recursive = false) const {
-				return Object3D().copy(*this, recursive);
-			}
-			Object3D clone(const Object3D& o, bool recursive = false) const {
-				return Object3D().copy(o, recursive);
-			}
 			Object3D& operator=(const Object3D& o){
 				return copy(o);
 			}
@@ -382,7 +388,7 @@ namespace MyUPlay {
 
 		};
 
-		#define OBJECT3D_DEFINED
+#define OBJECT3D_DEFINED
 
 	}
 

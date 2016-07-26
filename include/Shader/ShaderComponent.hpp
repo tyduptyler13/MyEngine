@@ -13,7 +13,7 @@ namespace MyUPlay {
 
 		namespace Shader {
 
-			struct Return {
+			struct Return { //Keeping this as a struct in case we implement more features in the future.
 				const std::string type;
 				Return(std::string type) : type(type) {}
 			};

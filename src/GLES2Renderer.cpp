@@ -7,6 +7,7 @@
 #include "GLES2Renderer.hpp"
 #include "Vector4.hpp"
 #include "Shader/ShaderUtil.hpp"
+#include "Frustum.hpp"
 
 
 using namespace std;
@@ -117,30 +118,28 @@ void GLES2Renderer::setDefaultViewport() {
 	setViewport(0, 0, w, h);
 }
 
-void GLES2Renderer::renderBufferImmediate(const Object3D<float>& object, const Shader::Shader<GLES2Renderer>& program, const Material<float>& material)  {
+void GLES2Renderer::renderBufferImmediate(Object3D<float>& object, Shader::Shader<GLES2Renderer>& program, Material<float>& material)  {
 
-	if (!object.visible) return; //Immediately skip non visible objects.
 
-}
-
-void GLES2Renderer::renderBufferDirect(const Camera<float>& camera, const std::vector<Light<float> >& lights,
-		const Fog<float>& fog, const Material<float>& material, const Object3D<float>& object, const Object3D<float>& objectGroup)  {
 
 }
 
-void GLES2Renderer::render(const Scene<float>& scene, const Camera<float>& camera, RenderTarget* renderTarget, bool forceClear)  {
+void GLES2Renderer::renderBufferDirect(Camera<float>& camera, std::vector<Light<float> >& lights,
+		Fog<float>& fog, Material<float>& material, Object3D<float>& object, Object3D<float>& objectGroup)  {
+
+}
+
+void GLES2Renderer::render(Scene<float>& scene, Camera<float>& camera, std::shared_ptr<RenderTarget> renderTarget, bool forceClear)  {
 
 	if (scene.autoUpdate) scene.updateMatrixWorld();
 
-	if (camera.parent == NULL) camera.updateMatrixWorld();
+	if (camera.parent.expired()) camera.updateMatrixWorld();
 
-	camera.matrixWorldInverse = camera.matrixWorld.getInverse();
+	camera.matrixWorldInverse.getInverse(camera.matrixWorld);
 
 	Matrix4f projScreenMatrix = camera.projectionMatrix * camera.matrixWorldInverse;
-	Frustumf frustum;
+	Frustum<float> frustum;
 	frustum.setFromMatrix(projScreenMatrix);
-
-
 
 }
 

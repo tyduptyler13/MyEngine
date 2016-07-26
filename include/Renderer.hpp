@@ -107,10 +107,10 @@ public:
 	virtual std::tuple<int, int, unsigned, unsigned> getViewport() const = 0;
 	virtual void setDefaultViewport() = 0;
 
-	virtual void renderBufferImmediate(const Object3D<T>& object, const Shader::Shader<R>& shader, const Material<T>& material) = 0;
-	virtual void renderBufferDirect(const Camera<T>& camera, const std::vector<Light<T> >& lights, const Fog<T>& fog, const Material<T>& material, const Object3D<T>& object, const Object3D<T>& objectGroup) = 0;
+	virtual void renderBufferImmediate(Object3D<T>& object, Shader::Shader<R>& shader, Material<T>& material) = 0;
+	virtual void renderBufferDirect(Camera<T>& camera, std::vector<Light<T> >& lights, Fog<T>& fog, Material<T>& material, Object3D<T>& object, Object3D<T>& objectGroup) = 0;
 
-	virtual void render(const Scene<T>& scene, const Camera<T>& camera, RenderTarget* renderTarget = NULL, bool forceClear = false) = 0;
+	virtual void render(Scene<T>& scene, Camera<T>& camera, std::shared_ptr<RenderTarget> renderTarget = NULL, bool forceClear = false) = 0;
 
 	virtual void setFaceCulling(CullConstant cullFace, CullDirection frontFaceDirection) = 0;
 	virtual void setTexture(std::shared_ptr<Texture> texture, unsigned slot = 0) = 0;

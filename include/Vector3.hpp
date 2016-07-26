@@ -311,7 +311,7 @@ namespace MyUPlay {
 				Matrix4<T> matrix;
 
 				matrix.multiplyMatricies(camera.matrixWorld, matrix.getInverse( camera.projectionMatrix ) );
-				return applyProjection();
+				return applyProjection(matrix);
 
 			}
 

@@ -130,6 +130,9 @@ namespace MyUPlay {
 
 		};
 
+		typedef Frustum<float> Frustumf;
+		typedef Frustum<double> Frustumd;
+
 	}
 
 }

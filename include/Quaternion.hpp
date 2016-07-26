@@ -356,8 +356,8 @@ namespace MyUPlay {
 			}
 
 			Quaternion& slerp(const Quaternion& qb, T interpolation){
-				if ( t == 0 ) return *this;
-				if ( t == 1 ) return copy( qb );
+				if ( interpolation == 0 ) return *this;
+				if ( interpolation == 1 ) return copy( qb );
 
 				T x = this->x, y = this->y, z = this->z, w = this->w;
 
@@ -405,8 +405,8 @@ namespace MyUPlay {
 				}
 
 				T halfTheta = std::atan2( sinHalfTheta, cosHalfTheta );
-				T ratioA = std::sin( ( 1 - t ) * halfTheta ) / sinHalfTheta,
-				ratioB = std::sin( t * halfTheta ) / sinHalfTheta;
+				T ratioA = std::sin( ( 1 - interpolation ) * halfTheta ) / sinHalfTheta,
+				ratioB = std::sin( interpolation * halfTheta ) / sinHalfTheta;
 
 				this->w = ( w * ratioA + this->w * ratioB );
 				this->x = ( x * ratioA + this->x * ratioB );
