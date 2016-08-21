@@ -7,7 +7,8 @@
 			"sources": [
  				"src/GLES2Renderer.cpp",
   				"src/Log.cpp",
-  				"src/Math.cpp"
+  				"src/Math.cpp",
+  				"src/ShaderNode.cpp"
 			],
 			"include_dirs": [
 				"include",

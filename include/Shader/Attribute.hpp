@@ -19,15 +19,25 @@ namespace MyUPlay{
 		namespace Shader {
 
 			class IAttribute {
-			protected:
-				IAttribute(std::string name) : name(name) {}
 			public:
+				enum Scope {
+					Const, //Compile time
+					PerFrame, //Uniform
+					PerPrimative, //Attribute
+					PerVertex //Varying
+				};
+			protected:
+				IAttribute(std::string name, Scope s) : name(name), scope(s) {}
+			public:
+				Scope scope;
+
 				std::string uuid = Math::generateUUID();
 				std::string name;
 
 				virtual ~IAttribute(){}
 
-				virtual std::string get() = 0;
+				virtual std::string text() const = 0; //Generates the string for code
+				virtual void push() = 0; //Pushes the native values to the gpu
 			};
 
 			/**
@@ -53,8 +63,8 @@ namespace MyUPlay{
 
 				static const char* type;
 
-				Attribute(const std::string& name, const std::array<T, (size>0?size:1)>& value) : IAttribute(name), value(value) {}
-				Attribute(std::string&& name, std::array<T,(size>0?size:1)>&& value) : IAttribute(name), value(value) {}
+				Attribute(const std::string& name, const std::array<T, (size>0?size:1)>& value, Scope s) : IAttribute(name, s), value(value) {}
+				Attribute(std::string&& name, std::array<T,(size>0?size:1)>&& value, Scope s) : IAttribute(name, s), value(value) {}
 				~Attribute(){}
 
 				Attribute(const Attribute& a){ //Copy
@@ -85,12 +95,38 @@ namespace MyUPlay{
 				}
 
 				//This must be defined with a partial specialization in each renderer R
-				std::string get() override;
+				std::string text() const override;
+				void push() override;
 
 			};
 
 			template <typename R, typename T, unsigned size>
 			const char* Attribute<R, T, size>::type = Utility<R, T>::Type;
+
+			template <typename T, unsigned size>
+			std::string Attribute<GLES2Renderer, T, size>::text() const {
+				std::string ret;
+				switch(scope){
+					case Const:
+					ret = "const";
+					break;
+					case PerFrame:
+					ret = "uniform";
+					break;
+					case PerPrimative:
+					ret = "attribute";
+					break;
+					case PerVertex:
+					ret = "varying";
+					break;
+				}
+				ret += " " + Attribute::type;
+				if (size > 1){
+					ret += "[" + size + "]";
+				}
+				ret += " " + name + ";";
+				return ret;
+			}
 
 		}
 	}
