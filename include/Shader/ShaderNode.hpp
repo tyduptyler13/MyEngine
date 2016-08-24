@@ -10,19 +10,38 @@
 namespace MyUPlay {
 	namespace MyEngine {
 
-		class GLES2Renderer;
-
 		namespace Shader {
 
 			class IShaderNode {
 
+			public:
+
+				/**
+				 * When declaring a shader node, it must be known at what level
+				 * this code will run so it can be optimized.
+				 *
+				 * If a node depends on code that runs at a lower level, then that
+				 * node will be promoted to run at that lower level, losing performance.
+				 */
+				enum Scope {
+					PerPrimative, //Uniform
+					PerVertex, //Attribute
+					PerFragment //Varying
+				};
+
 			protected:
+
+				IShaderNode(Scope s, std::string uniqueName = generateUniqueName()) : uniqueName(uniqueName), scope(scope) {}
 
 				static const std::string uniqueName; //Used for static naming.
 
 			public:
 
+				Scope scope;
+
 				static std::string generateUniqueName();
+
+				Math::UUID uuid = Math::generateUUID();
 
 				/**
 				 * This allows the compiler to generate all the code required for
@@ -60,10 +79,9 @@ namespace MyUPlay {
 			};
 
 			/**
-			 * All shaders are specialized based on the renderer.
+			 * This class is the base class for all renderers shaders.
 			 */
-			template <class R>
-			class MasterShaderNode : IShaderNode {
+			class IMasterShaderNode : IShaderNode {
 			public:
 
 				//Per vertex
@@ -90,7 +108,9 @@ namespace MyUPlay {
 
 				std::string getStatic() const override;
 
-				std::String getInstance() const override;
+				std::String getInstance() const override {
+					return ""; //The master node will use main as its function which has no instances.
+				}
 
 			};
 
