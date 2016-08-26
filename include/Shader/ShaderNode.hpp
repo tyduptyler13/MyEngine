@@ -4,8 +4,12 @@
 #include <vector>
 #include <string>
 #include <functional>
+#include <memory>
 
 #include "Math.hpp"
+#include "Vector4.hpp"
+#include "Vector3.hpp"
+#include "Color.hpp"
 
 namespace MyUPlay {
 	namespace MyEngine {
@@ -33,7 +37,7 @@ namespace MyUPlay {
 
 				IShaderNode(Scope s, std::string uniqueName = generateUniqueName()) : uniqueName(uniqueName), scope(scope) {}
 
-				static const std::string uniqueName; //Used for static naming.
+				const std::string uniqueName; //Used for static naming.
 
 			public:
 
@@ -47,7 +51,7 @@ namespace MyUPlay {
 				 * This allows the compiler to generate all the code required for
 				 * a shader.
 				 */
-				virtual traverseInputs(std::function<void(std::shared_ptr<IShaderNode>)> func) const = 0;
+				virtual void traverseInputs(std::function<void(std::shared_ptr<IShaderNode>)> func) const = 0;
 
 				/**
 				 * The following function returns the static code related to the
@@ -85,10 +89,10 @@ namespace MyUPlay {
 			public:
 
 				//Per vertex
-				Input<Vector4> position;
+				Input<Vector4<float> > position;
 
 				//Per fragment
-				Input<Vector3> normal;
+				Input<Vector3<float> > normal;
 				Input<float> reflection; //Default value will be a const value of 0.
 				Input<Color> color;
 				Input<float> alpha;
@@ -97,7 +101,7 @@ namespace MyUPlay {
 				//This can be applied in post shading or forward shading
 				Input<Color> lightColor; //The light component and brightness.
 
-				traverseInputs(std::function<void(std::shared_ptr<IShaderNode>)> func) const override {
+				void traverseInputs(std::function<void(std::shared_ptr<IShaderNode>)> func) const override {
 					func(position.output->node);
 					func(reflection.output->node);
 					func(color.output->node);
@@ -106,9 +110,9 @@ namespace MyUPlay {
 					func(lightColor.output->node);
 				}
 
-				std::string getStatic() const override;
+				virtual std::string getStatic() const = 0;
 
-				std::String getInstance() const override {
+				std::string getInstance() const override {
 					return ""; //The master node will use main as its function which has no instances.
 				}
 

@@ -118,7 +118,7 @@ void GLES2Renderer::setDefaultViewport() {
 	setViewport(0, 0, w, h);
 }
 
-void GLES2Renderer::renderBufferImmediate(Object3D<float>& object, Shader::Shader<GLES2Renderer>& program, Material<float>& material)  {
+void GLES2Renderer::renderBufferImmediate(Object3D<float>& object, std::shared_ptr<Shader::IMasterShaderNode> program, Material<float>& material)  {
 
 
 
@@ -231,4 +231,3 @@ template <> const char* Shader::Utility<GLES2Renderer, Matrix3<float>>::Type = "
 template <> const char* Shader::Utility<GLES2Renderer, Matrix4<float>>::Type = "mat4";
 template <> const char* Shader::Utility<GLES2Renderer, Texture>::Type = "sampler2D";
 //Other specializations left out for now.
-

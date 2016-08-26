@@ -1,7 +1,8 @@
 
 #include <random>
 
-#include "ShaderNode.hpp"
+#include "Shader/ShaderNode.hpp"
+#include "Shader/Attribute.hpp"
 
 using namespace MyUPlay::MyEngine::Shader;
 using namespace std;

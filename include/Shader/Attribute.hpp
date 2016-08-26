@@ -137,13 +137,13 @@ namespace MyUPlay{
 			std::string Attribute<GLES2Renderer, T, size>::getStatic() const {
 				std::string ret;
 				switch(scope){
-					case PerFrame:
+					case Scope::PerFrame:
 					ret = "uniform";
 					break;
-					case PerPrimative:
+					case Scope::PerPrimative:
 					ret = "attribute";
 					break;
-					case PerVertex:
+					case Scope::PerVertex:
 					ret = "varying";
 					break;
 				}
