@@ -16,6 +16,10 @@ namespace MyUPlay {
 
 		namespace Shader {
 
+			//Forward declared.
+			struct Output;
+			struct Input;
+
 			class IShaderNode {
 
 			public:
@@ -51,35 +55,34 @@ namespace MyUPlay {
 				 * This allows the compiler to generate all the code required for
 				 * a shader.
 				 */
-				virtual void traverseInputs(std::function<void(std::shared_ptr<IShaderNode>)> func) const = 0;
+				virtual void traverseInputs(std::function<void(const Input&)> func) const = 0;
 
 				/**
 				 * The following function returns the static code related to the
-				 * function.
+				 * function. (Method body, etc) This can be empty.
 				 */
-				virtual std::string getStatic() const = 0;
+				virtual std::string getStatic() const {
+					return ""; //Default is to return nothing.
+				};
 
 				/**
 				 * This function is called when defining an actual call to the
-				 * function or code.
+				 * function or code. (Method call)
 				 */
-				virtual std::string getInstance() const = 0;
+				virtual std::string getInstance() const = 0; //All calls/refs must be defined. If this returns nothing then the node is useless.
 
 			};
 
-			template <typename T>
-			struct Input;
-
-			template <typename T>
 			struct Output {
-				const std::shared_ptr<IShaderNode> node; //The node the output is connected to.
 				std::vector<std::weak_ptr<IShaderNode>> inputs; //The inputs the output is connected to.
-				Output(std::shared_ptr<IShaderNode> node) : node(node) {}
+				const std::string type; //String version of the type, used in validation and code generation.
+				const std::string name; //The name of the output variable (as it is in code), this is important!
+				Output(std::string type, std::string name) : type(type), name(name) {}
 			};
 
-			template <typename T>
 			struct Input {
-				std::shared_ptr<Output<T>> output; //The output the input connects to.
+				std::shared_ptr<IShaderNode> node; //Hold the node in memory.
+				Output* output = NULL; //The output the input connects to.
 			};
 
 			/**
@@ -101,13 +104,13 @@ namespace MyUPlay {
 				//This can be applied in post shading or forward shading
 				Input<Color> lightColor; //The light component and brightness.
 
-				void traverseInputs(std::function<void(std::shared_ptr<IShaderNode>)> func) const override {
-					func(position.output->node);
-					func(reflection.output->node);
-					func(color.output->node);
-					func(alpha.output->node);
-					func(specular.output->node);
-					func(lightColor.output->node);
+				void traverseInputs(std::function<void(const Input&)> func) const override {
+					func(position);
+					func(reflection);
+					func(color);
+					func(alpha);
+					func(specular);
+					func(lightColor);
 				}
 
 				virtual std::string getStatic() const = 0;
@@ -115,6 +118,18 @@ namespace MyUPlay {
 				std::string getInstance() const override {
 					return ""; //The master node will use main as its function which has no instances.
 				}
+
+				/**
+				 * TODO Decide if I want to give rendering to shading or keep it
+				 * inside the renderers.
+				 *
+				 * This function is meant to be the final render step. It will
+				 * be customized by various implementations of this class.
+				 * This method is meant to take in all the attributes of an object
+				 * and pass them into the renderer as needed. It will also compile
+				 * the shader itself if it has not already done so.
+				 */
+				virtual void render(std::shared_ptr<Geometry<float>>) = 0;
 
 			};
 
