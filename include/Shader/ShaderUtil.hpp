@@ -20,9 +20,9 @@ namespace MyUPlay {
 			template <typename R, typename T>
 			struct Utility {
 
-				static const char* Type;
+				static const char* type;
 				static const char* getType(){
-					return Type;
+					return type;
 				}
 
 			};

@@ -16,50 +16,56 @@ namespace MyUPlay {
 
 		namespace Shader {
 
+			/**
+			 * All of the following are templated to do static type restriction.
+			 * This keeps all shaders specific to their renderer.
+			 */
+
 			//Forward declared.
+			template <class R, typename T>
 			struct Output;
+			template <class R, typename T>
 			struct Input;
 
+			/**
+			 * When declaring a shader node, it must be known at what level
+			 * this code will run so it can be optimized.
+			 *
+			 * If a node depends on code that runs at a lower level, then that
+			 * node will be promoted to run at that lower level, losing performance.
+			 */
+			enum ShaderScope {
+				PerPrimative, //Uniform
+				PerVertex, //Attribute
+				PerFragment //Varying
+			};
+
+			template <class R> //Renderer
 			class IShaderNode {
-
-			public:
-
-				/**
-				 * When declaring a shader node, it must be known at what level
-				 * this code will run so it can be optimized.
-				 *
-				 * If a node depends on code that runs at a lower level, then that
-				 * node will be promoted to run at that lower level, losing performance.
-				 */
-				enum Scope {
-					PerPrimative, //Uniform
-					PerVertex, //Attribute
-					PerFragment //Varying
-				};
-
 			protected:
 
-				IShaderNode(Scope s, std::string uniqueName = generateUniqueName()) : uniqueName(uniqueName), scope(scope) {}
+				IShaderNode(ShaderScope s, std::string uniqueName = generateUniqueName()) : uniqueName(uniqueName), scope(scope) {}
+				IShaderNode(const IShaderNode& node) //Copy
+				: uniqueName(node.uniqueName), scope(node.scope){}
+				IShaderNode(IShaderNode&& node) //Move
+				: uniqueName(node.uniqueName), scope(node.scope), uuid(node.uuid){}
 
-				const std::string uniqueName; //Used for static naming.
+				virtual ~IShaderNode(){}
+
+				const std::string uniqueName; //Used for static variables and functions, can be overridden.
 
 			public:
 
-				Scope scope;
+				ShaderScope scope;
 
 				static std::string generateUniqueName();
 
 				Math::UUID uuid = Math::generateUUID();
 
 				/**
-				 * This allows the compiler to generate all the code required for
-				 * a shader.
-				 */
-				virtual void traverseInputs(std::function<void(const Input&)> func) const = 0;
-
-				/**
 				 * The following function returns the static code related to the
-				 * function. (Method body, etc) This can be empty.
+				 * function. (Method body, etc) This can be empty. Static will be
+				 * generated once per shader compile per class involved.
 				 */
 				virtual std::string getStatic() const {
 					return ""; //Default is to return nothing.
@@ -73,63 +79,43 @@ namespace MyUPlay {
 
 			};
 
+			template <class R, typename T> //Renderer, internal type
 			struct Output {
-				std::vector<std::weak_ptr<IShaderNode>> inputs; //The inputs the output is connected to.
-				const std::string type; //String version of the type, used in validation and code generation.
+				std::vector<std::weak_ptr<IShaderNode<R>>> inputs; //The inputs the output is connected to.
 				const std::string name; //The name of the output variable (as it is in code), this is important!
-				Output(std::string type, std::string name) : type(type), name(name) {}
+				//It is likely that this gets set by something further down the line in the code, like when a
+				//variable is initially declared, then it is passed down through the call chain and reused.
+				//If a variable is copied vs referenced, a new name would be used from either a pre-declaration
+				//or is internally declared and returned. (out vs inout in glsl)
+				Output(std::string name) : name(name) {}
 			};
 
+			template <class R, typename T> //Renderer, internal type
 			struct Input {
-				std::shared_ptr<IShaderNode> node; //Hold the node in memory.
-				Output* output = NULL; //The output the input connects to.
+				std::shared_ptr<IShaderNode<R>> node; //Hold the node in memory.
+				Output<R, T>* output = NULL; //The output the input connects to.
 			};
 
 			/**
-			 * This class is the base class for all renderers shaders.
+			 * This shader node is used in all renderers and is the core to
+			 * creating dynamically compiled shaders.
 			 */
-			class IMasterShaderNode : IShaderNode {
+			template <class R>
+			class IMasterShaderNode : public IShaderNode<R> {
 			public:
 
 				//Per vertex
-				Input<Vector4<float> > position;
+				Input<R, Vector4<float> > position;
 
 				//Per fragment
-				Input<Vector3<float> > normal;
-				Input<float> reflection; //Default value will be a const value of 0.
-				Input<Color> color;
-				Input<float> alpha;
-				Input<float> specular;
+				Input<R, Vector3<float> > normal;
+				Input<R, float> reflection; //Default value will be a const value of 0.
+				Input<R, Color> color;
+				Input<R, float> alpha;
+				Input<R, float> specular;
 
 				//This can be applied in post shading or forward shading
-				Input<Color> lightColor; //The light component and brightness.
-
-				void traverseInputs(std::function<void(const Input&)> func) const override {
-					func(position);
-					func(reflection);
-					func(color);
-					func(alpha);
-					func(specular);
-					func(lightColor);
-				}
-
-				virtual std::string getStatic() const = 0;
-
-				std::string getInstance() const override {
-					return ""; //The master node will use main as its function which has no instances.
-				}
-
-				/**
-				 * TODO Decide if I want to give rendering to shading or keep it
-				 * inside the renderers.
-				 *
-				 * This function is meant to be the final render step. It will
-				 * be customized by various implementations of this class.
-				 * This method is meant to take in all the attributes of an object
-				 * and pass them into the renderer as needed. It will also compile
-				 * the shader itself if it has not already done so.
-				 */
-				virtual void render(std::shared_ptr<Geometry<float>>) = 0;
+				Input<R, Color> lightColor; //The light component and brightness.
 
 			};
 

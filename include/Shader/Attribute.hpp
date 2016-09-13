@@ -18,16 +18,16 @@ namespace MyUPlay{
 	namespace MyEngine {
 		namespace Shader {
 
-			class IAttribute : IShaderNode {
+			template <class R>
+			class IAttribute : public IShaderNode<R> {
 			protected:
-				IAttribute(std::string name) : name(name) {}
+				IAttribute(std::string name, ShaderScope scope) : IShaderNode<R>(scope, name) {}
 			public:
-				const std::string name;
 
 				virtual ~IAttribute(){}
 
 				std::string getInstance() const override {
-					return name;
+					return IShaderNode<R>::uniqueName;
 				}
 				virtual void push() = 0; //Pushes the native values to the gpu
 			};
@@ -53,34 +53,33 @@ namespace MyUPlay{
 			 * @param value - A shared pointer to a statically sized array or value.
 			 */
 			template <class R, typename T, unsigned size>
-			class Attribute : IAttribute {
+			class ArrayAttribute : public IAttribute<R> {
 			private:
 				std::shared_ptr<std::array<T, size>> value; //Always will have at least one element.
 			public:
 
 				static const char* type;
-				Output<T> out;
+				Output<R, T> out;
 
-				Attribute(const std::string& name, Scope s, std::shared_ptr<std::array<T, size>> value) : IAttribute(name, s), value(value) {}
-				Attribute(std::string&& name, Scope s, std::shared_ptr<std::array<T,size>> value) : IAttribute(name, s), value(value) {}
-				~Attribute(){}
+				ArrayAttribute(const std::string& name, ShaderScope s, std::shared_ptr<std::array<T, size>> value) : IAttribute<R>(name, s), value(value) {}
+				ArrayAttribute(std::string&& name, ShaderScope s, std::shared_ptr<std::array<T,size>> value) : IAttribute<R>(name, s), value(value) {}
+				~ArrayAttribute(){}
 
-				Attribute(const Attribute& a){ //Copy
+				ArrayAttribute(const ArrayAttribute& a){ //Copy
 					copy(a);
 				}
 
-				Attribute(Attribute&& a){ //Move
+				ArrayAttribute(ArrayAttribute&& a) : IShaderNode<R>(a) { //Move
 					value = a.value;
-					name = a.name;
 				}
 
-				Attribute& copy(const Attribute& a){
+				ArrayAttribute& copy(const ArrayAttribute& a){
+					IShaderNode<R>::IShaderNode(a);
 					value = a.value;
-					name = a.name;
 					return *this;
 				}
 
-				Attribute& operator=(const Attribute& a){
+				ArrayAttribute& operator=(const ArrayAttribute& a){
 					return copy(a);
 				}
 
@@ -91,29 +90,29 @@ namespace MyUPlay{
 			};
 
 			template <class R, typename T>
-			class Attribute : IAttribute {
+			class Attribute : public IAttribute<R> {
 			private:
 				std::shared_ptr<T> value;
 			public:
 
 				static const char* type;
+				Output<R, T> out;
 
-				Attribute(const std::string& name, Scope s, std::shared_ptr<T> value) : IAttribute(name, s), value(value) {}
-				Attribute(std::string&& name, Scope s, std::shared_ptr<T> value) : IAttribute(name, s), value(value) {}
+				Attribute(const std::string& name, ShaderScope s, std::shared_ptr<T> value) : IAttribute<R>(name, s), value(value) {}
+				Attribute(std::string&& name, ShaderScope s, std::shared_ptr<T> value) : IAttribute<R>(name, s), value(value) {}
 				~Attribute(){}
 
-				Attribute(const Attribute& a){ //Copy
-					copy(a);
+				Attribute(const Attribute& a) : IShaderNode<R>(a) { //Copy
+					value = a.value;
 				}
 
-				Attribute(Attribute&& a){ //Move
+				Attribute(Attribute&& a) : IShaderNode<R>(a) { //Move
 					value = a.value;
-					name = a.name;
 				}
 
 				Attribute& copy(const Attribute& a){
+					IShaderNode<R>::operator=(a);
 					value = a.value;
-					name = a.name;
 					return *this;
 				}
 
@@ -128,13 +127,13 @@ namespace MyUPlay{
 			};
 
 			template <class R, typename T, unsigned size>
-			const char* Attribute<R, T, size>::type = Utility<R, T>::Type;
+			const char* ArrayAttribute<R, T, size>::type = Utility<R, T>::type;
 
 			template <class R, typename T>
-			const char* Attribute<R, T>::type = Utiltity<R, T>::Type;
+			const char* Attribute<R, T>::type = Utiltity<R, T>::type;
 
 			template <class T, unsigned size>
-			std::string Attribute<GLES2Renderer, T, size>::getStatic() const {
+			std::string ArrayAttribute<GLES2Renderer, T, size>::getStatic() const {
 				std::string ret;
 				switch(scope){
 					case Scope::PerFrame:

@@ -107,7 +107,7 @@ public:
 	virtual std::tuple<int, int, unsigned, unsigned> getViewport() const = 0;
 	virtual void setDefaultViewport() = 0;
 
-	virtual void renderBufferImmediate(Object3D<T>& object, std::shared_ptr<Shader::IMasterShaderNode> shader, Material<T>& material) = 0;
+	virtual void renderBufferImmediate(Object3D<T>& object, std::shared_ptr<Shader::IMasterShaderNode<R>> shader, Material<T>& material) = 0;
 	virtual void renderBufferDirect(Camera<T>& camera, std::vector<Light<T> >& lights, Fog<T>& fog, Material<T>& material, Object3D<T>& object, Object3D<T>& objectGroup) = 0;
 
 	virtual void render(Scene<T>& scene, Camera<T>& camera, std::shared_ptr<RenderTarget> renderTarget = NULL, bool forceClear = false) = 0;

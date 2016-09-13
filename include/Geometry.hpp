@@ -343,7 +343,7 @@ namespace MyUPlay {
 						Face3<T>& face = faces[ f ];
 
 						FaceNormal<T>& faceNormal = morphNormals.faceNormals[ f ];
-						vector<FaceNormal<T> >& vertexNormals = morphNormals.vertexNormals[ f ];
+						std::vector<FaceNormal<T> >& vertexNormals = morphNormals.vertexNormals[ f ];
 
 						faceNormal = face.normal;
 
@@ -409,7 +409,7 @@ namespace MyUPlay {
 			}
 
 			unsigned mergeVertices(){
-				unordered_map<string, unsigned> verticesMap; // Hashmap for looking up vertices by position coordinates (and making sure they are unique)
+				std::unordered_map<std::string, unsigned> verticesMap; // Hashmap for looking up vertices by position coordinates (and making sure they are unique)
 				std::vector<Vector3<T> > unique, changes(vertices.size());
 
 				T precisionPoints = 4; // number of decimal points, e.g. 4 for epsilon of 0.0001
@@ -419,7 +419,7 @@ namespace MyUPlay {
 				for (unsigned i = 0, il = vertices.size(); i < il; i ++ ) {
 
 					Vector3<T>& v = vertices[ i ];
-					string key = round( v.x * precision ) + "_" + round( v.y * precision ) + "_" + round( v.z * precision );
+					std::string key = round( v.x * precision ) + "_" + round( v.y * precision ) + "_" + round( v.z * precision );
 
 					if ( verticesMap.find(key) == verticesMap.end() ) {
 
