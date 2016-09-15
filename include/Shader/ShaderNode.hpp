@@ -11,6 +11,8 @@
 #include "Vector3.hpp"
 #include "Color.hpp"
 
+#include "Shader/ShaderUtil.hpp"
+
 namespace MyUPlay {
 	namespace MyEngine {
 
@@ -52,13 +54,11 @@ namespace MyUPlay {
 
 				virtual ~IShaderNode(){}
 
-				const std::string uniqueName; //Used for static variables and functions, can be overridden.
+				const std::string uniqueName = generateUniqueName(); //Used for static variables and functions, can be overridden.
 
 			public:
 
 				ShaderScope scope;
-
-				static std::string generateUniqueName();
 
 				Math::UUID uuid = Math::generateUUID();
 

@@ -16,6 +16,9 @@
 
 namespace MyUPlay{
 	namespace MyEngine {
+
+		class GLES2Renderer;
+
 		namespace Shader {
 
 			template <class R>
@@ -63,7 +66,7 @@ namespace MyUPlay{
 
 				ArrayAttribute(const std::string& name, ShaderScope s, std::shared_ptr<std::array<T, size>> value) : IAttribute<R>(name, s), value(value) {}
 				ArrayAttribute(std::string&& name, ShaderScope s, std::shared_ptr<std::array<T,size>> value) : IAttribute<R>(name, s), value(value) {}
-				~ArrayAttribute(){}
+				virtual ~ArrayAttribute(){}
 
 				ArrayAttribute(const ArrayAttribute& a){ //Copy
 					copy(a);
@@ -100,7 +103,7 @@ namespace MyUPlay{
 
 				Attribute(const std::string& name, ShaderScope s, std::shared_ptr<T> value) : IAttribute<R>(name, s), value(value) {}
 				Attribute(std::string&& name, ShaderScope s, std::shared_ptr<T> value) : IAttribute<R>(name, s), value(value) {}
-				~Attribute(){}
+				virtual ~Attribute(){}
 
 				Attribute(const Attribute& a) : IShaderNode<R>(a) { //Copy
 					value = a.value;
@@ -130,19 +133,19 @@ namespace MyUPlay{
 			const char* ArrayAttribute<R, T, size>::type = Utility<R, T>::type;
 
 			template <class R, typename T>
-			const char* Attribute<R, T>::type = Utiltity<R, T>::type;
+			const char* Attribute<R, T>::type = Utility<R, T>::type;
 
 			template <class T, unsigned size>
 			std::string ArrayAttribute<GLES2Renderer, T, size>::getStatic() const {
 				std::string ret;
 				switch(scope){
-					case Scope::PerFrame:
+					case PerFrame:
 					ret = "uniform";
 					break;
-					case Scope::PerPrimative:
+					case PerPrimative:
 					ret = "attribute";
 					break;
-					case Scope::PerVertex:
+					case PerVertex:
 					ret = "varying";
 					break;
 				}

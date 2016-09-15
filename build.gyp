@@ -8,7 +8,7 @@
  				"src/GLES2Renderer.cpp",
   				"src/Log.cpp",
   				"src/Math.cpp",
-  				"src/ShaderNode.cpp"
+  				"src/ShaderUtil.cpp"
 			],
 			"include_dirs": [
 				"include",
@@ -34,7 +34,8 @@
 			],
 			"libraries": [
 				"<!@(<(pkg-config) --libs-only-l sdl2)",
-				"-lSOIL"
+				"-lSOIL",
+				"-lGL"
 			],
 			"ldflags": [
 				"<!@(<(pkg-config) --libs-only-L --libs-only-other sdl2)"

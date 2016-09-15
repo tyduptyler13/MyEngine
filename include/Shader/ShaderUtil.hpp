@@ -8,6 +8,8 @@
 #ifndef SHADER_SHADERUTIL
 #define SHADER_SHADERUTIL
 
+#include <string>
+
 namespace MyUPlay {
 	namespace MyEngine {
 		namespace Shader {
@@ -26,6 +28,11 @@ namespace MyUPlay {
 				}
 
 			};
+
+			/**
+			 * Creates a unique variable name. (Low chance of collision)
+			 */
+			std::string generateUniqueName();
 
 		}
 	}
