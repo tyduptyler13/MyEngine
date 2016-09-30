@@ -10,6 +10,7 @@ namespace MyUPlay {
 
 	namespace MyEngine {
 
+		template <class R> //Renderer
 		class RenderTarget {
 
 		public:
@@ -22,7 +23,7 @@ namespace MyUPlay {
 			bool depthBuffer = true,
 			     stencilBuffer = true;
 
-			std::shared_ptr<RenderTarget> shareDepthFrom = NULL;
+			std::shared_ptr<RenderTarget<R>> shareDepthFrom = NULL;
 
 		};
 

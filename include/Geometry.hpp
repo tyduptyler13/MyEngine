@@ -183,7 +183,7 @@ namespace MyUPlay {
 
 				applyMatrix( matrix );
 
-				return;
+				return *this;
 			}
 
 			void computeFaceNormals(){
@@ -208,7 +208,7 @@ namespace MyUPlay {
 
 				}
 			}
-			void computeVertexNormals(bool areaWeighted){
+			void computeVertexNormals(bool areaWeighted = true){
 
 				std::vector<Vector3<T> > vertices2(vertices.length );
 
@@ -546,7 +546,7 @@ namespace MyUPlay {
 
 			}
 			Geometry& operator=(const Geometry& geometry){
-				copy(geometry);
+				return copy(geometry);
 			}
 
 		};

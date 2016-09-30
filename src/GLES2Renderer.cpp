@@ -94,7 +94,7 @@ void GLES2Renderer::clearDepth()  {
 void GLES2Renderer::clearStencil()  {
 	glClear(GL_STENCIL_BUFFER_BIT);
 }
-void GLES2Renderer::clearTarget(RenderTarget& target, bool color, bool depth, bool stencil)  {
+void GLES2Renderer::clearTarget(std::shared_ptr<RenderTarget<GLES2Renderer>> target, bool color, bool depth, bool stencil)  {
 	logger.warn("TODO: Implement clearTarget");
 }
 
@@ -129,7 +129,7 @@ void GLES2Renderer::renderBufferDirect(Camera<float>& camera, std::vector<Light<
 
 }
 
-void GLES2Renderer::render(Scene<float>& scene, Camera<float>& camera, std::shared_ptr<RenderTarget> renderTarget, bool forceClear)  {
+void GLES2Renderer::render(Scene<float>& scene, Camera<float>& camera, std::shared_ptr<RenderTarget<GLES2Renderer>> renderTarget, bool forceClear)  {
 
 	if (scene.autoUpdate) scene.updateMatrixWorld();
 
@@ -203,17 +203,17 @@ void GLES2Renderer::setTexture(shared_ptr<Texture> texture, unsigned slot)  {
 
 }
 
-void GLES2Renderer::setRenderTarget(RenderTarget& target) {
+void GLES2Renderer::setRenderTarget(std::shared_ptr<RenderTarget<GLES2Renderer>> target) {
 
 }
-RenderTarget& GLES2Renderer::getRenderTarget() {
+std::shared_ptr<RenderTarget<GLES2Renderer>> GLES2Renderer::getRenderTarget() {
 
 }
-void GLES2Renderer::readRenderTargetPixels(RenderTarget& target, int x, int y, unsigned width, unsigned height, void** buffer) {
+void GLES2Renderer::readRenderTargetPixels(std::shared_ptr<RenderTarget<GLES2Renderer>> target, int x, int y, unsigned width, unsigned height, void** buffer) {
 
 }
 
-//Specializations for shaders (Allows a renderer to work
+//Specializations for shaders (Allows a renderer to work)
 template <> const char* Shader::Utility<GLES2Renderer, bool>::type = "bool";
 template <> const char* Shader::Utility<GLES2Renderer, int>::type = "int";
 template <> const char* Shader::Utility<GLES2Renderer, unsigned>::type = "uint";
