@@ -29,46 +29,28 @@ namespace MyUPlay {
 			template <class R, typename T>
 			struct Input;
 
-			/**
-			 * When declaring a shader node, it must be known at what level
-			 * this code will run so it can be optimized.
-			 *
-			 * If a node depends on code that runs at a lower level, then that
-			 * node will be promoted to run at that lower level, losing performance.
-			 */
-			enum ShaderScope {
-				Any, //This is used for code that has no dependency.
-				PerPrimative, //Uniform
-				PerVertex, //Attribute
-				PerFragment //Varying
-			};
-
 			template <class R> //Renderer
 			class IShaderNode {
 			protected:
 
-				IShaderNode(ShaderScope s, std::string uniqueName = generateUniqueName()) : uniqueName(uniqueName), scope(scope) {}
-				IShaderNode(const IShaderNode& node) //Copy
-				: uniqueName(node.uniqueName), scope(node.scope){}
+				IShaderNode(){}
+				IShaderNode(const IShaderNode& node){}
 				IShaderNode(IShaderNode&& node) //Move
-				: uniqueName(node.uniqueName), scope(node.scope), uuid(node.uuid){}
+				: uuid(node.uuid){}
 
 				virtual ~IShaderNode(){}
-
-				const std::string uniqueName = generateUniqueName(); //Used for static variables and functions, can be overridden.
 
 				bool dirty = true;
 
 				static void makeDirty(std::vector<std::weak_ptr<IShaderNode<R>>>& nodes){
 					for (std::weak_ptr<IShaderNode<R>>& ptr : nodes){
+						if (ptr.expired()) continue;
 						auto node = ptr.lock();
 						node.makeDirty();
 					}
 				}
 
 			public:
-
-				ShaderScope scope;
 
 				Math::UUID uuid = Math::generateUUID();
 
@@ -88,9 +70,7 @@ namespace MyUPlay {
 				virtual std::string getInstance() const = 0; //All calls/refs must be defined. If this returns nothing then the node is useless.
 
 				/** Recursively sets all of its parents to dirty. */
-				virtual void makeDirty() {
-					dirty = true;
-				}
+				virtual void makeDirty() = 0;
 
 				bool isDirty(){
 					return dirty;
@@ -143,32 +123,24 @@ namespace MyUPlay {
 
 			};
 
+			template <class R>
+			struct Shader {
+
+			};
+
 			/**
 			 * This shader node is used in all renderers and is the core to
 			 * creating dynamically compiled shaders.
 			 */
 			template <class R>
-			class IMasterShaderNode : public IShaderNode<R> {
+			class DeferredShaderNode : public IShaderNode<R> {
 			public:
 
 				//Per vertex
 				Input<R, Vector4<float> > position;
 
-				/*
-				 * If the shader is compiled to be a post shader, then all values will
-				 * be automatically saved to allocated textures for that purpose, they
-				 * will then be applied at the end combining all of the values to achieve
-				 * shadows. If it is compiled as a forward shader, the normal, color,
-				 * positin, and specular are just discareded and optimized out (as needed).
-				 *
-				 * In foward shading, lights are limited to a max number per PerPrimative
-				 * where in post, all of the lights get applied to the whole "Screen" as
-				 * needed using a similar approach.
-				 */
-
 				//Per fragment
 				Input<R, Vector3<float> > normal;
-				Input<R, float> reflection; //Default value will be a const value of 0.
 				Input<R, Color> color; //Vec3
 				Input<R, float> alpha;
 				//Color and alpha are combined in the last step with gl_fragColor = vec4(color, alpha); -- GLES2Renderer
@@ -181,9 +153,20 @@ namespace MyUPlay {
 				 * specular values. Reflection is a post process effect regardless and should
 				 * be executed after the shadows are added.
 				 */
-				//TODO This will be a shader instead of an input.
 				Input<R, Color> shadedColor; //The color after shadows have been applied
 				//This includes specular lighting like glare, etc.
+
+			};
+
+			/**
+			 * This is a class that will always be available in the node structure.
+			 * It contains outputs for the most common attribute inputs to a shader
+			 * and will only be pruned in the shader itself.
+			 */
+			template <class R>
+			struct StandardInputs : public IShaderNode<R> {
+
+				Attribute("")
 
 			};
 

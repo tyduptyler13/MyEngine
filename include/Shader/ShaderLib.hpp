@@ -92,7 +92,7 @@ namespace MyUPlay {
 				InputVariable() : IShaderNode(ShaderScope::Any) {}
 
 				std::string getStatic() const override {
-					return "const " + Utility<GLES2Renderer, T>::type + " " + out.name  + " = " + std::to_string(value) + ";\n";
+					return Utility<GLES2Renderer, T>::type + " " + out.name  + " = " + std::to_string(value) + ";\n";
 				} //TODO replace to_string with internal function that handles vector3-4 and matrix3-4, etc.
 
 				std::string getInstance() const override {

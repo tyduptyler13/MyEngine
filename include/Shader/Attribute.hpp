@@ -21,20 +21,6 @@ namespace MyUPlay{
 
 		namespace Shader {
 
-			template <class R>
-			class IAttribute : public IShaderNode<R> {
-			protected:
-				IAttribute(std::string name, ShaderScope scope) : IShaderNode<R>(scope, name) {}
-			public:
-
-				virtual ~IAttribute(){}
-
-				std::string getInstance() const override {
-					return IShaderNode<R>::uniqueName;
-				}
-				virtual void push() = 0; //Pushes the native values to the gpu
-			};
-
 			/**
 			 * Attribute is a class meant to take c variables and push them to the gpu.
 			 * This class is heavily templated to allow any shader language to use it but
@@ -56,15 +42,16 @@ namespace MyUPlay{
 			 * @param value - A shared pointer to a statically sized array or value.
 			 */
 			template <class R, typename T, unsigned size>
-			class ArrayAttribute : public IAttribute<R> {
+			class ArrayAttribute : public IShaderNode<R> {
 			private:
 				std::shared_ptr<std::array<T, size>> value; //Always will have at least one element.
 			public:
 
-				static const char* type;
 				Output<R, T> out;
 
-				ArrayAttribute(const std::string& name, ShaderScope s, std::shared_ptr<std::array<T, size>> value) : IAttribute<R>(name, s), value(value) {}
+				ArrayAttribute(const std::string& name, ShaderScope s, std::shared_ptr<std::array<T, size>> value) : IShaderNode<R>(s), value(value) {
+					out.name = uniqueName;
+				}
 				ArrayAttribute(std::string&& name, ShaderScope s, std::shared_ptr<std::array<T,size>> value) : IAttribute<R>(name, s), value(value) {}
 				virtual ~ArrayAttribute(){}
 
@@ -87,18 +74,32 @@ namespace MyUPlay{
 				}
 
 				//This must be defined with a partial specialization in each renderer R
-				std::string getStatic() const override;
-				void push() override;
+				std::string getStatic() const override {
+					std::string ret;
+					switch(scope){
+						case PerFrame:
+						ret = "uniform";
+						break;
+						case PerPrimative:
+						ret = "attribute";
+						break;
+						case PerVertex:
+						ret = "varying";
+						break;
+					}
+					ret += " " + Utility<R, T>::type " " + name + "[" + size + "];";
+					return ret;
+				}
+				void push(const std::array<T, size>& array);
 
 			};
 
 			template <class R, typename T>
-			class Attribute : public IAttribute<R> {
+			class Attribute : public IShaderNode<R> {
 			private:
 				std::shared_ptr<T> value;
 			public:
 
-				static const char* type;
 				Output<R, T> out;
 
 				Attribute(const std::string& name, ShaderScope s, std::shared_ptr<T> value) : IAttribute<R>(name, s), value(value) {}
@@ -124,52 +125,25 @@ namespace MyUPlay{
 				}
 
 				//This must be defined with a partial specialization in each renderer R
-				std::string getStatic() const override;
-				void push() override;
+				std::string getStatic() const override {
+					std::string ret;
+					switch(scope){
+						case PerFrame:
+						ret = "uniform";
+						break;
+						case PerPrimative:
+						ret = "attribute";
+						break;
+						case PerVertex:
+						ret = "varying";
+						break;
+					}
+					ret += " " + Utility<R, T>::type " " + name + ";";
+					return ret;
+				}
+				void push(const T& value);
 
 			};
-
-			template <class R, typename T, unsigned size>
-			const char* ArrayAttribute<R, T, size>::type = Utility<R, T>::type;
-
-			template <class R, typename T>
-			const char* Attribute<R, T>::type = Utility<R, T>::type;
-
-			template <class T, unsigned size>
-			std::string ArrayAttribute<GLES2Renderer, T, size>::getStatic() const {
-				std::string ret;
-				switch(scope){
-					case PerFrame:
-					ret = "uniform";
-					break;
-					case PerPrimative:
-					ret = "attribute";
-					break;
-					case PerVertex:
-					ret = "varying";
-					break;
-				}
-				ret += " " + Attribute::type " " + name + "[" + size + "];";
-				return ret;
-			}
-
-			template <class T>
-			std::string Attribute<GLES2Renderer, T>::getStatic() const {
-				std::string ret;
-				switch(scope){
-					case PerFrame:
-					ret = "uniform";
-					break;
-					case PerPrimative:
-					ret = "attribute";
-					break;
-					case PerVertex:
-					ret = "varying";
-					break;
-				}
-				ret += " " + Attribute::type " " + name + ";";
-				return ret;
-			}
 
 		}
 	}
