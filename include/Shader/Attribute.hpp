@@ -12,7 +12,6 @@
 #include <functional>
 
 #include "Shader/ShaderUtil.hpp"
-#include "Shader/ShaderNode.hpp"
 
 namespace MyUPlay{
 	namespace MyEngine {
@@ -20,6 +19,32 @@ namespace MyUPlay{
 		class GLES2Renderer;
 
 		namespace Shader {
+
+			template <class R>
+			struct IShaderNode;
+
+			enum ShaderScope {
+				PerPrimitive,
+				PerVertex
+			};
+
+			template <class R>
+			struct IAttribute : public IShaderNode<R> {
+			protected:
+				bool dirty = true;
+
+			public:
+
+				virtual ~IAttribute(){}
+
+				bool isDirty() {
+					return dirty;
+				}
+
+				//This is expected to set the dirty flag to false.
+				virtual void push() = 0; //Completely renderer specific.
+
+			};
 
 			/**
 			 * Attribute is a class meant to take c variables and push them to the gpu.
@@ -42,17 +67,19 @@ namespace MyUPlay{
 			 * @param value - A shared pointer to a statically sized array or value.
 			 */
 			template <class R, typename T, unsigned size>
-			class ArrayAttribute : public IShaderNode<R> {
+			class ArrayAttribute : public IAttribute<R> {
 			private:
-				std::shared_ptr<std::array<T, size>> value; //Always will have at least one element.
+				std::array<T, size> value;
 			public:
 
 				Output<R, T> out;
 
-				ArrayAttribute(const std::string& name, ShaderScope s, std::shared_ptr<std::array<T, size>> value) : IShaderNode<R>(s), value(value) {
-					out.name = uniqueName;
+				ArrayAttribute(const std::string& name, ShaderScope s, const std::array<T, size>& value) : value(value) {
+					out.name = name;
 				}
-				ArrayAttribute(std::string&& name, ShaderScope s, std::shared_ptr<std::array<T,size>> value) : IAttribute<R>(name, s), value(value) {}
+				ArrayAttribute(std::string&& name, ShaderScope s, std::array<T,size>&& value) : value(value) {
+					out.name = name;
+				}
 				virtual ~ArrayAttribute(){}
 
 				ArrayAttribute(const ArrayAttribute& a){ //Copy
@@ -77,33 +104,42 @@ namespace MyUPlay{
 				std::string getStatic() const override {
 					std::string ret;
 					switch(scope){
-						case PerFrame:
+						case PerPrimitive:
 						ret = "uniform";
 						break;
-						case PerPrimative:
+						case PerVertex:
 						ret = "attribute";
 						break;
-						case PerVertex:
-						ret = "varying";
-						break;
 					}
-					ret += " " + Utility<R, T>::type " " + name + "[" + size + "];";
+					ret += " " + Utility<R, T>::type + " " + name + "[" + size + "];";
 					return ret;
 				}
-				void push(const std::array<T, size>& array);
+
+				virtual void setValue(const std::array<T, size>& value){
+					dirty = true;
+					this->value = value;
+				}
+				virtual void setValue(std::array<T, size>&& value){
+					dirty = true;
+					this->value = value;
+				}
 
 			};
 
 			template <class R, typename T>
-			class Attribute : public IShaderNode<R> {
+			class Attribute : public IAttribute<R> {
 			private:
-				std::shared_ptr<T> value;
+				T value;
 			public:
 
 				Output<R, T> out;
 
-				Attribute(const std::string& name, ShaderScope s, std::shared_ptr<T> value) : IAttribute<R>(name, s), value(value) {}
-				Attribute(std::string&& name, ShaderScope s, std::shared_ptr<T> value) : IAttribute<R>(name, s), value(value) {}
+				Attribute(const std::string& name, ShaderScope s, const T& value) : value(value) {
+					out.name = name;
+				}
+				Attribute(std::string&& name, ShaderScope s, T&& value) : value(value) {
+					out.name = name;
+				}
 				virtual ~Attribute(){}
 
 				Attribute(const Attribute& a) : IShaderNode<R>(a) { //Copy
@@ -128,26 +164,33 @@ namespace MyUPlay{
 				std::string getStatic() const override {
 					std::string ret;
 					switch(scope){
-						case PerFrame:
+						case PerPrimitive:
 						ret = "uniform";
 						break;
-						case PerPrimative:
+						case PerVertex:
 						ret = "attribute";
 						break;
-						case PerVertex:
-						ret = "varying";
-						break;
 					}
-					ret += " " + Utility<R, T>::type " " + name + ";";
+					ret += " " + Utility<R, T>::type + " " + name + ";";
 					return ret;
 				}
-				void push(const T& value);
+
+				virtual void setValue(const T& val){
+					value = val;
+				}
+
+				virtual void setValue(T&& val){
+					value = val;
+				}
 
 			};
 
 		}
 	}
 }
+
+//Circular
+#include "Shader/ShaderNode.hpp"
 
 
 #endif /* INCLUDE_SHADER_SHADERATTRIBUTE_HPP_ */

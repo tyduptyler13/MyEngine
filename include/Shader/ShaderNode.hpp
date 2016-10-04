@@ -11,7 +11,11 @@
 #include "Vector3.hpp"
 #include "Color.hpp"
 
+#include "Camera.hpp"
+#include "DrawableObject3D.hpp"
+
 #include "Shader/ShaderUtil.hpp"
+#include "Shader/Attribute.hpp"
 
 namespace MyUPlay {
 	namespace MyEngine {
@@ -30,27 +34,9 @@ namespace MyUPlay {
 			struct Input;
 
 			template <class R> //Renderer
-			class IShaderNode {
-			protected:
-
-				IShaderNode(){}
-				IShaderNode(const IShaderNode& node){}
-				IShaderNode(IShaderNode&& node) //Move
-				: uuid(node.uuid){}
+			struct IShaderNode {
 
 				virtual ~IShaderNode(){}
-
-				bool dirty = true;
-
-				static void makeDirty(std::vector<std::weak_ptr<IShaderNode<R>>>& nodes){
-					for (std::weak_ptr<IShaderNode<R>>& ptr : nodes){
-						if (ptr.expired()) continue;
-						auto node = ptr.lock();
-						node.makeDirty();
-					}
-				}
-
-			public:
 
 				Math::UUID uuid = Math::generateUUID();
 
@@ -69,12 +55,6 @@ namespace MyUPlay {
 				 */
 				virtual std::string getInstance() const = 0; //All calls/refs must be defined. If this returns nothing then the node is useless.
 
-				/** Recursively sets all of its parents to dirty. */
-				virtual void makeDirty() = 0;
-
-				bool isDirty(){
-					return dirty;
-				}
 
 			};
 
@@ -102,9 +82,12 @@ namespace MyUPlay {
 				 * and we need the output pointer because there is no way to tell which output in the node we want.
 				 */
 				void set(std::shared_ptr<IShaderNode<R>> self, std::shared_ptr<IShaderNode<R>> outNode, Output<R, T>* out){
+					if (node){ //Remove from previous node.
+						unset(self);
+					}
 					node = outNode;
 					output = out;
-					out->inputs.push_back(weak_ptr<IShaderNode<R>>(self));
+					out->inputs.push_back(std::weak_ptr<IShaderNode<R>>(self));
 				}
 
 				/**
@@ -126,47 +109,75 @@ namespace MyUPlay {
 			template <class R>
 			struct Shader {
 
+				virtual ~Shader(){}
+
+				bool dirty = true;
+
+				virtual void compile() = 0;
+
+				virtual void render(std::shared_ptr<Camera<float>> camera, std::shared_ptr<DrawableObject3D<float>> o) = 0;
+
+				//A list of attributes to check if they are dirty before rendering.
+				std::vector<std::weak_ptr<IAttribute<R>>> attributes;
+
 			};
 
 			/**
-			 * This shader node is used in all renderers and is the core to
-			 * creating dynamically compiled shaders.
+			 * This shader is the final component in the first stage of shading.
+			 * It will collect
 			 */
 			template <class R>
-			class DeferredShaderNode : public IShaderNode<R> {
-			public:
+			struct DeferredShaderS1 : public Shader<R> {
 
-				//Per vertex
 				Input<R, Vector4<float> > position;
-
-				//Per fragment
 				Input<R, Vector3<float> > normal;
 				Input<R, Color> color; //Vec3
 				Input<R, float> alpha;
 				//Color and alpha are combined in the last step with gl_fragColor = vec4(color, alpha); -- GLES2Renderer
-				Input<R, Color> specular; //Specular color, black means no shine. Default white
+
+			};
+
+			template <class R>
+			struct DeferredShaderS2 : public Shader<R> {
 
 				/**
-				 * This is a special node, it should be the final value of the object.
-				 * If the object gets run in post shading or forward shading, this value
-				 * should be the same and ONLY should rely on the normal, color, position, and
-				 * specular values. Reflection is a post process effect regardless and should
-				 * be executed after the shadows are added.
+				 * This is the output node after all shading is complete
 				 */
-				Input<R, Color> shadedColor; //The color after shadows have been applied
-				//This includes specular lighting like glare, etc.
+				Input<R, Color> finalColor;
 
+			};
+
+			template <class R>
+			struct ShaderStages {
+				DeferredShaderS1<R> stage1;
+				DeferredShaderS2<R> stage2;
 			};
 
 			/**
 			 * This is a class that will always be available in the node structure.
 			 * It contains outputs for the most common attribute inputs to a shader
-			 * and will only be pruned in the shader itself.
+			 * and will only be pruned in the shader code itself.
 			 */
 			template <class R>
 			struct StandardInputs : public IShaderNode<R> {
 
-				Attribute("")
+				Attribute<R, Vector3f> normal;
+				Attribute<R, Vector3f> position;
+				Attribute<R, Matrix4f> modelViewMatrix; //Camera.matrixWorldInverse * object.matrixWorld
+				Attribute<R, Matrix4f> projectionMatrix; //camera.projectionMatrix;
+				Attribute<R, Matrix4f> modelMatrix; //object.matrixWorld
+				Attribute<R, Matrix4f> viewMatrix; //Camera.matrixWorldInverse
+				Attribute<R, Vector3f> cameraPosition;
+
+				StandardInputs() :
+					normal("normal", ShaderScope::PerVertex, Vector3f()),
+					position("position", ShaderScope::PerVertex, Vector3f()),
+					modelViewMatrix("modelViewMatrix", ShaderScope::PerPrimitive, Matrix4f()),
+					projectionMatrix("projectionMatrix", ShaderScope::PerPrimitive, Matrix4f()),
+					modelMatrix("modelMatrix", ShaderScope::PerPrimitive, Matrix4f()),
+					viewMatrix("viewMatrix", ShaderScope::PerPrimitive, Matrix4f()),
+					cameraPosition("cameraPosition", ShaderScope::PerPrimitive, Vector3f())
+				{}
 
 			};
 

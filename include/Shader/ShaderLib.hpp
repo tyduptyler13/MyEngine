@@ -20,8 +20,6 @@ namespace MyUPlay {
 
 				Output<GLES2Renderer, Vector3<float>> ret;
 
-				TransformDirection() : IShaderNode(ShaderScope::Any) {} //Default constructor
-
 				std::string getStatic() const override {
 					return "vec3 transformDirection(in vec3 dir, in mat4 matrix) {\n"
 							"	normalize((matrix * vec4(dir, 0.0)).xyz);\n"
@@ -29,11 +27,6 @@ namespace MyUPlay {
 				}
 				std::string getInstance() const override {
 					return ret.name + " = transformDirection(" + dir.output->name + ", " + matrix.output->name + ");\n";
-				}
-
-				virtual void makeDirty() {
-					dirty = true;
-					IShaderNode<GLES2Renderer>::makeDirty(ret.inputs);
 				}
 
 			};
@@ -46,15 +39,8 @@ namespace MyUPlay {
 
 				Output<GLES2Renderer, T> ret;
 
-				Add() : IShaderNode(ShaderScope::Any) {}
-
 				std::string getInstance() const override {
 					return ret.name + " = " + a.output->name + " + " + b.output->name + ";\n";
-				}
-
-				virtual void makeDirty() {
-					dirty = true;
-					IShaderNode<GLES2Renderer>::makeDirty(ret.inputs);
 				}
 
 			};
@@ -68,18 +54,12 @@ namespace MyUPlay {
 
 				Output<GLES2Renderer, T> ret;
 
-				Mix() : IShaderNode(ShaderScope::Any) {}
-
 				std::string getInstance() const override {
 					//mix should already be defined.
 					return ret.name + " = mix(" + a.output->name + ", " + b.output->name + ", "
 							+ fac.output->name + ");\n";
 				}
 
-				virtual void makeDirty() {
-					dirty = true;
-					IShaderNode<GLES2Renderer>::makeDirty(ret.inputs);
-				}
 			};
 
 			template <typename T>
@@ -89,19 +69,12 @@ namespace MyUPlay {
 
 				Output<GLES2Renderer, T> out;
 
-				InputVariable() : IShaderNode(ShaderScope::Any) {}
-
 				std::string getStatic() const override {
 					return Utility<GLES2Renderer, T>::type + " " + out.name  + " = " + std::to_string(value) + ";\n";
 				} //TODO replace to_string with internal function that handles vector3-4 and matrix3-4, etc.
 
 				std::string getInstance() const override {
 					return out.name;
-				}
-
-				virtual void makeDirty() {
-					dirty = true;
-					IShaderNode<GLES2Renderer>::makeDirty(out.inputs);
 				}
 
 			};
@@ -127,11 +100,6 @@ namespace MyUPlay {
 							+ lightDir.output->name + ", " + fac.output->name + ");\n";
 				}
 
-				virtual void makeDirty() {
-					dirty = true;
-					IShaderNode<GLES2Renderer>::makeDirty(out.inputs);
-				}
-
 			};
 
 			struct Rand : public IShaderNode<GLES2Renderer> {
@@ -155,20 +123,7 @@ namespace MyUPlay {
 					return out.name + " = rand(" + seed.output->name + ");\n";
 				}
 
-				virtual void makeDirty() {
-					dirty = true;
-					IShaderNode<GLES2Renderer>::makeDirty(out.inputs);
-				}
-
 			};
-
-			/**
-			 * This is a universal shader that should be used for all non metals.
-			 * It produces a physically based shader setup.
-			 */
-			std::shared_ptr<IShaderNode<GLES2Renderer>> createDielectricShader(){
-				//TODO Generate all nodes requires for the shader.
-			}
 
 		}
 	}
