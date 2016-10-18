@@ -62,6 +62,28 @@ namespace MyUPlay {
 
 			};
 
+			/**
+			 * A simple create a new variable based on an existing value.
+			 */
+			template <typename T>
+			struct Variable : public IShaderNode<GLES2Renderer> {
+				Input<GLES2Renderer, T> in;
+				Output<GLES2Renderer, T> out;
+
+				std::string getStatic() const override {
+					return Utility<GLES2Renderer, T>::type + " " + out.name  + " = " + in.output->name + ";\n";
+				} //TODO replace to_string with internal function that handles vector3-4 and matrix3-4, etc.
+
+				std::string getInstance() const override {
+					return out.name;
+				}
+			};
+
+			/**
+			 * Create a new static variable based on initial input. (Must be recompiled every time the value changes.
+			 *
+			 * If you are looking to change this value every frame, then use an attribute.
+			 */
 			template <typename T>
 			struct InputVariable : public IShaderNode<GLES2Renderer> {
 
@@ -70,7 +92,7 @@ namespace MyUPlay {
 				Output<GLES2Renderer, T> out;
 
 				std::string getStatic() const override {
-					return Utility<GLES2Renderer, T>::type + " " + out.name  + " = " + std::to_string(value) + ";\n";
+					return "const " + Utility<GLES2Renderer, T>::type + " " + out.name  + " = " + std::to_string(value) + ";\n";
 				} //TODO replace to_string with internal function that handles vector3-4 and matrix3-4, etc.
 
 				std::string getInstance() const override {
@@ -124,6 +146,18 @@ namespace MyUPlay {
 				}
 
 			};
+
+
+
+			struct DielectricShader : public IShaderNode<GLES2Renderer> {
+
+			};
+
+			struct MetallicShader : public IShaderNode<GLES2Renderer> {
+
+			};
+
+
 
 		}
 	}

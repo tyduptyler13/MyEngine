@@ -87,7 +87,7 @@ public:
 	virtual void clearColor() = 0;
 	virtual void clearDepth() = 0;
 	virtual void clearStencil() = 0;
-	virtual void clearTarget(RenderTarget& target, bool color = true, bool depth = true, bool stencil = true) = 0;
+	virtual void clearTarget(std::shared_ptr<RenderTarget<R>> target, bool color = true, bool depth = true, bool stencil = true) = 0;
 
 	virtual unsigned getMaxAnisotripy() const = 0;
 
@@ -107,16 +107,16 @@ public:
 	virtual std::tuple<int, int, unsigned, unsigned> getViewport() const = 0;
 	virtual void setDefaultViewport() = 0;
 
-	virtual void renderBufferImmediate(Object3D<T>& object, std::shared_ptr<Shader::IMasterShaderNode<R>> shader, Material<T>& material) = 0;
+	virtual void renderBufferImmediate(Object3D<T>& object, std::shared_ptr<Shader::Shader<R>> shader, Material<T>& material) = 0;
 	virtual void renderBufferDirect(Camera<T>& camera, std::vector<Light<T> >& lights, Fog<T>& fog, Material<T>& material, Object3D<T>& object, Object3D<T>& objectGroup) = 0;
 
-	virtual void render(Scene<T>& scene, Camera<T>& camera, std::shared_ptr<RenderTarget> renderTarget = NULL, bool forceClear = false) = 0;
+	virtual void render(Scene<T>& scene, Camera<T>& camera, std::shared_ptr<RenderTarget<R>> renderTarget = NULL, bool forceClear = false) = 0;
 
 	virtual void setFaceCulling(CullConstant cullFace, CullDirection frontFaceDirection) = 0;
 	virtual void setTexture(std::shared_ptr<Texture> texture, unsigned slot = 0) = 0;
-	virtual void setRenderTarget(RenderTarget& target) = 0;
-	virtual RenderTarget& getRenderTarget() = 0;
-	virtual void readRenderTargetPixels(RenderTarget& target, int x, int y, unsigned width, unsigned height, void** buffer) = 0; //TODO Find type for buffer
+	virtual void setRenderTarget(std::shared_ptr<RenderTarget<R>> target) = 0;
+	virtual std::shared_ptr<RenderTarget<R>> getRenderTarget() = 0;
+	virtual void readRenderTargetPixels(std::shared_ptr<RenderTarget<R>> target, int x, int y, unsigned width, unsigned height, void* buffer) = 0; //TODO Find type for buffer
 
 	/**
 	 * Use this function to get a list of display modes for all monitors.

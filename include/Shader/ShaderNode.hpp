@@ -5,6 +5,7 @@
 #include <string>
 #include <functional>
 #include <memory>
+#include <unordered_map>
 
 #include "Math.hpp"
 #include "Vector4.hpp"
@@ -106,6 +107,65 @@ namespace MyUPlay {
 
 			};
 
+
+			template <class R, typename T, int size>
+			struct ArrayBuffer : IShaderNode<R> {
+
+				ArrayBuffer<R, T, size> buffer;
+				Attribute<R, int> index;
+
+
+				ArrayBuffer(std::string bufferName, std::string indexName)
+				: buffer(bufferName), index(indexName) {}
+
+			};
+
+			/**
+			 * This node is where the core vertex shader components attach.
+			 */
+			template <class R>
+			struct VertexBase : public IShaderNode<R> {
+
+				Output<R, Matrix4f> modelView;
+				Output<R, Matrix4f> projectionMatrix;
+				Output<R, Matrix4f> modelMatrix; //Matrix world
+				Output<R, Matrix4f> viewMatrix; //Inverse matrix world
+				Output<R, Vector3f> cameraPosition;
+
+				Input<R, Vector3f> position;
+				Input<R, Vector3f> normal; //Output the normalized normal vector for use in the fragment shader.
+
+			};
+
+			template <class R>
+			struct FragmentBase : public IShaderNode<R> {
+				Output<R, Vector3f> position; //Interpolated position from vertex shader
+				Output<R, Vector3f> normal; //Interpolated normal from vertex shader (normalized)
+
+				Input<R, Color> color; //gl_color;
+			};
+
+			template <class R>
+			struct DeferredFragment : public IShaderNode<R> {
+				Output<R, Vector3f> vposition; // Position from vertex shader
+				Output<R, Vector3f> vnormal; //Normal from vertex shader.
+
+				Input<R, Vector3f> position; //Camera space position
+				Input<R, Vector3f> normal; //Camera space normal
+				Input<R, Color> color;
+				Input<R, Color> emission;
+			};
+
+			template <class R>
+			struct DeferredLightingPass : public IShaderNode<R> {
+				Output<R, Vector3f> position;
+				Output<R, Vector3f> normal;
+				Output<R, Color> objColor;
+				Output<R, Color> objEmission;
+
+				Input<R, Color> finalColor;
+			};
+
 			template <class R>
 			struct Shader {
 
@@ -113,73 +173,30 @@ namespace MyUPlay {
 
 				bool dirty = true;
 
-				virtual void compile() = 0;
+				virtual void compile();
 
-				virtual void render(std::shared_ptr<Camera<float>> camera, std::shared_ptr<DrawableObject3D<float>> o) = 0;
+				virtual void bind();
 
-				//A list of attributes to check if they are dirty before rendering.
-				std::vector<std::weak_ptr<IAttribute<R>>> attributes;
+				virtual void render(std::shared_ptr<Camera<float>> camera, std::shared_ptr<DrawableObject3D<float>> o, const std::vector<Light<float>>& lights);
 
-			};
-
-			/**
-			 * This shader is the final component in the first stage of shading.
-			 * It will collect
-			 */
-			template <class R>
-			struct DeferredShaderS1 : public Shader<R> {
-
-				Input<R, Vector4<float> > position;
-				Input<R, Vector3<float> > normal;
-				Input<R, Color> color; //Vec3
-				Input<R, float> alpha;
-				//Color and alpha are combined in the last step with gl_fragColor = vec4(color, alpha); -- GLES2Renderer
+				VertexBase<R> vertexShader;
 
 			};
 
 			template <class R>
-			struct DeferredShaderS2 : public Shader<R> {
+			struct ForwardShader : public Shader<R> {
 
-				/**
-				 * This is the output node after all shading is complete
-				 */
-				Input<R, Color> finalColor;
+				FragmentBase<R> fragmentShader;
 
 			};
 
 			template <class R>
-			struct ShaderStages {
-				DeferredShaderS1<R> stage1;
-				DeferredShaderS2<R> stage2;
+			struct DeferredShader : public Shader<R> {
+				DeferredFragment<R> frag;
+				DeferredLightingPass<R> lighting;
 			};
 
-			/**
-			 * This is a class that will always be available in the node structure.
-			 * It contains outputs for the most common attribute inputs to a shader
-			 * and will only be pruned in the shader code itself.
-			 */
-			template <class R>
-			struct StandardInputs : public IShaderNode<R> {
 
-				Attribute<R, Vector3f> normal;
-				Attribute<R, Vector3f> position;
-				Attribute<R, Matrix4f> modelViewMatrix; //Camera.matrixWorldInverse * object.matrixWorld
-				Attribute<R, Matrix4f> projectionMatrix; //camera.projectionMatrix;
-				Attribute<R, Matrix4f> modelMatrix; //object.matrixWorld
-				Attribute<R, Matrix4f> viewMatrix; //Camera.matrixWorldInverse
-				Attribute<R, Vector3f> cameraPosition;
-
-				StandardInputs() :
-					normal("normal", ShaderScope::PerVertex, Vector3f()),
-					position("position", ShaderScope::PerVertex, Vector3f()),
-					modelViewMatrix("modelViewMatrix", ShaderScope::PerPrimitive, Matrix4f()),
-					projectionMatrix("projectionMatrix", ShaderScope::PerPrimitive, Matrix4f()),
-					modelMatrix("modelMatrix", ShaderScope::PerPrimitive, Matrix4f()),
-					viewMatrix("viewMatrix", ShaderScope::PerPrimitive, Matrix4f()),
-					cameraPosition("cameraPosition", ShaderScope::PerPrimitive, Vector3f())
-				{}
-
-			};
 
 		}
 	}

@@ -8,6 +8,7 @@
 #include "Vector4.hpp"
 #include "Shader/ShaderUtil.hpp"
 #include "Frustum.hpp"
+#include "RenderTarget.hpp"
 
 
 using namespace std;
@@ -118,7 +119,7 @@ void GLES2Renderer::setDefaultViewport() {
 	setViewport(0, 0, w, h);
 }
 
-void GLES2Renderer::renderBufferImmediate(Object3D<float>& object, std::shared_ptr<Shader::IMasterShaderNode<GLES2Renderer>> program, Material<float>& material)  {
+void GLES2Renderer::renderBufferImmediate(Object3D<float>& object, std::shared_ptr<Shader::Shader<GLES2Renderer>> program, Material<float>& material)  {
 
 
 
@@ -209,7 +210,7 @@ void GLES2Renderer::setRenderTarget(std::shared_ptr<RenderTarget<GLES2Renderer>>
 std::shared_ptr<RenderTarget<GLES2Renderer>> GLES2Renderer::getRenderTarget() {
 
 }
-void GLES2Renderer::readRenderTargetPixels(std::shared_ptr<RenderTarget<GLES2Renderer>> target, int x, int y, unsigned width, unsigned height, void** buffer) {
+void GLES2Renderer::readRenderTargetPixels(std::shared_ptr<RenderTarget<GLES2Renderer>> target, int x, int y, unsigned width, unsigned height, void* buffer) {
 
 }
 
@@ -231,3 +232,14 @@ template <> const char* Shader::Utility<GLES2Renderer, Matrix3<float>>::type = "
 template <> const char* Shader::Utility<GLES2Renderer, Matrix4<float>>::type = "mat4";
 template <> const char* Shader::Utility<GLES2Renderer, Texture>::type = "sampler2D";
 //Other specializations left out for now.
+
+RenderTarget<GLES2Renderer>::RenderTarget(unsigned width, unsigned height, bool depthBuffer, bool stencilBuffer)
+: width(width), height(height), depthBuffer(depthBuffer), stencilBuffer(stencilBuffer)
+{
+	glGenFramebuffers(1, &id);
+}
+
+RenderTarget<GLES2Renderer>::~RenderTarget(){
+	glDeleteFramebuffers(1, &id);
+}
+
