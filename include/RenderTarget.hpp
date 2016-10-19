@@ -15,7 +15,7 @@ namespace MyUPlay {
 		class GLES2Renderer;
 
 		template <class R> //Renderer
-		struct RenderTarget : public Shader::IAttribute<R> {
+		struct RenderTarget : public Shader::IAttribute {
 
 			Math::UUID uuid = Math::generateUUID();
 
@@ -32,15 +32,13 @@ namespace MyUPlay {
 			//We also need to clean up the depth buffer if it is deleted.
 			~RenderTarget();
 
-			//Most framebuffers don't
-			void push() override;
 			//Bind the framebuffer in the context.
 			void bind() override;
 
 		};
 
 		template <>
-		struct RenderTarget<GLES2Renderer> : public Shader::IAttribute<GLES2Renderer> {
+		struct RenderTarget<GLES2Renderer> : public Shader::IAttribute {
 			Math::UUID uuid = Math::generateUUID();
 			GLuint id; //How to identify the buffer.
 
@@ -56,7 +54,6 @@ namespace MyUPlay {
 			//We also need to clean up the depth buffer if it is deleted.
 			~RenderTarget();
 
-			void push() override {} //Nothing to push
 			//Bind the framebuffer in the context.
 			void bind() override;
 		};

@@ -16,68 +16,63 @@ namespace MyUPlay {
 
 		class ThreadPool {
 
-			public:
-				typedef std::function<void()> Task;
+		public:
+			typedef std::function<void()> Task;
 
-			private:
+		private:
+			std::vector<std::thread> pool;
+			std::queue<Task> tasks;
 
-				std::vector<std::thread> pool;
-				std::queue<Task> tasks;
+			std::mutex taskLock;
 
-				std::mutex taskLock;
+			std::atomic<bool> running;
 
-				std::atomic<bool> running;
+			Task& getTask(){
 
-				Task& getTask(){
+				taskLock.lock();
 
-					taskLock.lock();
+				Task& t = tasks.front();
+				tasks.pop();
 
-					Task& t = tasks.front();
-					tasks.pop();
+				taskLock.unlock();
 
-					taskLock.unlock();
+				return t;
 
-					return t;
+			}
 
-				}
+		public:
 
-				void threadLoop(){
-
-					while(running.load()){
-
-						Task& t = getTask();
-
-						try {
-							t();
-						} catch (...) {
-							Log::getInstance() << "Uncaught error in task!";
+			ThreadPool(unsigned size = std::thread::hardware_concurrency() * 1.5) {
+				running.store(true);
+				pool.reserve(size);
+				for (unsigned i = 0; i < size; ++i){
+					pool.push_back(
+							std::thread(
+									[this, i](){
+						Log log("Thread [" + std::to_string(i) + "]");
+						while(running.load()){
+							Task& t = getTask();
+							try {
+								t();
+							} catch (...) {
+								log.warn("Uncaught exception!");
+							}
 						}
-
-					}
-
+					}));
 				}
+			}
 
-			public:
+			void stop(){
+				running.store(false);
+			}
 
-				ThreadPool(unsigned size = std::thread::hardware_concurrency() * 1.5) {
-					running.store(true);
-					pool.reserve(size);
-					for (unsigned i = 0; i < size; ++i){
-						pool.push_back(std::thread([this]{threadLoop();}));
-					}
-				}
+			void addTask(Task t){
 
-				void stop(){
-					running.store(false);
-				}
+				taskLock.lock();
+				tasks.push(t);
+				taskLock.unlock();
 
-				void addTask(Task t){
-					
-					taskLock.lock();
-					tasks.push(t);
-					taskLock.unlock();
-
-				}
+			}
 
 
 		};

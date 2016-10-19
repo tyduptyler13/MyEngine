@@ -10,7 +10,9 @@
 
 #include <array>
 #include <functional>
+#include <exception>
 
+#include "Shader/ShaderNode.hpp"
 #include "Shader/ShaderUtil.hpp"
 
 namespace MyUPlay{
@@ -20,26 +22,15 @@ namespace MyUPlay{
 
 		namespace Shader {
 
-			template <class R>
-			struct IShaderNode;
-
-			template <class R, typename T>
-			struct Output;
-
 			enum ShaderScope {
 				PerPrimitive,
 				PerVertex
 			};
 
-			template <class R>
-			struct IAttribute : public IShaderNode<R> {
+			struct IAttribute : public IShaderNode {
 				ShaderScope scope;
-				bool dirty = true;
 
 				virtual ~IAttribute(){}
-
-				//This is expected to set the dirty flag to false.
-				virtual void push() = 0; //Completely renderer specific.
 
 				//This will be called before every shader process.
 				virtual void bind() = 0;
@@ -54,118 +45,95 @@ namespace MyUPlay{
 			};
 
 			/**
-			 * Attribute is a class meant to take c variables and push them to the gpu.
-			 * This class is heavily templated to allow any shader language to use it but
-			 * then it must have the static variables/methods created for that renderer.
+			 * MappedArrayAttribute
 			 *
-			 * Template:
-			 * Renderer followed by the type the class holds.
-			 * This will be automatically converted thanks to specializations in each render class
-			 * Size: We put size in the template to allow some quick optimization and prevent users
-			 * from changing attribute sizes over time. If you want to change "size" then create a
-			 * max size one and a second that indicates its length. Otherwise the shader needs to
-			 * be recompiled every time the size changes.
+			 * The value in this array exactly matches that in gpu memory. The memory is
+			 * mapped between system and gpu memory for easy modification. In order to resize,
+			 * additional operations may need to first happen. This class is specialized for every
+			 * renderer through template specialization.
 			 *
-			 * @param name - Must be unique to the shader.
-			 * @param value - The initial value to use.
+			 * @param name - A required name for the attribute. Randomly generated names are not provided automatically.
+			 * @param size - An initial size to create as shared memory.
 			 */
-			template <class R, typename T, unsigned size>
-			class MappedArrayAttribute : public IAttribute<R> {
+			template <class R, typename T>
+			class MappedArrayAttribute : public IAttribute {
 			private:
-				std::array<T, size> value;
+				T* value;
+
 			public:
 
-				Output<R, T> out;
+				Output<T> out;
+				unsigned size;
 
-				MappedArrayAttribute(const std::string& name, ShaderScope s, const std::array<T, size>& value)
-				: value(value), IShaderNode<R>::scope(s) {
-					out.name = name;
-				}
-				MappedArrayAttribute(std::string&& name, ShaderScope s, std::array<T,size>&& value)
-				: value(value), IShaderNode<R>::scope(s) {
-					out.name = name;
-				}
-				~MappedArrayAttribute();
-
-				//This must be defined with a partial specialization in each renderer R
-				std::string getStatic() const override {
-					std::string ret;
-					switch(this->scope){
-						case PerPrimitive:
-						ret = "uniform";
-						break;
-						case PerVertex:
-						ret = "attribute";
-						break;
-					}
-					ret += " " + Utility<R, T>::type + " " + out.name + "[" + size + "];";
-					return ret;
+				MappedArrayAttribute(std::string name, unsigned size)
+				: out(name), size(size) {
+					value = new T[size];
 				}
 
-				void setValue(const std::array<T, size>& value){
-					this->dirty = true;
-					this->value = value;
-				}
-				void setValue(std::array<T, size>&& value){
-					this->dirty = true;
-					this->value = value;
+				~MappedArrayAttribute(){
+					delete[] value;
 				}
 
-				void push() override;
-				void bind() override;
+				T& operator[](unsigned i){
+					if (i >= size) throw std::range_error("Attempt to access data out of range!");
+					return value[i];
+				}
+
+				virtual void resize(unsigned size) = 0;
 
 			};
 
+			/**
+			 * This is the standard method to create array attributes. In openGL this translates to an ArrayBuffer
+			 *
+			 * It is the responsibility of the designer to implement the isDirty and update methods.
+			 * It is recommended to either extend this class or create an unnamed in place class.
+			 *
+			 * isDirty will be called at every frame and if it returns true, then update will also
+			 * be called to collect a new array of data and push it to the gpu. Keep in mind that this
+			 * is usually the most expensive operation in a game engine as bandwidth is slow.
+			 *
+			 * isDirty also has a start and length parameter passed into the call, should you choose to update
+			 * these, the program will do its best to cut down on bandwidth by only updating part of the data
+			 * that needs to be udpated. Should this be used, update will also pass a non 0 value into the
+			 * start parameter to let you know where the array is offset to begin its update.
+			 * Note:Some renderers may still ignore start and len and not set start as it might not be supported.
+			 *
+			 * Finally, the type on this class is recommended to be a basic data type and then use
+			 */
 			template <class R, typename T>
-			class Attribute : public IAttribute<R> {
-			private:
-				T value;
-			public:
+			struct ArrayAttribute : public IAttribute {
+				Output<T> out;
+				unsigned size;
 
-				Output<R, T> out;
+				ArrayAttribute(std::string name, unsigned size) : out(name), size(size) {}
 
-				Attribute(const std::string& name, ShaderScope s, const T& value) : value(value), IShaderNode<R>::s(s) {
-					out.name = name;
-				}
-				Attribute(std::string&& name, ShaderScope s, T&& value) : value(value), IShaderNode<R>::s(s) {
-					out.name = name;
-				}
-				~Attribute();
+				virtual bool isDirty(unsigned& start, unsigned& len) = 0;
+				virtual void update(T*, unsigned len, unsigned start = 0) = 0; //As soon as this returns, the data at T* will be pushed.
+				virtual void resize(unsigned size) = 0; //Calling this will throw away old data and call update for new data.
 
-				//This must be defined with a partial specialization in each renderer R
-				std::string getStatic() const override {
-					std::string ret;
-					switch(this->scope){
-						case PerPrimitive:
-						ret = "uniform";
-						break;
-						case PerVertex:
-						ret = "attribute";
-						break;
-					}
-					ret += " " + Utility<R, T>::type + " " + out.name + ";";
-					return ret;
-				}
+			};
 
-				void setValue(const T& val){
-					value = val;
-				}
+			/**
+			 * This is a single value Attribute. Its value is pushed to the gpu at every frame. If you want to
+			 * keep data on a gpu, it is recommended to use an ArrayAttribute to store it and all similar values
+			 * and then use a normal attribute to mark the index of that object you are referring to.
+			 *
+			 * Expect update to be called every time the renderer needs its value.
+			 */
+			template <class R, typename T>
+			struct Attribute : public IAttribute {
+				bool dirty = true;
+				Output<T> out;
 
-				void setValue(T&& val){
-					value = val;
-				}
+				Attribute(std::string name) : out(name) {}
 
-				void push() override;
-				void bind() override;
+				virtual T update() = 0;
 
 			};
 
 		}
 	}
 }
-
-//Circular
-#include "Shader/ShaderNode.hpp"
-
 
 #endif /* INCLUDE_SHADER_SHADERATTRIBUTE_HPP_ */

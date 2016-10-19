@@ -33,7 +33,7 @@
 #				"-flto"
 			],
 			"libraries": [
-				"<!@(<(pkg-config) --libs-only-l sdl2)",
+				"<!@(<(pkg-config) --libs-only-l sdl2 capnp)",
 				"-lSOIL",
 				"-lGL"
 			],

@@ -41,7 +41,7 @@ namespace MyUPlay {
 			std::tuple<int, int, unsigned, unsigned> getViewport() const override;
 			void setDefaultViewport() override;
 
-			void renderBufferImmediate(Object3D<float>& object, std::shared_ptr<Shader::Shader<GLES2Renderer>> program, Material<float>& material) override;
+			void renderBufferImmediate(Object3D<float>& object, std::shared_ptr<Shader::Shader> program, Material<float>& material) override;
 			void renderBufferDirect(Camera<float>& camera, std::vector<Light<float> >& lights, Fog<float>& fog, Material<float>& material, Object3D<float>& object, Object3D<float>& objectGroup) override;
 
 			void render(Scene<float>& scene, Camera<float>& camera, std::shared_ptr<RenderTarget<GLES2Renderer>> renderTarget = NULL, bool forceClear = false) override;
