@@ -6,7 +6,7 @@
 #include "Log.hpp"
 #include "GLES2Renderer.hpp"
 #include "Vector4.hpp"
-#include "Shader/ShaderUtil.hpp"
+#include "Shader/Shader.hpp"
 #include "Frustum.hpp"
 #include "RenderTarget.hpp"
 
@@ -32,14 +32,14 @@ GLES2Renderer::GLES2Renderer(unsigned antialias) {
 
 	if (!window){
 		logger.warn("Failed to create sdl window!");
-		throw new runtime_error("Failed to create sdl window!");
+		throw runtime_error("Failed to create sdl window!");
 	}
 
 	context = SDL_GL_CreateContext(window);
 
 	if (!context){
 		logger.warn("Failed to create a gl context!");
-		throw new runtime_error("Failed to create a gl context!");
+		throw runtime_error("Failed to create a gl context!");
 	}
 
 	glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &maxTextures);

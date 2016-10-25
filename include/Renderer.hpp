@@ -18,7 +18,7 @@
 #include "Camera.hpp"
 #include "Material.hpp"
 #include "Texture.hpp"
-#include "Shader/ShaderNode.hpp"
+#include "Shader/Shader.hpp"
 #include "Quaternion.hpp"
 
 namespace MyUPlay {

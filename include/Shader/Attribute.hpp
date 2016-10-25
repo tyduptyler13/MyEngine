@@ -5,15 +5,14 @@
  *      Author: tyler
  */
 
-#ifndef MyUPlay_MyEngine_Attribute
-#define MyUPlay_MyEngine_Attribute
+#ifndef MYUPLAY_MYENGINE_ATTRIBUTE
+#define MYUPLAY_MYENGINE_ATTRIBUTE
 
 #include <array>
 #include <functional>
 #include <exception>
 
 #include "Shader/ShaderNode.hpp"
-#include "Shader/ShaderUtil.hpp"
 
 namespace MyUPlay{
 	namespace MyEngine {
@@ -23,8 +22,8 @@ namespace MyUPlay{
 		namespace Shader {
 
 			enum ShaderScope {
-				PerPrimitive,
-				PerVertex
+				PerPrimitive, //Accessible in vertex and frag
+				PerVertex //Accessible only in vertex, must be interpolated for frag
 			};
 
 			struct IAttribute : public IShaderNode {
@@ -38,7 +37,7 @@ namespace MyUPlay{
 				/**
 				 * Attributes don't have instances, instead you use its name.
 				 */
-				virtual std::string getInstance() const override {
+				std::string getInstance() const override {
 					return "";
 				}
 

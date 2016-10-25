@@ -8,16 +8,17 @@
  				"src/GLES2Renderer.cpp",
   				"src/Log.cpp",
   				"src/Math.cpp",
-  				"src/ShaderUtil.cpp"
+  				"src/ShaderUtil.cpp",
+  				"src/ShaderGLES2.cpp"
 			],
 			"include_dirs": [
 				"include",
-				"<!@(<(pkg-config) --cflags sdl2)"
+				"<!@(<(pkg-config) --cflags sdl2)",
+				"deps/glsl-optimizer/src"
 			],
 			"direct_dependent_settings": {
 				"include_dirs": [
-					"include",
-					"<!@(<(pkg-config) --cflags sdl2)"
+					"include"
 				]
 			},
 			"variables": {
@@ -30,12 +31,15 @@
 				"-std=c++11",
 				"-g",
 				"-O2",
-#				"-flto"
+				"-fPIC"
 			],
+			'cflags!': [ '-fno-exceptions' ],
+			'cflags_cc!': [ '-fno-exceptions' ],
 			"libraries": [
 				"<!@(<(pkg-config) --libs-only-l sdl2 capnp)",
 				"-lSOIL",
-				"-lGL"
+				"-lGL",
+				"../deps/glsl-optimizer/libglsl_optimizer.a"
 			],
 			"ldflags": [
 				"<!@(<(pkg-config) --libs-only-L --libs-only-other sdl2)"
