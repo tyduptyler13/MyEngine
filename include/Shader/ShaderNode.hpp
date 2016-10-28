@@ -53,12 +53,22 @@ namespace MyUPlay {
 
 			template <typename T> //Internal type
 			struct Output {
-				std::vector<std::weak_ptr<IShaderNode>> inputs; //The inputs the output is connected to.
-				const std::string name; //The name of the output variable (as it is in code), this is important!
-				//It is likely that this gets set by something further down the line in the code, like when a
-				//variable is initially declared, then it is passed down through the call chain and reused.
-				//If a variable is copied vs referenced, a new name would be used from either a pre-declaration
-				//or is internally declared and returned. (out vs inout in glsl)
+				/*
+				 * The following was to allow reverse traversal of the nodes without leaking memory. The
+				 * flaw with it is that connecting inputs and outputs required LOTS of bending over backwards
+				 * to please this design. Because of this, it has been removed.
+				 */
+				//std::vector<std::weak_ptr<IShaderNode>> inputs; //The inputs the output is connected to.
+
+				/**
+				 * This is the name of the variable in the code. All nodes will use this value to feed into the
+				 * next node and then the variable is done. We leave it up to the compiler and optimizer (internal
+				 * and the driver) to clean up after we make this mess. If this is a problem in the future, we
+				 * will have to redesign how outputs work because without this model, the nodes can have sort of
+				 * race conditions except that instead its just the alternate paths executing and using the same
+				 * variables.
+				 */
+				const std::string name; //The value is generated if not specified at creation time.
 				Output(std::string name = generateUniqueName()) : name(name) {}
 			};
 
@@ -70,32 +80,37 @@ namespace MyUPlay {
 				//and we don't own its memory so a shared_ptr doesn't work.
 
 				/**
-				 * We need self because we don't have the authority to hold our own shared_ptr,
-				 * we need the output node because output doesn't have reference to it,
-				 * and we need the output pointer because there is no way to tell which output in the node we want.
+				 * This is the new design. It is less complicated as it doesn't require a reference to its
+				 * own shared_ptr.
 				 */
-				void set(std::shared_ptr<IShaderNode> self, std::shared_ptr<IShaderNode> outNode, Output<T>* out){
-					if (node){ //Remove from previous node.
-						unset(self);
-					}
+				void set(std::shared_ptr<IShaderNode> outNode, Output<T>* out){
 					node = outNode;
 					output = out;
-					out->inputs.push_back(std::weak_ptr<IShaderNode>(self));
+					//Outputs no longer can track inputs!
 				}
 
 				/**
-				 * We once again need to know our self pointer.
+				 * This is the easiest way to set an input but can have problems if the
+				 * type passed is not a derivative of IShaderNode!
 				 */
-				void unset(std::shared_ptr<IShaderNode> self){
-					if (node.use_count() > 1){ //If we are not the only owner, actually clean up, otherwise it will get deleted anyways.
-						for (auto it = output->inputs.begin(); it != output->inputs.end(); it++){
-							if (it->lock() == self){
-								output->inputs.erase(it);
-							}
-						}
-					}
-					node.reset();
+				template <typename PT> //PT is expected to be a subtype of
+				void set(std::shared_ptr<PT> outNode, Output<T>* out){
+					node = static_pointer_cast<IShaderNode>(outNode);
+					output = out;
 				}
+
+				/**
+				 * This is the least likely to be used method.
+				 *
+				 * This version of set doesn't save a pointer to the sub node and thus
+				 * it will be deleted automatically, except when that node doesn't exist
+				 * and you are pointing to Outputs in for instance the base Vertex and Fragment
+				 * classes. There is no node to point to in that instance.
+				 */
+				void set(Output<T>* out){
+					output = out;
+				}
+
 
 			};
 

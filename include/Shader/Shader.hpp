@@ -24,13 +24,13 @@ namespace MyUPlay {
 
 				virtual void render(std::shared_ptr<Camera<float>> camera, std::shared_ptr<DrawableObject3D<float>> o, const std::vector<Light<float>>& lights) = 0;
 
-				std::unique_ptr<VertexBase> vertexShader;
+				std::unique_ptr<VertexBase> vertexShaderRoot;
 
 			};
 
 			struct ForwardShader : public virtual Shader {
 
-				std::unique_ptr<FragmentBase> fragmentShader;
+				std::unique_ptr<FragmentBase> fragmentShaderRoot;
 
 			};
 

@@ -10,45 +10,41 @@ using namespace std;
 using namespace MyUPlay::MyEngine;
 using namespace MyUPlay::MyEngine::Shader;
 
-void GLES2Shader::bind(){
-	glUseProgram(program);
-}
-
 static string fetchCode(IShaderNode& root){
 	vector<shared_ptr<IShaderNode>> nodes; //For doing bredth first searches
 
-		//Seed the initial variables.
-		root.traverseChildren([&](shared_ptr<IShaderNode> node){
+	//Seed the initial variables.
+	root.traverseChildren([&](shared_ptr<IShaderNode> node){
+		nodes.push_back(node);
+	});
+
+	for (unsigned i = 0; i < nodes.size(); ++i){ //nodes size will change at almost every iteration, we are following its depth
+
+		shared_ptr<IShaderNode>& node = nodes[i];
+
+
+		node->traverseChildren([&](shared_ptr<IShaderNode> node){
 			nodes.push_back(node);
 		});
 
-		for (unsigned i = 0; i < nodes.size(); ++i){ //nodes size will change at almost every iteration, we are following its depth
+	} //This has constructed a list that guarantees breadth first.
 
-			shared_ptr<IShaderNode>& node = nodes[i];
+	string code;
 
+	for (int i = nodes.size() - 1; i >= 0; --i){
+		code += nodes[i]->getStatic();
+	}
 
-			node->traverseChildren([&](shared_ptr<IShaderNode> node){
-				nodes.push_back(node);
-			});
+	code += "\n\n"
+			"void main(){\n";
 
-		} //This has constructed a list that guarantees breadth first.
+	for (int i = nodes.size() -1; i >= 0; --i){
+		code += nodes[i]->getInstance();
+	}
 
-		string code;
+	code += "\n}\n//This is generated code, do not try to directly modify!";
 
-		for (int i = nodes.size() - 1; i >= 0; --i){
-			code += nodes[i]->getStatic();
-		}
-
-		code += "\n\n"
-				"void main(){\n";
-
-		for (int i = nodes.size() -1; i >= 0; --i){
-			code += nodes[i]->getInstance();
-		}
-
-		code += "\n}\n//This is generated code, do not try to directly modify!";
-
-		return code;
+	return code;
 
 }
 
@@ -69,9 +65,9 @@ void ForwardShaderGLES2::compile() {
 
 	static glslopt_ctx *ctx = glslopt_initialize(kGlslTargetOpenGLES20); //FIXME, This should be put somewhere more global and should be destructed.
 
-	string vertexCode = fetchCode(*vertexShader);
+	string vertexCode = fetchCode(*vertexShaderRoot);
 	shaderLog.log("Vertex shader:\n" + vertexCode);
-	string fragmentCode = fetchCode(*fragmentShader);
+	string fragmentCode = fetchCode(*fragmentShaderRoot);
 	shaderLog.log("Fragment shader:\n" + fragmentCode);
 
 	glslopt_shader *shader = glslopt_optimize(ctx, kGlslOptShaderVertex, vertexCode.c_str(), 0);

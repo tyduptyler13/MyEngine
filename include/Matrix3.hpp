@@ -26,9 +26,10 @@ namespace MyUPlay {
 		class Matrix3 {
 
 		public:
+			//Column major notation.
 			std::array<T,9> elements = {
-				1, 0, 0,
-				0, 1, 0,
+				1, 0, 0, //First column
+				0, 1, 0, //Second column
 				0, 0, 1
 			};
 
@@ -200,6 +201,7 @@ namespace MyUPlay {
 
 			Matrix3& fromArray(const std::array<T, 9>& array){
 				elements = array;
+				return *this;
 			}
 
 			std::array<T, 9> toArray() const {

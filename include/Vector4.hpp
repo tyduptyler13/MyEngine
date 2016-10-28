@@ -413,6 +413,9 @@ namespace MyUPlay {
 
 		};
 
+		typedef Vector4<float> Vector4f;
+		typedef Vector4<double> Vector4d;
+
 	}
 
 }

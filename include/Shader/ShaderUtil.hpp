@@ -13,7 +13,7 @@
 
 #include "Matrix4.hpp"
 #include "Vector3.hpp"
-#include "Color.hpp"
+#include "Vector4.hpp"
 #include "DrawableObject3D.hpp"
 #include "Light.hpp"
 
@@ -31,9 +31,14 @@ namespace MyUPlay {
 			template <typename R, typename T>
 			struct Utility {
 
+				//Types can be hidden away in cpp files. Currently these are defined in each renderers cpp file.
 				static const char* type;
 				static const char* getType(){
 					return type;
+				}
+
+				inline static std::string toString(const T& t){
+					return std::to_string(t); //Default fallback
 				}
 
 			};
@@ -67,25 +72,39 @@ namespace MyUPlay {
 				Output<Matrix4f> viewMatrix; //Inverse matrix world
 				Output<Vector3f> cameraPosition;
 
-				Input<Vector3f> position;
-				Input<Vector3f> normal; //Output the normalized normal vector for use in the fragment shader.
+				// The following are treated as varying in GLSL and passed to the fragment shader
+				Input<Vector3f> fPosition; //World coords
+				Input<Vector3f> fNormal; //Output the normalized normal vector for use in the fragment shader.
 
-				void traverseChildren(ShaderTraverser s) override {
-					s(position.node);
-					s(normal.node);
+				virtual void traverseChildren(ShaderTraverser s) override {
+					s(fPosition.node);
+					s(fNormal.node);
 				}
+
+			protected:
+
+				//Default constructor should not be directly callable.
+				VertexBase() : modelView("modelView"), projectionMatrix("projectionMatrix"), modelMatrix("modelMatrix"),
+				viewMatrix("viewMatrix"), cameraPosition("cameraPosition") {}
 
 			};
 
 			struct FragmentBase : public IRootShaderNode {
-				Output<Vector3f> position; //Interpolated position from vertex shader
+				Output<Vector3f> position; //Interpolated world position from vertex shader
 				Output<Vector3f> normal; //Interpolated normal from vertex shader (normalized)
 
-				Input<Color> color; //gl_color;
+				//The following are combined in opengl automatically.
+				Input<Vector3f> color;
+				Input<float> alpha;
 
 				void traverseChildren(ShaderTraverser s) override {
 					s(color.node);
 				}
+
+			protected:
+
+				FragmentBase() : position("fPosition"), normal("fNormal") {}
+
 			};
 
 			struct DeferredFragment : public IRootShaderNode {
@@ -117,6 +136,98 @@ namespace MyUPlay {
 					s(finalColor.node);
 				}
 			};
+
+
+			//Things below this line are renderer specific, they may be moved at any time.
+
+			//Function specializations must be defined in the header for the compiler to know they exist. They will go unused in a cpp file.
+			template <>
+			inline std::string Utility<GLES2Renderer, bool>::toString(const bool& t){
+				if (t){
+					return "true";
+				} else {
+					return "false";
+				}
+			}
+
+			template <>
+			inline std::string Utility<GLES2Renderer, double>::toString(const double& t){
+				std::string s = std::to_string(t);
+				if (s.find(".") == s.end()){ //GLSL requires a decimal for floats.
+					s += ".0";
+				}
+				return s;
+			}
+
+			template <>
+			inline std::string Utility<GLES2Renderer, float>::toString(const float& t){
+				std::string s = std::to_string(t);
+				if (s.find(".") == s.end()){ //GLSL requires a decimal for floats.
+					s += ".0";
+				}
+				return s;
+			}
+
+			template <>
+			inline std::string Utility<GLES2Renderer, Vector3<float>>::toString(const Vector3<float>& t){
+				return "vec3(" + Utility<GLES2Renderer, float>::toString(t.x) + "," + Utility<GLES2Renderer, float>::toString(t.y) + "," + Utility<GLES2Renderer, float>::toString(t.z) + ")";
+			}
+
+			template <>
+			inline std::string Utility<GLES2Renderer, Vector4<float>>::toString(const Vector4<float>& t){
+				return "vec4(" + Utility<GLES2Renderer, float>::toString(t.x) + "," + Utility<GLES2Renderer, float>::toString(t.y) + "," + Utility<GLES2Renderer, float>::toString(t.z) + "," + Utility<GLES2Renderer, float>::toString(t.w) + ")";
+			}
+
+			template <>
+			inline std::string Utility<GLES2Renderer, Matrix3<float>>::toString(const Matrix3<float>& t){
+				std::string s = "mat3(" + Utility<GLES2Renderer, float>::toString(t.elements[0]);
+				for (unsigned i = 1; i < 9; ++i){
+					s += "," + Utility<GLES2Renderer, float>::toString(t.elements[i]);
+				}
+				s += ")";
+				return s;
+			}
+
+			template <>
+			inline std::string Utility<GLES2Renderer, Matrix4<float>>::toString(const Matrix4<float>& t){
+				std::string s = "mat4(" + Utility<GLES2Renderer, float>::toString(t.elements[0]);
+				for (unsigned i = 1; i < 16; ++i){
+					s += "," + Utility<GLES2Renderer, float>::toString(t.elements[i]);
+				}
+				s += ")";
+				return s;
+			}
+
+			template <>
+			inline std::string Utility<GLES2Renderer, Vector3<double>>::toString(const Vector3<double>& t){
+				return "dvec3(" + Utility<GLES2Renderer, double>::toString(t.x) + "," + Utility<GLES2Renderer, double>::toString(t.y) + "," + Utility<GLES2Renderer, double>::toString(t.z) + ")";
+			}
+
+			template <>
+			inline std::string Utility<GLES2Renderer, Vector4<double>>::toString(const Vector4<double>& t){
+				return "dvec4(" + Utility<GLES2Renderer, double>::toString(t.x) + "," + Utility<GLES2Renderer, double>::toString(t.y) + "," + Utility<GLES2Renderer, double>::toString(t.z) + "," + Utility<GLES2Renderer, double>::toString(t.w) + ")";
+			}
+
+			//TODO dmats might not be supported, haven't checked specifics for GLES2
+			template <>
+			inline std::string Utility<GLES2Renderer, Matrix3<double>>::toString(const Matrix3<double>& t){
+				std::string s = "dmat3(" + Utility<GLES2Renderer, double>::toString(t.elements[0]);
+				for (unsigned i = 1; i < 9; ++i){
+					s += "," + Utility<GLES2Renderer, double>::toString(t.elements[i]);
+				}
+				s += ")";
+				return s;
+			}
+
+			template <>
+			inline std::string Utility<GLES2Renderer, Matrix4<double>>::toString(const Matrix4<double>& t){
+				std::string s = "dmat4(" + Utility<GLES2Renderer, double>::toString(t.elements[0]);
+				for (unsigned i = 1; i < 16; ++i){
+					s += "," + Utility<GLES2Renderer, double>::toString(t.elements[i]);
+				}
+				s += ")";
+				return s;
+			}
 
 		}
 	}

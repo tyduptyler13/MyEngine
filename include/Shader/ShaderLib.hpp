@@ -4,6 +4,7 @@
 #include <string>
 
 #include "Shader/ShaderNode.hpp"
+#include "Shader/ShaderUtil.hpp"
 
 #include "Vector3.hpp"
 #include "Matrix4.hpp"
@@ -12,71 +13,130 @@ namespace MyUPlay {
 	namespace MyEngine {
 		namespace Shader {
 
+			/**
+			 * The following are expected to change soon to allow for multiple renderers.
+			 *
+			 * Expect some form of factory system that produces the desired node, specialized for a renderer of choice.
+			 *
+			 * The current design is mainly for proof of concept testing.
+			 */
+
 			//Specialized for GLES2
-			struct TransformDirection : public IShaderNode<GLES2Renderer> {
+			struct TransformDirection : public IShaderNode {
 
-				Input<GLES2Renderer, Vector3<float>> dir;
-				Input<GLES2Renderer, Matrix4<float>> matrix;
+				Input<Vector3<float>> dir;
+				Input<Matrix4<float>> matrix;
 
-				Output<GLES2Renderer, Vector3<float>> ret;
+				Output<Vector3<float>> ret;
 
 				std::string getStatic() const override {
 					return "vec3 transformDirection(in vec3 dir, in mat4 matrix) {\n"
-							"	normalize((matrix * vec4(dir, 0.0)).xyz);\n"
+							"	return normalize((matrix * vec4(dir, 0.0)).xyz);\n"
 							"}\n";
 				}
 				std::string getInstance() const override {
-					return ret.name + " = transformDirection(" + dir.output->name + ", " + matrix.output->name + ");\n";
+					return "vec3 " + ret.name + " = transformDirection(" + dir.output->name + ", " + matrix.output->name + ");\n";
+				}
+
+			};
+
+			//Specialized for GLES2
+			struct TransformLocation : public IShaderNode {
+
+				Input<Vector3<float>> loc;
+				Input<Matrix4<float>> matrix;
+
+				Output<Vector3<float>> ret;
+
+				std::string getStatic() const override {
+					return "vec3 transformLocation(in vec3 loc, in mat4 matrix) {\n"
+							"	return (matrix * vec4(loc, 1.0)).xyz;\n"
+							"}\n";
+				}
+				std::string getInstance() const override {
+					return "vec3 " + ret.name + " = transformLocation(" + loc.output->name + ", " + matrix.output->name + ");\n";
 				}
 
 			};
 
 			template <typename T>
-			struct Add : public IShaderNode<GLES2Renderer> {
+			struct Add : public IShaderNode {
 
-				Input<GLES2Renderer, T> a;
-				Input<GLES2Renderer, T> b;
+				Input<T> a;
+				Input<T> b;
 
-				Output<GLES2Renderer, T> ret;
+				Output<T> ret;
 
 				std::string getInstance() const override {
-					return ret.name + " = " + a.output->name + " + " + b.output->name + ";\n";
+					return Utility<GLES2Renderer, T>::type + " " + ret.name + " = " + a.output->name + " + " + b.output->name + ";\n";
+				}
+
+			};
+
+			//It is up to the designer to know if the types inserted are valid.
+			template <typename A, typename B, typename R>
+			struct Multiply : public IShaderNode {
+
+				Input<A> a;
+				Input<B> b;
+
+				Output<R> ret;
+
+				std::string getInstance() const override {
+					return Utility<GLES2Renderer, R>::type + " " + ret.name + " = " + a.output->name + " * " + b.output->name + ";\n";
+				}
+
+			};
+
+			//It is up to the designer to know if the types inserted are valid.
+			template <typename A, typename B, typename R>
+			struct Combine : public IShaderNode {
+
+				Input<A> a;
+				Input<B> b;
+
+				Output<R> ret;
+
+				std::string getInstance() const override {
+					return Utility<GLES2Renderer, R>::type + " " + ret.name + " = " +
+							Utility<GLES2Renderer, R>::type + "(" + a.output->name + ", " + b.output->name + ");\n";
+				}
+
+			};
+
+			//It is up to the designer to know if the types inserted are valid.
+			/**
+			 * This class is designed to get sub elements of a variable to create a new one.
+			 */
+			template <class A, typename R>
+			struct Swizzle : public IShaderNode {
+
+				Input<A> a;
+				std::string swiz = ".x"; //By default returns only x.
+
+				Output<R> ret;
+
+				std::string getInstance() const override {
+					return Utility<GLES2Renderer, R>::type + " " + ret.name + " = " + a.output->name + swiz + ";\n";
 				}
 
 			};
 
 			template <typename T>
-			struct Mix : public IShaderNode<GLES2Renderer> {
-				Input<GLES2Renderer, T> a;
-				Input<GLES2Renderer, T> b;
-				Input<GLES2Renderer, float> fac; //Factor from 0 to 1 for all a to all b;
+			struct Mix : public IShaderNode {
+				Input<T> a;
+				Input<T> b;
+				Input<float> fac; //Factor from 0 to 1 for all a to all b;
 				//Undefined behavior for values outside of 0 and 1;
 
-				Output<GLES2Renderer, T> ret;
+				Output<T> ret;
 
 				std::string getInstance() const override {
 					//mix should already be defined.
-					return ret.name + " = mix(" + a.output->name + ", " + b.output->name + ", "
-							+ fac.output->name + ");\n";
+					return Utility<GLES2Renderer, T>::type + " " + ret.name + " = mix(" + a.output->name +
+							", " + b.output->name + ", " + fac.output->name + ");\n";
 				}
 
-			};
-
-			/**
-			 * A simple create a new variable based on an existing value.
-			 */
-			template <typename T>
-			struct Variable : public IShaderNode<GLES2Renderer> {
-				Input<GLES2Renderer, T> in;
-				Output<GLES2Renderer, T> out;
-
-				std::string getStatic() const override {
-					return Utility<GLES2Renderer, T>::type + " " + out.name  + " = " + in.output->name + ";\n";
-				} //TODO replace to_string with internal function that handles vector3-4 and matrix3-4, etc.
-
-				std::string getInstance() const override {
-					return out.name;
-				}
 			};
 
 			/**
@@ -85,29 +145,33 @@ namespace MyUPlay {
 			 * If you are looking to change this value every frame, then use an attribute.
 			 */
 			template <typename T>
-			struct InputVariable : public IShaderNode<GLES2Renderer> {
+			struct InputVariable : public IShaderNode {
+
+				using std::to_string;
 
 				T value; //Note, this will only be used at the time the shader is compiled. You must recompile every time this changes.
 
-				Output<GLES2Renderer, T> out;
+				Output<T> out;
 
 				std::string getStatic() const override {
-					return "const " + Utility<GLES2Renderer, T>::type + " " + out.name  + " = " + std::to_string(value) + ";\n";
+					return "const " + Utility<GLES2Renderer, T>::type + " " + out.name  + " = " + Utility<GLES2Renderer, T>::toString(value) + ";\n";
 				} //TODO replace to_string with internal function that handles vector3-4 and matrix3-4, etc.
 
 				std::string getInstance() const override {
-					return out.name;
+					return ""; //Other nodes will use the out, not the get instance method.
 				}
+
+				InputVariable(T t) : value(t){}
 
 			};
 
-			struct Fresnel : public IShaderNode<GLES2Renderer> {
+			struct Fresnel : public IShaderNode {
 
-				Input<GLES2Renderer, float> fac;
-				Input<GLES2Renderer, Vector3<float>> normal;
-				Input<GLES2Renderer, Vector3<float>> lightDir;
+				Input<float> fac;
+				Input<Vector3<float>> normal;
+				Input<Vector3<float>> lightDir;
 
-				Output<GLES2Renderer, float> out;
+				Output<float> out;
 
 				std::string getStatic() const override {
 					return "float fresnelSchlick(vec3 norm, vec3 lightDir, float fac){\n"
@@ -118,17 +182,17 @@ namespace MyUPlay {
 				}
 
 				std::string getInstance() const override {
-					return out.name + " = fresnelSchlick(" + normal.output->name + ", "
+					return "float " + out.name + " = fresnelSchlick(" + normal.output->name + ", "
 							+ lightDir.output->name + ", " + fac.output->name + ");\n";
 				}
 
 			};
 
-			struct Rand : public IShaderNode<GLES2Renderer> {
+			struct Rand : public IShaderNode {
 
-				Input<GLES2Renderer, Vector2<float>> seed;
+				Input<Vector2<float>> seed;
 
-				Output<GLES2Renderer, float> out;
+				Output<float> out;
 
 				std::string getStatic() const override {
 					return "float rand(vec2 co){\n"
@@ -142,19 +206,19 @@ namespace MyUPlay {
 				}
 
 				std::string getInstance() const override {
-					return out.name + " = rand(" + seed.output->name + ");\n";
+					return "float " + out.name + " = rand(" + seed.output->name + ");\n";
 				}
 
 			};
 
 
 
-			struct DielectricShader : public IShaderNode<GLES2Renderer> {
-
+			struct DielectricShader : public IShaderNode {
+				//TODO
 			};
 
-			struct MetallicShader : public IShaderNode<GLES2Renderer> {
-
+			struct MetallicShader : public IShaderNode {
+				//TODO
 			};
 
 
