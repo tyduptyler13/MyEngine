@@ -39,7 +39,6 @@ namespace MyUPlay {
 				 */
 				virtual std::string getInstance() const = 0; //All calls/refs must be defined. If this returns nothing then the node is useless.
 
-
 				typedef std::function<void(std::shared_ptr<IShaderNode>)> ShaderTraverser;
 
 				/**
