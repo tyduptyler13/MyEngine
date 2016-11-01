@@ -171,7 +171,7 @@ namespace MyUPlay {
 			 * shared_ptr to avoid early deletion.
 			 */
 			Object3D& add(std::shared_ptr<Object3D> self, std::shared_ptr<Object3D> object){
-				if (object == this){
+				if (object == self){
 					logger.error("Add: Object cannot be added to itself.");
 					return *this;
 				}
@@ -186,20 +186,20 @@ namespace MyUPlay {
 				return *this;
 			}
 
-			Object3D& remove(std::shared_ptr<Object3D> self, std::vector<std::shared_ptr<Object3D>> objects){
+			Object3D& remove(std::vector<std::shared_ptr<Object3D>> objects){
 				for (std::shared_ptr<Object3D>& o : objects){
-					add(self, o);
+					remove(o);
 				}
 				return *this;
 			}
 
-			Object3D& remove(std::shared_ptr<Object3D> self, std::shared_ptr<Object3D> object){
+			Object3D& remove(std::shared_ptr<Object3D> object){
 
 				auto loc = std::find(children.begin(), children.end(), object);
 
 				if (loc != children.end()){
-					object.parent = std::shared_ptr<Object3D>(); //Reset parent pointer to null;
-					object.erase(loc);
+					object.parent = std::weak_ptr<Object3D<T>>(); //Reset parent pointer to null;
+					children.erase(loc);
 				}
 
 				return *this;
@@ -218,12 +218,12 @@ namespace MyUPlay {
 						return o2;
 					}
 				}
-				return NULL;
+				return nullptr;
 			}
-			inline Object3D& getObjectByName(std::string&& s) const { //Test move version.
+			inline std::shared_ptr<Object3D> getObjectByName(std::string&& s) const { //Test move version.
 				return getObjectByName(s);
 			}
-			Object3D& getObjectByName(const std::string& name) const {
+			std::shared_ptr<Object3D> getObjectByName(const std::string& name) const {
 				for (auto o : children) {
 					if (o->name == name){
 						return o;
@@ -235,7 +235,7 @@ namespace MyUPlay {
 						return o2;
 					}
 				}
-				return NULL;
+				return nullptr;
 			}
 
 			Vector3<T> getWorldPosition() {
@@ -288,7 +288,7 @@ namespace MyUPlay {
 			Object3D& traverse(std::shared_ptr<Object3D> self, std::function<void(std::shared_ptr<Object3D>)> func){
 				func(self);
 				for (auto o : children){
-					o.traverse(o, func);
+					o->traverse(o, func);
 				}
 				return *this;
 			}
@@ -296,7 +296,7 @@ namespace MyUPlay {
 				if (visible){
 					func(self);
 					for (auto o : children){
-						o.traverseVisible(o, func);
+						o->traverseVisible(o, func);
 					}
 				}
 				return *this;
@@ -345,27 +345,27 @@ namespace MyUPlay {
 
 			}
 
-			virtual Object3D& copy(const Object3D& o, bool recursive = true) {
-				name = o->name;
-				up = o->up;
+			Object3D& copy(const Object3D& o, bool recursive = true) {
+				name = o.name;
+				up = o.up;
 
-				position = o->position;
-				quaternion = o->quaternion;
-				scale = o->scale;
+				position = o.position;
+				quaternion = o.quaternion;
+				scale = o.scale;
 
-				matrix = o->matrix;
-				matrixWorld = o->matrixWorld;
+				matrix = o.matrix;
+				matrixWorld = o.matrixWorld;
 
-				matrixAutoUpdate = o->matrixAutoUpdate;
-				matrixWorldNeedsUpdate = o->matrixWorldNeedsUpdate;
+				matrixAutoUpdate = o.matrixAutoUpdate;
+				matrixWorldNeedsUpdate = o.matrixWorldNeedsUpdate;
 
-				visible = o->visible;
+				visible = o.visible;
 
-				castShadow = o->castShadow;
-				receiveShadow = o->receiveShadow;
+				castShadow = o.castShadow;
+				receiveShadow = o.receiveShadow;
 
-				frustumCulled = o->frustumCulled;
-				renderOrder = o->renderOrder;
+				frustumCulled = o.frustumCulled;
+				renderOrder = o.renderOrder;
 
 				if (recursive){
 					for (auto o : children){

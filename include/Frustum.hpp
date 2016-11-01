@@ -60,12 +60,12 @@ namespace MyUPlay {
 
 			}
 
-			bool interesectsObject(const Object3D<T>& object) const {
+			bool interesectsObject(std::shared_ptr<Mesh<T>>& object) const {
 
-				Geometry<T>& geometry = object.geometry;
+				std::shared_ptr<IGeometry<T>> geometry = object->geometry;
 
-				if (geometry.boundingSphere == NULL) geometry.computeBoundingSphere();
-				Sphere<T> sphere = geometry.boundingSphere;
+				if (geometry->boundingSphere == nullptr) geometry->computeBoundingSphere();
+				Sphere<T>& sphere = geometry->boundingSphere;
 				sphere.applyMatrix4(object.matrixWorld);
 
 				return intersectsSphere(sphere);

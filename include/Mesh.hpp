@@ -1,3 +1,6 @@
+#ifndef MYUPLAY_MYENGINE_MESH
+#define MYUPLAY_MYENGINE_MESH
+
 #include <string>
 
 #include "Object3D.hpp"
@@ -9,25 +12,18 @@ namespace MyUPlay {
 
 	namespace MyEngine {
 
-		#ifndef GeometryDefined
 		template <typename T>
-		struct Geometry;
-		#endif
+		struct Mesh : public Object3D<T> {
 
-		template <typename T>
-		class Mesh : public Object3D<T> {
+			std::unique_ptr<IGeometry<T>> geometry;
+			std::unique_ptr<Material<T>> material;
 
-		public:
-
-			Geometry<T> geometry;
-			Material<T> material;
-
-			void updateMorphTargets();
-			unsigned getMorphTargetIndexByName(const std::string& s) const;
-			void raycast(const Raycaster<T>&, std::vector<Intersection<T> >&);
+			//void raycast(const Raycaster<T>&, std::vector<Intersection<T> >&); //TODO
 
 		};
 
 	}
 
 }
+
+#endif

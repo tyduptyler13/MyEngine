@@ -2,7 +2,7 @@
 #define MYUPLAY_MYENGINE_SCENE
 
 #include "Object3D.hpp"
-#include "DrawableObject3D.hpp"
+#include "Mesh.hpp"
 #include "Material.hpp"
 #include "Fog.hpp"
 #include "Light.hpp"
@@ -35,7 +35,7 @@ namespace MyUPlay {
 
 		public:
 			std::forward_list<std::weak_ptr<Light<T> > > lights;
-			std::forward_list<std::weak_ptr<DrawableObject3D<T> > > opaqueObjects, transparentObjects;
+			std::forward_list<std::weak_ptr<Mesh<T> > > opaqueObjects, transparentObjects;
 
 			std::shared_ptr<Material<T> > overrideMaterial;
 			std::shared_ptr<Fog<T> > fog;
@@ -76,7 +76,7 @@ namespace MyUPlay {
 					lights.push_front(o);
 					break;
 				case ObjectType::DRAWABLE: { //Need scope for internal variables.
-					std::shared_ptr<DrawableObject3D<T>> co = std::dynamic_pointer_cast<DrawableObject3D<T>>(o);
+					std::shared_ptr<Mesh<T>> co = std::dynamic_pointer_cast<Mesh<T>>(o);
 					if (co->material.transparent){
 						transparentObjects.push_front(co);
 					} else {
@@ -104,14 +104,14 @@ namespace MyUPlay {
 					break;
 				}
 				case ObjectType::DRAWABLE: { //Cases need scope for their internal variables.
-					std::shared_ptr<DrawableObject3D<T>> co = std::dynamic_pointer_cast<DrawableObject3D<T>>(o);
+					std::shared_ptr<Mesh<T>> co = std::dynamic_pointer_cast<Mesh<T>>(o);
 					if (co->material.transparent){
-						auto pos = std::find_if(transparentObjects.begin(), transparentObjects.end(), COMP_WEAK_SHARED(co, DrawableObject3D<T>));
+						auto pos = std::find_if(transparentObjects.begin(), transparentObjects.end(), COMP_WEAK_SHARED(co, Mesh<T>));
 						if (pos != transparentObjects.end()){
 							transparentObjects.erase(co);
 						}
 					} else {
-						auto pos = std::find_if(opaqueObjects.begin(), opaqueObjects.end(), COMP_WEAK_SHARED(co, DrawableObject3D<T>));
+						auto pos = std::find_if(opaqueObjects.begin(), opaqueObjects.end(), COMP_WEAK_SHARED(co, Mesh<T>));
 						if (pos != opaqueObjects.end()){
 							opaqueObjects.erase(co);
 						}

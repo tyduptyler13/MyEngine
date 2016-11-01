@@ -111,7 +111,7 @@ namespace MyUPlay {
 						break;
 
 					case MirroredRepeatWrapping:
-						if (abs(fmod(floor(uv.x), 2)) == 1){
+						if (std::abs(fmod(floor(uv.x), 2)) == 1){
 							uv.x = ceil(uv.x) - uv.x;
 						} else {
 							uv.x = uv.x - floor(uv.x);
@@ -131,7 +131,7 @@ namespace MyUPlay {
 						break;
 
 					case MirroredRepeatWrapping:
-						if (abs(fmod(floor(uv.y), 2)) == 1){
+						if (std::abs(fmod(floor(uv.y), 2)) == 1){
 							uv.y = ceil(uv.y) - uv.y;
 						} else {
 							uv.y = uv.y - floor(uv.y);

@@ -148,7 +148,7 @@ void ForwardShaderGLES2::compile() {
 
 }
 
-void GLES2Vertex::prepare(std::shared_ptr<Camera<float>> camera, std::shared_ptr<DrawableObject3D<float>> object, std::vector<Light<float>>& lights) {
+void GLES2Vertex::prepare(std::shared_ptr<Camera<float>> camera, std::shared_ptr<Mesh<float>> object, std::vector<Light<float>>& lights) {
 
 	shader->bind(); //The shader needs to already be bound.
 
@@ -161,11 +161,14 @@ void GLES2Vertex::prepare(std::shared_ptr<Camera<float>> camera, std::shared_ptr
 
 	GLint normLoc = shader->getAttribLoc("normal");
 
-
+	if (normLoc == 0) {
+		shaderLog.error("Failed to get position of required 'normal' attribute!");
+		throw runtime_error("Couldn't get position of attribute. No progress could be made.");
+	}
 
 }
 
-void GLES2Fragment::prepare(std::shared_ptr<Camera<float>> camera, std::shared_ptr<DrawableObject3D<float>> object, std::vector<Light<float>>& lights) {
+void GLES2Fragment::prepare(std::shared_ptr<Camera<float>> camera, std::shared_ptr<Mesh<float>> object, std::vector<Light<float>>& lights) {
 
 	//TODO Handle custom attributes, otherwise we have 0 things to add by default.
 	//FIXME Custom attribute handling should be handled by a base class. (Is this the base class?)

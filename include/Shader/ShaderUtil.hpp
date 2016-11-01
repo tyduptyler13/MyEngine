@@ -11,10 +11,10 @@
 #include "Shader/ShaderNode.hpp"
 #include "Shader/Attribute.hpp"
 
+#include "Mesh.hpp"
 #include "Matrix4.hpp"
 #include "Vector3.hpp"
 #include "Vector4.hpp"
-#include "DrawableObject3D.hpp"
 #include "Light.hpp"
 
 #include <string>
@@ -59,7 +59,7 @@ namespace MyUPlay {
 				 * Should the attribute get optimized out because it wasn't used, only then can
 				 * it be skipped. In opengl this is done when the position is not present in the shader.
 				 */
-				virtual void prepare(std::shared_ptr<Camera<float>>, std::shared_ptr<DrawableObject3D<float>>, std::vector<Light<float>>& lights) = 0;
+				virtual void prepare(std::shared_ptr<Camera<float>>, std::shared_ptr<Mesh<float>>, std::vector<Light<float>>& lights) = 0;
 
 			};
 
