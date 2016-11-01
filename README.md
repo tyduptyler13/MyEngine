@@ -1,7 +1,7 @@
 MyEngine
 ========
 
-This is a completely open source (MIT License) game engine.
+This is a completely open source (MIT License) game engine written in C++14 and has a javascript scripting engine attached.
 
 I created this engine because I found a large lackluster of existing game engines and wasn't particularly impressed by the large cost on getting a mainstream engine. This engine is designed after some of the best (also open source) tools in the industry. This engine is special because it is designed to be extremely modular and extremely cross platform. The target operating systems should include unix based systems, windows, and browser technologies like emscripten and nacl. We will eventually support android and iphone but I have very little experience in either of those platforms but would like to learn.
 

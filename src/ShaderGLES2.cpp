@@ -1,5 +1,6 @@
 
 #include <exception>
+#include <unordered_set>
 
 #include "Shader/ShaderGLES2.hpp"
 #include "Log.hpp"
@@ -11,40 +12,27 @@ using namespace MyUPlay::MyEngine;
 using namespace MyUPlay::MyEngine::Shader;
 
 static string fetchCode(IShaderNode& root){
-	vector<shared_ptr<IShaderNode>> nodes; //For doing bredth first searches
 
-	//Seed the initial variables.
-	root.traverseChildren([&](shared_ptr<IShaderNode> node){
-		nodes.push_back(node);
-	});
-
-	for (unsigned i = 0; i < nodes.size(); ++i){ //nodes size will change at almost every iteration, we are following its depth
-
-		shared_ptr<IShaderNode>& node = nodes[i];
-
-
-		node->traverseChildren([&](shared_ptr<IShaderNode> node){
-			nodes.push_back(node);
-		});
-
-	} //This has constructed a list that guarantees breadth first.
-
-	string code;
-
-	for (int i = nodes.size() - 1; i >= 0; --i){
-		code += nodes[i]->getStatic();
-	}
-
-	code += "\n\n"
+	string staticCode;
+	string mainCode = "//This is generated code, do not try to directly modify!\n\n"
 			"void main(){\n";
 
-	for (int i = nodes.size() -1; i >= 0; --i){
-		code += nodes[i]->getInstance();
-	}
+	std::unordered_set<Math::UUID> visited;
 
-	code += "\n}\n//This is generated code, do not try to directly modify!";
+	IShaderNode::ShaderTraverser trav = [&](shared_ptr<IShaderNode> node){
+		if (visited.find(node->uuid) == visited.end()){ //Have we seen this node before?
+			visited.insert(node->uuid);
+			staticCode += node->getStatic(); //Foward recursion (breadth first)
+			node->traverseChildren(trav);
+			mainCode += node->getInstance(); //Tail recursion (depth first)
+		}
+	};
 
-	return code;
+	root.traverseChildren(trav);
+
+	mainCode += "\n}\n//This is generated code, do not try to directly modify!";
+
+	return staticCode + mainCode;
 
 }
 
@@ -64,6 +52,8 @@ static inline void reportError(GLuint shader) {
 void ForwardShaderGLES2::compile() {
 
 	static glslopt_ctx *ctx = glslopt_initialize(kGlslTargetOpenGLES20); //FIXME, This should be put somewhere more global and should be destructed.
+
+	pos.clear(); //Want to forget old positions.
 
 	string vertexCode = fetchCode(*vertexShaderRoot);
 	shaderLog.log("Vertex shader:\n" + vertexCode);
@@ -151,7 +141,36 @@ void ForwardShaderGLES2::compile() {
 	//We don't need these sub components anymore, the program has it all.
 	glDetachShader(program, vertShader);
 	glDetachShader(program, fragmentShader);
-	glDeleteShader(vertShader);
+	glDeleteShader(vertShader); //This allows the shaders to be deleted if the program is deleted.
 	glDeleteShader(fragmentShader);
 
+	dirty = false; //This call will clear the dirty flag.
+
 }
+
+void GLES2Vertex::prepare(std::shared_ptr<Camera<float>> camera, std::shared_ptr<DrawableObject3D<float>> object, std::vector<Light<float>>& lights) {
+
+	shader->bind(); //The shader needs to already be bound.
+
+	GLint posLoc = shader->getAttribLoc("position");
+
+	if (posLoc == 0) {
+		shaderLog.error("Failed to get position of required 'position' attribute!");
+		throw runtime_error("Couldn't get position of attribute. No progress could be made.");
+	}
+
+	GLint normLoc = shader->getAttribLoc("normal");
+
+
+
+}
+
+void GLES2Fragment::prepare(std::shared_ptr<Camera<float>> camera, std::shared_ptr<DrawableObject3D<float>> object, std::vector<Light<float>>& lights) {
+
+	//TODO Handle custom attributes, otherwise we have 0 things to add by default.
+	//FIXME Custom attribute handling should be handled by a base class. (Is this the base class?)
+
+}
+
+
+

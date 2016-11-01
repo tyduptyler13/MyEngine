@@ -94,7 +94,7 @@ namespace MyUPlay {
 				 */
 				template <typename PT> //PT is expected to be a subtype of
 				void set(std::shared_ptr<PT> outNode, Output<T>* out){
-					node = static_pointer_cast<IShaderNode>(outNode);
+					node = std::static_pointer_cast<IShaderNode>(outNode);
 					output = out;
 				}
 

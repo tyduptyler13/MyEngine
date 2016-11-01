@@ -1,4 +1,4 @@
-CFLAGS=-O2 -Wall -Wextra -pedantic -flto -I../include -I../deps/googletest/include -pthread --std=c++11
+CFLAGS=-O2 -Wall -Wextra -pedantic -flto -I../include -I../deps/googletest/include -pthread --std=c++14
 LFLAGS=-flto -lpthread -L../deps/googletest -lgtest -lgtest_main -L../build/out/Default/obj.target -lMyEngine
 
 FILES=$(wildcard *.cc)

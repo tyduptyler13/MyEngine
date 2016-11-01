@@ -11,58 +11,68 @@ namespace MyUPlay {
 
 	namespace MyEngine {
 
+		/**
+		 * Redesigned to handle max customization. Previously, there were
+		 * expandable values for handling the cases where you wanted per
+		 * vertex color or normals. Now, those values are always present
+		 * and just duplicates of each other if unused. Most geometry these
+		 * days is smooth requiring different values for every vertex.
+		 *
+		 * This memory usage will be optimized before reaching the GPU
+		 * using indexing.
+		 */
 		template <typename T>
-		class Face3 {
+		struct Face3 {
 
-		public:
-
-			Vector3<T> a, b, c;
-			Vector3<T> normal;
-			std::unique_ptr<std::array<Vector3<T>, 3> > vertexNormals = NULL;
-
-			Color color;
-			std::unique_ptr<std::array<Color, 3> > vertexColors = NULL;
+			std::array<Vector3<T>, 3> vertices;
+			std::array<Vector3<T>, 3> normals;
+			std::array<Color, 3> colors;
 
 			unsigned materialIndex = 0;
 
 			Face3(){}
-			Face3(const Vector3<T>& a, const Vector3<T>& b, const Vector3<T>& c, Vector3<T> normal = Vector3<T>(), Color color = Color(), unsigned materialIndex = 0)
-				: a(a), b(b), c(c), normal(normal), color(color), materialIndex(materialIndex) {}
-			Face3(const Face3& face){
-				copy(face);
+			Face3(const Vector3<T>& a, const Vector3<T>& b, const Vector3<T>& c, unsigned materialIndex = 0)
+			: materialIndex(materialIndex) {
+				vertices[0] = a;
+				vertices[1] = b;
+				vertices[2] = c;
 			}
 
-			Face3& copy(const Face3& f) {
+			template <typename T2>
+			Face3(const Face3<T2>& f){
+				vertices = f.vertices;
+				normals = f.normals;
+				colors = f.colors;
 
-				a = f.a;
-				b = f.b;
-				c = f.c;
+				materialIndex = f.materialIndex;
+			}
 
-				normal = f.normal;
-				color = f.color;
+			Face3(Face3&& f){ //Move constructor
+				vertices = f.vertices;
+				normals = f.normals;
+				colors = f.colors;
+				materialIndex = f.materialIndex;
+			}
+
+			template <typename T2>
+			Face3& operator=(const Face3<T2>& f){
+				vertices = f.vertices;
+				normals = f.normals;
+				colors = f.colors;
 
 				materialIndex = f.materialIndex;
 
-				if (f.vertexNormals != NULL){
-					vertexNormals = new std::array<Vector3<T>, 3>();
-					for (unsigned i = 0; i < 3; ++i){
-						vertexNormals.get()[i] = f.vertexNormals[i];
-					}
-				}
-
-				if (f.vertexColors != NULL){
-					vertexColors = new std::array<Color, 3>();
-					for (unsigned i = 0; i < 3; ++i){
-						vertexColors.get()[i] = f.vertexColors[i];
-					}
-				}
-
 				return *this;
-
 			}
 
-			Face3& operator=(const Face3& f){
-				return copy(f);
+			Face3& operator=(Face3&& f){ //Move assignment
+				vertices = f.vertices;
+				normals = f.normals;
+				colors = f.colors;
+
+				materialIndex = f.materialIndex;
+
+				return *this;
 			}
 
 		};

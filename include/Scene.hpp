@@ -18,7 +18,7 @@
  * t is the type inside the weak_ptr
  */
 #define COMP_WEAK_SHARED(x, t) ( \
-[&x](std::weak_ptr<t>& a){ \
+		[&x](std::weak_ptr<t>& a){ \
 	auto s = a.lock(); \
 	if (s){ \
 		return s == x; \
@@ -75,7 +75,7 @@ namespace MyUPlay {
 				case ObjectType::LIGHT:
 					lights.push_front(o);
 					break;
-				case DRAWABLE: //TODO Add drawable types.
+				case ObjectType::DRAWABLE: { //Need scope for internal variables.
 					std::shared_ptr<DrawableObject3D<T>> co = std::dynamic_pointer_cast<DrawableObject3D<T>>(o);
 					if (co->material.transparent){
 						transparentObjects.push_front(co);
@@ -84,9 +84,7 @@ namespace MyUPlay {
 					}
 
 					break;
-
-				default:
-					break;
+				}
 
 				}
 
@@ -96,7 +94,7 @@ namespace MyUPlay {
 
 			Object3D<T>& remove(std::shared_ptr<Object3D<T>> self, std::shared_ptr<Object3D<T>> o) {
 				switch (o->type){
-				case ObjectType::LIGHT:
+				case ObjectType::LIGHT: { //Cases need scope for their internal variables.
 
 					auto pos = std::find_if(lights.begin(), lights.end(), COMP_WEAK_SHARED(o, Light<T>));
 					if (pos != lights.end()){
@@ -104,7 +102,8 @@ namespace MyUPlay {
 					}
 
 					break;
-				case DRAWABLE:
+				}
+				case ObjectType::DRAWABLE: { //Cases need scope for their internal variables.
 					std::shared_ptr<DrawableObject3D<T>> co = std::dynamic_pointer_cast<DrawableObject3D<T>>(o);
 					if (co->material.transparent){
 						auto pos = std::find_if(transparentObjects.begin(), transparentObjects.end(), COMP_WEAK_SHARED(co, DrawableObject3D<T>));
@@ -119,9 +118,7 @@ namespace MyUPlay {
 					}
 
 					break;
-
-				default:
-					break;
+				}
 
 				}
 

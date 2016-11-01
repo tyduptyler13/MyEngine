@@ -39,11 +39,10 @@ namespace MyUPlay {
 			Vector3(T x = 0, T y = 0, T z = 0) : x(x), y(y), z(z) {}
 
 			template <typename T2> //Allows conversion from other template types.
-			Vector3(const Vector3<T2>& v){
-				x = v.x;
-				y = v.y;
-				z = v.z;
-			}
+			Vector3(const Vector3<T2>& v) : x(v.x), y(v.y), z(v.z) {}
+
+			//This only can accept the same type.
+			Vector3(Vector3&& v) : x(v.x), y(v.y), z(v.z) {} //Move constructor;
 
 			Vector3& set(T x, T y, T z){
 				this->x = x;

@@ -18,6 +18,7 @@
 #include "Light.hpp"
 
 #include <string>
+#include <regex>
 
 namespace MyUPlay {
 	namespace MyEngine {
@@ -49,6 +50,7 @@ namespace MyUPlay {
 			 */
 			struct IRootShaderNode : public IShaderNode {
 
+
 				std::vector<std::unique_ptr<IAttribute>> customAttributes;
 
 				/**
@@ -57,7 +59,7 @@ namespace MyUPlay {
 				 * Should the attribute get optimized out because it wasn't used, only then can
 				 * it be skipped. In opengl this is done when the position is not present in the shader.
 				 */
-				virtual void prepare(std::shared_ptr<Camera<float>> camera, std::shared_ptr<DrawableObject3D<float>> object, std::vector<Light<float>>& lights) = 0;
+				virtual void prepare(std::shared_ptr<Camera<float>>, std::shared_ptr<DrawableObject3D<float>>, std::vector<Light<float>>& lights) = 0;
 
 			};
 
@@ -152,8 +154,9 @@ namespace MyUPlay {
 
 			template <>
 			inline std::string Utility<GLES2Renderer, double>::toString(const double& t){
+				static const std::regex decimal("\\.\\d+$");
 				std::string s = std::to_string(t);
-				if (s.find(".") == s.end()){ //GLSL requires a decimal for floats.
+				if (std::regex_search(s, decimal)){ //GLSL requires a decimal for floats.
 					s += ".0";
 				}
 				return s;
@@ -161,8 +164,9 @@ namespace MyUPlay {
 
 			template <>
 			inline std::string Utility<GLES2Renderer, float>::toString(const float& t){
+				static const std::regex decimal("\\.\\d+$");
 				std::string s = std::to_string(t);
-				if (s.find(".") == s.end()){ //GLSL requires a decimal for floats.
+				if (std::regex_search(s, decimal)){ //GLSL requires a decimal for floats.
 					s += ".0";
 				}
 				return s;

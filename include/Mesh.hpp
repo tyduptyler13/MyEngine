@@ -11,7 +11,7 @@ namespace MyUPlay {
 
 		#ifndef GeometryDefined
 		template <typename T>
-		class Geometry;
+		struct Geometry;
 		#endif
 
 		template <typename T>

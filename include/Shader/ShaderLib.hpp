@@ -83,7 +83,7 @@ namespace MyUPlay {
 				Output<R> ret;
 
 				std::string getInstance() const override {
-					return Utility<GLES2Renderer, R>::type + " " + ret.name + " = " + a.output->name + " * " + b.output->name + ";\n";
+					return std::string(Utility<GLES2Renderer, R>::type) + " " + ret.name + " = " + a.output->name + " * " + b.output->name + ";\n";
 				}
 
 			};
@@ -98,7 +98,7 @@ namespace MyUPlay {
 				Output<R> ret;
 
 				std::string getInstance() const override {
-					return Utility<GLES2Renderer, R>::type + " " + ret.name + " = " +
+					return std::string(Utility<GLES2Renderer, R>::type) + " " + ret.name + " = " +
 							Utility<GLES2Renderer, R>::type + "(" + a.output->name + ", " + b.output->name + ");\n";
 				}
 
@@ -147,14 +147,12 @@ namespace MyUPlay {
 			template <typename T>
 			struct InputVariable : public IShaderNode {
 
-				using std::to_string;
-
 				T value; //Note, this will only be used at the time the shader is compiled. You must recompile every time this changes.
 
 				Output<T> out;
 
 				std::string getStatic() const override {
-					return "const " + Utility<GLES2Renderer, T>::type + " " + out.name  + " = " + Utility<GLES2Renderer, T>::toString(value) + ";\n";
+					return std::string("const ") + Utility<GLES2Renderer, T>::type + " " + out.name  + " = " + Utility<GLES2Renderer, T>::toString(value) + ";\n";
 				} //TODO replace to_string with internal function that handles vector3-4 and matrix3-4, etc.
 
 				std::string getInstance() const override {
