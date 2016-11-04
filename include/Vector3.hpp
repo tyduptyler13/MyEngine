@@ -657,10 +657,18 @@ namespace MyUPlay {
 				return !equals(v);
 			}
 
-			std::array<T, 3> toArray(){
-				return {x, y, z};
-			};
-			//Vector3& fromArray(T array[], unsigned offset);
+			Vector3& toArray(std::vector<T>& array, unsigned offset){
+				array[offset] = x;
+				array[offset + 1] = y;
+				array[offset + 2] = z;
+				return *this;
+			}
+			Vector3& fromArray(std::vector<T>& array, unsigned offset){
+				x = array[offset];
+				y = array[offset + 1];
+				z = array[offset + 2];
+				return *this;
+			}
 
 		};
 

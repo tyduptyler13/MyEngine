@@ -13,37 +13,28 @@ namespace MyUPlay {
 
 	namespace MyEngine {
 
-		struct IndexedFace {
-
-			//All internal attributes reference indexed values.
-			std::array<unsigned, 3> vertices;
-			std::array<unsigned, 3> normals;
-			std::array<unsigned, 3> uvs;
-			std::array<Color, 3> colors;
-
-		};
-
-
-
 		template <typename T>
-		struct BufferGeometry : public IGeometry<T>, public AGeometry<T, BufferGeometry<T>> {
+		struct BufferGeometry : public virtual IGeometry<T>, public AGeometry<T, BufferGeometry<T>> {
 
 			struct Group {
 				unsigned start,
 				count,
 				materialIndex;
+				Group(unsigned start, unsigned count, unsigned materialIndex)
+				: start(start), count(count), materialIndex(materialIndex) {}
 			};
 
 			std::vector<T> vertices;
 			std::vector<T> normals;
 			std::vector<T> uvs;
-			std::vector<unsigned> indices;
+			std::vector<Color> colors;
+			std::vector<unsigned> vertexIndices;
+			std::vector<unsigned> normalIndices;
+			std::vector<unsigned> uvIndices;
 
 			std::vector<Group> groups;
 
 			Math::UUID uuid = Math::generateUUID();
-
-			std::vector<IndexedFace> faces;
 
 			bool indicesNeedUpdate = true,
 					normalsNeedUpdate = true,
@@ -54,13 +45,16 @@ namespace MyUPlay {
 			template <typename T2>
 			void fromSimpleGeometry(const SimpleGeometry<T2>& geo){
 
-				std::vector<Vector3<T>> vertices;
-				std::vector<Vector3<T>> normals;
-				std::vector<Vector2<T>> uvs;
-
 				vertices.clear();
 				normals.clear();
-				faces.clear();
+				uvs.clear();
+				vertexIndices.clear();
+				normalIndices.clear();
+				uvIndices.clear();
+
+				vertexIndices.reserve(geo.faces.size() * 3);
+				normalIndices.reserve(geo.faces.size() * 3);
+				uvIndices.reserve(geo.faces.size() * 3);
 
 				indicesNeedUpdate = true;
 				normalsNeedUpdate = true;
@@ -68,21 +62,19 @@ namespace MyUPlay {
 
 				for (const Face3<T2>& f : geo.faces){
 
-					IndexedFace face;
-
 					for (unsigned v = 0; v < 3; ++v){
 						bool matched = false;
 						for (unsigned i = 0; i < vertices.size(); ++i){
 							if (f.vertices[v] == vertices[i]){
-								face.vertices[v] = i;
+								vertexIndices.push_back(i);
 								matched = true;
 								break;
 							}
 						}
 
 						if (!matched){
-							vertices.push_back(f.vertices[v]);
-							face.vertices[v] = vertices.size() - 1;
+							vertices.insert(vertices.end(), {f.vertices[v].x, f.vertices[v].y, f.vertices[v].z});
+							vertexIndices.push_back( vertices.size() - 1 );
 						}
 					}
 
@@ -90,25 +82,20 @@ namespace MyUPlay {
 						bool matched = false;
 						for (unsigned i = 0; i < normals.size(); ++i){
 							if (f.normals[n] == normals[i]){
-								face.normals[n] = i;
+								normalIndices.push_back(i);
 								matched = true;
 								break;
 							}
 						}
 
 						if (!matched){
-							normals.push_back(f.normals[n]);
-							face.normals[n] = normals.size() - 1;
+							normals.insert(normals.end(), {f.normals[n].x, f.normals[n].y, f.normals[n].z});
+							normalIndices.push_back( normals.size() - 1 );
 						}
 					}
 
 					//TODO uvs;
-
-					//TODO convert the arrays to raw type arrays Vec3 -> floats
-
-					face.colors = f.colors;
-
-					faces.push_back(face);
+					//TODO colors;
 
 				}
 
@@ -118,6 +105,82 @@ namespace MyUPlay {
 
 				groups.emplace_back(Group(start, count, materialIndex));
 
+			}
+
+			void applyMatrix(const Matrix4<T>& matrix){
+				matrix.applyToVector3Array(vertices);
+				Matrix3<T> m3;
+				m3.getNormalMatrix(matrix).applyToVector3Array(normals);
+				this->computeBoundingBox();
+				this->computeBoundingSphere();
+			}
+
+			std::vector<T> getVertices() {
+				return vertices;
+			}
+
+			std::vector<unsigned> getVertexIndices(){
+				return vertexIndices;
+			}
+
+			std::vector<T> getNormals() {
+				return normals;
+			}
+
+			std::vector<unsigned> getNormalIndices(){
+				return normalIndices;
+			}
+
+			std::vector<T> getUVs(){
+				return uvs;
+			}
+
+			std::vector<unsigned> getUVIndices(){
+				return uvIndices;
+			}
+
+			void computeBoundingBox(){
+
+				if (this->boundingBox == nullptr){
+					this->boundingBox = std::make_unique<Box3<T>>();
+				}
+
+				this->boundingBox->setFromArray(vertices);
+
+			}
+
+			void computeBoundingSphere() {
+
+				if (this->boundingSphere == nullptr){
+					this->boundingSphere = std::make_unique<Sphere<T>>();
+				}
+
+				computeBoundingBox();
+
+				this->boundingBox->center(this->boundingSphere->center);
+
+				//The radius doesn't necessarily include the corners of the bounding box.
+
+				T maxRadiusSq;
+
+				Vector3<T> vertex;
+
+				for (unsigned i = 0; i < vertices.size(); ++i){
+					//We thus check every vertex for the max distance from the center.
+					vertex.fromArray(vertices, i);
+					maxRadiusSq = std::max(maxRadiusSq, this->boundingSphere->center.distanceToSquared(vertex));
+				}
+
+				this->boundingSphere->radius = std::sqrt(maxRadiusSq);
+
+			}
+
+			std::vector<Color> getColors(){
+				return colors;
+			}
+
+			unsigned size() {
+				return vertices.size();
 			}
 
 		};

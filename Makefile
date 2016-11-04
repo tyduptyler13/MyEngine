@@ -16,7 +16,6 @@ compile: ./build
 	@echo Entering build directory
 	$(MAKE) -C ./build
 	cp build/out/Default/lib.target/libMyEngine.so .
-	strip --strip-unneeded libMyEngine.so
 
 ./build: autogen.sh build.gyp
 	./autogen.sh

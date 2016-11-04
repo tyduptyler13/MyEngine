@@ -800,6 +800,30 @@ namespace MyUPlay {
 
 			}
 
+			/**
+			 * This will apply the matrix to a set of vertices already stuffed in a buffer array.
+			 *
+			 * Offset changes where the loop begins (Defaults to the start of the array)
+			 * length changes where the loop ends (Default is the size of the array, despite the default value)
+			 */
+			std::vector<T>& applyToVector3Array(std::vector<T>& array, unsigned offset = 0, unsigned length = 0) const {
+
+				if (length == 0){
+					length = array.size();
+				}
+
+				Vector3<T> v1;
+
+				for (unsigned i = offset; i < length; i += 3){
+					v1.fromArray(array, i);
+					v1.applyMatrix4(*this);
+					v1.toArray(array, i);
+				}
+
+				return array;
+
+			}
+
 		};
 
 		#define MATRIX4_DEFINED

@@ -15,25 +15,24 @@ namespace MyUPlay {
 	namespace MyEngine {
 
 		//If Vector3 is not parsed yet. Circular dependency.
-		#ifndef VECTOR3_DEFINED
+#ifndef VECTOR3_DEFINED
 		template <typename T> class Vector3;
-		#endif
-		#ifndef MATRIX4_DEFINED
+#endif
+#ifndef MATRIX4_DEFINED
 		template <typename T> class Matrix4;
-		#endif
+#endif
 
 		template<typename T = float>
-		class Matrix3 {
+		struct Matrix3 {
 
-		public:
 			//Column major notation.
-			std::array<T,9> elements = {
-				1, 0, 0, //First column
-				0, 1, 0, //Second column
-				0, 0, 1
-			};
+			std::array<T,9> elements = { {
+					1, 0, 0, //First column
+					0, 1, 0, //Second column
+					0, 0, 1
+			} };
 
-			Matrix3(){};
+			Matrix3(){}
 			Matrix3(const Matrix3& m) {
 
 				for (unsigned i = 0; i < 9; ++i){
@@ -64,10 +63,10 @@ namespace MyUPlay {
 
 			Matrix3& identity(){
 				set(
-					1, 0, 0,
-					0, 1, 0,
-					0, 0, 1
-				   );
+						1, 0, 0,
+						0, 1, 0,
+						0, 0, 1
+				);
 
 				return *this;
 			}
@@ -106,14 +105,14 @@ namespace MyUPlay {
 			T det() const {
 
 				T& a = elements[ 0 ], b = elements[ 1 ], c = elements[ 2 ],
-				   d = elements[ 3 ], e = elements[ 4 ], f = elements[ 5 ],
-				   g = elements[ 6 ], h = elements[ 7 ], i = elements[ 8 ];
+						d = elements[ 3 ], e = elements[ 4 ], f = elements[ 5 ],
+						g = elements[ 6 ], h = elements[ 7 ], i = elements[ 8 ];
 
 				return a * e * i - a * f * h - b * d * i + b * f * g + c * d * h - c * e * g;
 
 			}
 
-			Matrix3& getInverse(const Matrix4<T>& m, bool throwOnInvertible){
+			Matrix3& getInverse(const Matrix4<T>& m, bool throwOnDegenerate = false){
 
 				auto& me = m.elements;
 				auto& te = elements;
@@ -136,7 +135,7 @@ namespace MyUPlay {
 
 					const std::string msg = "Matrix3.getInverse(): can't invert matrix, determinant is 0";
 
-					if (throwOnInvertible) {
+					if (throwOnDegenerate) {
 						throw std::logic_error(msg);
 					} else {
 						std::cerr << msg << std::endl;
@@ -199,6 +198,30 @@ namespace MyUPlay {
 
 			}
 
+			/**
+			 * This will apply the matrix to a set of vertices already stuffed in a buffer array.
+			 *
+			 * Offset changes where the loop begins (Defaults to the start of the array)
+			 * length changes where the loop ends (Default is the size of the array, despite the default value)
+			 */
+			std::vector<T>& applyToVector3Array(std::vector<T>& array, unsigned offset = 0, unsigned length = 0) const {
+
+				if (length == 0){
+					length = array.size();
+				}
+
+				Vector3<T> v1;
+
+				for (unsigned i = offset; i < length; i += 3){
+					v1.fromArray(array, i);
+					v1.applyMatrix3(*this);
+					v1.toArray(array, i);
+				}
+
+				return array;
+
+			}
+
 			Matrix3& fromArray(const std::array<T, 9>& array){
 				elements = array;
 				return *this;
@@ -213,7 +236,7 @@ namespace MyUPlay {
 
 		};
 
-		#define MATRIX3_DEFINED
+#define MATRIX3_DEFINED
 
 		typedef Matrix3<float> Matrix3f;
 		typedef Matrix3<double> Matrix3d;

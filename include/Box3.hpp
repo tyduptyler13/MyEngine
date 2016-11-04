@@ -35,10 +35,10 @@ namespace MyUPlay {
 			Vector3<T> min;
 			Vector3<T> max;
 
-			Box3() {
-				min(limit::infinity(), limit::infinity());
-				max(-limit::infinity(), -limit::infinity());
-			}
+			Box3() :
+				min(limit::infinity(), limit::infinity(), limit::infinity()),
+				max(-limit::infinity(), -limit::infinity(), -limit::infinity())
+			{}
 
 			Box3(Vector3<T> min, Vector3<T> max) : min(min), max(max) {}
 			Box3(const Vector3<T>& min, const Vector3<T>& max) : min(min), max(max){}
@@ -199,7 +199,7 @@ namespace MyUPlay {
 			}
 
 			Vector3<T>& center(Vector3<T>& target){
-				return target.addVectors(min, max).mupltiply(.5);
+				return target.addVectors(min, max).multiply(.5);
 			}
 
 			inline Vector3<T> size(){
@@ -286,6 +286,35 @@ namespace MyUPlay {
 
 			bool equals(const Box3& b) const {
 				return b.min == min && b.max == max;
+			}
+
+			void setFromArray(const std::vector<T>& array){
+				T minX = limit::infinity();
+				T minY = limit::infinity();
+				T minZ = limit::infinity();
+
+				T maxX = -limit::infinity();
+				T maxY = -limit::infinity();
+				T maxZ = -limit::infinity();
+
+				for ( unsigned i = 0, l = array.size(); i < l; i += 3 ) {
+
+					const T& x = array[ i ];
+					const T& y = array[ i + 1 ];
+					const T& z = array[ i + 2 ];
+
+					if ( x < minX ) minX = x;
+					if ( y < minY ) minY = y;
+					if ( z < minZ ) minZ = z;
+
+					if ( x > maxX ) maxX = x;
+					if ( y > maxY ) maxY = y;
+					if ( z > maxZ ) maxZ = z;
+
+				}
+
+				min.set( minX, minY, minZ );
+				max.set( maxX, maxY, maxZ );
 			}
 
 		};

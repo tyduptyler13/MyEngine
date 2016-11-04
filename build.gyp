@@ -39,7 +39,9 @@
 				"<!@(<(pkg-config) --libs-only-l sdl2 capnp)",
 				"-lSOIL",
 				"-lGL",
-				"../deps/glsl-optimizer/libglsl_optimizer.a"
+				"../deps/glsl-optimizer/libglsl_optimizer.a",
+				"../deps/glsl-optimizer/libmesa.a",
+				"../deps/glsl-optimizer/libglcpp-library.a"
 			],
 			"ldflags": [
 				"<!@(<(pkg-config) --libs-only-L --libs-only-other sdl2)"

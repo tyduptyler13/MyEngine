@@ -59,13 +59,18 @@ namespace MyUPlay {
 				return false;
 			}
 
-			virtual std::vector<Vector3<T>> getVertices() = 0;
+			virtual std::vector<T> getVertices() = 0;
 			virtual std::vector<unsigned> getVertexIndices() {
 				return {}; //Empty list;
 			}
 
-			virtual std::vector<Vector3<T>> getNormals() = 0;
+			virtual std::vector<T> getNormals() = 0;
 			virtual std::vector<unsigned> getNormalIndices() {
+				return {};
+			}
+
+			virtual std::vector<T> getUVs() = 0;
+			virtual std::vector<unsigned> getUVIndices() {
 				return {};
 			}
 
@@ -109,7 +114,7 @@ namespace MyUPlay {
 		 * derived classes.
 		 */
 		template <typename T, class Derived>
-		struct AGeometry : public IGeometry<T> {
+		struct AGeometry : public virtual IGeometry<T> {
 
 			Derived& rotateX(T angle) {
 				Matrix4<T> m1;

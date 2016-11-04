@@ -15,10 +15,13 @@ namespace MyUPlay {
 		template <typename T>
 		struct Mesh : public Object3D<T> {
 
-			std::unique_ptr<IGeometry<T>> geometry;
-			std::unique_ptr<IMaterial> material;
+			std::shared_ptr<IGeometry<T>> geometry;
+			std::shared_ptr<IMaterial> material;
 
 			//void raycast(const Raycaster<T>&, std::vector<Intersection<T> >&); //TODO
+
+			Mesh(std::shared_ptr<IGeometry<T>> geometry, std::shared_ptr<IMaterial> material)
+			: geometry(geometry), material(material) {}
 
 		};
 

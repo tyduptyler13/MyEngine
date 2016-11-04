@@ -28,7 +28,8 @@ namespace MyUPlay {
 			Vector3<T> center;
 			T radius = 0;
 
-			Sphere(Vector3<T> center = Vector3<T>(), T radius = 0) : center(center), radius(radius) {}
+			Sphere(){}
+			Sphere(Vector3<T> center, T radius) : center(center), radius(radius) {}
 			Sphere(const Sphere& sphere) : center(sphere.center), radius(sphere.radius) {}
 
 			Sphere& set(const Vector3<T>& center, T radius) {
