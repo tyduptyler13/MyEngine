@@ -28,14 +28,14 @@ GLES2Renderer::GLES2Renderer(unsigned antialias) {
 		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, antialias);
 	}
 
-	window = SDL_CreateWindow("MyEngine", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 800, 600, SDL_WINDOW_OPENGL);
+	this->window = SDL_CreateWindow("MyEngine", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 800, 600, SDL_WINDOW_OPENGL);
 
-	if (!window){
+	if (!this->window){
 		logger.warn("Failed to create sdl window!");
 		throw runtime_error("Failed to create sdl window!");
 	}
 
-	context = SDL_GL_CreateContext(window);
+	context = SDL_GL_CreateContext(this->window);
 
 	if (!context){
 		logger.warn("Failed to create a gl context!");
@@ -48,7 +48,7 @@ GLES2Renderer::GLES2Renderer(unsigned antialias) {
 
 GLES2Renderer::~GLES2Renderer(){
 	SDL_GL_DeleteContext(context);
-	SDL_DestroyWindow(window);
+	SDL_DestroyWindow(this->window);
 }
 
 void GLES2Renderer::setScissor(int x, int y, unsigned width, unsigned height) {
@@ -95,7 +95,7 @@ void GLES2Renderer::clearDepth()  {
 void GLES2Renderer::clearStencil()  {
 	glClear(GL_STENCIL_BUFFER_BIT);
 }
-void GLES2Renderer::clearTarget(std::shared_ptr<RenderTarget<GLES2Renderer>> target, bool color, bool depth, bool stencil)  {
+void GLES2Renderer::clearTarget(std::shared_ptr<IRenderTarget> target, bool color, bool depth, bool stencil)  {
 	logger.warn("TODO: Implement clearTarget");
 }
 
@@ -119,22 +119,22 @@ void GLES2Renderer::setDefaultViewport() {
 	setViewport(0, 0, w, h);
 }
 
-void GLES2Renderer::renderBufferImmediate(Object3D<float>& object, std::shared_ptr<Shader::Shader> program, Material<float>& material)  {
+void GLES2Renderer::renderBufferImmediate(std::shared_ptr<Object3D<float>> object, std::shared_ptr<Shader::Shader> program, std::shared_ptr<IMaterial> material)  {
 
 
 
 }
 
 void GLES2Renderer::renderBufferDirect(Camera<float>& camera, std::vector<Light<float> >& lights,
-		Fog<float>& fog, Material<float>& material, Object3D<float>& object, Object3D<float>& objectGroup)  {
+		Fog<float>& fog, std::shared_ptr<IMaterial> material, std::shared_ptr<Object3D<float>> object, std::shared_ptr<Object3D<float>> objectGroup)  {
 
 }
 
-void GLES2Renderer::render(Scene<float>& scene, Camera<float>& camera, std::shared_ptr<RenderTarget<GLES2Renderer>> renderTarget, bool forceClear)  {
+void GLES2Renderer::render(Scene<float>& scene, Camera<float>& camera, std::shared_ptr<IRenderTarget> renderTarget, bool forceClear)  {
 
 	if (scene.autoUpdate) scene.updateMatrixWorld();
 
-	if (camera.parent.expired()) camera.updateMatrixWorld();
+	if (camera.parent == nullptr) camera.updateMatrixWorld();
 
 	camera.matrixWorldInverse.getInverse(camera.matrixWorld);
 
@@ -204,13 +204,13 @@ void GLES2Renderer::setTexture(shared_ptr<Texture> texture, unsigned slot)  {
 
 }
 
-void GLES2Renderer::setRenderTarget(std::shared_ptr<RenderTarget<GLES2Renderer>> target) {
+void GLES2Renderer::setRenderTarget(std::shared_ptr<IRenderTarget> target) {
 
 }
-std::shared_ptr<RenderTarget<GLES2Renderer>> GLES2Renderer::getRenderTarget() {
+std::shared_ptr<IRenderTarget> GLES2Renderer::getRenderTarget() {
 
 }
-void GLES2Renderer::readRenderTargetPixels(std::shared_ptr<RenderTarget<GLES2Renderer>> target, int x, int y, unsigned width, unsigned height, void* buffer) {
+void GLES2Renderer::readRenderTargetPixels(std::shared_ptr<IRenderTarget> target, int x, int y, unsigned width, unsigned height, void* buffer) {
 
 }
 
@@ -232,14 +232,3 @@ template <> const char* Shader::Utility<GLES2Renderer, Matrix3<float>>::type = "
 template <> const char* Shader::Utility<GLES2Renderer, Matrix4<float>>::type = "mat4";
 template <> const char* Shader::Utility<GLES2Renderer, Texture>::type = "sampler2D";
 //Other specializations left out for now.
-
-RenderTarget<GLES2Renderer>::RenderTarget(unsigned width, unsigned height, bool depthBuffer, bool stencilBuffer)
-: width(width), height(height), depthBuffer(depthBuffer), stencilBuffer(stencilBuffer)
-{
-	glGenFramebuffers(1, &id);
-}
-
-RenderTarget<GLES2Renderer>::~RenderTarget(){
-	glDeleteFramebuffers(1, &id);
-}
-

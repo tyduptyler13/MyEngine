@@ -11,7 +11,7 @@ namespace MyUPlay {
 
 	namespace MyEngine {
 
-		class GLES2Renderer : Renderer<GLES2Renderer, float> {
+		class GLES2Renderer : public Renderer<float> {
 
 		public:
 
@@ -19,40 +19,38 @@ namespace MyUPlay {
 			 * Antialias should be set to a value 0 (off), or 2-4 for varying samples (on).
 			 */
 			GLES2Renderer(unsigned antialias = 0);
-			virtual ~GLES2Renderer();
+			~GLES2Renderer();
 
-			void setScissor(int x, int y, unsigned width, unsigned height) override;
-			void setScissorTest(bool enable = true) override;
+			void setScissor(int x, int y, unsigned width, unsigned height);
+			void setScissorTest(bool enable = true);
 
-			void setClearColor(const Color&, float alpha) override;
-			Color getClearColor() const override;
-			float getClearAlpha() const override;
+			void setClearColor(const Color&, float alpha);
+			Color getClearColor() const;
+			float getClearAlpha() const;
 
-			void clear(bool color = true, bool depth = true, bool stencil = true) override;
+			void clear(bool color = true, bool depth = true, bool stencil = true);
 
-			void clearColor() override;
-			void clearDepth() override;
-			void clearStencil() override;
-			void clearTarget(std::shared_ptr<RenderTarget<GLES2Renderer>> target, bool color = true, bool depth = true, bool stencil = true) override;
+			void clearColor();
+			void clearDepth();
+			void clearStencil();
+			void clearTarget(std::shared_ptr<IRenderTarget> target, bool color = true, bool depth = true, bool stencil = true);
 
-			unsigned getMaxAnisotripy() const override;
+			unsigned getMaxAnisotripy() const;
 
-			void setViewport(int x, int y, unsigned width, unsigned height) override;
-			std::tuple<int, int, unsigned, unsigned> getViewport() const override;
-			void setDefaultViewport() override;
+			void setViewport(int x, int y, unsigned width, unsigned height);
+			std::tuple<int, int, unsigned, unsigned> getViewport() const;
+			void setDefaultViewport();
 
-			void renderBufferImmediate(Object3D<float>& object, std::shared_ptr<Shader::Shader> program, Material<float>& material) override;
-			void renderBufferDirect(Camera<float>& camera, std::vector<Light<float> >& lights, Fog<float>& fog, Material<float>& material, Object3D<float>& object, Object3D<float>& objectGroup) override;
+			void renderBufferImmediate(std::shared_ptr<Object3D<float>> object, std::shared_ptr<Shader::Shader> program, std::shared_ptr<IMaterial> material);
+			void renderBufferDirect(Camera<float>& camera, std::vector<Light<float> >& lights, Fog<float>& fog, std::shared_ptr<IMaterial> material, std::shared_ptr<Object3D<float>> object, std::shared_ptr<Object3D<float>> objectGroup);
 
-			void render(Scene<float>& scene, Camera<float>& camera, std::shared_ptr<RenderTarget<GLES2Renderer>> renderTarget = NULL, bool forceClear = false) override;
+			void render(Scene<float>& scene, Camera<float>& camera, std::shared_ptr<IRenderTarget> renderTarget = NULL, bool forceClear = false);
 
-			void setFaceCulling(CullConstant cullFace, CullDirection frontFaceDirection) override;
-			void setTexture(std::shared_ptr<Texture> texture, unsigned slot = 0) override;
-			void setRenderTarget(std::shared_ptr<RenderTarget<GLES2Renderer>> target) override;
-			std::shared_ptr<RenderTarget<GLES2Renderer>> getRenderTarget() override;
-			void readRenderTargetPixels(std::shared_ptr<RenderTarget<GLES2Renderer>> target, int x, int y, unsigned width, unsigned height, void* buffer) override; //TODO Find type for buffer
-
-
+			void setFaceCulling(CullConstant cullFace, CullDirection frontFaceDirection);
+			void setTexture(std::shared_ptr<Texture> texture, unsigned slot = 0);
+			void setRenderTarget(std::shared_ptr<IRenderTarget> target);
+			std::shared_ptr<IRenderTarget> getRenderTarget();
+			void readRenderTargetPixels(std::shared_ptr<IRenderTarget> target, int x, int y, unsigned width, unsigned height, void* buffer); //TODO Find type for buffer
 
 		private:
 

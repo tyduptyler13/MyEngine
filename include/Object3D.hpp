@@ -42,7 +42,7 @@ namespace MyUPlay {
 			const Math::UUID id = Math::generateUUID();
 			std::string name;
 
-			std::weak_ptr<Object3D> parent; //We don't want to keep a ref count on something that also owns us.
+			Object3D* parent; //We don't want to keep a ref count on something that also owns us.
 
 			std::vector<std::shared_ptr<Object3D> > children;
 
@@ -155,32 +155,19 @@ namespace MyUPlay {
 				return *this;
 			}
 
-			/**
-			 * A helper function for easily adding multiple objects.
-			 */
-			Object3D& add(std::shared_ptr<Object3D> self, std::vector<std::shared_ptr<Object3D>> objects){
+			Object3D& add(std::vector<std::shared_ptr<Object3D>> objects){
 				for (std::shared_ptr<Object3D>& o : objects){
-					add(self, o);
+					add(o);
 				}
 				return *this;
 			}
 
-			/**
-			 * This function requires its shared_ptr to be pased into
-			 * the function. All of the objects added must reference the correct
-			 * shared_ptr to avoid early deletion.
-			 */
-			Object3D& add(std::shared_ptr<Object3D> self, std::shared_ptr<Object3D> object){
-				if (object == self){
-					logger.error("Add: Object cannot be added to itself.");
-					return *this;
+			Object3D& add(std::shared_ptr<Object3D> object){
+				if (object->parent != nullptr){
+					object->parent->remove(object);
 				}
 
-				if (!object->parent.expired()){
-					object->parent.lock()->remove(object);
-				}
-
-				object->parent = self;
+				object->parent = this;
 				children.push_back(object);
 
 				return *this;
@@ -198,7 +185,7 @@ namespace MyUPlay {
 				auto loc = std::find(children.begin(), children.end(), object);
 
 				if (loc != children.end()){
-					object.parent = std::weak_ptr<Object3D<T>>(); //Reset parent pointer to null;
+					object->parent = nullptr; //Reset parent pointer to null;
 					children.erase(loc);
 				}
 
@@ -325,10 +312,10 @@ namespace MyUPlay {
 
 				if (matrixWorldNeedsUpdate || force) {
 
-					if (parent.expired()) {
+					if (parent == nullptr) {
 						matrixWorld = matrix;
 					} else {
-						matrixWorld = parent.lock()->matrixWorld * matrix;
+						matrixWorld = parent->matrixWorld * matrix;
 					}
 
 					matrixWorldNeedsUpdate = false;

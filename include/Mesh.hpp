@@ -16,7 +16,7 @@ namespace MyUPlay {
 		struct Mesh : public Object3D<T> {
 
 			std::unique_ptr<IGeometry<T>> geometry;
-			std::unique_ptr<Material<T>> material;
+			std::unique_ptr<IMaterial> material;
 
 			//void raycast(const Raycaster<T>&, std::vector<Intersection<T> >&); //TODO
 

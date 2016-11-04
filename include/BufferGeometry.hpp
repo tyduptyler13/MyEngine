@@ -1,6 +1,8 @@
 #ifndef MYUPLAY_MYENGINE_BUFFERGEOMETRY
 #define MYUPLAY_MYENGINE_BUFFERGEOMETRY
 
+#include "Vector3.hpp"
+#include "Vector2.hpp"
 #include "Geometry.hpp"
 #include "Math.hpp"
 
@@ -16,19 +18,30 @@ namespace MyUPlay {
 			//All internal attributes reference indexed values.
 			std::array<unsigned, 3> vertices;
 			std::array<unsigned, 3> normals;
+			std::array<unsigned, 3> uvs;
 			std::array<Color, 3> colors;
 
 		};
 
-		template <typename T>
-		class BufferGeometry {
 
-		public:
+
+		template <typename T>
+		struct BufferGeometry : public IGeometry<T>, public AGeometry<T, BufferGeometry<T>> {
+
+			struct Group {
+				unsigned start,
+				count,
+				materialIndex;
+			};
+
+			std::vector<T> vertices;
+			std::vector<T> normals;
+			std::vector<T> uvs;
+			std::vector<unsigned> indices;
+
+			std::vector<Group> groups;
 
 			Math::UUID uuid = Math::generateUUID();
-
-			std::vector<Vector3<T>> vertices;
-			std::vector<Vector3<T>> normals;
 
 			std::vector<IndexedFace> faces;
 
@@ -39,7 +52,11 @@ namespace MyUPlay {
 			BufferGeometry(){}
 
 			template <typename T2>
-			void fromGeometry(const Geometry<T2>& geo){
+			void fromSimpleGeometry(const SimpleGeometry<T2>& geo){
+
+				std::vector<Vector3<T>> vertices;
+				std::vector<Vector3<T>> normals;
+				std::vector<Vector2<T>> uvs;
 
 				vertices.clear();
 				normals.clear();
@@ -85,11 +102,21 @@ namespace MyUPlay {
 						}
 					}
 
+					//TODO uvs;
+
+					//TODO convert the arrays to raw type arrays Vec3 -> floats
+
 					face.colors = f.colors;
 
 					faces.push_back(face);
 
 				}
+
+			}
+
+			void addGroup(unsigned start, unsigned count, unsigned materialIndex) {
+
+				groups.emplace_back(Group(start, count, materialIndex));
 
 			}
 

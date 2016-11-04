@@ -90,7 +90,6 @@ namespace MyUPlay {
 				return *this;
 			}
 
-		protected:
 			virtual ~IGeometry(){}
 
 			IGeometry(){}

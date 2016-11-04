@@ -37,7 +37,7 @@ namespace MyUPlay {
 			std::forward_list<std::weak_ptr<Light<T> > > lights;
 			std::forward_list<std::weak_ptr<Mesh<T> > > opaqueObjects, transparentObjects;
 
-			std::shared_ptr<Material<T> > overrideMaterial;
+			std::shared_ptr<IMaterial> overrideMaterial;
 			std::shared_ptr<Fog<T> > fog;
 
 			bool autoUpdate = true;
@@ -70,60 +70,53 @@ namespace MyUPlay {
 				return copy(s);
 			}
 
-			Object3D<T>& add(std::shared_ptr<Object3D<T>> self, std::shared_ptr<Object3D<T>> o) {
-				switch (o->type){
-				case ObjectType::LIGHT:
-					lights.push_front(o);
-					break;
-				case ObjectType::DRAWABLE: { //Need scope for internal variables.
-					std::shared_ptr<Mesh<T>> co = std::dynamic_pointer_cast<Mesh<T>>(o);
-					if (co->material.transparent){
-						transparentObjects.push_front(co);
-					} else {
-						opaqueObjects.push_front(co);
-					}
-
-					break;
-				}
-
-				}
-
-				return Object3D<T>::add(self, o);
-
+			//Overloaded version. Explicitly adds lights to our special list.
+			Scene& add(std::shared_ptr<Light<T>> l){
+				lights.push_front(l);
+				this->add(std::static_pointer_cast<Object3D<T>>(l));
+				return *this;
 			}
 
-			Object3D<T>& remove(std::shared_ptr<Object3D<T>> self, std::shared_ptr<Object3D<T>> o) {
-				switch (o->type){
-				case ObjectType::LIGHT: { //Cases need scope for their internal variables.
+			//Overloaded version. Explicity handles drawable objects.
+			Scene& add(std::shared_ptr<Mesh<T>> m){
+				if (m->material->transparent){
+					transparentObjects.push_front(m);
+				} else {
+					opaqueObjects.push_front(m);
+				}
+				this->add(std::static_pointer_cast<Object3D<T>>(m));
+				return *this;
+			}
 
-					auto pos = std::find_if(lights.begin(), lights.end(), COMP_WEAK_SHARED(o, Light<T>));
-					if (pos != lights.end()){
-						lights.erase(pos);
+			Scene& add(std::shared_ptr<Object3D<T>> o) {
+				Object3D<T>::add(o);
+				return *this;
+			}
+
+			Scene& remove(std::shared_ptr<Light<T>> l){
+				auto pos = std::find_if(lights.begin(), lights.end(), COMP_WEAK_SHARED(l, Light<T>));
+				if (pos != lights.end()){
+					lights.erase(pos);
+				}
+				this->remove(std::static_pointer_cast<Object3D<T>>(l));
+				return *this;
+			}
+
+			Scene& remove(std::shared_ptr<Mesh<T>> m){
+				if (m->material.transparent){
+					auto pos = std::find_if(transparentObjects.begin(), transparentObjects.end(), COMP_WEAK_SHARED(m, Mesh<T>));
+					if (pos != transparentObjects.end()){
+						transparentObjects.erase(pos);
 					}
-
-					break;
-				}
-				case ObjectType::DRAWABLE: { //Cases need scope for their internal variables.
-					std::shared_ptr<Mesh<T>> co = std::dynamic_pointer_cast<Mesh<T>>(o);
-					if (co->material.transparent){
-						auto pos = std::find_if(transparentObjects.begin(), transparentObjects.end(), COMP_WEAK_SHARED(co, Mesh<T>));
-						if (pos != transparentObjects.end()){
-							transparentObjects.erase(co);
-						}
-					} else {
-						auto pos = std::find_if(opaqueObjects.begin(), opaqueObjects.end(), COMP_WEAK_SHARED(co, Mesh<T>));
-						if (pos != opaqueObjects.end()){
-							opaqueObjects.erase(co);
-						}
+				} else {
+					auto pos = std::find_if(opaqueObjects.begin(), opaqueObjects.end(), COMP_WEAK_SHARED(m, Mesh<T>));
+					if (pos != opaqueObjects.end()){
+						opaqueObjects.erase(pos);
 					}
-
-					break;
 				}
 
-				}
-
-				return Object3D<T>::remove(self, o);
-
+				this->remove(std::static_pointer_cast<Object3D<T>>(m));
+				return *this;
 			}
 
 		};

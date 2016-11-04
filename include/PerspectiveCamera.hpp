@@ -15,7 +15,7 @@ namespace MyUPlay {
 		#endif
 
 		template <typename T>
-		class PerspectiveCamera : public Camera<T> {
+		struct PerspectiveCamera : public Camera<T> {
 
 			T zoom = 1;
 
@@ -31,7 +31,8 @@ namespace MyUPlay {
 			T width = -1;
 			T height = -1;
 
-			PerspectiveCamera() : Camera<T>() {
+			PerspectiveCamera(T fov = 50, T aspect = 1, T near = 0.1, T far = 2000) : Camera<T>(),
+					fov(fov), aspect(aspect), near(near), far(far) {
 				updateProjectionMatrix();
 			}
 
@@ -79,7 +80,7 @@ namespace MyUPlay {
 					T width = std::abs(right - left);
 					T height = std::abs(top - bottom);
 			
-					this->projectionMatrix.makeFrustrum(
+					this->projectionMatrix.makeFrustum(
 							left + x * width / fullWidth,
 							left + (x + width) * width / fullWidth,
 							top - (y + height) * height / fullHeight,

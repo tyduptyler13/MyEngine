@@ -13,8 +13,7 @@ namespace MyUPlay {
 
 	namespace MyEngine {
 
-		template <typename T>
-		class Material : EventDispatcher<Material<T>, std::string> {
+		class IMaterial {
 
 		public:
 
@@ -77,7 +76,7 @@ namespace MyUPlay {
 
 			bool needsUpdate = true;
 
-			Material& copy(const Material& mat) {
+			IMaterial& copy(const IMaterial& mat) {
 
 				name = mat.name;
 
@@ -113,19 +112,19 @@ namespace MyUPlay {
 
 			}
 
-			Material& operator=(const Material& mat) {
+			IMaterial& operator=(const IMaterial& mat) {
 				return copy(mat);
 			}
 
 			void update(){
 
-				dispatchEvent("update", *this);
+				//dispatchEvent("update", *this);
 
 			}
 
 			void dispose(){
 
-				dispatchEvent("dispose", *this);
+				//dispatchEvent("dispose", *this);
 
 			}
 
