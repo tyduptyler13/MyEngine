@@ -8,8 +8,6 @@
 #include "Vector4.hpp"
 #include "Shader/Shader.hpp"
 #include "Frustum.hpp"
-#include "RenderTarget.hpp"
-
 
 using namespace std;
 using namespace MyUPlay::MyEngine;
@@ -79,7 +77,7 @@ float GLES2Renderer::getClearAlpha() const  {
 }
 
 void GLES2Renderer::clear(bool color, bool depth, bool stencil)  {
-	GLbitfield mask;
+	GLbitfield mask = 0;
 	mask |= color ? GL_COLOR_BUFFER_BIT : 0;
 	mask |= depth ? GL_DEPTH_BUFFER_BIT : 0;
 	mask |= stencil ? GL_STENCIL_BUFFER_BIT : 0;
@@ -95,8 +93,10 @@ void GLES2Renderer::clearDepth()  {
 void GLES2Renderer::clearStencil()  {
 	glClear(GL_STENCIL_BUFFER_BIT);
 }
-void GLES2Renderer::clearTarget(std::shared_ptr<IRenderTarget> target, bool color, bool depth, bool stencil)  {
-	logger.warn("TODO: Implement clearTarget");
+void GLES2Renderer::clearTarget(std::shared_ptr<IRenderTarget> target, bool color, bool depth, bool stencil) {
+	target->bind();
+	clear(color, depth, stencil);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0); //Unbind
 }
 
 unsigned GLES2Renderer::getMaxAnisotripy() const  {
@@ -119,28 +119,32 @@ void GLES2Renderer::setDefaultViewport() {
 	setViewport(0, 0, w, h);
 }
 
-void GLES2Renderer::renderBufferImmediate(std::shared_ptr<Object3D<float>> object, std::shared_ptr<Shader::Shader> program, std::shared_ptr<IMaterial> material)  {
+void GLES2Renderer::renderBufferImmediate(Object3D<float>* object, std::shared_ptr<Shader::Shader> program, IMaterial* material)  {
 
 
 
 }
 
-void GLES2Renderer::renderBufferDirect(Camera<float>& camera, std::vector<Light<float> >& lights,
-		Fog<float>& fog, std::shared_ptr<IMaterial> material, std::shared_ptr<Object3D<float>> object, std::shared_ptr<Object3D<float>> objectGroup)  {
+void GLES2Renderer::renderBufferDirect(Camera<float>* camera, std::vector<Light<float>*>& lights,
+		Fog<float>& fog, IMaterial* material, Object3D<float>* object, Object3D<float>* objectGroup) {
 
 }
 
-void GLES2Renderer::render(Scene<float>& scene, Camera<float>& camera, std::shared_ptr<IRenderTarget> renderTarget, bool forceClear)  {
+void GLES2Renderer::render(Scene<float>& scene, Camera<float>* camera, std::shared_ptr<IRenderTarget> renderTarget, bool forceClear)  {
 
 	if (scene.autoUpdate) scene.updateMatrixWorld();
 
-	if (camera.parent == nullptr) camera.updateMatrixWorld();
+	if (camera->parent == nullptr) camera->updateMatrixWorld();
 
-	camera.matrixWorldInverse.getInverse(camera.matrixWorld);
+	camera->matrixWorldInverse.getInverse(camera->matrixWorld);
 
-	Matrix4f projScreenMatrix = camera.projectionMatrix * camera.matrixWorldInverse;
+	Matrix4f projScreenMatrix = camera->projectionMatrix * camera->matrixWorldInverse;
 	Frustum<float> frustum;
 	frustum.setFromMatrix(projScreenMatrix);
+
+	if (renderTarget != nullptr){
+		renderTarget->bind();
+	}
 
 }
 

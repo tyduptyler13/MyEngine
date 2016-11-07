@@ -10,39 +10,72 @@
 #include <memory>
 #include <forward_list>
 
-
-/**
- * This function is a macro for creating a lambda compare for weak_ptr vs shared_ptr
- * (Assuming the container has the weak_ptrs)
- * x is the input to the lambda
- * t is the type inside the weak_ptr
- */
-#define COMP_WEAK_SHARED(x, t) ( \
-		[&x](std::weak_ptr<t>& a){ \
-	auto s = a.lock(); \
-	if (s){ \
-		return s == x; \
-	} \
-	return false; \
-})
-
 namespace MyUPlay {
 
 	namespace MyEngine {
 
 		template <typename T = float>
 		class Scene : public Object3D<T> {
+		private:
+
+			typedef typename Object3D<T>::ObjectType ObjectType;
+			typedef typename Object3D<T>::EventType EventType;
+
+			template <typename T2>
+			static void removeFirst(std::vector<T2>& v, T2 t) {
+				auto it = std::find(v.begin(), v.end(), t);
+				//Swap and pop. Fast and cheap.
+				std::swap(*it, v.back());
+				v.pop_back();
+			}
+
+			void handleEvents(Object3D<T>* o, EventType e){
+				switch(e){
+				case EventType::ADD: {
+					o->eventHandlers.push_back(&handleEvents);
+					switch(o->type){
+					case ObjectType::MESH: {
+						Mesh<T>* m = dynamic_cast<Mesh<T>*>(o);
+						if (m->material->transparent){
+							transparentObjects.push_back(m);
+						} else {
+							opaqueObjects.push_back(m);
+						}
+					}
+					break;
+					case ObjectType::LIGHT:
+						lights.push_back(dynamic_cast<Light<T>*>(o));
+					}
+
+					break;
+				}
+				case EventType::DELETE:
+					switch(o->type){
+					case ObjectType::MESH: {
+						Mesh<T>* m = dynamic_cast<Mesh<T>*>(o);
+						if (m->material->transparent){
+							removeFirst(transparentObjects, m);
+						} else {
+							removeFirst(opaqueObjects, m);
+						}
+					}
+					break;
+					case ObjectType::LIGHT:
+						removeFirst(lights, o);
+					}
+				}
+			}
 
 		public:
-			std::forward_list<std::weak_ptr<Light<T> > > lights;
-			std::forward_list<std::weak_ptr<Mesh<T> > > opaqueObjects, transparentObjects;
+			std::forward_list<Light<T>*> lights;
+			std::forward_list<Mesh<T>*> opaqueObjects, transparentObjects;
 
-			std::shared_ptr<IMaterial> overrideMaterial;
-			std::shared_ptr<Fog<T> > fog;
+			std::unique_ptr<IMaterial> overrideMaterial;
+			std::unique_ptr<Fog<T> > fog;
 
 			bool autoUpdate = true;
 
-			Scene() : Object3D<T>(SCENE) {}
+			Scene() : Object3D<T>(ObjectType::SCENE) {}
 
 			Scene(const Scene& scene) : Object3D<T>(scene) {
 				overrideMaterial = scene.overrideMaterial;
@@ -71,51 +104,52 @@ namespace MyUPlay {
 			}
 
 			//Overloaded version. Explicitly adds lights to our special list.
-			Scene& add(std::shared_ptr<Light<T>> l){
+			Scene& add(Light<T>* l){
 				lights.push_front(l);
-				this->add(std::static_pointer_cast<Object3D<T>>(l));
+				this->add(static_cast<Object3D<T>*>(l));
 				return *this;
 			}
 
 			//Overloaded version. Explicity handles drawable objects.
-			Scene& add(std::shared_ptr<Mesh<T>> m){
+			Scene& add(Mesh<T>* m){
 				if (m->material->transparent){
 					transparentObjects.push_front(m);
 				} else {
 					opaqueObjects.push_front(m);
 				}
-				this->add(std::static_pointer_cast<Object3D<T>>(m));
+				this->add(static_cast<Object3D<T>*>(m));
 				return *this;
 			}
 
-			Scene& add(std::shared_ptr<Object3D<T>> o) {
+			Scene& add(Object3D<T>* o) {
 				Object3D<T>::add(o);
+				o->eventHandlers.push_back(&handleEvents);
 				return *this;
 			}
 
-			Scene& remove(std::shared_ptr<Light<T>> l){
-				auto pos = std::find_if(lights.begin(), lights.end(), COMP_WEAK_SHARED(l, Light<T>));
+			Scene& remove(Light<T>* l){
+				auto pos = std::find(lights.begin(), lights.end(), l);
 				if (pos != lights.end()){
 					lights.erase(pos);
 				}
-				this->remove(std::static_pointer_cast<Object3D<T>>(l));
+				this->remove(static_cast<Object3D<T>*>(l));
 				return *this;
 			}
 
-			Scene& remove(std::shared_ptr<Mesh<T>> m){
+			Scene& remove(Mesh<T>* m){
 				if (m->material.transparent){
-					auto pos = std::find_if(transparentObjects.begin(), transparentObjects.end(), COMP_WEAK_SHARED(m, Mesh<T>));
+					auto pos = std::find(transparentObjects.begin(), transparentObjects.end(), m);
 					if (pos != transparentObjects.end()){
 						transparentObjects.erase(pos);
 					}
 				} else {
-					auto pos = std::find_if(opaqueObjects.begin(), opaqueObjects.end(), COMP_WEAK_SHARED(m, Mesh<T>));
+					auto pos = std::find(opaqueObjects.begin(), opaqueObjects.end(), m);
 					if (pos != opaqueObjects.end()){
 						opaqueObjects.erase(pos);
 					}
 				}
 
-				this->remove(std::static_pointer_cast<Object3D<T>>(m));
+				this->remove(static_cast<Object3D<T>*>(m));
 				return *this;
 			}
 

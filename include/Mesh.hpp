@@ -12,16 +12,23 @@ namespace MyUPlay {
 
 	namespace MyEngine {
 
-		template <typename T>
+		template <typename T = float>
 		struct Mesh : public Object3D<T> {
 
-			std::shared_ptr<IGeometry<T>> geometry;
-			std::shared_ptr<IMaterial> material;
+			std::unique_ptr<IGeometry<T>> geometry;
+			std::unique_ptr<IMaterial> material;
 
 			//void raycast(const Raycaster<T>&, std::vector<Intersection<T> >&); //TODO
 
-			Mesh(std::shared_ptr<IGeometry<T>> geometry, std::shared_ptr<IMaterial> material)
-			: geometry(geometry), material(material) {}
+			Mesh(IGeometry<T>* geometry, IMaterial* material)
+			: Object3D<T>(Object3D<T>::ObjectType::MESH), geometry(geometry), material(material) {}
+
+			Mesh(const Mesh& m){
+				*geometry = *(m.geometry);
+				*material = *(m.material);
+			}
+
+			Mesh(Mesh&& m) : geometry(std::move(m.geometry)), material(std::move(m.material)) {}
 
 		};
 

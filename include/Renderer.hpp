@@ -15,6 +15,7 @@
 #include "RenderTarget.hpp"
 #include "Light.hpp"
 #include "Object3D.hpp"
+#include "Scene.hpp"
 #include "Camera.hpp"
 #include "Material.hpp"
 #include "Texture.hpp"
@@ -107,11 +108,11 @@ public:
 	virtual std::tuple<int, int, unsigned, unsigned> getViewport() const = 0;
 	virtual void setDefaultViewport() = 0;
 
-	virtual void renderBufferImmediate(std::shared_ptr<Object3D<T>> object, std::shared_ptr<Shader::Shader> shader, std::shared_ptr<IMaterial> material) = 0;
-	virtual void renderBufferDirect(Camera<T>& camera, std::vector<Light<T> >& lights, Fog<T>& fog, std::shared_ptr<IMaterial> material,
-			std::shared_ptr<Object3D<T>> object, std::shared_ptr<Object3D<T>> objectGroup) = 0;
+	virtual void renderBufferImmediate(Object3D<T>* object, std::shared_ptr<Shader::Shader> shader, IMaterial* material) = 0;
+	virtual void renderBufferDirect(Camera<T>* camera, std::vector<Light<T>*>& lights, Fog<T>& fog, IMaterial* material,
+			Object3D<T>* object, Object3D<T>* objectGroup) = 0;
 
-	virtual void render(Scene<T>& scene, Camera<T>& camera, std::shared_ptr<IRenderTarget> renderTarget = NULL, bool forceClear = false) = 0;
+	virtual void render(Scene<T>& scene, Camera<T>* camera, std::shared_ptr<IRenderTarget> renderTarget = nullptr, bool forceClear = false) = 0;
 
 	virtual void setFaceCulling(CullConstant cullFace, CullDirection frontFaceDirection) = 0;
 	virtual void setTexture(std::shared_ptr<Texture> texture, unsigned slot = 0) = 0;

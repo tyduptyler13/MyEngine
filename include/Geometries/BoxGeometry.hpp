@@ -87,6 +87,7 @@ namespace MyUPlay {
 								c = numberOfVertices + ( ix + 1 ) + gridX1 * ( iy + 1 ),
 								d = numberOfVertices + ( ix + 1 ) + gridX1 * iy;
 
+						//Vertices
 						this->vertexIndices[ indexBufferOffset ] = a;
 						this->vertexIndices[ indexBufferOffset + 1] = b;
 						this->vertexIndices[ indexBufferOffset + 2] = d;
@@ -139,6 +140,9 @@ namespace MyUPlay {
 				buildPlane( vector.x, vector.y, vector.z,  1, -1, width, height,  depth,  widthSegments, heightSegments, 4, vertexBufferOffset, uvBufferOffset, indexBufferOffset, numberOfVertices, groupStart, vector ); // pz
 				buildPlane( vector.x, vector.y, vector.z, -1, -1, width, height, -depth,  widthSegments, heightSegments, 5, vertexBufferOffset, uvBufferOffset, indexBufferOffset, numberOfVertices, groupStart, vector ); // nz
 
+				//For this case, all of these share the same indices
+				this->normalIndices = this->vertexIndices;
+				this->uvIndices = this->vertexIndices;
 			}
 
 		};

@@ -4,6 +4,12 @@
 #include <vector>
 #include <cmath>
 
+namespace MyUPlay {
+	namespace MyEngine {
+		template <typename T> class Vector3;
+	}
+}
+
 #include "Matrix3.hpp"
 #include "Matrix4.hpp"
 #include "Quaternion.hpp"
@@ -14,16 +20,6 @@
 namespace MyUPlay {
 
 	namespace MyEngine {
-
-		#ifndef MATRIX3_DEFINED
-		template <typename> class Matrix3;
-		#endif
-		#ifndef MATRIX4_DEFINED
-		template <typename> class Matrix4;
-		#endif
-		#ifndef CAMERA_DEFINED
-		template <typename> class Camera;
-		#endif
 
 		/**
 		 * This class supports any numeric type or class that supports
@@ -671,8 +667,6 @@ namespace MyUPlay {
 			}
 
 		};
-
-		#define VECTOR3_DEFINED
 
 		template<typename T>
 		Vector3<T> operator+(const T scalar, Vector3<T> rhs){

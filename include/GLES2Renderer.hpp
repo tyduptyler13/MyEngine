@@ -5,7 +5,6 @@
 #include <unordered_map>
 
 #include "Renderer.hpp"
-#include "Texture.hpp"
 
 namespace MyUPlay {
 
@@ -41,10 +40,10 @@ namespace MyUPlay {
 			std::tuple<int, int, unsigned, unsigned> getViewport() const;
 			void setDefaultViewport();
 
-			void renderBufferImmediate(std::shared_ptr<Object3D<float>> object, std::shared_ptr<Shader::Shader> program, std::shared_ptr<IMaterial> material);
-			void renderBufferDirect(Camera<float>& camera, std::vector<Light<float> >& lights, Fog<float>& fog, std::shared_ptr<IMaterial> material, std::shared_ptr<Object3D<float>> object, std::shared_ptr<Object3D<float>> objectGroup);
+			void renderBufferImmediate(Object3D<float>* object, std::shared_ptr<Shader::Shader> program,IMaterial* material);
+			void renderBufferDirect(Camera<float>* camera, std::vector<Light<float>*>& lights, Fog<float>& fog, IMaterial* material, Object3D<float>* object, Object3D<float>* objectGroup);
 
-			void render(Scene<float>& scene, Camera<float>& camera, std::shared_ptr<IRenderTarget> renderTarget = NULL, bool forceClear = false);
+			void render(Scene<float>& scene, Camera<float>* camera, std::shared_ptr<IRenderTarget> renderTarget = NULL, bool forceClear = false);
 
 			void setFaceCulling(CullConstant cullFace, CullDirection frontFaceDirection);
 			void setTexture(std::shared_ptr<Texture> texture, unsigned slot = 0);

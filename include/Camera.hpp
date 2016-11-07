@@ -1,71 +1,63 @@
 #ifndef MYUPLAY_MYENGINE_CAMERA
 #define MYUPLAY_MYENGINE_CAMERA
 
+namespace MyUPlay {
+	namespace MyEngine {
+		template <typename T> class Camera;
+	}
+}
+
 #include "Object3D.hpp"
 #include "Matrix4.hpp"
 #include "Quaternion.hpp"
 
-namespace MyUPlay {
+template <typename T>
+class MyUPlay::MyEngine::Camera : public Object3D<T> {
 
-	namespace MyEngine {
+public:
 
-		#ifndef OBJECT3D_DEFINED
-		template <typename> class Object3D;
-		#endif
+	Matrix4<T> matrixWorldInverse;
+	Matrix4<T> projectionMatrix;
 
-		template <typename T>
-		class Camera : public Object3D<T> {
+	Camera() : Object3D<T>() {}
 
-		public:
+	Camera(const Camera& camera) : Object3D<T>(camera) {
+		matrixWorldInverse = camera.matrixWorldInverse;
+		projectionMatrix = camera.projectionMatrix;
+	}
 
-			Matrix4<T> matrixWorldInverse;
-			Matrix4<T> projectionMatrix;
+	Vector3<T> getWorldDirection() const {
 
-			Camera() : Object3D<T>() {}
+		Quaternion<T> quaternion;
 
-			Camera(const Camera& camera) : Object3D<T>(camera) {
-				matrixWorldInverse = camera.matrixWorldInverse;
-				projectionMatrix = camera.projectionMatrix;
-			}
+		getWorldQuaternion(quaternion);
 
-			Vector3<T> getWorldDirection() const {
-
-				Quaternion<T> quaternion;
-
-				getWorldQuaternion(quaternion);
-
-				return Vector3<T>(0,0,-1).applyQuaternion(quaternion);
-
-			}
-
-			void lookAt(const Vector3<T>& point) {
-				Matrix4<T> m1;
-				m1.lookAt(this->position, point, this->up);
-				this->quaternion.setFromRotationMatrix(m1);
-			}
-
-			Camera& copy(const Camera& camera) {
-
-				Object3D<T>::copy(camera);
-
-				matrixWorldInverse = camera.matrixWorldInverse;
-				projectionMatrix = camera.projectionMatrix;
-
-				return *this;
-
-			}
-
-			Camera& operator=(const Camera& camera){
-				return copy(camera);
-			}
-
-		};
-
-		#define CAMERA_DEFINED
+		return Vector3<T>(0,0,-1).applyQuaternion(quaternion);
 
 	}
 
-}
+	void lookAt(const Vector3<T>& point) {
+		Matrix4<T> m1;
+		m1.lookAt(this->position, point, this->up);
+		this->quaternion.setFromRotationMatrix(m1);
+	}
+
+	Camera& copy(const Camera& camera) {
+
+		Object3D<T>::copy(camera);
+
+		matrixWorldInverse = camera.matrixWorldInverse;
+		projectionMatrix = camera.projectionMatrix;
+
+		return *this;
+
+	}
+
+	Camera& operator=(const Camera& camera){
+		return copy(camera);
+	}
+
+};
 
 #endif
 

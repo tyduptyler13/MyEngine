@@ -15,7 +15,7 @@ int main(){
 
 	Scene<> scene;
 
-	std::shared_ptr<PerspectiveCamera<float>> camera = make_shared<PerspectiveCamera<float>>(45, 800.0 / 600.0);
+	PerspectiveCamera<float> camera = make_shared<PerspectiveCamera<float>>(45, 800.0 / 600.0);
 
 	scene.add(std::static_pointer_cast<Object3D<float>>(camera));
 
@@ -27,11 +27,7 @@ int main(){
 
 	renderer.setSize(800, 600);
 
-	std::shared_ptr<BoxGeometry<float>> geo = make_shared<BoxGeometry<float>>(10, 10, 10, 2, 4, 8);
-
-	std::shared_ptr<MeshNormalMaterial> mat = make_shared<MeshNormalMaterial>();
-
-	std::shared_ptr<Mesh<float>> box = make_shared<Mesh<float>>(geo, mat);
+	Mesh<float>* box = make_unique<Mesh<float>>(make_unique<BoxGeometry<float>>(10, 10, 10, 2, 4, 8), make_unique<MeshNormalMaterial>());
 
 	scene.add(box);
 

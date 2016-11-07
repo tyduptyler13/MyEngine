@@ -116,18 +116,6 @@ namespace MyUPlay {
 				return copy(mat);
 			}
 
-			void update(){
-
-				//dispatchEvent("update", *this);
-
-			}
-
-			void dispose(){
-
-				//dispatchEvent("dispose", *this);
-
-			}
-
 		};
 
 	}
