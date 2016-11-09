@@ -118,7 +118,7 @@ public:
 	virtual void setTexture(std::shared_ptr<Texture> texture, unsigned slot = 0) = 0;
 	virtual void setRenderTarget(std::shared_ptr<IRenderTarget> target) = 0;
 	virtual std::shared_ptr<IRenderTarget> getRenderTarget() = 0;
-	virtual void readRenderTargetPixels(std::shared_ptr<IRenderTarget> target, int x, int y, unsigned width, unsigned height, void* buffer) = 0; //TODO Find type for buffer
+	virtual std::vector<unsigned char> readRenderTargetPixels(std::shared_ptr<IRenderTarget> target, int x, int y, unsigned width, unsigned height) = 0;
 
 	/**
 	 * Use this function to get a list of display modes for all monitors.

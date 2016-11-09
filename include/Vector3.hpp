@@ -611,7 +611,7 @@ namespace MyUPlay {
 				y = m.elements[13];
 				z = m.elements[14];
 
-				return this;
+				return *this;
 			}
 
 			Vector3& setFromMatrixScale(const Matrix4<T>& m){

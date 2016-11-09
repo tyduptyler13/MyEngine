@@ -5,14 +5,15 @@
 #include <unordered_map>
 
 #include "Renderer.hpp"
+#include "Frustum.hpp"
 
 namespace MyUPlay {
 
 	namespace MyEngine {
 
-		class GLES2Renderer : public Renderer<float> {
+		struct GLES2Renderer : public Renderer<float> {
 
-		public:
+			bool sortObjects = true; //TODO look into a better place for this
 
 			/**
 			 * Antialias should be set to a value 0 (off), or 2-4 for varying samples (on).
@@ -49,9 +50,12 @@ namespace MyUPlay {
 			void setTexture(std::shared_ptr<Texture> texture, unsigned slot = 0);
 			void setRenderTarget(std::shared_ptr<IRenderTarget> target);
 			std::shared_ptr<IRenderTarget> getRenderTarget();
-			void readRenderTargetPixels(std::shared_ptr<IRenderTarget> target, int x, int y, unsigned width, unsigned height, void* buffer); //TODO Find type for buffer
+			std::vector<unsigned char> readRenderTargetPixels(std::shared_ptr<IRenderTarget> target, int x, int y, unsigned width, unsigned height);
 
 		private:
+
+			Matrix4f projScreenMatrix;
+			Frustum<float> frustum;
 
 			SDL_GLContext context;
 
@@ -63,6 +67,32 @@ namespace MyUPlay {
 
 			//Textures are tracked by their guids.
 			std::unordered_map<std::string, GPUTexture> textures; //Tracks loaded textures.
+
+			template <typename T>
+			struct RenderItem {
+				T* object;
+				float z;
+				int group = -1;
+
+				RenderItem(T* object, float z, int group = -1) : object(object), z(z), group(group) {}
+			};
+
+			std::vector<Light<float>*> lights;
+			std::vector<RenderItem<Mesh<float>>> opaqueObjects;
+			std::vector<RenderItem<Mesh<float>>> transparentObjects;
+			//TODO sprites
+			//TODO lens flares
+
+			void projectObject(Object3D<float>* s, Camera<float>* camera);
+
+			bool isObjectViewable(Mesh<float>*);
+			bool isSphereVisible(Spheref);
+			//bool isSpriteVisible(Sprite);
+
+			void renderObjects(std::vector<RenderItem<Mesh<float>>>& objects, Scene<float>& scene, Camera<float>* camera, IMaterial* mat = nullptr);
+
+			static float stablePainterSort(const RenderItem<Mesh<float>>& a, const RenderItem<Mesh<float>>& b);
+			static float reverseStablePainterSort(const RenderItem<Mesh<float>>& a, const RenderItem<Mesh<float>>& b);
 
 		};
 

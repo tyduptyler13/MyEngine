@@ -17,6 +17,7 @@ namespace MyUPlay {
 
 		public:
 
+			//This will likely be removed, types of materials have been generalized by shaders.
 			enum MaterialType { //Must be caps to avoid name clash
 				LINEBASICMATERIAL,
 				LINEDASHEDMATERIAL,
@@ -35,7 +36,9 @@ namespace MyUPlay {
 
 			MaterialType type = MATERIAL;
 
-			unsigned id;
+			static unsigned materialIdCounter;
+
+			unsigned id = materialIdCounter++;
 			Math::UUID uuid = Math::generateUUID();
 
 			std::map<std::string, std::map<std::string, std::string> > shaderData;
@@ -75,6 +78,12 @@ namespace MyUPlay {
 			bool visible = true;
 
 			bool needsUpdate = true;
+
+			IMaterial(){}
+
+			IMaterial(const IMaterial& m) {
+				copy(m);
+			}
 
 			IMaterial& copy(const IMaterial& mat) {
 

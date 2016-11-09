@@ -30,16 +30,23 @@ private:
 
 public:
 
-	enum ObjectType { //TODO Expand this to the rest of the types.
-		BASIC,
-		LIGHT,
-		SCENE,
-		MESH
+	enum ObjectType { //The following are the supported types for objects. Each has different rendering properties.
+		BASIC, //A container, does not render
+		LIGHT, //Does not render but can be applied in shading
+		SCENE, //Top container (shouldn't be a child) (Might be redundant)
+		MESH, //Basic renderable object (MUST BE OF TYPE Mesh!)
+		SPRITE, //Renders a flat object in 3d space
+		LENSFLARE, //Applied after rendering
+		LINE, //Renders an object in line mode (wireframe) You can also use the wireframe property in some materials
+		POINTS //Renders points with no lines or faces (usually with circle sprites)
 	};
 
 	ObjectType type;
 
-	const Math::UUID id = Math::generateUUID();
+	static unsigned object3DIdCounter;
+
+	const unsigned id = object3DIdCounter++;
+	const Math::UUID uuid = Math::generateUUID();
 	std::string name;
 
 	Object3D* parent = nullptr; //We don't want to keep a ref count on something that also owns us.
@@ -60,6 +67,9 @@ public:
 	Matrix4<T> matrix;
 	Matrix4<T> matrixWorld;
 
+	Matrix4<T> modelViewMatrix;
+	Matrix3<T> normalMatrix;
+
 	bool matrixAutoUpdate = true;
 	bool matrixWorldNeedsUpdate = false;
 
@@ -71,21 +81,8 @@ public:
 	bool frustumCulled = true;
 	unsigned renderOrder = 0;
 
-	enum EventType {
-		ADD, //Triggered when the object is created and added to a scene
-		//REMOVE has been disabled in favor of DELETE
-		DELETE //Triggered when the object is deleted
-	};
-
-	typedef std::function<void(Object3D<T>* , EventType)> EventHandler;
-	std::vector<EventHandler> eventHandlers;
-
 	Object3D(ObjectType t = BASIC) : type(t) {}
-	virtual ~Object3D(){
-		for (EventHandler& e : eventHandlers){
-			e(this, DELETE);
-		}
-	}
+	virtual ~Object3D(){}
 
 	Object3D(const Object3D& o){
 		copy(o);
@@ -186,10 +183,6 @@ public:
 		object->parent = this;
 		children.push_back(object);
 
-		for (EventHandler& e : eventHandlers){
-			e(object, ADD);
-		}
-
 		return *this;
 	}
 
@@ -200,12 +193,22 @@ public:
 		return *this;
 	}
 
-	Object3D& remove(Object3D* object){
+	/**
+	 * Removes a child from this object.
+	 *
+	 * WARNING: Removing an object will automatically free its memory.
+	 *
+	 * By setting release to true, you assume responsibility for freeing the objects memory later.
+	 */
+	Object3D& remove(Object3D* object, bool release = false){
 
 		auto loc = std::find(children.begin(), children.end(), object);
 
 		if (loc != children.end()){
 			object->parent = nullptr; //Reset parent pointer to null;
+			if (release){
+				loc->release();
+			}
 			children.erase(loc);
 		}
 
@@ -394,5 +397,8 @@ public:
 	virtual void raycast(const Raycaster<T>&, std::vector<Intersection<T> >&) const {} //TODO
 
 };
+
+template <typename T>
+unsigned MyUPlay::MyEngine::Object3D<T>::object3DIdCounter = 0;
 
 #endif

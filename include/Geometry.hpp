@@ -35,6 +35,14 @@ namespace MyUPlay {
 		template <typename T>
 		struct IGeometry {
 
+			struct Group {
+				unsigned start,
+				count,
+				materialIndex;
+				Group(unsigned start, unsigned count, unsigned materialIndex)
+				: start(start), count(count), materialIndex(materialIndex) {}
+			};
+
 			Math::UUID uuid = Math::generateUUID();
 
 			std::string name;
@@ -44,18 +52,20 @@ namespace MyUPlay {
 
 			bool verticesNeedUpdate = false,
 					normalsNeedUpdate = false,
-					colorsNeedUpdate = false;
+					colorsNeedUpdate = false,
+					boundingBoxDirty = true, //Must be set to true for it to recalculate
+					boundingSphereDirty = true; //Must be set to true for it to recalculate
 
 			virtual void applyMatrix(const Matrix4<T>& matrix) = 0;
 
 			virtual void computeBoundingBox() = 0;
 			virtual void computeBoundingSphere() = 0;
 
-			virtual bool hasIndexedVertices(){
+			virtual bool hasIndexedVertices() const {
 				return false;
 			}
 
-			virtual bool hasIndexedNormals(){
+			virtual bool hasIndexedNormals() const {
 				return false;
 			}
 
@@ -83,7 +93,10 @@ namespace MyUPlay {
 			 *
 			 * To get faces divide this by 3. (All faces are triangles)
 			 */
-			virtual unsigned size() = 0;
+			virtual unsigned size() const = 0;
+
+			virtual bool isMultiMaterial() const = 0;
+			virtual std::vector<Group> getGroups() = 0;
 
 			IGeometry& operator=(const IGeometry& geometry) {
 				name = geometry.name;
@@ -105,6 +118,7 @@ namespace MyUPlay {
 
 			template <typename T2>
 			IGeometry(IGeometry<T2>&& g) : name(std::move(g.name)) {}
+
 		};
 
 		/**
@@ -316,7 +330,8 @@ namespace MyUPlay {
 			void computeMorphNormals(); //TODO Reimplement morph targets.
 
 
-			void computeBoundingBox() override {
+			void computeBoundingBox() {
+				if (!this->boundingBoxDirty) return;
 				if (this->boundingBox == nullptr){
 					this->boundingBox = new Box3<T>();
 				}
@@ -328,7 +343,8 @@ namespace MyUPlay {
 				this->boundingBox.setFromPoints(vertices);
 			}
 
-			void computeBoundingSphere() override {
+			void computeBoundingSphere() {
+				if (!this->boundingSphereDirty) return;
 				if (this->boundingSphere == nullptr){
 					this->boundingSphere = new Sphere<T>();
 				}

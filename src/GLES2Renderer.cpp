@@ -1,4 +1,6 @@
 #include <stdexcept>
+#include <algorithm>
+
 #include <SDL2/SDL_opengles2.h>
 
 #include <SOIL/SOIL.h>
@@ -130,6 +132,28 @@ void GLES2Renderer::renderBufferDirect(Camera<float>* camera, std::vector<Light<
 
 }
 
+float GLES2Renderer::stablePainterSort(const RenderItem<Mesh<float>>& a, const RenderItem<Mesh<float>>& b){
+	if (a.object->renderOrder != b.object->renderOrder){
+		return a.object->renderOrder - b.object->renderOrder;
+	} else if (a.object->material->id != b.object->material->id) {
+		return a.object->material->id - b.object->material->id;
+	} else if (a.z != b.z) {
+		return a.z - b.z;
+	} else {
+		return a.object->id - b.object->id;
+	}
+}
+
+float GLES2Renderer::reverseStablePainterSort(const RenderItem<Mesh<float>>& a, const RenderItem<Mesh<float>>& b){
+	if (a.object->renderOrder != b.object->renderOrder){
+		return a.object->renderOrder - b.object->renderOrder;
+	} else if (a.z != b.z) {
+		return b.z - a.z;
+	} else {
+		return a.object->id - b.object->id;
+	}
+}
+
 void GLES2Renderer::render(Scene<float>& scene, Camera<float>* camera, std::shared_ptr<IRenderTarget> renderTarget, bool forceClear)  {
 
 	if (scene.autoUpdate) scene.updateMatrixWorld();
@@ -138,12 +162,146 @@ void GLES2Renderer::render(Scene<float>& scene, Camera<float>* camera, std::shar
 
 	camera->matrixWorldInverse.getInverse(camera->matrixWorld);
 
-	Matrix4f projScreenMatrix = camera->projectionMatrix * camera->matrixWorldInverse;
-	Frustum<float> frustum;
+	projScreenMatrix = camera->projectionMatrix * camera->matrixWorldInverse;
+
 	frustum.setFromMatrix(projScreenMatrix);
 
 	if (renderTarget != nullptr){
 		renderTarget->bind();
+	}
+
+	projectObject(&scene, camera);
+
+	if (sortObjects){
+		std::stable_sort(opaqueObjects.begin(), opaqueObjects.end(), stablePainterSort);
+		std::stable_sort(transparentObjects.begin(), transparentObjects.end(), reverseStablePainterSort);
+	}
+
+	//TODO Shadowmap goes here
+
+	info.renderer.calls = 0;
+	info.renderer.vertices = 0;
+	info.renderer.faces = 0;
+	info.renderer.points = 0;
+
+	setRenderTarget(renderTarget);
+
+	if (autoClear || forceClear){
+		clear(this->autoClearColor, this->autoClearDepth, this->autoClearStencil);
+	}
+
+	if (scene.overrideMaterial != nullptr){
+
+		renderObjects(opaqueObjects, scene, camera, scene.overrideMaterial.get());
+		renderObjects(transparentObjects, scene, camera, scene.overrideMaterial.get());
+
+	} else {
+
+		//FIXME setBlending(NoBlending);
+		renderObjects(opaqueObjects, scene, camera);
+
+		renderObjects(transparentObjects, scene, camera);
+
+	}
+
+	//TODO handle sprites and lensflares
+
+	//FIXME setDepthTest(true);
+	//FIXME setDepthWrite(true);
+	//FIXME setColorWrite(true);
+
+}
+
+void GLES2Renderer::projectObject(Object3D<>* o, Camera<float>* camera) {
+
+	typedef typename Object3D<float>::ObjectType ObjectType;
+
+	if (o->visible){
+		switch(o->type){
+		case ObjectType::LIGHT:
+			lights.push_back(dynamic_cast<Light<float>*>(o));
+			break;
+		case ObjectType::SPRITE:
+			//if (o->frustumCulled == false || isSpriteViewable(o) == true){
+			//TODO
+			//}
+			break;
+		case ObjectType::LENSFLARE:
+			//TODO
+			break;
+		case ObjectType::MESH:
+		case ObjectType::LINE:
+		case ObjectType::POINTS: { //Need a scope to have new objects on the stack
+
+			Mesh<float>* m = dynamic_cast<Mesh<float>*>(o);
+			Vector3f vector;
+
+			//TODO handle skins
+
+			if (o->frustumCulled == false || isObjectViewable(m) == true){
+
+				if (m->material->visible){
+
+					if (sortObjects){
+						vector.setFromMatrixPosition(m->matrixWorld);
+						vector.applyProjection(projScreenMatrix);
+					}
+
+					if (m->geometry->isMultiMaterial()){
+
+						const auto& groups = m->geometry->getGroups();
+
+						for (unsigned i = 0; i < groups.size(); ++i){
+							//TODO handle multimaterials, need to check for transparency
+						}
+
+					} else {
+						if (m->material->transparent){
+							transparentObjects.emplace_back(RenderItem<Mesh<float>>(m, vector.z));
+						} else {
+							opaqueObjects.emplace_back(RenderItem<Mesh<float>>(m, vector.z));
+						}
+					}
+
+				}
+
+			}
+
+			break;
+		} //Close a scope
+		case ObjectType::BASIC:
+		case ObjectType::SCENE:
+			//Do nothing
+			break;
+		} //Close the switch
+	}
+
+	for (std::unique_ptr<Object3D<float>>& child : o->children){
+		projectObject(child.get(), camera);
+	}
+
+}
+
+void GLES2Renderer::renderObjects(std::vector<RenderItem<Mesh<float>>>& objects,
+		Scene<float>& scene, Camera<float>* camera, IMaterial* mat){
+
+	for (RenderItem<Mesh<float>>& item : objects) {
+
+		Mesh<float>* object = item.object;
+		IGeometry<float>* geometry = object->geometry.get();
+		IMaterial* material = mat != nullptr ? mat : object->material.get();
+
+		object->modelViewMatrix.multiplyMatrices(camera->matrixWorldInverse, object->matrixWorld);
+		object->normalMatrix.getNormalMatrix(object->modelViewMatrix);
+
+		//TODO Trigger on before render event for object
+
+		//TODO Immediate rendering?
+
+		renderBufferDirect(camera, scene.fog, geometry, material, object, item.group);
+
+		//TODO handle post render events
+
 	}
 
 }
@@ -209,13 +367,22 @@ void GLES2Renderer::setTexture(shared_ptr<Texture> texture, unsigned slot)  {
 }
 
 void GLES2Renderer::setRenderTarget(std::shared_ptr<IRenderTarget> target) {
-
+	if (target == nullptr){
+		glBindFramebuffer(GL_FRAMEBUFFER, 0); //Bind to default target (screen)
+	} else {
+		target->bind();
+	}
+	//TODO We need to store every render target that comes through here.
 }
 std::shared_ptr<IRenderTarget> GLES2Renderer::getRenderTarget() {
-
+	return nullptr; //TODO We need to get gls framebuffer number and connect it to some list of known render targets. (0 is none)
 }
-void GLES2Renderer::readRenderTargetPixels(std::shared_ptr<IRenderTarget> target, int x, int y, unsigned width, unsigned height, void* buffer) {
 
+std::vector<unsigned char> GLES2Renderer::readRenderTargetPixels(std::shared_ptr<IRenderTarget> target, int x, int y, unsigned width, unsigned height) {
+	std::vector<unsigned char> data(width * height * 3);
+	target->bind();
+	glReadPixels(x, y, width, height, GL_RGB, GL_UNSIGNED_BYTE, data.data());
+	return data;
 }
 
 //Specializations for shaders (Allows a renderer to work)

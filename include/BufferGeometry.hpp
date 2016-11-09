@@ -16,14 +16,6 @@ namespace MyUPlay {
 		template <typename T>
 		struct BufferGeometry : public virtual IGeometry<T>, public AGeometry<T, BufferGeometry<T>> {
 
-			struct Group {
-				unsigned start,
-				count,
-				materialIndex;
-				Group(unsigned start, unsigned count, unsigned materialIndex)
-				: start(start), count(count), materialIndex(materialIndex) {}
-			};
-
 			std::vector<T> vertices;
 			std::vector<T> normals;
 			std::vector<T> uvs;
@@ -141,6 +133,8 @@ namespace MyUPlay {
 
 			void computeBoundingBox(){
 
+				if (!this->boundingBoxDirty) return;
+
 				if (this->boundingBox == nullptr){
 					this->boundingBox = std::make_unique<Box3<T>>();
 				}
@@ -150,6 +144,8 @@ namespace MyUPlay {
 			}
 
 			void computeBoundingSphere() {
+
+				if (!this->boundingSphereDirty) return;
 
 				if (this->boundingSphere == nullptr){
 					this->boundingSphere = std::make_unique<Sphere<T>>();

@@ -15,9 +15,9 @@ int main(){
 
 	Scene<> scene;
 
-	PerspectiveCamera<float> camera = make_shared<PerspectiveCamera<float>>(45, 800.0 / 600.0);
+	PerspectiveCamera<float>* camera = new PerspectiveCamera<float>(45, 800.0 / 600.0);
 
-	scene.add(std::static_pointer_cast<Object3D<float>>(camera));
+	scene.add(camera);
 
 	camera->position.set(0, 150, 400);
 
@@ -27,7 +27,11 @@ int main(){
 
 	renderer.setSize(800, 600);
 
-	Mesh<float>* box = make_unique<Mesh<float>>(make_unique<BoxGeometry<float>>(10, 10, 10, 2, 4, 8), make_unique<MeshNormalMaterial>());
+	BoxGeometry<float>* geo = new BoxGeometry<float>(10, 10, 10, 2, 4, 8);
+
+	MeshNormalMaterial* mat = new MeshNormalMaterial();
+
+	Mesh<float>* box = new Mesh<float>(geo, mat);
 
 	scene.add(box);
 
@@ -36,7 +40,7 @@ int main(){
 	while (!quit){ //Closes when the window closes
 
 		//TODO figure out how to handle the framerate
-		renderer.render(scene, *camera);
+		renderer.render(scene, camera);
 
 		SDL_Event event;
 

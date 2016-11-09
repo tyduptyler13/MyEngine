@@ -22,6 +22,9 @@
 
 namespace MyUPlay {
 	namespace MyEngine {
+
+		struct GLES2Renderer;
+
 		namespace Shader {
 
 			/**
@@ -152,9 +155,10 @@ namespace MyUPlay {
 				}
 			}
 
+			static const std::regex decimal("\\.\\d+$");
+
 			template <>
 			inline std::string Utility<GLES2Renderer, double>::toString(const double& t){
-				static const std::regex decimal("\\.\\d+$");
 				std::string s = std::to_string(t);
 				if (std::regex_search(s, decimal)){ //GLSL requires a decimal for floats.
 					s += ".0";
@@ -164,7 +168,6 @@ namespace MyUPlay {
 
 			template <>
 			inline std::string Utility<GLES2Renderer, float>::toString(const float& t){
-				static const std::regex decimal("\\.\\d+$");
 				std::string s = std::to_string(t);
 				if (std::regex_search(s, decimal)){ //GLSL requires a decimal for floats.
 					s += ".0";

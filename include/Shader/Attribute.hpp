@@ -17,8 +17,6 @@
 namespace MyUPlay{
 	namespace MyEngine {
 
-		class GLES2Renderer;
-
 		namespace Shader {
 
 			enum ShaderScope {

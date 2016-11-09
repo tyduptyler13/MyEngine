@@ -9,7 +9,8 @@
   				"src/Log.cpp",
   				"src/Math.cpp",
   				"src/ShaderUtil.cpp",
-  				"src/ShaderGLES2.cpp"
+  				"src/ShaderGLES2.cpp",
+  				"src/Material.cpp"
 			],
 			"include_dirs": [
 				"include",
@@ -19,6 +20,11 @@
 			"direct_dependent_settings": {
 				"include_dirs": [
 					"include"
+				],
+				"libraries": [
+					"-lSOIL",
+					"-lGL",
+					"<!@(<(pkg-config) --libs-only-l sdl2 capnp)"
 				]
 			},
 			"variables": {

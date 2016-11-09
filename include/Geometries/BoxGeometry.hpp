@@ -133,6 +133,7 @@ namespace MyUPlay {
 				Vector vector;
 
 				//TODO Improve the call structure of this function
+				//Attempted to use lambdas but those are impossible to debug in gdb
 				buildPlane( vector.z, vector.y, vector.x, -1, -1, depth, height,  width, depthSegments, heightSegments, 0, vertexBufferOffset, uvBufferOffset, indexBufferOffset, numberOfVertices, groupStart, vector ); // px
 				buildPlane( vector.z, vector.y, vector.x,  1, -1, depth, height, -width,  depthSegments, heightSegments, 1, vertexBufferOffset, uvBufferOffset, indexBufferOffset, numberOfVertices, groupStart, vector ); // nx
 				buildPlane( vector.x, vector.z, vector.y,  1,  1, width, depth,   height, widthSegments, depthSegments,  2, vertexBufferOffset, uvBufferOffset, indexBufferOffset, numberOfVertices, groupStart, vector ); // py
