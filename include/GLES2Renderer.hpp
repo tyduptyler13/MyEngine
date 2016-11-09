@@ -42,7 +42,7 @@ namespace MyUPlay {
 			void setDefaultViewport();
 
 			void renderBufferImmediate(Object3D<float>* object, std::shared_ptr<Shader::Shader> program,IMaterial* material);
-			void renderBufferDirect(Camera<float>* camera, std::vector<Light<float>*>& lights, Fog<float>& fog, IMaterial* material, Object3D<float>* object, Object3D<float>* objectGroup);
+			void renderBufferDirect(Camera<float>*, Fog<float>*, IGeometry<float>*, IMaterial*, Object3D<float>*, unsigned group);
 
 			void render(Scene<float>& scene, Camera<float>* camera, std::shared_ptr<IRenderTarget> renderTarget = NULL, bool forceClear = false);
 

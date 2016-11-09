@@ -127,8 +127,22 @@ void GLES2Renderer::renderBufferImmediate(Object3D<float>* object, std::shared_p
 
 }
 
-void GLES2Renderer::renderBufferDirect(Camera<float>* camera, std::vector<Light<float>*>& lights,
-		Fog<float>& fog, IMaterial* material, Object3D<float>* object, Object3D<float>* objectGroup) {
+void GLES2Renderer::renderBufferDirect(Camera<float>* camera, Fog<float>* fog, IGeometry<float>* geometry,
+		IMaterial* material, Object3D<float>* object, unsigned group) {
+
+	//FIXME set material (including its program)
+
+	//TODO handle program caching
+
+	//TODO morph targets
+
+	//FIXME send geometry to gpu, cache if it has changed
+
+	//TODO Handle wireframe mode
+
+	//FIXME Render groups
+
+	//TODO Expand to points, lines, sprites
 
 }
 
@@ -298,7 +312,7 @@ void GLES2Renderer::renderObjects(std::vector<RenderItem<Mesh<float>>>& objects,
 
 		//TODO Immediate rendering?
 
-		renderBufferDirect(camera, scene.fog, geometry, material, object, item.group);
+		renderBufferDirect(camera, scene.fog.get(), geometry, material, object, item.group);
 
 		//TODO handle post render events
 

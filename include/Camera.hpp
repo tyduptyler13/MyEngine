@@ -19,6 +19,8 @@ public:
 	Matrix4<T> matrixWorldInverse;
 	Matrix4<T> projectionMatrix;
 
+	virtual ~Camera(){}
+
 	Camera() : Object3D<T>() {}
 
 	Camera(const Camera& camera) : Object3D<T>(camera) {
@@ -35,6 +37,8 @@ public:
 		return Vector3<T>(0,0,-1).applyQuaternion(quaternion);
 
 	}
+
+	virtual void updateProjectionMatrix() = 0;
 
 	void lookAt(const Vector3<T>& point) {
 		Matrix4<T> m1;

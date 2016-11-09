@@ -109,8 +109,7 @@ public:
 	virtual void setDefaultViewport() = 0;
 
 	virtual void renderBufferImmediate(Object3D<T>* object, std::shared_ptr<Shader::Shader> shader, IMaterial* material) = 0;
-	virtual void renderBufferDirect(Camera<T>* camera, std::vector<Light<T>*>& lights, Fog<T>& fog, IMaterial* material,
-			Object3D<T>* object, Object3D<T>* objectGroup) = 0;
+	virtual void renderBufferDirect(Camera<float>*, Fog<float>*, IGeometry<float>*, IMaterial*, Object3D<float>*, unsigned group);
 
 	virtual void render(Scene<T>& scene, Camera<T>* camera, std::shared_ptr<IRenderTarget> renderTarget = nullptr, bool forceClear = false) = 0;
 

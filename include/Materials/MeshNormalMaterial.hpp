@@ -16,9 +16,7 @@ namespace MyUPlay {
 					lights = false,
 					morphTargets = false;
 
-			MeshNormalMaterial() {
-				this->type = MESHNORMALMATERIAL;
-			}
+			MeshNormalMaterial() {}
 
 		};
 

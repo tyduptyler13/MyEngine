@@ -30,7 +30,7 @@ namespace MyUPlay {
 
 				Input<Vector4f> gl_Position; //Window coords
 
-				void prepare(std::shared_ptr<Camera<float>> camera, std::shared_ptr<Mesh<float>> object, std::vector<Light<float>>& lights) override;
+				void prepare(Camera<float>* camera, Mesh<float>* object, const std::vector<Light<float>*>& lights) override;
 
 				std::string getStatic() const override {
 					return "attribute vec3 position\n"
@@ -98,7 +98,7 @@ namespace MyUPlay {
 				Output<Vector4f> gl_FragCoord;
 				Output<bool> gl_FrontFacing;
 
-				void prepare(std::shared_ptr<Camera<float>> camera, std::shared_ptr<Mesh<float>> object, std::vector<Light<float>>& lights) override;
+				void prepare(Camera<float>* camera, Mesh<float>* object, const std::vector<Light<float>*>& lights) override;
 
 				std::string getStatic() const override {
 					return "varying vec3 fPosition;\n"
@@ -173,9 +173,7 @@ namespace MyUPlay {
 
 				void compile() override;
 
-				void render(std::shared_ptr<Camera<float>> camera,
-						std::shared_ptr<Mesh<float>> object,
-						const std::vector<Light<float>>& lights) override;
+				void prepare(Camera<float>* camera, Mesh<float>* object, const std::vector<Light<float>*>& lights) override;
 
 			};
 
