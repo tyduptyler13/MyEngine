@@ -10,7 +10,10 @@
   				"src/Math.cpp",
   				"src/ShaderUtil.cpp",
   				"src/ShaderGLES2.cpp",
-  				"src/Material.cpp"
+  				"src/Material.cpp",
+  				"src/GLES2MaterialLib.cpp",
+  				"src/GLES2RenderTarget.cpp",
+  				"src/Texture.cpp"
 			],
 			"include_dirs": [
 				"include",

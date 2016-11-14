@@ -4,13 +4,13 @@
 #include <string>
 #include <memory>
 #include <functional>
+#include <vector>
 
 #include <SOIL/SOIL.h>
 
 #include "Math.hpp"
 #include "Constants.hpp"
 #include "Vector2.hpp"
-#include "CacheManager.hpp"
 
 namespace MyUPlay {
 
@@ -18,13 +18,13 @@ namespace MyUPlay {
 
 		class Texture {
 
-			std::shared_ptr<CacheHandle<unsigned char> > fileData;
+			std::shared_ptr<std::vector<unsigned char>> fileData;
 
 			void loadImage();
 
 		public:
 
-			static MappingMode DEFAULT_MAPPING;
+			static const MappingMode DEFAULT_MAPPING;
 
 			Math::UUID uuid = Math::generateUUID();
 
@@ -141,17 +141,15 @@ namespace MyUPlay {
 
 			}
 
-			std::shared_ptr<const std::vector<unsigned char>> getData() const {
-				return fileData->get();
+			std::shared_ptr<std::vector<unsigned char>> getData() const {
+				return fileData;
 			}
 
-			int getDataLength() const {
-				return fileData->get()->size();
+			unsigned getDataLength() const {
+				return fileData->size();
 			}
 
 		};
-
-		MappingMode Texture::DEFAULT_MAPPING = UVMapping;
 
 	}
 

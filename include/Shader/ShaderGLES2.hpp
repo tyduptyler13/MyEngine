@@ -164,12 +164,12 @@ namespace MyUPlay {
 
 			};
 
-			struct ForwardShaderGLES2 : public ForwardShader, public GLES2Shader {
+			struct GLES2ForwardShader : public ForwardShader, public GLES2Shader {
 
-				ForwardShaderGLES2(){
+				GLES2ForwardShader() : GLES2Shader() {
 					fragmentShaderRoot = std::make_unique<GLES2Fragment>(this);
 				}
-				~ForwardShaderGLES2();
+				~GLES2ForwardShader();
 
 				void compile() override;
 

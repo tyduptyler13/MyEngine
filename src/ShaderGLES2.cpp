@@ -49,7 +49,7 @@ static inline void reportError(GLuint shader) {
 	shaderLog.log("GL Log from previous error: \n" + infoLog);
 }
 
-void ForwardShaderGLES2::compile() {
+void GLES2ForwardShader::compile() {
 
 	static glslopt_ctx *ctx = glslopt_initialize(kGlslTargetOpenGLES20); //FIXME, This should be put somewhere more global and should be destructed.
 

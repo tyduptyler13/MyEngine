@@ -21,13 +21,16 @@ namespace MyUPlay {
 			bool depthBuffer = true,
 			     stencilBuffer = true;
 
-			std::shared_ptr<IRenderTarget> shareDepthFrom;
-
 			//We also need to clean up the depth buffer if it is deleted.
 			virtual ~IRenderTarget(){};
 
 			//Bind the framebuffer in the context.
 			virtual void bind() = 0;
+
+		protected:
+
+			IRenderTarget(unsigned width, unsigned height, bool depthBuffer, bool stencilBuffer)
+			: width(width), height(height), depthBuffer(depthBuffer), stencilBuffer(stencilBuffer) {}
 
 		};
 

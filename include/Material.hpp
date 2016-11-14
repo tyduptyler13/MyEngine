@@ -43,7 +43,6 @@ public:
 	short depthFunc = LessEqualDepth;
 	bool depthTest = false;
 	bool depthWrite = true;
-
 	bool colorWrite = true;
 
 	short precision = -1;
@@ -60,7 +59,17 @@ public:
 
 	bool needsUpdate = true;
 
+	bool wireframe = false;
+
+	bool fog = false,
+			lights = false,
+			morphTargets = false;
+
+	virtual ~IMaterial(){}
+
 	IMaterial(){}
+
+	IMaterial(std::string name) : name(name) {}
 
 	IMaterial(const IMaterial& m) {
 		copy(m);
