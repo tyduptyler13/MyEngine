@@ -52,6 +52,10 @@ namespace MyUPlay {
 			std::shared_ptr<IRenderTarget> getRenderTarget();
 			std::vector<unsigned char> readRenderTargetPixels(std::shared_ptr<IRenderTarget> target, int x, int y, unsigned width, unsigned height);
 
+			void setDepthTest(bool);
+			void setDepthWrite(bool);
+			void setColorWrite(bool);
+
 		private:
 
 			Matrix4f projScreenMatrix;
@@ -88,6 +92,8 @@ namespace MyUPlay {
 			bool isObjectViewable(Mesh<float>*);
 			bool isSphereVisible(Spheref);
 			//bool isSpriteVisible(Sprite);
+
+			void setMaterial(IMaterial*);
 
 			void renderObjects(std::vector<RenderItem<Mesh<float>>>& objects, Scene<float>& scene, Camera<float>* camera, IMaterial* mat = nullptr);
 

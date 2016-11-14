@@ -97,7 +97,7 @@ namespace MyUPlay {
 			LessDepth = 2,
 			LessEqualDepth = 3,
 			EqualDepth = 4,
-			GreaterEqualDeath = 5,
+			GreaterEqualDepth = 5,
 			GreaterDepth = 6,
 			NotEqualDepth = 7
 		};

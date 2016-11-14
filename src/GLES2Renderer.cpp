@@ -101,6 +101,20 @@ void GLES2Renderer::clearTarget(std::shared_ptr<IRenderTarget> target, bool colo
 	glBindFramebuffer(GL_FRAMEBUFFER, 0); //Unbind
 }
 
+void GLES2Renderer::setDepthTest(bool b){
+	if (b) {
+		glEnable(GL_DEPTH_TEST);
+	} else {
+		glDisable(GL_DEPTH_TEST);
+	}
+}
+void GLES2Renderer::setDepthWrite(bool b){
+	glDepthMask(b);
+}
+void GLES2Renderer::setColorWrite(bool b){
+	glColorMask(b, b, b, b);
+}
+
 unsigned GLES2Renderer::getMaxAnisotripy() const  {
 	GLint i;
 	glGetIntegerv(GL_TEXTURE_MAX_ANISOTROPY_EXT, &i);
@@ -130,7 +144,7 @@ void GLES2Renderer::renderBufferImmediate(Object3D<float>* object, std::shared_p
 void GLES2Renderer::renderBufferDirect(Camera<float>* camera, Fog<float>* fog, IGeometry<float>* geometry,
 		IMaterial* material, Object3D<float>* object, unsigned group) {
 
-	//FIXME set material (including its program)
+	setMaterial(material);
 
 	//TODO handle program caching
 
@@ -140,7 +154,7 @@ void GLES2Renderer::renderBufferDirect(Camera<float>* camera, Fog<float>* fog, I
 
 	//TODO Handle wireframe mode
 
-	//FIXME Render groups
+	//FIXME Render group
 
 	//TODO Expand to points, lines, sprites
 
@@ -220,9 +234,117 @@ void GLES2Renderer::render(Scene<float>& scene, Camera<float>* camera, std::shar
 
 	//TODO handle sprites and lensflares
 
-	//FIXME setDepthTest(true);
-	//FIXME setDepthWrite(true);
-	//FIXME setColorWrite(true);
+	//This allows it to be cleared for the next render.
+	setDepthTest(true);
+	setDepthWrite(true);
+	setColorWrite(true);
+
+}
+
+void GLES2Renderer::setMaterial(IMaterial* mat) {
+
+	//Set culling
+	if (mat->side == DoubleSide) {
+		glDisable(GL_CULL_FACE);
+	} else {
+		glEnable(GL_CULL_FACE);
+		if (mat->side == FrontSide) {
+			glCullFace(GL_BACK); //Cull the back, leaving front
+		} else {
+			glCullFace(GL_FRONT);
+		}
+	}
+
+	//Set blending
+	if (mat->transparent){
+
+		if (mat->blending == NoBlending){
+			glDisable(GL_BLEND);
+		} else {
+			glEnable(GL_BLEND);
+
+			if (mat->blending == AdditiveBlending) {
+				if (premultipliedAlpha) {
+					glBlendEquationSeparate(GL_FUNC_ADD, GL_FUNC_ADD);
+					glBlendFuncSeparate(GL_ONE, GL_ONE, GL_ONE, GL_ONE);
+				} else {
+					glBlendEquation(GL_FUNC_ADD);
+					glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+				}
+			} else if (mat->blending == SubtractiveBlending) {
+				if (premultipliedAlpha) {
+					glBlendEquationSeparate(GL_FUNC_ADD, GL_FUNC_ADD);
+					glBlendFuncSeparate(GL_ZERO, GL_ZERO, GL_ONE_MINUS_SRC_COLOR, GL_ONE_MINUS_SRC_ALPHA);
+				} else {
+					glBlendEquation(GL_FUNC_ADD);
+					glBlendFunc(GL_ZERO, GL_ONE_MINUS_SRC_COLOR);
+				}
+			} else if (mat->blending == MultiplyBlending) {
+				if (premultipliedAlpha) {
+					glBlendEquationSeparate(GL_FUNC_ADD, GL_FUNC_ADD);
+					glBlendFuncSeparate(GL_ZERO, GL_SRC_COLOR, GL_ZERO, GL_SRC_ALPHA);
+				} else {
+					glBlendEquation(GL_FUNC_ADD);
+					glBlendFunc(GL_ZERO, GL_SRC_COLOR);
+				}
+			} else {
+				if (premultipliedAlpha) {
+					glBlendEquationSeparate(GL_FUNC_ADD, GL_FUNC_ADD);
+					glBlendFuncSeparate(GL_ONE, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+				} else {
+					glBlendEquationSeparate(GL_FUNC_ADD, GL_FUNC_ADD);
+					glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+				}
+			} //TODO Handle custom blending
+
+		}
+
+	} else {
+		glDisable(GL_BLEND);
+	}
+
+	//Handle the depth function
+	switch(mat->depthFunc) {
+	case NeverDepth:
+		glDepthFunc(GL_NEVER);
+		break;
+	case AlwaysDepth:
+		glDepthFunc(GL_ALWAYS);
+		break;
+	case LessDepth:
+		glDepthFunc(GL_LESS);
+		break;
+	case LessEqualDepth:
+		glDepthFunc(GL_LEQUAL);
+		break;
+	case EqualDepth:
+		glDepthFunc(GL_EQUAL);
+		break;
+	case GreaterEqualDepth:
+		glDepthFunc(GL_GEQUAL);
+		break;
+	case GreaterDepth:
+		glDepthFunc(GL_GREATER);
+		break;
+	case NotEqualDepth:
+		glDepthFunc(GL_NOTEQUAL);
+		break;
+	default:
+		glDepthFunc(GL_LEQUAL);
+	}
+
+	//Handle if gl has the writes enabled.
+	setDepthTest(mat->depthTest);
+	setDepthWrite(mat->depthWrite);
+	setColorWrite(mat->colorWrite);
+
+	//Handle polygon offsets
+	if (mat->polygonOffset){
+		glEnable(GL_POLYGON_OFFSET_FILL);
+		glPolygonOffset(mat->polygonOffsetFactor, mat->polygonOffsetUnits);
+	} else {
+		glDisable(GL_POLYGON_OFFSET_FILL);
+	}
 
 }
 
