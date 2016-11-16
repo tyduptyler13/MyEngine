@@ -148,6 +148,15 @@ void GLES2ForwardShader::compile() {
 
 }
 
+void GLES2ForwardShader::prepare(Camera<float>* camera, Mesh<float>* object, const vector<Light<float>*>& lights){
+	this->vertexShaderRoot->prepare(camera, object, lights);
+	this->fragmentShaderRoot->prepare(camera, object, lights);
+}
+
+void GLES2ForwardShader::render(int group){
+	//TODO
+}
+
 void GLES2Vertex::prepare(Camera<float>* camera, Mesh<float>* object, const std::vector<Light<float>*>& lights) {
 
 	shader->bind(); //The shader needs to already be bound.

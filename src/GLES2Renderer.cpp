@@ -135,28 +135,31 @@ void GLES2Renderer::setDefaultViewport() {
 	setViewport(0, 0, w, h);
 }
 
-void GLES2Renderer::renderBufferImmediate(Object3D<float>* object, std::shared_ptr<Shader::Shader> program, IMaterial* material)  {
+void GLES2Renderer::renderBufferImmediate(Mesh<float>* object, std::shared_ptr<Shader::Shader> program, IMaterial* material)  {
 
 
 
 }
 
 void GLES2Renderer::renderBufferDirect(Camera<float>* camera, Fog<float>* fog, IGeometry<float>* geometry,
-		IMaterial* material, Object3D<float>* object, unsigned group) {
+		IMaterial* material, Mesh<float>* object, int group) {
 
 	setMaterial(material);
 
+	material->shader->bind();
+	material->shader->prepare(camera, object, lights);
+
 	//TODO handle program caching
+	//TODO handle fog, probably change it to a shaderNode
 
-	//TODO morph targets
+	//TODO morph targets (bones and such)
 
-	//FIXME send geometry to gpu, cache if it has changed
+	//Geometry is already sent by the shader prepare statement. (Allows for more custom handling of geometry)
 
 	//TODO Handle wireframe mode
-
-	//FIXME Render group
-
 	//TODO Expand to points, lines, sprites
+
+	material->shader->render(group);
 
 }
 
@@ -225,9 +228,7 @@ void GLES2Renderer::render(Scene<float>& scene, Camera<float>* camera, std::shar
 
 	} else {
 
-		//FIXME setBlending(NoBlending);
 		renderObjects(opaqueObjects, scene, camera);
-
 		renderObjects(transparentObjects, scene, camera);
 
 	}
@@ -519,6 +520,30 @@ std::vector<unsigned char> GLES2Renderer::readRenderTargetPixels(std::shared_ptr
 	target->bind();
 	glReadPixels(x, y, width, height, GL_RGB, GL_UNSIGNED_BYTE, data.data());
 	return data;
+}
+
+
+bool GLES2Renderer::isObjectViewable(Mesh<float>* object) {
+
+	if (object->geometry->boundingSphere == nullptr) {
+		object->geometry->computeBoundingSphere();
+	}
+
+	Sphere<float> sphere(*object->geometry->boundingSphere);
+	sphere.applyMatrix4(object->matrixWorld);
+
+	return isSphereViewable(sphere);
+
+}
+
+bool GLES2Renderer::isSphereViewable(Spheref s) {
+
+	if (!frustum.intersectsSphere(s)){
+		return false;
+	}
+
+	return true; //TODO Finish this function it should use clipping.
+
 }
 
 //Specializations for shaders (Allows a renderer to work)

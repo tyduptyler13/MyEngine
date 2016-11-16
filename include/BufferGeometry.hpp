@@ -16,6 +16,8 @@ namespace MyUPlay {
 		template <typename T>
 		struct BufferGeometry : public virtual IGeometry<T>, public AGeometry<T, BufferGeometry<T>> {
 
+			typedef typename IGeometry<T>::Group Group;
+
 			std::vector<T> vertices;
 			std::vector<T> normals;
 			std::vector<T> uvs;
@@ -107,27 +109,27 @@ namespace MyUPlay {
 				this->computeBoundingSphere();
 			}
 
-			std::vector<T> getVertices() {
+			std::vector<T> getVertices() const {
 				return vertices;
 			}
 
-			std::vector<unsigned> getVertexIndices(){
+			std::vector<unsigned> getVertexIndices() const {
 				return vertexIndices;
 			}
 
-			std::vector<T> getNormals() {
+			std::vector<T> getNormals() const {
 				return normals;
 			}
 
-			std::vector<unsigned> getNormalIndices(){
+			std::vector<unsigned> getNormalIndices() const {
 				return normalIndices;
 			}
 
-			std::vector<T> getUVs(){
+			std::vector<T> getUVs() const {
 				return uvs;
 			}
 
-			std::vector<unsigned> getUVIndices(){
+			std::vector<unsigned> getUVIndices() const {
 				return uvIndices;
 			}
 
@@ -171,12 +173,20 @@ namespace MyUPlay {
 
 			}
 
-			std::vector<Color> getColors(){
+			std::vector<Color> getColors() const {
 				return colors;
 			}
 
-			unsigned size() {
+			unsigned size() const {
 				return vertices.size();
+			}
+
+			bool isMultiMaterial() const {
+				return groups.size() > 1;
+			}
+
+			std::vector<Group> getGroups() const {
+				return groups;
 			}
 
 		};

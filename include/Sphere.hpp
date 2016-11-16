@@ -13,13 +13,6 @@ namespace MyUPlay {
 
 	namespace MyEngine {
 
-		#ifndef BOX3_DEFINED
-		template <typename T> class Box3;
-		#endif
-		#ifndef OBJECT3D_DEFINED
-		template <typename T> class Object3D;
-		#endif
-
 		template <typename T>
 		class Sphere {
 
@@ -157,8 +150,6 @@ namespace MyUPlay {
 
 		typedef Sphere<float> Spheref;
 		typedef Sphere<double> Sphered;
-
-		#define SPHERE_DEFINED
 
 	}
 

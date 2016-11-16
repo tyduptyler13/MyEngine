@@ -7,4 +7,5 @@ BasicExample: BasicExample.cpp
 	$(CXX) $(FLAGS) BasicExample.cpp $(LIBS) -o BasicExample
 
 clean:
+	$(MAKE) clean -C ../../
 	rm BasicExample

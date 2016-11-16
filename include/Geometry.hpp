@@ -50,6 +50,8 @@ namespace MyUPlay {
 			std::unique_ptr<Box3<T> > boundingBox;
 			std::unique_ptr<Sphere<T> > boundingSphere;
 
+			bool multiMaterial = false;
+
 			bool verticesNeedUpdate = false,
 					normalsNeedUpdate = false,
 					colorsNeedUpdate = false,
@@ -69,22 +71,22 @@ namespace MyUPlay {
 				return false;
 			}
 
-			virtual std::vector<T> getVertices() = 0;
-			virtual std::vector<unsigned> getVertexIndices() {
+			virtual std::vector<T> getVertices() const = 0;
+			virtual std::vector<unsigned> const getVertexIndices() {
 				return {}; //Empty list;
 			}
 
-			virtual std::vector<T> getNormals() = 0;
-			virtual std::vector<unsigned> getNormalIndices() {
+			virtual std::vector<T> getNormals() const = 0;
+			virtual std::vector<unsigned> const getNormalIndices() {
 				return {};
 			}
 
-			virtual std::vector<T> getUVs() = 0;
-			virtual std::vector<unsigned> getUVIndices() {
+			virtual std::vector<T> getUVs() const = 0;
+			virtual std::vector<unsigned> const getUVIndices() {
 				return {};
 			}
 
-			virtual std::vector<Color> getColors() = 0;
+			virtual std::vector<Color> getColors() const = 0;
 
 			/**
 			 * Returns the number elements in the Geometry.
@@ -96,7 +98,7 @@ namespace MyUPlay {
 			virtual unsigned size() const = 0;
 
 			virtual bool isMultiMaterial() const = 0;
-			virtual std::vector<Group> getGroups() = 0;
+			virtual std::vector<Group> getGroups() const = 0;
 
 			IGeometry& operator=(const IGeometry& geometry) {
 				name = geometry.name;

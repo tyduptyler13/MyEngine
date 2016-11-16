@@ -128,7 +128,7 @@ namespace MyUPlay {
 				std::unordered_map<std::string, GLint> pos;
 				GLuint program = 0;
 
-				~GLES2Shader(){
+				virtual ~GLES2Shader(){
 					glDeleteProgram(program);
 				}
 
@@ -162,6 +162,8 @@ namespace MyUPlay {
 					}
 				}
 
+				virtual void render(int group = -1) override = 0;
+
 			};
 
 			struct GLES2ForwardShader : public ForwardShader, public GLES2Shader {
@@ -169,11 +171,12 @@ namespace MyUPlay {
 				GLES2ForwardShader() : GLES2Shader() {
 					fragmentShaderRoot = std::make_unique<GLES2Fragment>(this);
 				}
-				~GLES2ForwardShader();
 
 				void compile() override;
 
 				void prepare(Camera<float>* camera, Mesh<float>* object, const std::vector<Light<float>*>& lights) override;
+
+				void render(int group = -1) override;
 
 			};
 

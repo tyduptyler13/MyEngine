@@ -4,7 +4,7 @@
 #include "GLES2Renderer.hpp"
 
 #include "Geometries/BoxGeometry.hpp"
-#include "Materials/MeshNormalMaterial.hpp"
+#include "GLES2MaterialLib.hpp"
 
 #include <memory>
 
@@ -29,7 +29,7 @@ int main(){
 
 	BoxGeometry<float>* geo = new BoxGeometry<float>(10, 10, 10, 2, 4, 8);
 
-	MeshNormalMaterial* mat = new MeshNormalMaterial();
+	IMaterial* mat = createNormalMaterial<GLES2Renderer>();
 
 	Mesh<float>* box = new Mesh<float>(geo, mat);
 

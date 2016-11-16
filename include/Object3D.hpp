@@ -181,7 +181,7 @@ public:
 		}
 
 		object->parent = this;
-		children.push_back(object);
+		children.emplace_back(std::unique_ptr<Object3D>(object));
 
 		return *this;
 	}
@@ -202,7 +202,9 @@ public:
 	 */
 	Object3D& remove(Object3D* object, bool release = false){
 
-		auto loc = std::find(children.begin(), children.end(), object);
+		auto loc = std::find_if(children.begin(), children.end(), [object](const std::unique_ptr<Object3D>& p){
+			return p.get() == object;
+		});
 
 		if (loc != children.end()){
 			object->parent = nullptr; //Reset parent pointer to null;

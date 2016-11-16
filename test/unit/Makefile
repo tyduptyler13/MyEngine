@@ -1,5 +1,5 @@
-CFLAGS=-O2 -Wall -Wextra -pedantic -flto -I../include -I../deps/googletest/include -pthread --std=c++14
-LFLAGS=-flto -lpthread -L../deps/googletest -lgtest -lgtest_main -L../build/out/Default/obj.target -lMyEngine
+CFLAGS=-O2 -Wall -Wextra -pedantic -flto -I../../include -I../../deps/googletest/googletest/include -pthread --std=c++14
+LFLAGS=-flto -lpthread -L../../deps/googletest/googletest -lgtest -lgtest_main -Wl,-rpath ../../ -L../../ -lMyEngine
 
 FILES=$(wildcard *.cc)
 HEADERS=$(wildcard ../../include/*.hpp)
@@ -18,14 +18,14 @@ clean:
 
 default: check gtest
 
-../../deps/googletest/Makefile: ../../deps/googletest/CMakeLists.txt
-	cd ../../deps/googletest; cmake .
+../../deps/googletest/googletest/Makefile: ../../deps/googletest/CMakeLists.txt
+	cd ../../deps/googletest/googletest; cmake .
 
 ../../deps/googletest:
 	git submodule init ../../deps/googletest && git submodule update ../../deps/googletest
 
-gtest: ../../deps/googletest ../../deps/googletest/Makefile
-	$(MAKE) -C ../../deps/googletest
+gtest: ../../deps/googletest/googletest ../../deps/googletest/googletest/Makefile
+	$(MAKE) -C ../../deps/googletest/googletest
 
 
 

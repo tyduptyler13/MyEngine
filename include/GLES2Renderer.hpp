@@ -41,8 +41,8 @@ namespace MyUPlay {
 			std::tuple<int, int, unsigned, unsigned> getViewport() const;
 			void setDefaultViewport();
 
-			void renderBufferImmediate(Object3D<float>* object, std::shared_ptr<Shader::Shader> program,IMaterial* material);
-			void renderBufferDirect(Camera<float>*, Fog<float>*, IGeometry<float>*, IMaterial*, Object3D<float>*, unsigned group);
+			void renderBufferImmediate(Mesh<float>* object, std::shared_ptr<Shader::Shader> program, IMaterial* material);
+			void renderBufferDirect(Camera<float>*, Fog<float>*, IGeometry<float>*, IMaterial*, Mesh<float>*, int group);
 
 			void render(Scene<float>& scene, Camera<float>* camera, std::shared_ptr<IRenderTarget> renderTarget = NULL, bool forceClear = false);
 
@@ -90,7 +90,7 @@ namespace MyUPlay {
 			void projectObject(Object3D<float>* s, Camera<float>* camera);
 
 			bool isObjectViewable(Mesh<float>*);
-			bool isSphereVisible(Spheref);
+			bool isSphereViewable(Spheref);
 			//bool isSpriteVisible(Sprite);
 
 			void setMaterial(IMaterial*);

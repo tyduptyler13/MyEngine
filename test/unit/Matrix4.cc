@@ -183,7 +183,7 @@ TEST(Matrix4f, getInverse) {
         Matrix4f().makeRotationZ( 0.3 ),
         Matrix4f().makeRotationZ( -0.3 ),
         Matrix4f().makeScale( 1, 2, 3 ),
-        Matrix4f().makeScale( 1/8, 1/2, 1/3 ),
+        Matrix4f().makeScale( 1.0/8, 1.0/2, 1.0/3 ),
         Matrix4f().makeFrustum( -1, 1, -1, 1, 1, 1000 ),
         Matrix4f().makeFrustum( -16, 16, -9, 9, 0.1, 10000 ),
         Matrix4f().makeTranslation( 1, 2, 3 )
@@ -199,12 +199,12 @@ TEST(Matrix4f, getInverse) {
         EXPECT_TRUE(matrixEquals4( mSelfInverse, mInverse ));
 
         // the determinant of the inverse should be the reciprocal
-        EXPECT_LT(abs( m.det() * mInverse.det() - 1 ), 0.0001);
+        EXPECT_LT(fabs( m.det() * mInverse.det() - 1 ), 0.0001);
 
         Matrix4f mProduct = Matrix4f().multiplyMatrices( m, mInverse );
 
         // the determinant of the identity matrix is 1
-        EXPECT_LT(abs( mProduct.det() - 1 ), 0.0001);
+        EXPECT_LT(fabs( mProduct.det() - 1 ), 0.0001);
         EXPECT_TRUE(matrixEquals4( mProduct, identity ));
     }
 }
