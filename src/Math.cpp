@@ -8,14 +8,14 @@ namespace MyUPlay {
 	namespace MyEngine {
 		namespace Math {
 
-			static const char characters[63] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+			static const char characters[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
 			const UUID generateUUID(){
 
 				UUID uuid(36, ' ');
 				std::random_device rand; //Trueish random (slow)
 				std::default_random_engine randG(rand()); //Fake random (fast) with good rand input seed
-				std::uniform_int_distribution<int> dist(0, 62); //Range for UUID
+				std::uniform_int_distribution<int> dist(0, 61); //Range for UUID
 
 				for ( unsigned i = 0; i < 36; ++i ) {
 
