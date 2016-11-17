@@ -52,41 +52,30 @@ namespace MyUPlay {
 
 			bool multiMaterial = false;
 
-			bool verticesNeedUpdate = false,
-					normalsNeedUpdate = false,
-					colorsNeedUpdate = false,
+			bool verticesNeedUpdate = true,
+					normalsNeedUpdate = true,
+					indicesNeedUpdate = false,
 					boundingBoxDirty = true, //Must be set to true for it to recalculate
 					boundingSphereDirty = true; //Must be set to true for it to recalculate
+
+			unsigned vertexBuffer = 0, indexBuffer = 0, normalBuffer = 0; //Internal use
 
 			virtual void applyMatrix(const Matrix4<T>& matrix) = 0;
 
 			virtual void computeBoundingBox() = 0;
 			virtual void computeBoundingSphere() = 0;
 
-			virtual bool hasIndexedVertices() const {
-				return false;
-			}
-
-			virtual bool hasIndexedNormals() const {
+			virtual bool isIndexed() const {
 				return false;
 			}
 
 			virtual std::vector<T> getVertices() const = 0;
-			virtual std::vector<unsigned> const getVertexIndices() {
-				return {}; //Empty list;
-			}
 
 			virtual std::vector<T> getNormals() const = 0;
-			virtual std::vector<unsigned> const getNormalIndices() {
+
+			virtual std::vector<unsigned short> getIndices() const {
 				return {};
 			}
-
-			virtual std::vector<T> getUVs() const = 0;
-			virtual std::vector<unsigned> const getUVIndices() {
-				return {};
-			}
-
-			virtual std::vector<Color> getColors() const = 0;
 
 			/**
 			 * Returns the number elements in the Geometry.
@@ -98,7 +87,9 @@ namespace MyUPlay {
 			virtual unsigned size() const = 0;
 
 			virtual bool isMultiMaterial() const = 0;
-			virtual std::vector<Group> getGroups() const = 0;
+			virtual std::vector<Group> getGroups() const {
+				return {};
+			}
 
 			IGeometry& operator=(const IGeometry& geometry) {
 				name = geometry.name;

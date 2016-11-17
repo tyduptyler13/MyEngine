@@ -1,4 +1,4 @@
-.PHONY: configure all clean compile
+.PHONY: configure all clean compile testapp
 
 #export CC=clang
 #export CXX=clang++
@@ -22,3 +22,6 @@ compile: ./build
 
 clean:
 	rm -rf ./build
+
+testapp:
+	$(MAKE) -C test/core

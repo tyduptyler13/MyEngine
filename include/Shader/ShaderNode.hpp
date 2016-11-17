@@ -67,8 +67,9 @@ namespace MyUPlay {
 				 * race conditions except that instead its just the alternate paths executing and using the same
 				 * variables.
 				 */
-				const std::string name; //The value is generated if not specified at creation time.
-				Output(std::string name = generateUniqueName()) : name(name) {}
+				const std::string name = generateUniqueName(); //The value is generated if not specified at creation time.
+				Output(){}
+				Output(std::string name) : name(name) {}
 			};
 
 			template <typename T> //Renderer, internal type

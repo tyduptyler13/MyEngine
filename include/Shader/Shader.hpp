@@ -29,7 +29,6 @@ struct MyUPlay::MyEngine::Shader::Shader {
 	virtual void bind() = 0;
 
 	virtual void prepare(Camera<float>* camera, Mesh<float>* o, const std::vector<Light<float>*>& lights) = 0;
-	virtual void render(int group = -1) = 0;
 
 	std::unique_ptr<VertexBase> vertexShaderRoot;
 

@@ -33,6 +33,8 @@ int main(){
 
 	Mesh<float>* box = new Mesh<float>(geo, mat);
 
+	box->frustumCulled = false; //TODO fix culling bug
+
 	scene.add(box);
 
 	bool quit = false;

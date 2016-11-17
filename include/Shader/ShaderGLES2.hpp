@@ -33,8 +33,8 @@ namespace MyUPlay {
 				void prepare(Camera<float>* camera, Mesh<float>* object, const std::vector<Light<float>*>& lights) override;
 
 				std::string getStatic() const override {
-					return "attribute vec3 position\n"
-							"attribute vec3 normal\n\n"
+					return "attribute vec3 position;\n"
+							"attribute vec3 normal;\n\n"
 							"uniform mat4 modelView;\n"
 							"uniform mat4 projectionMatrix;\n"
 							"uniform mat4 modelMatrix;\n"
@@ -113,12 +113,15 @@ namespace MyUPlay {
 				 * By default we output the normal shader
 				 */
 				GLES2Fragment(GLES2Shader* const shader) : FragmentBase(), shader(shader), gl_FragCoord("gl_FragCoord"), gl_FrontFacing("gl_FrontFacing") {
-
 					std::shared_ptr<InputVariable<float>> a = std::make_shared<InputVariable<float>>(1);
 					alpha.set(a, &a->out);
 
 					color.set(&normal);
+				}
 
+				void traverseChildren(ShaderTraverser s) override {
+					s(alpha.node);
+					s(color.node);
 				}
 
 			};
@@ -162,8 +165,6 @@ namespace MyUPlay {
 					}
 				}
 
-				virtual void render(int group = -1) override = 0;
-
 			};
 
 			struct GLES2ForwardShader : public ForwardShader, public GLES2Shader {
@@ -175,8 +176,6 @@ namespace MyUPlay {
 				void compile() override;
 
 				void prepare(Camera<float>* camera, Mesh<float>* object, const std::vector<Light<float>*>& lights) override;
-
-				void render(int group = -1) override;
 
 			};
 

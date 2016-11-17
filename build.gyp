@@ -39,7 +39,7 @@
 				"-pedantic",
 				"-std=c++14",
 				"-g",
-				"-O2",
+				#"-O2",
 				"-fPIC"
 			],
 			'cflags!': [ '-fno-exceptions' ],

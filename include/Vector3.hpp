@@ -19,7 +19,7 @@ namespace MyUPlay {
 			return rhs * scalar;
 		}
 
-		typedef Vector3<> Vector3f;
+		typedef Vector3<float> Vector3f;
 		typedef Vector3<double> Vector3d;
 	}
 }
@@ -30,7 +30,6 @@ namespace MyUPlay {
 #include "Euler.hpp"
 #include "Camera.hpp"
 #include "Math.hpp"
-
 
 /**
  * This class supports any numeric type or class that supports

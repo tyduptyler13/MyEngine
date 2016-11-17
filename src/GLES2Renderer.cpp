@@ -1,6 +1,7 @@
 #include <stdexcept>
 #include <algorithm>
 
+#include <SDL2/SDL.h>
 #include <SDL2/SDL_opengles2.h>
 
 #include <SOIL/SOIL.h>
@@ -159,7 +160,16 @@ void GLES2Renderer::renderBufferDirect(Camera<float>* camera, Fog<float>* fog, I
 	//TODO Handle wireframe mode
 	//TODO Expand to points, lines, sprites
 
-	material->shader->render(group);
+	if (group != -1) {
+		auto groups = object->geometry->getGroups();
+		auto indices = object->geometry->getIndices();
+		glDrawElements(GL_TRIANGLES, groups[group].count, GL_UNSIGNED_SHORT, indices.data() + groups[group].start * sizeof(unsigned short));
+	} else {
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, object->geometry->indexBuffer);
+		glDrawElements(GL_TRIANGLES, object->geometry->size(), GL_UNSIGNED_SHORT, NULL);
+	}
+
+	SDL_GL_SwapWindow(window);
 
 }
 
@@ -389,7 +399,11 @@ void GLES2Renderer::projectObject(Object3D<>* o, Camera<float>* camera) {
 						const auto& groups = m->geometry->getGroups();
 
 						for (unsigned i = 0; i < groups.size(); ++i){
-							//TODO handle multimaterials, need to check for transparency
+							if (m->material->transparent) { //FIXME This is a multimaterial, need to check some sort of array somehow
+								transparentObjects.emplace_back(RenderItem<Mesh<float>>(m, vector.z, i));
+							} else {
+								opaqueObjects.emplace_back(RenderItem<Mesh<float>>(m, vector.z, i));
+							}
 						}
 
 					} else {

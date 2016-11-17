@@ -38,6 +38,11 @@ namespace MyUPlay {
 					return "vec3 " + ret.name + " = transformDirection(" + dir.output->name + ", " + matrix.output->name + ");\n";
 				}
 
+				void traverseChildren(ShaderTraverser s) override {
+					s(dir.node);
+					s(matrix.node);
+				}
+
 			};
 
 			//Specialized for GLES2
@@ -57,6 +62,11 @@ namespace MyUPlay {
 					return "vec3 " + ret.name + " = transformLocation(" + loc.output->name + ", " + matrix.output->name + ");\n";
 				}
 
+				void traverseChildren(ShaderTraverser s) override {
+					s(loc.node);
+					s(matrix.node);
+				}
+
 			};
 
 			template <typename T>
@@ -69,6 +79,11 @@ namespace MyUPlay {
 
 				std::string getInstance() const override {
 					return Utility<GLES2Renderer, T>::type + " " + ret.name + " = " + a.output->name + " + " + b.output->name + ";\n";
+				}
+
+				void traverseChildren(ShaderTraverser s) override{
+					s(a.node);
+					s(b.node);
 				}
 
 			};
@@ -86,6 +101,11 @@ namespace MyUPlay {
 					return std::string(Utility<GLES2Renderer, R>::type) + " " + ret.name + " = " + a.output->name + " * " + b.output->name + ";\n";
 				}
 
+				void traverseChildren(ShaderTraverser s) override {
+					s(a.node);
+					s(b.node);
+				}
+
 			};
 
 			//It is up to the designer to know if the types inserted are valid.
@@ -100,6 +120,11 @@ namespace MyUPlay {
 				std::string getInstance() const override {
 					return std::string(Utility<GLES2Renderer, R>::type) + " " + ret.name + " = " +
 							Utility<GLES2Renderer, R>::type + "(" + a.output->name + ", " + b.output->name + ");\n";
+				}
+
+				void traverseChildren(ShaderTraverser s) override {
+					s(a.node);
+					s(b.node);
 				}
 
 			};
@@ -120,6 +145,10 @@ namespace MyUPlay {
 					return Utility<GLES2Renderer, R>::type + " " + ret.name + " = " + a.output->name + swiz + ";\n";
 				}
 
+				void traverseChildren(ShaderTraverser s) override {
+					s(a.node);
+				}
+
 			};
 
 			template <typename T>
@@ -135,6 +164,12 @@ namespace MyUPlay {
 					//mix should already be defined.
 					return Utility<GLES2Renderer, T>::type + " " + ret.name + " = mix(" + a.output->name +
 							", " + b.output->name + ", " + fac.output->name + ");\n";
+				}
+
+				void traverseChildren(ShaderTraverser s) override {
+					s(a.node);
+					s(b.node);
+					s(fac.node);
 				}
 
 			};
@@ -163,6 +198,7 @@ namespace MyUPlay {
 
 			};
 
+			/* Working
 			struct Fresnel : public IShaderNode {
 
 				Input<float> fac;
@@ -184,7 +220,14 @@ namespace MyUPlay {
 							+ lightDir.output->name + ", " + fac.output->name + ");\n";
 				}
 
+				void traverseChildren(ShaderTraverser s){
+					s(fac);
+					s(normal);
+					s(lightDir);
+				}
+
 			};
+			 */
 
 			struct Rand : public IShaderNode {
 
@@ -205,6 +248,10 @@ namespace MyUPlay {
 
 				std::string getInstance() const override {
 					return "float " + out.name + " = rand(" + seed.output->name + ");\n";
+				}
+
+				void traverseChildren(ShaderTraverser s) override {
+					s(seed.node);
 				}
 
 			};

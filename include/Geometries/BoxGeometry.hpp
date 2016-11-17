@@ -88,13 +88,13 @@ namespace MyUPlay {
 								d = numberOfVertices + ( ix + 1 ) + gridX1 * iy;
 
 						//Vertices
-						this->vertexIndices[ indexBufferOffset ] = a;
-						this->vertexIndices[ indexBufferOffset + 1] = b;
-						this->vertexIndices[ indexBufferOffset + 2] = d;
+						this->indices[ indexBufferOffset ] = a;
+						this->indices[ indexBufferOffset + 1] = b;
+						this->indices[ indexBufferOffset + 2] = d;
 
-						this->vertexIndices[ indexBufferOffset + 3] = b;
-						this->vertexIndices[ indexBufferOffset + 4] = c;
-						this->vertexIndices[ indexBufferOffset + 5] = d;
+						this->indices[ indexBufferOffset + 3] = b;
+						this->indices[ indexBufferOffset + 4] = c;
+						this->indices[ indexBufferOffset + 5] = d;
 
 						indexBufferOffset += 6;
 						groupCounter += 6;
@@ -118,7 +118,7 @@ namespace MyUPlay {
 				const unsigned vertexCount = calculateVertexCount(widthSegments, heightSegments, depthSegments);
 				const unsigned indexCount = calculateIndexCount(widthSegments, heightSegments, depthSegments);
 
-				this->vertexIndices.resize(indexCount);
+				this->indices.resize(indexCount);
 				this->vertices.resize(vertexCount * 3);
 				this->normals.resize(vertexCount * 3);
 				this->uvs.resize(vertexCount * 2);
@@ -141,9 +141,6 @@ namespace MyUPlay {
 				buildPlane( vector.x, vector.y, vector.z,  1, -1, width, height,  depth,  widthSegments, heightSegments, 4, vertexBufferOffset, uvBufferOffset, indexBufferOffset, numberOfVertices, groupStart, vector ); // pz
 				buildPlane( vector.x, vector.y, vector.z, -1, -1, width, height, -depth,  widthSegments, heightSegments, 5, vertexBufferOffset, uvBufferOffset, indexBufferOffset, numberOfVertices, groupStart, vector ); // nz
 
-				//For this case, all of these share the same indices
-				this->normalIndices = this->vertexIndices;
-				this->uvIndices = this->vertexIndices;
 			}
 
 		};

@@ -11,15 +11,18 @@ using namespace std;
 using namespace MyUPlay::MyEngine;
 using namespace MyUPlay::MyEngine::Shader;
 
-static string fetchCode(IShaderNode& root){
+static Log shaderLog("GLES2ShaderCompiler");
 
-	string staticCode;
+static string fetchCode(IShaderNode* root){
+
+	string staticCode = "//THIS IS GENERATED CODE!!!\n\n" + root->getStatic();
 	string mainCode = "//This is generated code, do not try to directly modify!\n\n"
 			"void main(){\n";
 
 	std::unordered_set<Math::UUID> visited;
 
 	IShaderNode::ShaderTraverser trav = [&](shared_ptr<IShaderNode> node){
+		if (node == nullptr) return; //Some inputs don't have nodes attached!
 		if (visited.find(node->uuid) == visited.end()){ //Have we seen this node before?
 			visited.insert(node->uuid);
 			staticCode += node->getStatic(); //Foward recursion (breadth first)
@@ -28,15 +31,15 @@ static string fetchCode(IShaderNode& root){
 		}
 	};
 
-	root.traverseChildren(trav);
+	root->traverseChildren(trav);
 
-	mainCode += "\n}\n//This is generated code, do not try to directly modify!";
+	mainCode += root->getInstance();
+
+	mainCode += "\n}\n//This is generated code, do not try to directly modify!\n";
 
 	return staticCode + mainCode;
 
 }
-
-static Log shaderLog("GLES2ShaderCompiler");
 
 static inline void reportError(GLuint shader) {
 	GLint maxLength;
@@ -55,12 +58,12 @@ void GLES2ForwardShader::compile() {
 
 	pos.clear(); //Want to forget old positions.
 
-	string vertexCode = fetchCode(*vertexShaderRoot);
+	string vertexCode = fetchCode(vertexShaderRoot.get());
 	shaderLog.log("Vertex shader:\n" + vertexCode);
-	string fragmentCode = fetchCode(*fragmentShaderRoot);
+	string fragmentCode = fetchCode(fragmentShaderRoot.get());
 	shaderLog.log("Fragment shader:\n" + fragmentCode);
 
-	glslopt_shader *shader = glslopt_optimize(ctx, kGlslOptShaderVertex, vertexCode.c_str(), 0);
+	glslopt_shader* shader = glslopt_optimize(ctx, kGlslOptShaderVertex, vertexCode.c_str(), 0);
 	if (glslopt_get_status(shader)){
 		vertexCode = glslopt_get_output(shader);
 		shaderLog.log("Optimized vertex shader:\n" + vertexCode);
@@ -93,8 +96,8 @@ void GLES2ForwardShader::compile() {
 		throw runtime_error("Failed to compile a shader! See log for details.");
 	}
 
-	GLuint fragmentShader = glCreateShader(GL_VERTEX_SHADER);
-	cp = vertexCode.c_str(); //Getting an lvalue.
+	GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+	cp = fragmentCode.c_str(); //Getting an lvalue.
 	glShaderSource(fragmentShader, 1, &cp, 0);
 
 	glCompileShader(fragmentShader);
@@ -153,31 +156,103 @@ void GLES2ForwardShader::prepare(Camera<float>* camera, Mesh<float>* object, con
 	this->fragmentShaderRoot->prepare(camera, object, lights);
 }
 
-void GLES2ForwardShader::render(int group){
-	//TODO
-}
-
 void GLES2Vertex::prepare(Camera<float>* camera, Mesh<float>* object, const std::vector<Light<float>*>& lights) {
+
+	if (shader->dirty) shader->compile(); //Check if the shader needs an update
+
+	IGeometry<float>* geometry = object->geometry.get();
+
+	if (geometry->indicesNeedUpdate) {
+
+		if (geometry->indexBuffer == 0) {
+			glGenBuffers(1, &geometry->indexBuffer); //TODO Move this value somewhere we can manage its memory
+		}
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, geometry->indexBuffer);
+		//TODO look into if we should always static draw
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned short) * geometry->getIndices().size(), geometry->getIndices().data(), GL_STATIC_DRAW);
+
+		geometry->indicesNeedUpdate = false;
+
+	}
+
+	if (geometry->verticesNeedUpdate) {
+
+		if (geometry->vertexBuffer == 0){
+			glGenBuffers(1, &geometry->vertexBuffer); //TODO Move this value somewhere we can manage its memory
+		}
+
+		glBindBuffer(GL_ARRAY_BUFFER, geometry->vertexBuffer);
+		//TODO look into if we should always static draw
+		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * geometry->getVertices().size(), geometry->getVertices().data(), GL_STATIC_DRAW);
+
+		geometry->verticesNeedUpdate = false;
+
+	}
+
+	if (geometry->normalsNeedUpdate) {
+		if (geometry->normalBuffer == 0){
+			glGenBuffers(1, &geometry->normalBuffer); //TODO Move this value somewhere we can manage its memory
+		}
+
+		glBindBuffer(GL_ARRAY_BUFFER, geometry->normalBuffer);
+		//TODO look into if we should always static draw
+		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * geometry->getNormals().size(), geometry->getNormals().data(), GL_STATIC_DRAW);
+
+		geometry->normalsNeedUpdate = false;
+	}
 
 	shader->bind(); //The shader needs to already be bound.
 
 	GLint posLoc = shader->getAttribLoc("position");
 
-	if (posLoc == 0) {
-		shaderLog.error("Failed to get position of required 'position' attribute!");
-		throw runtime_error("Couldn't get position of attribute. No progress could be made.");
+	if (posLoc != 0) {
+		glBindBuffer(GL_ARRAY_BUFFER, geometry->vertexBuffer);
+		glVertexAttribPointer(posLoc, 3, GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(posLoc);
 	}
 
 	GLint normLoc = shader->getAttribLoc("normal");
 
-	if (normLoc == 0) {
-		shaderLog.error("Failed to get position of required 'normal' attribute!");
-		throw runtime_error("Couldn't get position of attribute. No progress could be made.");
+	if (normLoc != 0) {
+		glBindBuffer(GL_ARRAY_BUFFER, geometry->normalBuffer);
+		glVertexAttribPointer(normLoc, 3, GL_FLOAT, GL_FALSE, 0, 0);
+		glEnableVertexAttribArray(normLoc);
+	}
+
+	GLint cameraLoc = shader->getUniformLoc("cameraPosition");
+
+	if (cameraLoc != 0) {
+		glUniform3f(cameraLoc, camera->position.x, camera->position.y, camera->position.z);
+	}
+
+	GLint projectionMatrixLoc = shader->getUniformLoc("projectionMatrix");
+
+	if (projectionMatrixLoc != 0) {
+		glUniformMatrix4fv(projectionMatrixLoc, 16, GL_FALSE, &camera->projectionMatrix.elements[0]);
+	}
+
+	GLint viewMatrixLoc = shader->getUniformLoc("viewMatrix");
+
+	if (viewMatrixLoc != 0) {
+		glUniformMatrix4fv(viewMatrixLoc, 16, GL_FALSE, &camera->matrixWorldInverse.elements[0]);
+	}
+
+	GLint modelMatrixLoc = shader->getUniformLoc("modelMatrix");
+
+	if (modelMatrixLoc != 0) {
+		glUniformMatrix4fv(modelMatrixLoc, 16, GL_FALSE, &object->matrixWorld.elements[0]);
+	}
+
+	GLint modelViewLoc = shader->getUniformLoc("modelView");
+
+	if (modelViewLoc != 0) {
+		glUniformMatrix4fv(modelViewLoc, 16, GL_FALSE, &object->modelViewMatrix.elements[0]);
 	}
 
 }
 
-void GLES2Fragment::prepare(Camera<float>* camera, Mesh<float>* object, const std::vector<Light<float>*>& lights) {
+void GLES2Fragment::prepare(Camera<float>*, Mesh<float>*, const std::vector<Light<float>*>&) {
 
 	//TODO Handle custom attributes, otherwise we have 0 things to add by default.
 	//FIXME Custom attribute handling should be handled by a base class. (Is this the base class?)

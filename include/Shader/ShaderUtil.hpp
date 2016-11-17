@@ -18,7 +18,6 @@
 #include "Light.hpp"
 
 #include <string>
-#include <regex>
 
 namespace MyUPlay {
 	namespace MyEngine {
@@ -156,24 +155,14 @@ namespace MyUPlay {
 				}
 			}
 
-			static const std::regex decimal("\\.\\d+$");
-
 			template <>
 			inline std::string Utility<GLES2Renderer, double>::toString(const double& t){
-				std::string s = std::to_string(t);
-				if (std::regex_search(s, decimal)){ //GLSL requires a decimal for floats.
-					s += ".0";
-				}
-				return s;
+				return std::to_string(t);
 			}
 
 			template <>
 			inline std::string Utility<GLES2Renderer, float>::toString(const float& t){
-				std::string s = std::to_string(t);
-				if (std::regex_search(s, decimal)){ //GLSL requires a decimal for floats.
-					s += ".0";
-				}
-				return s;
+				return std::to_string(t);
 			}
 
 			template <>
