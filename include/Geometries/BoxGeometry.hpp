@@ -141,6 +141,8 @@ namespace MyUPlay {
 				buildPlane( vector.x, vector.y, vector.z,  1, -1, width, height,  depth,  widthSegments, heightSegments, 4, vertexBufferOffset, uvBufferOffset, indexBufferOffset, numberOfVertices, groupStart, vector ); // pz
 				buildPlane( vector.x, vector.y, vector.z, -1, -1, width, height, -depth,  widthSegments, heightSegments, 5, vertexBufferOffset, uvBufferOffset, indexBufferOffset, numberOfVertices, groupStart, vector ); // nz
 
+				this->indicesNeedUpdate = true;
+
 			}
 
 		};

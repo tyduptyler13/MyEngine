@@ -206,7 +206,7 @@ void GLES2Vertex::prepare(Camera<float>* camera, Mesh<float>* object, const std:
 
 	GLint posLoc = shader->getAttribLoc("position");
 
-	if (posLoc != 0) {
+	if (posLoc != -1) {
 		glBindBuffer(GL_ARRAY_BUFFER, geometry->vertexBuffer);
 		glVertexAttribPointer(posLoc, 3, GL_FLOAT, GL_FALSE, 0, 0);
 		glEnableVertexAttribArray(posLoc);
@@ -214,7 +214,7 @@ void GLES2Vertex::prepare(Camera<float>* camera, Mesh<float>* object, const std:
 
 	GLint normLoc = shader->getAttribLoc("normal");
 
-	if (normLoc != 0) {
+	if (normLoc != -1) {
 		glBindBuffer(GL_ARRAY_BUFFER, geometry->normalBuffer);
 		glVertexAttribPointer(normLoc, 3, GL_FLOAT, GL_FALSE, 0, 0);
 		glEnableVertexAttribArray(normLoc);
@@ -222,31 +222,31 @@ void GLES2Vertex::prepare(Camera<float>* camera, Mesh<float>* object, const std:
 
 	GLint cameraLoc = shader->getUniformLoc("cameraPosition");
 
-	if (cameraLoc != 0) {
+	if (cameraLoc != -1) {
 		glUniform3f(cameraLoc, camera->position.x, camera->position.y, camera->position.z);
 	}
 
 	GLint projectionMatrixLoc = shader->getUniformLoc("projectionMatrix");
 
-	if (projectionMatrixLoc != 0) {
+	if (projectionMatrixLoc != -1) {
 		glUniformMatrix4fv(projectionMatrixLoc, 16, GL_FALSE, &camera->projectionMatrix.elements[0]);
 	}
 
 	GLint viewMatrixLoc = shader->getUniformLoc("viewMatrix");
 
-	if (viewMatrixLoc != 0) {
+	if (viewMatrixLoc != -1) {
 		glUniformMatrix4fv(viewMatrixLoc, 16, GL_FALSE, &camera->matrixWorldInverse.elements[0]);
 	}
 
 	GLint modelMatrixLoc = shader->getUniformLoc("modelMatrix");
 
-	if (modelMatrixLoc != 0) {
+	if (modelMatrixLoc != -1) {
 		glUniformMatrix4fv(modelMatrixLoc, 16, GL_FALSE, &object->matrixWorld.elements[0]);
 	}
 
 	GLint modelViewLoc = shader->getUniformLoc("modelView");
 
-	if (modelViewLoc != 0) {
+	if (modelViewLoc != -1) {
 		glUniformMatrix4fv(modelViewLoc, 16, GL_FALSE, &object->modelViewMatrix.elements[0]);
 	}
 
