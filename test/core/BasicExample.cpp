@@ -5,6 +5,7 @@
 
 #include "Geometries/BoxGeometry.hpp"
 #include "GLES2MaterialLib.hpp"
+#include "Color.hpp"
 
 #include <memory>
 
@@ -15,21 +16,19 @@ int main(){
 
 	Scene<> scene;
 
-	PerspectiveCamera<float>* camera = new PerspectiveCamera<float>(45, 800.0 / 600.0);
+	PerspectiveCamera<float>* camera = new PerspectiveCamera<float>(90, 800.0 / 600.0);
 
 	scene.add(camera);
-
-	camera->position.set(0, 150, 400);
-
-	camera->lookAt(scene.position);
 
 	GLES2Renderer renderer;
 
 	renderer.setSize(800, 600);
 
-	BoxGeometry<float>* geo = new BoxGeometry<float>(10, 10, 10, 2, 4, 8);
+	BoxGeometry<float>* geo = new BoxGeometry<float>(10, 10, 10);
 
 	IMaterial* mat = createNormalMaterial<GLES2Renderer>();
+
+	mat->side = DoubleSide;
 
 	Mesh<float>* box = new Mesh<float>(geo, mat);
 

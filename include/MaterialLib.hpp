@@ -9,6 +9,7 @@ namespace MyUPlay {
 		template <class R>
 		IMaterial* createNormalMaterial(){
 			static_assert(true, "Material not implemented for this renderer or missing header!");
+			return nullptr;
 		}
 
 	}

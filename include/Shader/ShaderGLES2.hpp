@@ -75,10 +75,10 @@ namespace MyUPlay {
 					fPosition.set(transformLocation, &transformLocation->ret);
 
 					std::shared_ptr<Combine<Vector3f, float, Vector4f>> combined = std::make_shared<Combine<Vector3f, float, Vector4f>>();
-					std::shared_ptr<InputVariable<float>> zero = std::make_shared<InputVariable<float>>(0); //A float value of zero.
+					std::shared_ptr<InputVariable<float>> one = std::make_shared<InputVariable<float>>(1); //Const value of 1
 
 					combined->a.set(transformLocation, &transformLocation->ret);
-					combined->b.set(zero, &zero->out);
+					combined->b.set(one, &one->out);
 
 					std::shared_ptr<Multiply<Matrix4f, Vector4f, Vector4f>> multiply = std::make_shared<Multiply<Matrix4f, Vector4f, Vector4f>>();
 

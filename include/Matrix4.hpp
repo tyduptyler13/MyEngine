@@ -834,6 +834,21 @@ public:
 
 	}
 
+	std::string toString() const {
+
+		std::string r = "[[\n   ";
+
+		for (unsigned i = 0; i < 16; ++i) {
+			r += std::to_string(elements[i]) + ", ";
+			if ((i + 1) % 4 == 0) r += "]\n [ ";
+		}
+
+		r += "]]";
+
+		return r;
+
+	}
+
 };
 
 #endif

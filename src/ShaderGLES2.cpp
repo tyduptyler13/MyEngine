@@ -160,6 +160,8 @@ void GLES2Vertex::prepare(Camera<float>* camera, Mesh<float>* object, const std:
 
 	if (shader->dirty) shader->compile(); //Check if the shader needs an update
 
+	shader->bind(); //The shader needs to already be bound.
+
 	IGeometry<float>* geometry = object->geometry.get();
 
 	if (geometry->indicesNeedUpdate) {
@@ -202,22 +204,20 @@ void GLES2Vertex::prepare(Camera<float>* camera, Mesh<float>* object, const std:
 		geometry->normalsNeedUpdate = false;
 	}
 
-	shader->bind(); //The shader needs to already be bound.
-
 	GLint posLoc = shader->getAttribLoc("position");
 
 	if (posLoc != -1) {
 		glBindBuffer(GL_ARRAY_BUFFER, geometry->vertexBuffer);
-		glVertexAttribPointer(posLoc, 3, GL_FLOAT, GL_FALSE, 0, 0);
 		glEnableVertexAttribArray(posLoc);
+		glVertexAttribPointer(posLoc, 3, GL_FLOAT, GL_FALSE, 0, 0);
 	}
 
 	GLint normLoc = shader->getAttribLoc("normal");
 
 	if (normLoc != -1) {
 		glBindBuffer(GL_ARRAY_BUFFER, geometry->normalBuffer);
-		glVertexAttribPointer(normLoc, 3, GL_FLOAT, GL_FALSE, 0, 0);
 		glEnableVertexAttribArray(normLoc);
+		glVertexAttribPointer(normLoc, 3, GL_FLOAT, GL_FALSE, 0, 0);
 	}
 
 	GLint cameraLoc = shader->getUniformLoc("cameraPosition");
@@ -229,25 +229,25 @@ void GLES2Vertex::prepare(Camera<float>* camera, Mesh<float>* object, const std:
 	GLint projectionMatrixLoc = shader->getUniformLoc("projectionMatrix");
 
 	if (projectionMatrixLoc != -1) {
-		glUniformMatrix4fv(projectionMatrixLoc, 16, GL_FALSE, &camera->projectionMatrix.elements[0]);
+		glUniformMatrix4fv(projectionMatrixLoc, 1, GL_FALSE, camera->projectionMatrix.elements.data());
 	}
 
 	GLint viewMatrixLoc = shader->getUniformLoc("viewMatrix");
 
 	if (viewMatrixLoc != -1) {
-		glUniformMatrix4fv(viewMatrixLoc, 16, GL_FALSE, &camera->matrixWorldInverse.elements[0]);
+		glUniformMatrix4fv(viewMatrixLoc, 1, GL_FALSE, camera->matrixWorldInverse.elements.data());
 	}
 
 	GLint modelMatrixLoc = shader->getUniformLoc("modelMatrix");
 
 	if (modelMatrixLoc != -1) {
-		glUniformMatrix4fv(modelMatrixLoc, 16, GL_FALSE, &object->matrixWorld.elements[0]);
+		glUniformMatrix4fv(modelMatrixLoc, 1, GL_FALSE, object->matrixWorld.elements.data());
 	}
 
 	GLint modelViewLoc = shader->getUniformLoc("modelView");
 
 	if (modelViewLoc != -1) {
-		glUniformMatrix4fv(modelViewLoc, 16, GL_FALSE, &object->modelViewMatrix.elements[0]);
+		glUniformMatrix4fv(modelViewLoc, 1, GL_FALSE, object->modelViewMatrix.elements.data());
 	}
 
 }

@@ -23,5 +23,5 @@ compile: ./build
 clean:
 	rm -rf ./build
 
-testapp:
+testApp: all
 	$(MAKE) -C test/core

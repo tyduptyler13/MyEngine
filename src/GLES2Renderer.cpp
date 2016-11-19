@@ -18,7 +18,11 @@ using namespace MyUPlay::MyEngine;
 static Log logger("GLES2Renderer");
 
 GLES2Renderer::GLES2Renderer(unsigned antialias) {
-	SDL_Init(SDL_INIT_VIDEO);
+
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) < 0){
+		logger.warn("Failed to init SDL2");
+		throw runtime_error("Failed to initialize SDL2");
+	}
 
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
@@ -147,7 +151,6 @@ void GLES2Renderer::renderBufferDirect(Camera<float>* camera, Fog<float>* fog, I
 
 	setMaterial(material);
 
-	material->shader->bind();
 	material->shader->prepare(camera, object, lights);
 
 	//TODO handle program caching
@@ -163,13 +166,12 @@ void GLES2Renderer::renderBufferDirect(Camera<float>* camera, Fog<float>* fog, I
 	if (group != -1) {
 		auto groups = object->geometry->getGroups();
 		auto indices = object->geometry->getIndices();
-		glDrawElements(GL_TRIANGLES, groups[group].count, GL_UNSIGNED_SHORT, indices.data() + groups[group].start * sizeof(unsigned short));
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, object->geometry->indexBuffer);
+		glDrawElements(GL_TRIANGLES, groups[group].count / 3, GL_UNSIGNED_SHORT, (void*) (groups[group].start / 3 * sizeof(unsigned short)));
 	} else {
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, object->geometry->indexBuffer);
-		glDrawElements(GL_TRIANGLES, object->geometry->size(), GL_UNSIGNED_SHORT, NULL);
+		glDrawElements(GL_TRIANGLES, object->geometry->size() / 3, GL_UNSIGNED_SHORT, NULL);
 	}
-
-	SDL_GL_SwapWindow(window);
 
 }
 
@@ -211,6 +213,9 @@ void GLES2Renderer::render(Scene<float>& scene, Camera<float>* camera, std::shar
 		renderTarget->bind();
 	}
 
+	opaqueObjects.clear();
+	transparentObjects.clear();
+
 	projectObject(&scene, camera);
 
 	if (sortObjects){
@@ -242,6 +247,8 @@ void GLES2Renderer::render(Scene<float>& scene, Camera<float>* camera, std::shar
 		renderObjects(transparentObjects, scene, camera);
 
 	}
+
+	SDL_GL_SwapWindow(window);
 
 	//TODO handle sprites and lensflares
 
