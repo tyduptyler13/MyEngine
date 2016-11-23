@@ -163,13 +163,13 @@ void GLES2Renderer::renderBufferDirect(Camera<float>* camera, Fog<float>* fog, I
 	//TODO Handle wireframe mode
 	//TODO Expand to points, lines, sprites
 
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, object->geometry->indexBuffer);
+
 	if (group != -1) {
 		auto groups = object->geometry->getGroups();
-		auto indices = object->geometry->getIndices();
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, object->geometry->indexBuffer);
+
 		glDrawElements(GL_TRIANGLES, groups[group].count, GL_UNSIGNED_SHORT, reinterpret_cast<void*>(groups[group].start * sizeof(unsigned short)));
 	} else {
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, object->geometry->indexBuffer);
 		glDrawElements(GL_TRIANGLES, object->geometry->size(), GL_UNSIGNED_SHORT, nullptr);
 	}
 

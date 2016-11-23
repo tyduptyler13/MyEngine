@@ -97,7 +97,7 @@ namespace MyUPlay {
 			}
 
 			unsigned size() const {
-				return vertices.size();
+				return indices.size();
 			}
 
 			bool isMultiMaterial() const {

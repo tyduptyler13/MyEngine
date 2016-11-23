@@ -145,6 +145,18 @@ namespace MyUPlay {
 
 			}
 
+			/**
+			 * This function merges all of the groups into a single group using material index 0.
+			 */
+			void unifyGroups() {
+				unsigned size = 0;
+				for (auto& g : this->groups){
+					size += g.count;
+				}
+				this->groups.clear();
+				this->addGroup(0, size, 0);
+			}
+
 		};
 
 	}
