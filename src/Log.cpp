@@ -9,9 +9,10 @@ using namespace MyUPlay::MyEngine;
 
 //Static private variables.
 static mutex l;
-static DefaultClock c;
+static Clock<> c;
 
 static string getTime(){
+	c.getDelta(); //Tells the clock to update its elapsed time.
 	return "[" + to_string(c.getElapsedSeconds()) + "]";
 }
 

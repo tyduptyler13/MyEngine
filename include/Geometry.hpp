@@ -58,7 +58,8 @@ namespace MyUPlay {
 					boundingBoxDirty = true, //Must be set to true for it to recalculate
 					boundingSphereDirty = true; //Must be set to true for it to recalculate
 
-			unsigned vertexBuffer = 0, indexBuffer = 0, normalBuffer = 0; //Internal use
+			//These will later be added to a specialized class to manage their destruction and renderer type.
+			unsigned vertexObject = 0, vertexBuffer = 0, indexBuffer = 0, normalBuffer = 0; //Internal use
 
 			virtual void applyMatrix(const Matrix4<T>& matrix) = 0;
 

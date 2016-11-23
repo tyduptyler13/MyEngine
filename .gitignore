@@ -12,3 +12,5 @@ include/ShaderChunk/ShaderChunk.hpp
 
 *.so
 
+BasicExample
+

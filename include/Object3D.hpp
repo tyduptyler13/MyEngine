@@ -27,6 +27,7 @@ class MyUPlay::MyEngine::Object3D {
 private:
 
 	Log logger = Log("Object3D");
+	Euler<T> rotation;
 
 public:
 
@@ -59,7 +60,6 @@ public:
 	Vector3<T> up = Vector3<T>(0, 1, 0);
 
 	Vector3<T> position;
-	Euler<T> rotation;
 	Quaternion<T> quaternion;
 	Vector3<T> scale = Vector3<T>(1, 1, 1);
 

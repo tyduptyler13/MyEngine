@@ -14,8 +14,7 @@ check: test
 
 compile: ./build
 	@echo Entering build directory
-	$(MAKE) -C ./build
-	cp build/out/Default/lib.target/libMyEngine.so .
+	$(MAKE) -C ./build libMyEngine
 
 ./build: autogen.sh build.gyp
 	./autogen.sh
@@ -23,5 +22,5 @@ compile: ./build
 clean:
 	rm -rf ./build
 
-testApp: all
-	$(MAKE) -C test/core
+BasicExample: all
+	$(MAKE) -C ./build BasicExample

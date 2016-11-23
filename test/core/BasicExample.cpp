@@ -5,7 +5,7 @@
 
 #include "Geometries/BoxGeometry.hpp"
 #include "GLES2MaterialLib.hpp"
-#include "Color.hpp"
+#include "Clock.hpp"
 
 #include <memory>
 
@@ -20,15 +20,16 @@ int main(){
 
 	scene.add(camera);
 
-	GLES2Renderer renderer;
+	camera->position.set(20, 20, 10);
+	camera->lookAt(scene.position);
+
+	GLES2Renderer renderer(4);
 
 	renderer.setSize(800, 600);
 
-	BoxGeometry<float>* geo = new BoxGeometry<float>(10, 10, 10);
+	BoxGeometry<float>* geo = new BoxGeometry<float>(10, 10, 10, 8, 4, 2);
 
 	IMaterial* mat = createNormalMaterial<GLES2Renderer>();
-
-	mat->side = DoubleSide;
 
 	Mesh<float>* box = new Mesh<float>(geo, mat);
 
@@ -36,16 +37,23 @@ int main(){
 
 	scene.add(box);
 
+	Clock<> clock;
+
 	bool quit = false;
 
 	while (!quit){ //Closes when the window closes
+
+		auto d = clock.getDelta();
+
+		float rotation = Clock<>::durationToSeconds(d) * Math::PI * 0.5;
+		box->rotateX(rotation);
 
 		//TODO figure out how to handle the framerate
 		renderer.render(scene, camera);
 
 		SDL_Event event;
 
-		if (SDL_PollEvent(&event)){
+		while (SDL_PollEvent(&event)){ //We can have many events. (This should speed up closing the window)
 			if (event.type == SDL_QUIT){
 				quit = true;
 			}

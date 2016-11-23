@@ -7,6 +7,8 @@
 
 #include "glsl/glsl_optimizer.h"
 
+#include "GLES2/gl2ext.h"
+
 using namespace std;
 using namespace MyUPlay::MyEngine;
 using namespace MyUPlay::MyEngine::Shader;
@@ -163,6 +165,13 @@ void GLES2Vertex::prepare(Camera<float>* camera, Mesh<float>* object, const std:
 	shader->bind(); //The shader needs to already be bound.
 
 	IGeometry<float>* geometry = object->geometry.get();
+
+	//Working on adding VAO support, might have to wait for GLES3 Renderer
+	/*if (geometry->vertexObject == 0) {
+		glGenVertexArraysOES(1, &geometry->vertexObject);
+	}
+
+	glBindVertexArrayOES(geometry->vertexObject);*/
 
 	if (geometry->indicesNeedUpdate) {
 

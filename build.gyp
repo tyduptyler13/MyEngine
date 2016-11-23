@@ -1,8 +1,7 @@
 {
 	"targets": [
 		{
-			"target_name": "MyEngine",
-			"product_name": "MyEngine",
+			"target_name": "libMyEngine",
 			"type": "<(library)",
 			"sources": [
  				"src/GLES2Renderer.cpp",
@@ -25,9 +24,14 @@
 					"include"
 				],
 				"libraries": [
-					"-lSOIL",
+					"../deps/Simple-OpenGL-Image-Library/libSOIL.a",
 					"-lGL",
-					"<!@(<(pkg-config) --libs-only-l sdl2 capnp)"
+					"/usr/local/lib/libSDL2.a",
+					"../deps/glsl-optimizer/libglsl_optimizer.a",
+					"../deps/glsl-optimizer/libmesa.a",
+					"../deps/glsl-optimizer/libglcpp-library.a",
+					"-pthread",
+					"-ldl"
 				]
 			},
 			"variables": {
@@ -39,21 +43,26 @@
 				"-pedantic",
 				"-std=c++14",
 				"-g",
-				#"-O2",
-				"-fPIC"
+				"-O2"
 			],
 			'cflags!': [ '-fno-exceptions' ],
 			'cflags_cc!': [ '-fno-exceptions' ],
-			"libraries": [
-				"<!@(<(pkg-config) --libs-only-l sdl2 capnp)",
-				"-lSOIL",
-				"-lGL",
-				"../deps/glsl-optimizer/libglsl_optimizer.a",
-				"../deps/glsl-optimizer/libmesa.a",
-				"../deps/glsl-optimizer/libglcpp-library.a"
-			],
 			"ldflags": [
 				"<!@(<(pkg-config) --libs-only-L --libs-only-other sdl2)"
+			]
+		},
+		{
+			"target_name": "BasicExample",
+			"type": "executable",
+			"sources": [ "test/core/BasicExample.cpp" ],
+			"dependencies": [ "libMyEngine" ],
+			"cflags": [
+				"-Wall",
+				"-Wextra",
+				"-pedantic",
+				"-std=c++14",
+				"-O3",
+				#"-g"
 			]
 		}
 	]

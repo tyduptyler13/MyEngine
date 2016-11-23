@@ -167,10 +167,10 @@ void GLES2Renderer::renderBufferDirect(Camera<float>* camera, Fog<float>* fog, I
 		auto groups = object->geometry->getGroups();
 		auto indices = object->geometry->getIndices();
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, object->geometry->indexBuffer);
-		glDrawElements(GL_TRIANGLES, groups[group].count / 3, GL_UNSIGNED_SHORT, (void*) (groups[group].start / 3 * sizeof(unsigned short)));
+		glDrawElements(GL_TRIANGLES, groups[group].count, GL_UNSIGNED_SHORT, reinterpret_cast<void*>(groups[group].start * sizeof(unsigned short)));
 	} else {
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, object->geometry->indexBuffer);
-		glDrawElements(GL_TRIANGLES, object->geometry->size() / 3, GL_UNSIGNED_SHORT, NULL);
+		glDrawElements(GL_TRIANGLES, object->geometry->size(), GL_UNSIGNED_SHORT, nullptr);
 	}
 
 }

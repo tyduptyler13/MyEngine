@@ -16,5 +16,5 @@ hash git 2>/dev/null || { echo "Git was not found, please install before trying 
 	}
 }
 
-gyp build.gyp --depth=. -f make --generator-output=./build -Dlibrary=shared_library
+gyp build.gyp --depth=. -f make --generator-output=./build -Dlibrary=static_library
 
