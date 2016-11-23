@@ -33,8 +33,6 @@ int main(){
 
 	Mesh<float>* box = new Mesh<float>(geo, mat);
 
-	box->frustumCulled = false; //TODO fix culling bug
-
 	scene.add(box);
 
 	Clock<> clock;
@@ -48,7 +46,7 @@ int main(){
 		float rotation = Clock<>::durationToSeconds(d) * Math::PI * 0.5;
 		box->rotateX(rotation);
 
-		//TODO figure out how to handle the framerate
+		//Framerate is managed internally. You can tell sdl you don't want the framerate limited if you like.
 		renderer.render(scene, camera);
 
 		SDL_Event event;

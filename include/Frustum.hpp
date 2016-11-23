@@ -43,11 +43,11 @@ namespace MyUPlay {
 
 			Frustum& setFromMatrix(const Matrix4<T>& matrix) {
 
-				auto& me = matrix.elements;
-				T me0 = me[ 0 ], me1 = me[ 1 ], me2 = me[ 2 ], me3 = me[ 3 ];
-				T me4 = me[ 4 ], me5 = me[ 5 ], me6 = me[ 6 ], me7 = me[ 7 ];
-				T me8 = me[ 8 ], me9 = me[ 9 ], me10 = me[ 10 ], me11 = me[ 11 ];
-				T me12 = me[ 12 ], me13 = me[ 13 ], me14 = me[ 14 ], me15 = me[ 15 ];
+				const auto& me = matrix.elements;
+				const T& me0 = me[ 0 ], me1 = me[ 1 ], me2 = me[ 2 ], me3 = me[ 3 ];
+				const T& me4 = me[ 4 ], me5 = me[ 5 ], me6 = me[ 6 ], me7 = me[ 7 ];
+				const T& me8 = me[ 8 ], me9 = me[ 9 ], me10 = me[ 10 ], me11 = me[ 11 ];
+				const T& me12 = me[ 12 ], me13 = me[ 13 ], me14 = me[ 14 ], me15 = me[ 15 ];
 
 				planes[ 0 ].setComponents( me3 - me0, me7 - me4, me11 - me8, me15 - me12 ).normalize();
 				planes[ 1 ].setComponents( me3 + me0, me7 + me4, me11 + me8, me15 + me12 ).normalize();
@@ -60,13 +60,13 @@ namespace MyUPlay {
 
 			}
 
-			bool interesectsObject(std::shared_ptr<Mesh<T>>& object) const {
+			bool interesectsObject(Mesh<T>* object) const {
 
-				std::shared_ptr<IGeometry<T>> geometry = object->geometry;
+				IGeometry<T>* geometry = object->geometry;
 
 				if (geometry->boundingSphere == nullptr) geometry->computeBoundingSphere();
-				Sphere<T>& sphere = geometry->boundingSphere;
-				sphere.applyMatrix4(object.matrixWorld);
+				Sphere<T> sphere = geometry->boundingSphere;
+				sphere.applyMatrix4(object->matrixWorld);
 
 				return intersectsSphere(sphere);
 
@@ -74,9 +74,9 @@ namespace MyUPlay {
 
 			bool intersectsSphere(const Sphere<T>& sphere) const {
 
-				for (unsigned i = 0; i < 6; ++i) {
+				for (const Plane<T>& plane : planes) {
 
-					T distance = planes[i].distanceToPoint(sphere.center);
+					T distance = plane.distanceToPoint(sphere.center);
 
 					if (distance < - sphere.radius) {
 						return false;

@@ -61,8 +61,9 @@ namespace MyUPlay {
 			}
 
 			Plane& normalize() {
-				constant *= -1;
-				normal.negate();
+				T inverseNormalLength = 1.0 / normal.length();
+				normal *= inverseNormalLength;
+				constant *= inverseNormalLength;
 				return *this;
 			}
 

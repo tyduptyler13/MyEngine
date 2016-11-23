@@ -563,7 +563,9 @@ bool GLES2Renderer::isSphereViewable(Spheref s) {
 		return false;
 	}
 
-	return true; //TODO Finish this function it should use clipping.
+	//TODO add extra clipping.
+
+	return true;
 
 }
 

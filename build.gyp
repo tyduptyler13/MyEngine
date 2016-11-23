@@ -43,7 +43,7 @@
 				"-pedantic",
 				"-std=c++14",
 				"-g",
-				"-O2"
+				#"-O2"
 			],
 			'cflags!': [ '-fno-exceptions' ],
 			'cflags_cc!': [ '-fno-exceptions' ],
@@ -61,8 +61,8 @@
 				"-Wextra",
 				"-pedantic",
 				"-std=c++14",
-				"-O3",
-				#"-g"
+				#"-O3",
+				"-g"
 			]
 		}
 	]
