@@ -1,9 +1,15 @@
 MyEngine
 ========
 
-This is a completely open source (MIT License) game engine written in C++14 and has a javascript scripting engine attached.
+Welcome to MyEngine, this is a completely open source (MIT License) game engine written in C++14 with Electron and Node.js attached
+for easy modding and UI design.
 
-I created this engine because I found a large lackluster of existing game engines and wasn't particularly impressed by the large cost on getting a mainstream engine. This engine is designed after some of the best (also open source) tools in the industry. This engine is special because it is designed to be extremely modular and extremely cross platform. The target operating systems should include unix based systems, windows, and browser technologies like emscripten and nacl. We will eventually support android and iphone but I have very little experience in either of those platforms but would like to learn.
+I created this engine because I found a large lackluster of existing game engines and wasn't particularly impressed by the large cost on
+getting a mainstream engine. This engine is designed after some of the best (also open source) tools in the industry. This engine is
+special because it is designed to be extremely modular and extremely cross platform. The target operating systems should include unix
+based systems, windows, and browser technologies like emscripten, ppapi, and eventually webassembly. Mobile support will come through
+web support but may eventually become native apps (currently this is limited by electron and nodejs being ported to mobile or the engine
+gaining more abstraction to support those platforms and simulate electron and nodejs support).
 
 __Graphics__: Completely portable graphics using SDL2. Different render classes can be written for every driver if someone wants that driver. The windows will be powered by Electron (desktop) and browsers (mobile). Electron/browsers will also power the UI allowing highly customizable UIs, which will be overlayed on the game.
 
@@ -11,11 +17,35 @@ __Physics__: [Bullet](http://bulletphysics.org/wordpress/)
 
 __Networking__: [Nodejs](https://nodejs.org/en/)/[Cap'nProto](https://capnproto.org/) This mixture of networking allows networking to be cross platform, fast, and easy. No matter where the networking is happening.
 
-__Sound__: SDL2
+__Sound__: In Planning stage ([YSE](http://www.attr-x.net/yse/) is a major contender for our internal use)
 
 __Mod API/Scripting__: [Nodejs](https://nodejs.org/en/). All of our mods will be javascript driven through a shielded api that enforces permissions and reduces security risks. Scripts only get permissions that they are granted by the user running the mods and even then must go through the api defined in the engine to gain access to any external resources.
 
-__Mobile__: emscripten/browserify. Some games that use light weight nodejs packages and avoid some of the more extreme functionality will be able to compile the entire engine to html/js and will be able to run on any platform at the cost of reduced performance. (Specifically no threading is permitted in html/js due to no shared variables, webworkers may soon be able to do this through webassembly, which will vastly improve performance.)
+
+News
+====
+
+We have finally released version Alpha-1 which includes the first working version of the GLES2Renderer and the Shader compiler.
+
+I am really proud of the shader compiler as it is node based, aka you can drag and drop nodes to create shaders without even having
+to know any glsl. This will eventually have its own GUI similar to blender.
+
+TODO List
+=========
+
+This list comprises everything still needing to be done before this engine can be used for any sort of release of any game.
+
+* Abstracted keybinding for game input with default values. (wasd for movement, etc)
+* Sound - Was originally targetting sdl but not so much anymore.
+* Physics - Need to actually hook in the physics library. (Special Object3D type class that allows you to apply physics to objects)
+* Electron Overlay - Need to setup the steps to include it in the render process.
+* Electron Launcher/Menu - Games will implement these on their own
+
+Not as required but still TODO
+
+* Electron patcher - Not required, but eventually this will be part of the engine, will patch all files over p2p and html.
+* GLES3Renderer - Future work (Can optimize somethings and specialize a few others)
+* VulkanRenderer - Max performance out of rendering.
 
 Coding Style
 ============
