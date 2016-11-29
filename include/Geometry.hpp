@@ -87,7 +87,9 @@ namespace MyUPlay {
 			 */
 			virtual unsigned size() const = 0;
 
-			virtual bool isMultiMaterial() const = 0;
+			bool isMultiMaterial() const {
+				return multiMaterial;
+			}
 			virtual std::vector<Group> getGroups() const {
 				return {};
 			}

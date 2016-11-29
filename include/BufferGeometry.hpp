@@ -100,18 +100,6 @@ namespace MyUPlay {
 				return indices.size();
 			}
 
-			bool isMultiMaterial() const {
-				if (groups.size() > 1){
-					unsigned mat = groups[0].materialIndex;
-					for (const Group& group : groups){
-						if (group.materialIndex != mat) {
-							return true;
-						}
-					}
-				}
-				return false;
-			}
-
 			std::vector<Group> getGroups() const {
 				return groups;
 			}

@@ -543,6 +543,9 @@ std::vector<unsigned char> GLES2Renderer::readRenderTargetPixels(std::shared_ptr
 	return data;
 }
 
+void GLES2Renderer::setVsync(bool enable) {
+	SDL_GL_SetSwapInterval(enable ? 1 : 0);
+}
 
 bool GLES2Renderer::isObjectViewable(Mesh<float>* object) {
 

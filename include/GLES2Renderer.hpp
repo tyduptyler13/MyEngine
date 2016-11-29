@@ -56,6 +56,8 @@ namespace MyUPlay {
 			void setDepthWrite(bool);
 			void setColorWrite(bool);
 
+			void setVsync(bool);
+
 		private:
 
 			Matrix4f projScreenMatrix;

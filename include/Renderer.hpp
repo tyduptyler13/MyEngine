@@ -169,6 +169,8 @@ public:
 		SDL_GetWindowPosition(window, &windowX, &windowY);
 	}
 
+	virtual void setVsync(bool enable) = 0;
+
 protected:
 
 	int maxTextures;

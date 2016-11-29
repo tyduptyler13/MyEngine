@@ -26,9 +26,9 @@ int main(){
 	GLES2Renderer renderer(4);
 
 	renderer.setSize(800, 600);
+	renderer.setVsync(false);
 
 	BoxGeometry<float>* geo = new BoxGeometry<float>(10, 10, 10, 8, 4, 2);
-	geo->unifyGroups();
 
 	IMaterial* mat = createNormalMaterial<GLES2Renderer>();
 

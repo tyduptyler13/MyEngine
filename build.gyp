@@ -16,22 +16,24 @@
 			],
 			"include_dirs": [
 				"include",
-				"<!@(<(pkg-config) --cflags sdl2)",
+				"<!@(sdl2-config --cflags 2>/dev/null)",
 				"deps/glsl-optimizer/src"
 			],
 			"direct_dependent_settings": {
 				"include_dirs": [
-					"include"
+					"include",
+					"<!@(sdl2-config --cflags 2>/dev/null)"
 				],
 				"libraries": [
 					"../deps/Simple-OpenGL-Image-Library/libSOIL.a",
-					"-lGL",
-					"/usr/local/lib/libSDL2.a",
 					"../deps/glsl-optimizer/libglsl_optimizer.a",
 					"../deps/glsl-optimizer/libmesa.a",
 					"../deps/glsl-optimizer/libglcpp-library.a",
-					"-pthread",
-					"-ldl"
+					"../deps/sdl2/build/.libs/libSDL2.a",
+					"-pthread", #We might need pthread
+					"-ldl",
+					"-lGLESv2",
+					"-lGL",
 				]
 			},
 			"variables": {
@@ -43,13 +45,10 @@
 				"-pedantic",
 				"-std=c++14",
 				"-g",
-				#"-O2"
+				"-O2"
 			],
 			'cflags!': [ '-fno-exceptions' ],
-			'cflags_cc!': [ '-fno-exceptions' ],
-			"ldflags": [
-				"<!@(<(pkg-config) --libs-only-L --libs-only-other sdl2)"
-			]
+			'cflags_cc!': [ '-fno-exceptions' ]
 		},
 		{
 			"target_name": "BasicExample",
@@ -61,7 +60,7 @@
 				"-Wextra",
 				"-pedantic",
 				"-std=c++14",
-				#"-O3",
+				"-O3",
 				"-g"
 			]
 		}
