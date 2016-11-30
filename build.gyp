@@ -16,19 +16,22 @@
 			],
 			"include_dirs": [
 				"include",
-				"<!@(sdl2-config --cflags 2>/dev/null)",
-				"deps/glsl-optimizer/src"
+				"deps/sdl2/include",
 			],
 			"direct_dependent_settings": {
 				"include_dirs": [
 					"include",
-					"<!@(sdl2-config --cflags 2>/dev/null)"
-				],
+					"deps/sdl2/include"
+				]
+			},
+			"link_dependent_settings": {
+				"dependencies": [
+					"glsl-optimizer"
+				]
+			},
+			"link_settings": {
 				"libraries": [
 					"../deps/Simple-OpenGL-Image-Library/libSOIL.a",
-					"../deps/glsl-optimizer/libglsl_optimizer.a",
-					"../deps/glsl-optimizer/libmesa.a",
-					"../deps/glsl-optimizer/libglcpp-library.a",
 					"../deps/sdl2/build/.libs/libSDL2.a",
 					"-pthread", #We might need pthread
 					"-ldl",
@@ -36,6 +39,9 @@
 					"-lGL",
 				]
 			},
+			"dependencies": [
+				"glsl-optimizer"
+			],
 			"variables": {
 				"pkg-config": "pkg-config"
 			},
@@ -50,6 +56,41 @@
 			'cflags!': [ '-fno-exceptions' ],
 			'cflags_cc!': [ '-fno-exceptions' ]
 		},
+		# glsl-optimizer code is a dependency of the engines shader compiler.
+		# The settings have been adapted from cmake
+		{
+			"target_name": "glsl-optimizer",
+			"type": "static_library",
+			"variables": {
+				"root": "deps/glsl-optimizer"
+			},
+			"include_dirs": [
+				"<(root)/include",
+				"<(root)/src/mesa",
+				"<(root)/src/mapi",
+				"<(root)/src/glsl",
+				"<(root)/src"
+			],
+			"sources": [
+				"<!@(ls -1 <(root)/src/glsl/glcpp/*.c)",
+				"<!@(ls -1 <(root)/src/util/*.c)",
+				"<!@(ls -1 <(root)/src/mesa/program/*.c)",
+				"<!@(ls -1 <(root)/src/mesa/main/*.c)",
+				"<!@(ls -1 <(root)/src/glsl/*.cpp)",
+				"<!@(ls -1 <(root)/src/glsl/*.c)"
+			],
+			"sources!": [
+				"<(root)/src/glsl/main.cpp",
+				"<(root)/src/glsl/buildin_stubs.cpp"
+			],
+			"cflags": [ "-O2" ],
+			"direct_dependent_settings": {
+				"include_dirs": [
+					"deps/glsl-optimizer/src"
+				]
+			}
+		},
+		# This is our test build to check if the engine can compile properly.
 		{
 			"target_name": "BasicExample",
 			"type": "executable",
