@@ -153,6 +153,8 @@ public:
 	 */
 	virtual void loop(std::function<bool(double delta)>) = 0;
 
+	virtual void onResize(std::function<void(int, int)>) = 0;
+
 protected:
 
 	int maxTextures;

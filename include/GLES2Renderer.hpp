@@ -64,6 +64,8 @@ namespace MyUPlay {
 
 			void loop(std::function<bool(double delta)>);
 
+			void onResize(std::function<void(int, int)>);
+
 			void setDepthTest(bool);
 			void setDepthWrite(bool);
 			void setColorWrite(bool);

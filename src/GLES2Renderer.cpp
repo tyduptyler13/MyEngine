@@ -45,21 +45,25 @@ static int glfwInitStatus = glfwInit();
  */
 template <int, typename... Args> //The int allows you to differentiate static "instances".
 struct StaticInstanceEventMapper {
-	static unordered_map<GLFWwindow*, std::function<void(Args...)>> functionRemapper;
+	static unordered_map<GLFWwindow*, vector<function<void(Args...)>>> functionRemapper;
 
 	static void handleEvent(GLFWwindow* window, Args... args) { //GLFW calls this
-		functionRemapper[window](args...);
+		for (auto func : functionRemapper[window]){
+			func(args...);
+		}
 	}
-	static void addHandler(GLFWwindow* window, std::function<void(Args...)> func){ //Adds a hook for when glfw calls us.
-		functionRemapper.insert(make_pair(window, func));
+	static void addHandler(GLFWwindow* window, function<void(Args...)> func){ //Adds a hook for when glfw calls us.
+		functionRemapper[window].push_back(func);
 	}
 };
 
 //The static maps actual declarations.
 template <>
-unordered_map<GLFWwindow*, std::function<void(int, int)>> StaticInstanceEventMapper<0, int, int>::functionRemapper = unordered_map<GLFWwindow*, std::function<void(int, int)>>();
+unordered_map<GLFWwindow*, vector<function<void(int, int)>>> StaticInstanceEventMapper<0, int, int>::functionRemapper
+= unordered_map<GLFWwindow*, vector<function<void(int, int)>>>();
 template <>
-unordered_map<GLFWwindow*, std::function<void(int, int)>> StaticInstanceEventMapper<1, int, int>::functionRemapper = unordered_map<GLFWwindow*, std::function<void(int, int)>>();
+unordered_map<GLFWwindow*, vector<function<void(int, int)>>> StaticInstanceEventMapper<1, int, int>::functionRemapper
+= unordered_map<GLFWwindow*, vector<function<void(int, int)>>>();
 
 static StaticInstanceEventMapper<0, int, int> WindowSizer; //Handles window resizing
 static StaticInstanceEventMapper<1, int, int> FrameSizer; //Handles framebuffer resizing
@@ -232,6 +236,10 @@ void GLES2Renderer::loop(std::function<bool(double)> func) {
 		}
 	}
 
+}
+
+void GLES2Renderer::onResize(std::function<void(int, int)> func) {
+	FrameSizer.addHandler(window, func);
 }
 
 void GLES2Renderer::renderBufferImmediate(Mesh<float>* object, std::shared_ptr<Shader::Shader> program, IMaterial* material)  {

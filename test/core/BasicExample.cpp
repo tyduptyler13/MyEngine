@@ -1,11 +1,9 @@
-
 #include "Scene.hpp"
 #include "PerspectiveCamera.hpp"
 #include "GLES2Renderer.hpp"
 
 #include "Geometries/BoxGeometry.hpp"
 #include "GLES2MaterialLib.hpp"
-#include "Clock.hpp"
 
 #include <memory>
 
@@ -26,6 +24,11 @@ int main(){
 	GLES2Renderer renderer(4);
 
 	renderer.setSize(800, 600);
+	renderer.onResize([&camera](int width, int height){
+		camera->aspect = float(width) / float(height);
+		camera->updateProjectionMatrix();
+		//The renderer automatically manages its internal size. No need to set it like three.js
+	});
 
 	BoxGeometry<float>* geo = new BoxGeometry<float>(10, 10, 10, 8, 4, 2);
 
