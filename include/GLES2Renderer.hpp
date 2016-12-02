@@ -4,6 +4,8 @@
 #include <string>
 #include <unordered_map>
 
+#include <GLFW/glfw3.h>
+
 #include "Renderer.hpp"
 #include "Frustum.hpp"
 
@@ -37,6 +39,10 @@ namespace MyUPlay {
 
 			unsigned getMaxAnisotripy() const;
 
+			std::tuple<unsigned, unsigned> getSize() const;
+			void setSize(unsigned width, unsigned height);
+			void setPos(unsigned x, unsigned y);
+
 			void setViewport(int x, int y, unsigned width, unsigned height);
 			std::tuple<int, int, unsigned, unsigned> getViewport() const;
 			void setDefaultViewport();
@@ -52,6 +58,12 @@ namespace MyUPlay {
 			std::shared_ptr<IRenderTarget> getRenderTarget();
 			std::vector<unsigned char> readRenderTargetPixels(std::shared_ptr<IRenderTarget> target, int x, int y, unsigned width, unsigned height);
 
+			void setFullScreen();
+			void setFakeFullScreen();
+			void setWindowed();
+
+			void loop(std::function<bool(double delta)>);
+
 			void setDepthTest(bool);
 			void setDepthWrite(bool);
 			void setColorWrite(bool);
@@ -63,7 +75,7 @@ namespace MyUPlay {
 			Matrix4f projScreenMatrix;
 			Frustum<float> frustum;
 
-			SDL_GLContext context;
+			GLFWwindow* window;
 
 			struct GPUTexture { //Wrap textures with some of our own internal variables.
 				unsigned id; //Texture handle

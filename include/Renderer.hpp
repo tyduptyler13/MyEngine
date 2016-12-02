@@ -6,8 +6,17 @@
 #include <array>
 #include <unordered_map>
 #include <tuple>
+#include <functional>
 
-#include <SDL2/SDL.h>
+namespace MyUPlay {
+
+	namespace MyEngine {
+
+		template<typename>
+		class Renderer;
+
+	}
+}
 
 #include "Color.hpp"
 #include "Constants.hpp"
@@ -22,12 +31,10 @@
 #include "Shader/Shader.hpp"
 #include "Quaternion.hpp"
 
-namespace MyUPlay {
 
-namespace MyEngine {
 
 template <typename T = float>
-class Renderer {
+class MyUPlay::MyEngine::Renderer {
 
 public:
 
@@ -92,17 +99,9 @@ public:
 
 	virtual unsigned getMaxAnisotripy() const = 0;
 
-	std::tuple<unsigned, unsigned> getSize() const {
-		int width, height;
-		SDL_GetWindowSize(window, &width, &height);
-		return std::make_tuple(width, height);
-	}
-	void setSize(unsigned width, unsigned height){
-		SDL_SetWindowSize(window, width, height);
-	}
-	void setPos(unsigned x, unsigned y){
-		SDL_SetWindowPosition(window, x, y);
-	}
+	virtual std::tuple<unsigned, unsigned> getSize() const = 0;
+	virtual void setSize(unsigned width, unsigned height) = 0;
+	virtual void setPos(unsigned x, unsigned y) = 0;
 
 	virtual void setViewport(int x, int y, unsigned width, unsigned height) = 0;
 	virtual std::tuple<int, int, unsigned, unsigned> getViewport() const = 0;
@@ -120,56 +119,39 @@ public:
 	virtual std::vector<unsigned char> readRenderTargetPixels(std::shared_ptr<IRenderTarget> target, int x, int y, unsigned width, unsigned height) = 0;
 
 	/**
-	 * Use this function to get a list of display modes for all monitors.
-	 * The top level vector is the monitors
-	 * The second level is a list of display modes for that monitor
-	 */
-	std::vector<std::vector<SDL_DisplayMode> > getDisplayModes() const {
-
-		unsigned monitors = SDL_GetNumVideoDisplays();
-
-		std::vector<std::vector<SDL_DisplayMode> > monitorList(monitors);
-
-		for (unsigned i = 0; i < monitors; ++i){
-
-			unsigned displayModes = SDL_GetNumDisplayModes(i);
-
-			monitorList[i].reserve(displayModes);
-
-			for (unsigned j = 0; j < displayModes; ++j){
-				SDL_GetDisplayMode(i, j, &monitorList[i][j]);
-			}
-		}
-
-		return monitorList;
-	}
-
-	/**
 	 * This mode alters screen resolution and settings for this program.
 	 * This is what most people consider real full screen.
 	 */
-	void setFullScreen(){
-		SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
-		SDL_GetWindowPosition(window, &windowX, &windowY);
-	}
+	virtual void setFullScreen() = 0;
 
 	/**
-	 * In this mode no resolution change is made and the window will take the size of the desktop.
+	 * In this mode, a window removes its frame decoration and matches the desktop size.
 	 * This is useful for quickly changing the window to desktop size without a border.
 	 */
-	void setFakeFullScreen(){
-		SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
-		SDL_GetWindowSize(window, &windowWidth, &windowHeight);
-		SDL_GetWindowPosition(window, &windowX, &windowY);
-	}
+	virtual void setFakeFullScreen() = 0;
 
-	void setWindowed(){
-		SDL_SetWindowFullscreen(window, 0);
-		SDL_GetWindowSize(window, &windowWidth, &windowHeight);
-		SDL_GetWindowPosition(window, &windowX, &windowY);
-	}
+	/**
+	 * This is the standard mode.
+	 */
+	virtual void setWindowed() = 0;
 
 	virtual void setVsync(bool enable) = 0;
+
+	/**
+	 * The following is a blocking call to a loop. The user is expected to
+	 * put a lambda function in the call of this function to handle rendering
+	 * and do any game logic expected at every frame. This function will call the
+	 * function parameter every time the screen needs to be drawn, if vsync is disabled
+	 * then the function will be called immediately after rendering is finished.
+	 * Note: A buffer swap will occur after every call of this function, not drawing may
+	 * result in a black screen if color clearing is automatic.
+	 * @param function - The function with the following params
+	 * 	@param delta - The built in clock for this function. You don't need to have
+	 *		your own.
+	 * @return - Return true to exit the loop early. False will continue the loop
+	 * 	infinitely (until window close).
+	 */
+	virtual void loop(std::function<bool(double delta)>) = 0;
 
 protected:
 
@@ -181,8 +163,6 @@ protected:
 	windowHeight;
 
 	int opaqueObjectsLastIndex = -1, transparentObjectsLastIndex = -1;
-
-	SDL_Window* window;
 
 	Color clearColorv;
 	T clearAlpha;
@@ -210,9 +190,5 @@ protected:
 	Quaternionf lastSortedRot;
 
 };
-
-}
-
-}
 
 #endif

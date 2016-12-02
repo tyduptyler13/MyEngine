@@ -16,34 +16,56 @@ static string getTime(){
 	return "[" + to_string(c.getElapsedSeconds()) + "]";
 }
 
+Log& Log::debug(const std::string s) {
+
+	if (level == 0) {
+
+		l.lock();
+		std::cout << getTime() << "[debug][" << klass << "] " << s << "\n";
+		l.unlock();
+
+	}
+
+	return *this;
+
+}
+
 Log& Log::log(const std::string s) {
 
-	l.lock();
+	if (level <= 1) {
 
-	std::cout << getTime() << "[Log][" << klass << "] " << s << "\n";
+		l.lock();
+		std::cout << getTime() << "[Log][" << klass << "] " << s << "\n";
+		l.unlock();
 
-	l.unlock();
+	}
 
 	return *this;
 
 }
 
 Log& Log::error(const std::string s) {
-	l.lock();
 
-	std::cerr << getTime() << "[ERROR][" << klass << "] " << s << "\n";
+	if (level <= 3) {
 
-	l.unlock();
+		l.lock();
+		std::cerr << getTime() << "[ERROR][" << klass << "] " << s << "\n";
+		l.unlock();
+
+	}
 
 	return *this;
 }
 
 Log& Log::warn(const std::string s) {
-	l.lock();
 
-	std::cout << getTime() << "[Warn][" << klass << "] " << s << "\n";
+	if (level <= 2) {
 
-	l.unlock();
+		l.lock();
+		std::cout << getTime() << "[Warn][" << klass << "] " << s << "\n";
+		l.unlock();
+
+	}
 
 	return *this;
 }

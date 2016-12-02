@@ -7,13 +7,11 @@
 
 #include "glsl/glsl_optimizer.h"
 
-#include "GLES2/gl2ext.h"
-
 using namespace std;
 using namespace MyUPlay::MyEngine;
 using namespace MyUPlay::MyEngine::Shader;
 
-static Log shaderLog("GLES2ShaderCompiler");
+static Log shaderLog("ShaderGLES2");
 
 static string fetchCode(IShaderNode* root){
 
@@ -61,14 +59,14 @@ void GLES2ForwardShader::compile() {
 	pos.clear(); //Want to forget old positions.
 
 	string vertexCode = fetchCode(vertexShaderRoot.get());
-	shaderLog.log("Vertex shader:\n" + vertexCode);
+	shaderLog.debug("Vertex shader:\n" + vertexCode);
 	string fragmentCode = fetchCode(fragmentShaderRoot.get());
-	shaderLog.log("Fragment shader:\n" + fragmentCode);
+	shaderLog.debug("Fragment shader:\n" + fragmentCode);
 
 	glslopt_shader* shader = glslopt_optimize(ctx, kGlslOptShaderVertex, vertexCode.c_str(), 0);
 	if (glslopt_get_status(shader)){
 		vertexCode = glslopt_get_output(shader);
-		shaderLog.log("Optimized vertex shader:\n" + vertexCode);
+		shaderLog.debug("Optimized vertex shader:\n" + vertexCode);
 	} else {
 		shaderLog.error(string("Failed to optimize vertex shader!\n") + glslopt_get_log(shader));
 	}
@@ -76,7 +74,7 @@ void GLES2ForwardShader::compile() {
 	shader = glslopt_optimize(ctx, kGlslOptShaderFragment, fragmentCode.c_str(), 0);
 	if (glslopt_get_status(shader)){
 		fragmentCode = glslopt_get_output(shader);
-		shaderLog.log("Optimized fragment shader:\n" + fragmentCode);
+		shaderLog.debug("Optimized fragment shader:\n" + fragmentCode);
 	} else {
 		shaderLog.error(string("Failed to optimize fragment shader!\n") + glslopt_get_log(shader));
 	}

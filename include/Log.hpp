@@ -17,10 +17,19 @@ namespace MyUPlay {
 
 		public:
 
+			enum Level {
+				DebugLevel = 0,
+				LogLevel = 1,
+				WarnLevel = 2,
+				ErrorLevel = 3
+			} level = LogLevel;
+
 			std::string klass;
 
 			Log() = delete; //Must have a name
 			Log(std::string s) : klass(s) {}
+
+			Log& debug(const std::string s);
 
 			Log& log(const std::string s);
 

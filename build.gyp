@@ -2,7 +2,7 @@
 	"targets": [
 		{
 			"target_name": "libMyEngine",
-			"type": "<(library)",
+			"type": "shared_library",
 			"sources": [
  				"src/GLES2Renderer.cpp",
   				"src/Log.cpp",
@@ -16,12 +16,11 @@
 			],
 			"include_dirs": [
 				"include",
-				"deps/sdl2/include",
+				"deps/glfw/include"
 			],
 			"direct_dependent_settings": {
 				"include_dirs": [
-					"include",
-					"deps/sdl2/include"
+					"include"
 				]
 			},
 			"link_dependent_settings": {
@@ -32,11 +31,13 @@
 			"link_settings": {
 				"libraries": [
 					"../deps/Simple-OpenGL-Image-Library/libSOIL.a",
-					"../deps/sdl2/build/.libs/libSDL2.a",
-					"-pthread", #We might need pthread
-					"-ldl",
+					"<!(pkg-config --static --libs-only-l glfw3)",
+					"-pthread", #We might need pthread for gcc (because their std::threads are broken otherwise)
 					"-lGLESv2",
 					"-lGL",
+				],
+				"ldflags": [
+					"-Wl,-rpath ."
 				]
 			},
 			"dependencies": [
@@ -51,6 +52,7 @@
 				"-pedantic",
 				"-std=c++14",
 				"-g",
+				"-fpic",
 				"-O2"
 			],
 			'cflags!': [ '-fno-exceptions' ],
@@ -83,7 +85,10 @@
 				"<(root)/src/glsl/main.cpp",
 				"<(root)/src/glsl/buildin_stubs.cpp"
 			],
-			"cflags": [ "-O2" ],
+			"cflags": [
+				"-O2",
+				"-fpic"
+			],
 			"direct_dependent_settings": {
 				"include_dirs": [
 					"deps/glsl-optimizer/src"

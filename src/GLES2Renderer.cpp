@@ -1,8 +1,11 @@
 #include <stdexcept>
 #include <algorithm>
+#include <functional>
+#include <unordered_map>
 
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_opengles2.h>
+//See http://www.glfw.org/docs/latest/build_guide.html#build_macros
+#define GLFW_INCLUDE_ES2
+#define GLFW_INCLUDE_GLEXT
 
 #include <SOIL/SOIL.h>
 
@@ -11,49 +14,97 @@
 #include "Vector4.hpp"
 #include "Shader/Shader.hpp"
 #include "Frustum.hpp"
+#include "Clock.hpp"
 
 using namespace std;
 using namespace MyUPlay::MyEngine;
 
 static Log logger("GLES2Renderer");
 
+namespace { //Anonymous namespace
+	void errorCallback(int, const char* description) {
+		logger.error(string("glfw error: ") + description);
+	}
+
+	//Neat trick for adding static code (executes before main)
+	struct StaticBlock {
+		StaticBlock() {
+			glfwSetErrorCallback(errorCallback);
+		}
+	};
+
+	static StaticBlock s;
+}
+
+static int glfwInitStatus = glfwInit();
+
+/**
+ * Due to the nature of GLFW callbacks, we use a static struct to receive the events but
+ * then we have to find the actual function that wants to receive the call, thus the following
+ * functions will wrap and handle things like we want them to be.
+ */
+template <int, typename... Args> //The int allows you to differentiate static "instances".
+struct StaticInstanceEventMapper {
+	static unordered_map<GLFWwindow*, std::function<void(Args...)>> functionRemapper;
+
+	static void handleEvent(GLFWwindow* window, Args... args) { //GLFW calls this
+		functionRemapper[window](args...);
+	}
+	static void addHandler(GLFWwindow* window, std::function<void(Args...)> func){ //Adds a hook for when glfw calls us.
+		functionRemapper.insert(make_pair(window, func));
+	}
+};
+
+//The static maps actual declarations.
+template <>
+unordered_map<GLFWwindow*, std::function<void(int, int)>> StaticInstanceEventMapper<0, int, int>::functionRemapper = unordered_map<GLFWwindow*, std::function<void(int, int)>>();
+template <>
+unordered_map<GLFWwindow*, std::function<void(int, int)>> StaticInstanceEventMapper<1, int, int>::functionRemapper = unordered_map<GLFWwindow*, std::function<void(int, int)>>();
+
+static StaticInstanceEventMapper<0, int, int> WindowSizer; //Handles window resizing
+static StaticInstanceEventMapper<1, int, int> FrameSizer; //Handles framebuffer resizing
+
+
 GLES2Renderer::GLES2Renderer(unsigned antialias) {
 
-	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_EVENTS) < 0){
-		logger.warn("Failed to init SDL2");
-		throw runtime_error("Failed to initialize SDL2");
+	if (!glfwInitStatus){
+		logger.warn("Failed to init glfw");
+		throw runtime_error("Failed to initialize glfw");
 	}
 
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+	glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API); //Hard constraint.
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
 
-	if (antialias != 0){
-		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
-		SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, antialias);
-	}
+	glfwWindowHint(GLFW_SAMPLES, antialias);
 
-	this->window = SDL_CreateWindow("MyEngine", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 800, 600, SDL_WINDOW_OPENGL);
+	window = glfwCreateWindow(800, 600, "MyEngine", nullptr, nullptr);
 
-	if (!this->window){
+	if (!window){
 		logger.warn("Failed to create sdl window!");
 		throw runtime_error("Failed to create sdl window!");
 	}
 
-	context = SDL_GL_CreateContext(this->window);
+	//Every window instance needs to be added.
+	glfwSetWindowSizeCallback(window, WindowSizer.handleEvent);
 
-	if (!context){
-		logger.warn("Failed to create a gl context!");
-		throw runtime_error("Failed to create a gl context!");
-	}
+	WindowSizer.addHandler(window, [this](int width, int height){
+		this->windowWidth = width;
+		this->windowHeight = height;
+	});
+
+	glfwSetFramebufferSizeCallback(window, FrameSizer.handleEvent);
+
+	FrameSizer.addHandler(window, [this](int width, int height){
+		glViewport(0, 0, width, height);
+	});
 
 	glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &maxTextures);
 
 }
 
 GLES2Renderer::~GLES2Renderer(){
-	SDL_GL_DeleteContext(context);
-	SDL_DestroyWindow(this->window);
+	glfwDestroyWindow(this->window);
 }
 
 void GLES2Renderer::setScissor(int x, int y, unsigned width, unsigned height) {
@@ -126,6 +177,20 @@ unsigned GLES2Renderer::getMaxAnisotripy() const  {
 	return i;
 }
 
+std::tuple<unsigned, unsigned> GLES2Renderer::getSize() const {
+	int w, h;
+	glfwGetWindowSize(window, &w, &h);
+	return make_tuple(w, h);
+}
+
+void GLES2Renderer::setSize(unsigned width, unsigned height) {
+	glfwSetWindowSize(window, width, height);
+}
+
+void GLES2Renderer::setPos(unsigned x, unsigned y) {
+	glfwSetWindowPos(window, x, y);
+}
+
 void GLES2Renderer::setViewport(int x, int y, unsigned width, unsigned height)  {
 	glViewport(x, y, width, height);
 }
@@ -136,8 +201,37 @@ std::tuple<int, int, unsigned, unsigned> GLES2Renderer::getViewport() const  {
 }
 void GLES2Renderer::setDefaultViewport() {
 	int w, h;
-	SDL_GL_GetDrawableSize(window, &w, &h);
+	glfwGetFramebufferSize(window, &w, &h);
 	setViewport(0, 0, w, h);
+}
+
+void GLES2Renderer::setFullScreen() { //We use the existing size of the viewport for the new resolution. (It might not stay that way)
+	auto size = getViewport();
+	glfwSetWindowMonitor(window, glfwGetPrimaryMonitor(), 0, 0, std::get<0>(size), std::get<1>(size), GLFW_DONT_CARE);
+}
+
+void GLES2Renderer::setFakeFullScreen() {
+	static_assert(true, "FIXME: Implement fake fullscreen.");
+	//TODO
+}
+
+void GLES2Renderer::setWindowed() {
+	auto size = getViewport();
+	//Use the old x y values. (So long as the callback didn't overwrite them for some reason).
+	glfwSetWindowMonitor(window, nullptr, windowX, windowY, std::get<0>(size), std::get<1>(size), GLFW_DONT_CARE);
+}
+
+void GLES2Renderer::loop(std::function<bool(double)> func) {
+
+	Clock<> clock;
+
+	while (!glfwWindowShouldClose(window)){
+		glfwPollEvents();
+		if (func(Clock<>::durationToSeconds(clock.getDelta()))){
+			return;
+		}
+	}
+
 }
 
 void GLES2Renderer::renderBufferImmediate(Mesh<float>* object, std::shared_ptr<Shader::Shader> program, IMaterial* material)  {
@@ -199,6 +293,8 @@ float GLES2Renderer::reverseStablePainterSort(const RenderItem<Mesh<float>>& a, 
 
 void GLES2Renderer::render(Scene<float>& scene, Camera<float>* camera, std::shared_ptr<IRenderTarget> renderTarget, bool forceClear)  {
 
+	glfwMakeContextCurrent(window);
+
 	if (scene.autoUpdate) scene.updateMatrixWorld();
 
 	if (camera->parent == nullptr) camera->updateMatrixWorld();
@@ -248,7 +344,7 @@ void GLES2Renderer::render(Scene<float>& scene, Camera<float>* camera, std::shar
 
 	}
 
-	SDL_GL_SwapWindow(window);
+	glfwSwapBuffers(window);
 
 	//TODO handle sprites and lensflares
 
@@ -544,7 +640,7 @@ std::vector<unsigned char> GLES2Renderer::readRenderTargetPixels(std::shared_ptr
 }
 
 void GLES2Renderer::setVsync(bool enable) {
-	SDL_GL_SetSwapInterval(enable ? 1 : 0);
+	glfwSwapInterval(enable ? 1 : 0);
 }
 
 bool GLES2Renderer::isObjectViewable(Mesh<float>* object) {
