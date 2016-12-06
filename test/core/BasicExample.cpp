@@ -4,8 +4,7 @@
 
 #include "Geometries/BoxGeometry.hpp"
 #include "GLES2MaterialLib.hpp"
-
-#include <memory>
+#include "GeometryImporter.hpp"
 
 using namespace std;
 using namespace MyUPlay::MyEngine;
@@ -18,7 +17,7 @@ int main(){
 
 	scene.add(camera);
 
-	camera->position.set(20, 20, 10);
+	camera->position.set(0, 0, 20);
 	camera->lookAt(scene.position);
 
 	GLES2Renderer renderer(4);
@@ -35,12 +34,19 @@ int main(){
 	IMaterial* mat = createNormalMaterial<GLES2Renderer>();
 
 	Mesh<float>* box = new Mesh<float>(geo, mat);
+	box->position.set(-10, 0, 0);
 
 	scene.add(box);
 
+	Object3D<float>* suzane = GeometryImporter::ImportAsset("suzane.obj");
+	suzane->position.set(10, 0, 0);
+
+	scene.add(suzane);
+
 	renderer.loop([&](double delta){
 		float rotation = delta * Math::PI * 0.5;
-		box->rotateX(rotation);
+		box->rotateY(rotation);
+		suzane->rotateY(rotation);
 
 		//Framerate is managed internally. You can tell sdl you don't want the framerate limited if you like.
 		renderer.render(scene, camera);

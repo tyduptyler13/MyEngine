@@ -41,7 +41,7 @@ public:
 	short blendEquationAlpha = -1;
 
 	short depthFunc = LessEqualDepth;
-	bool depthTest = false;
+	bool depthTest = true;
 	bool depthWrite = true;
 	bool colorWrite = true;
 

@@ -12,11 +12,13 @@
   				"src/Material.cpp",
   				"src/GLES2MaterialLib.cpp",
   				"src/GLES2RenderTarget.cpp",
-  				"src/Texture.cpp"
+  				"src/Texture.cpp",
+  				"src/GeometryImporter.cpp"
 			],
 			"include_dirs": [
 				"include",
-				"deps/glfw/include"
+				"deps/glfw/include",
+				"<!(pkg-config assimp --cflags)"
 			],
 			"direct_dependent_settings": {
 				"include_dirs": [
@@ -32,6 +34,7 @@
 				"libraries": [
 					"../deps/Simple-OpenGL-Image-Library/libSOIL.a",
 					"<!(pkg-config --static --libs-only-l glfw3)",
+					"<!(pkg-config assimp --libs-only-l assimp)",
 					"-pthread", #We might need pthread for gcc (because their std::threads are broken otherwise)
 					"-lGLESv2",
 					"-lGL",
@@ -53,7 +56,7 @@
 				"-std=c++14",
 				"-g",
 				"-fpic",
-				"-O2"
+				#"-O2"
 			],
 			'cflags!': [ '-fno-exceptions' ],
 			'cflags_cc!': [ '-fno-exceptions' ]

@@ -21,8 +21,9 @@ namespace MyUPlay {
 			std::vector<T> vertices;
 			std::vector<T> normals;
 			std::vector<T> uvs;
+			std::vector<unsigned short> colors;
 			//You will only get indexed performance gains by having a single index buffer
-			std::vector<unsigned short> indices;
+			std::vector<unsigned int> indices;
 
 			std::vector<Group> groups;
 
@@ -52,7 +53,7 @@ namespace MyUPlay {
 				return normals;
 			}
 
-			std::vector<unsigned short> getIndices() const {
+			std::vector<unsigned int> getIndices() const {
 				return indices;
 			}
 

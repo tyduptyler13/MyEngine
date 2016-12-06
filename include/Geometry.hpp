@@ -74,7 +74,7 @@ namespace MyUPlay {
 
 			virtual std::vector<T> getNormals() const = 0;
 
-			virtual std::vector<unsigned short> getIndices() const {
+			virtual std::vector<unsigned int> getIndices() const {
 				return {};
 			}
 

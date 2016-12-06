@@ -179,7 +179,7 @@ void GLES2Vertex::prepare(Camera<float>* camera, Mesh<float>* object, const std:
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, geometry->indexBuffer);
 		//TODO look into if we should always static draw
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned short) * geometry->getIndices().size(), geometry->getIndices().data(), GL_STATIC_DRAW);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * geometry->getIndices().size(), geometry->getIndices().data(), GL_STATIC_DRAW);
 
 		geometry->indicesNeedUpdate = false;
 
