@@ -56,7 +56,7 @@
 				"-std=c++14",
 				"-g",
 				"-fpic",
-				#"-O2"
+				"-O2"
 			],
 			'cflags!': [ '-fno-exceptions' ],
 			'cflags_cc!': [ '-fno-exceptions' ]
