@@ -56,10 +56,14 @@
 				"-std=c++14",
 				"-g",
 				"-fpic",
-				"-O2"
+				"-O2",
 			],
 			'cflags!': [ '-fno-exceptions' ],
-			'cflags_cc!': [ '-fno-exceptions' ]
+			'cflags_cc!': [
+				'-fno-exceptions',
+				'-fno-rtti',
+				'-std=gnu++0x'
+			]
 		},
 		# glsl-optimizer code is a dependency of the engines shader compiler.
 		# The settings have been adapted from cmake

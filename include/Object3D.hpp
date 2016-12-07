@@ -236,9 +236,9 @@ public:
 		return getObjectByName(s);
 	}
 	Object3D* getObjectByName(const std::string& name) const {
-		for (auto o : children) {
+		for (auto& o : children) {
 			if (o->name == name){
-				return o;
+				return o.get();
 			}
 
 			auto o2 = o->getObjectByName(name);
@@ -380,14 +380,56 @@ public:
 		renderOrder = o.renderOrder;
 
 		if (recursive){
-			for (auto o : children){
-				add(new Object3D(o));
+			for (auto& o : children){
+				add(new Object3D(*o));
 			}
 		}
 
 		return *this;
 
 	}
+
+	//Gets and sets for javascript integration
+	bool getVisible() const {
+		return visible;
+	}
+
+	void setVisible(bool visible) {
+		this->visible = visible;
+	}
+
+	Vector3<T>& getPosition() {
+		return position;
+	}
+
+	void setPosition(const Vector3<T>& v) {
+		position = v;
+	}
+
+	bool getFrustumCulled() const {
+		return frustumCulled;
+	}
+
+	void setFrustumCulled(bool b) {
+		frustumCulled = b;
+	}
+
+	bool getMatrixWorldNeedsUpdate() const {
+		return matrixWorldNeedsUpdate;
+	}
+
+	void setMatrixWorldNeedsUpdate(bool b) {
+		matrixWorldNeedsUpdate = b;
+	}
+
+	unsigned getId() const {
+		return id;
+	}
+
+	std::string getUUID() const {
+		return uuid;
+	}
+
 	Object3D& operator=(const Object3D& o){
 		return copy(o);
 	}
@@ -402,5 +444,47 @@ public:
 
 template <typename T>
 unsigned MyUPlay::MyEngine::Object3D<T>::object3DIdCounter = 0;
+
+#ifdef NBINDING_MODE
+
+namespace {
+	using namespace MyUPlay::MyEngine;
+	NBIND_CLASS(Object3D<float>, Object3D) {
+		construct<>();
+		construct<Object3D<float>>();
+
+		multimethod(add, args(Object3D<float>*));
+		multimethod(remove, args(Object3D<float>*, bool));
+
+		getset(getVisible, setVisible);
+		getset(getFrustumCulled, setFrustumCulled);
+		getset(getMatrixWorldNeedsUpdate, setMatrixWorldNeedsUpdate);
+		getset(getPosition, setPosition);
+
+		getter(getId);
+		getter(getUUID);
+
+		method(copy);
+		method(updateMatrixWorld);
+		multimethod(getWorldDirection, args());
+		multimethod(getWorldScale, args());
+
+		multimethod(getObjectByName, args(const std::string&));
+
+		method(rotateX);
+		method(rotateY);
+		method(rotateZ);
+		method(rotateOnAxis);
+
+		method(translateX);
+		method(translateY);
+		method(translateZ);
+		method(translateOnAxis);
+		method(operator==, "equals");
+
+	}
+}
+
+#endif
 
 #endif

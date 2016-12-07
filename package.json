@@ -5,7 +5,14 @@
   "license": "MIT",
   "repository": "https://github.com/MyUPlay/MyEngine",
   "devDependencies": {
+    "autogypi": "^0.2.2",
     "electron": "^1.4.3"
   },
-  "main": "game.js"
+  "main": "game.js",
+  "dependencies": {
+    "autogypi": "^0.2.2",
+    "electron": "^1.4.10",
+    "nbind": "^0.3.6",
+    "node-gyp": "^3.4.0"
+  }
 }

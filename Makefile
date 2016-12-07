@@ -1,26 +1,24 @@
-.PHONY: configure all clean compile testapp
+.PHONY: configure all clean compile
 
-#export CC=clang
-#export CXX=clang++
+export CC=clang
+export CXX=clang++
 
 all: compile
 
-configure: ./build
+node_modules:
+	npm install
+
+configure: node_modules binding.gyp build.gyp Makefile
+	node-gyp configure -DCXX=$(CXX) -DCC=$(CC)
 
 test:
 	$(MAKE) -C ./test
 
 check: test
 
-compile: ./build
-	@echo Entering build directory
-	$(MAKE) -C ./build libMyEngine
-
-./build: autogen.sh build.gyp
-	./autogen.sh
+compile: configure
+	node-gyp build
 
 clean:
 	rm -rf ./build
 
-BasicExample: all
-	$(MAKE) -C ./build BasicExample
