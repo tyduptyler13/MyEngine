@@ -13,4 +13,24 @@ namespace MyUPlay {
 	}
 }
 
+#ifdef NBINDING_MODE
+
+namespace {
+
+	using namespace MyUPlay::MyEngine;
+
+	std::shared_ptr<IMaterial> createGLES2NormalMaterial() {
+		return std::shared_ptr<IMaterial>(createNormalMaterial<GLES2Renderer>());
+	}
+
+	NBIND_GLOBAL() {
+
+		function(createGLES2NormalMaterial);
+
+	}
+
+}
+
+#endif
+
 #endif

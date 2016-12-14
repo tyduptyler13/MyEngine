@@ -119,5 +119,23 @@ public:
 
 };
 
+#ifdef NBINDING_MODE
+
+namespace {
+
+	using namespace MyUPlay::MyEngine;
+
+	NBIND_CLASS(IMaterial) {
+
+		construct<>();
+		construct<std::string>();
+		construct<const IMaterial&>();
+
+	}
+
+}
+
+#endif
+
 #endif
 

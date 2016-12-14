@@ -45,25 +45,29 @@ static int glfwInitStatus = glfwInit();
  */
 template <int, typename... Args> //The int allows you to differentiate static "instances".
 struct StaticInstanceEventMapper {
-	static unordered_map<GLFWwindow*, vector<function<void(Args...)>>> functionRemapper;
+
+	typedef function<void(Args...)> RemapperFunction;
+	typedef unordered_map<GLFWwindow*, vector<RemapperFunction>> RemapperContainer;
+
+	static RemapperContainer functionRemapper;
 
 	static void handleEvent(GLFWwindow* window, Args... args) { //GLFW calls this
 		for (auto func : functionRemapper[window]){
 			func(args...);
 		}
 	}
-	static void addHandler(GLFWwindow* window, function<void(Args...)> func){ //Adds a hook for when glfw calls us.
+	static void addHandler(GLFWwindow* window, RemapperFunction func){ //Adds a hook for when glfw calls us.
 		functionRemapper[window].push_back(func);
 	}
 };
 
 //The static maps actual declarations.
 template <>
-unordered_map<GLFWwindow*, vector<function<void(int, int)>>> StaticInstanceEventMapper<0, int, int>::functionRemapper
-= unordered_map<GLFWwindow*, vector<function<void(int, int)>>>();
+StaticInstanceEventMapper<0, int, int>::RemapperContainer StaticInstanceEventMapper<0, int, int>::functionRemapper
+= StaticInstanceEventMapper<0, int, int>::RemapperContainer();
 template <>
-unordered_map<GLFWwindow*, vector<function<void(int, int)>>> StaticInstanceEventMapper<1, int, int>::functionRemapper
-= unordered_map<GLFWwindow*, vector<function<void(int, int)>>>();
+StaticInstanceEventMapper<1, int, int>::RemapperContainer StaticInstanceEventMapper<1, int, int>::functionRemapper
+= StaticInstanceEventMapper<1, int, int>::RemapperContainer();
 
 static StaticInstanceEventMapper<0, int, int> WindowSizer; //Handles window resizing
 static StaticInstanceEventMapper<1, int, int> FrameSizer; //Handles framebuffer resizing
@@ -99,7 +103,7 @@ GLES2Renderer::GLES2Renderer(unsigned antialias) {
 
 	glfwSetFramebufferSizeCallback(window, FrameSizer.handleEvent);
 
-	FrameSizer.addHandler(window, [this](int width, int height){
+	FrameSizer.addHandler(window, [](int width, int height){
 		glViewport(0, 0, width, height);
 	});
 
@@ -236,6 +240,11 @@ void GLES2Renderer::loop(std::function<bool(double)> func) {
 		}
 	}
 
+}
+
+bool GLES2Renderer::needsToClose() {
+	glfwPollEvents(); //Sneaking in some event handling.
+	return glfwWindowShouldClose(window);
 }
 
 void GLES2Renderer::onResize(std::function<void(int, int)> func) {
@@ -538,7 +547,7 @@ void GLES2Renderer::projectObject(Object3D<>* o, Camera<float>* camera) {
 		} //Close the switch
 	}
 
-	for (std::unique_ptr<Object3D<float>>& child : o->children){
+	for (std::shared_ptr<Object3D<float>>& child : o->children){
 		projectObject(child.get(), camera);
 	}
 

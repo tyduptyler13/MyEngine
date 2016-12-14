@@ -115,56 +115,46 @@ namespace MyUPlay {
 			template <typename T2>
 			IGeometry(IGeometry<T2>&& g) : name(std::move(g.name)) {}
 
-		};
-
-		/**
-		 * Abstract geometry
-		 *
-		 * Contains classes that get specialized methods specifically for the
-		 * derived classes.
-		 */
-		template <typename T, class Derived>
-		struct AGeometry : public virtual IGeometry<T> {
-
-			Derived& rotateX(T angle) {
+			IGeometry& rotateX(T angle) {
 				Matrix4<T> m1;
 				m1.makeRotationX(angle);
-				applyMatrix(m1);
+				this->applyMatrix(m1);
 				return *this;
 			}
 
-			Derived& rotateY(T angle) {
+			IGeometry& rotateY(T angle) {
 				Matrix4<T> m1;
 				m1.makeRotationY(angle);
-				applyMatrix(m1);
+				this->applyMatrix(m1);
 				return *this;
 			}
 
-			Derived& rotateZ(T angle) {
+			IGeometry& rotateZ(T angle) {
 				Matrix4<T> m1;
 				m1.makeRotationZ(angle);
-				applyMatrix(angle);
+				this->applyMatrix(m1);
 				return *this;
 			}
 
-			Derived& translate(T x, T y, T z) {
+			IGeometry& translate(T x, T y, T z) {
 				Matrix4<T> m1;
 				m1.makeTranslation(x, y, z);
-				applyMatrix(m1);
+				this->applyMatrix(m1);
 				return *this;
 			}
 
-			Derived& scale(T x, T y, T z) {
+			IGeometry& scale(T x, T y, T z) {
 				Matrix4<T> m1;
 				m1.makeScale(x, y, z);
-				applyMatrix(m1);
+				this->applyMatrix(m1);
 				return *this;
 			}
 
-			Derived& lookAt(const Vector3<T>& v){
-				Matrix4<T> m1;
-				m1.lookAt(v);
-				applyMatrix(m1);
+			IGeometry& lookAt(const Vector3<T>& v){
+				Object3D<T> obj;
+				obj.lookAt(v);
+				obj.updateMatrix();
+				this->applyMatrix(obj.matrix);
 				return *this;
 			}
 
@@ -175,7 +165,7 @@ namespace MyUPlay {
 				return offset;
 			}
 
-			Derived& normalize(){
+			IGeometry& normalize(){
 				this->computeBoundingSphere();
 
 				Vector3<T> center = this->boundingSphere->center;
@@ -191,7 +181,7 @@ namespace MyUPlay {
 						0, 0, 0, 1
 				);
 
-				applyMatrix( matrix );
+				this->applyMatrix( matrix );
 
 				return *this;
 			}
@@ -204,7 +194,7 @@ namespace MyUPlay {
 		 * geometry, which all faces have indexed values and thus requires extra work to modify a value.
 		 */
 		template <typename T>
-		struct SimpleGeometry : public AGeometry<T, SimpleGeometry<T>> {
+		struct SimpleGeometry : public IGeometry<T> {
 
 			std::vector<Face3<T> > faces;
 
@@ -405,5 +395,45 @@ namespace MyUPlay {
 	}
 
 }
+
+#ifdef NBINDING_MODE
+
+namespace {
+	using namespace MyUPlay::MyEngine;
+
+	NBIND_CLASS(IGeometry<float>, IGeometry) {
+
+		//TODO add getsets
+
+		//Disabled until box and sphere are added.
+		//method(computeBoundingBox);
+		//method(computeBoundingSphere);
+
+	}
+
+	//typedef AGeometry<float, IGeometry<float>> DefaultAGeometry;
+
+	/* Disabled for now
+	NBIND_CLASS(DefaultAGeometry, AGeometry) {
+
+		inherit(IGeometry<float>);
+
+		method(rotateX);
+		method(rotateY);
+		method(rotateZ);
+
+		method(translate);
+		method(scale);
+		method(lookAt);
+
+		method(center);
+		method(normalize);
+
+	}
+	 */
+
+}
+
+#endif
 
 #endif

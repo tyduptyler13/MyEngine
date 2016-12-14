@@ -21,7 +21,7 @@ namespace MyUPlay {
 			typedef typename Object3D<T>::ObjectType ObjectType;
 
 		public:
-			std::unique_ptr<IMaterial> overrideMaterial;
+			std::shared_ptr<IMaterial> overrideMaterial;
 			std::unique_ptr<Fog<T> > fog;
 
 			bool autoUpdate = true;
@@ -30,14 +30,14 @@ namespace MyUPlay {
 
 			Scene(const Scene& scene) : Object3D<T>(scene) {
 				overrideMaterial = scene.overrideMaterial;
-				fog = scene.fog;
+				//fog = scene.fog; FIXME
 				autoUpdate = scene.autoUpdate;
 			}
 
 			Scene& copy(const Scene& s){
 				Object3D<T>::copy(s);
-				overrideMaterial = s->Y;
-				fog = s.fog;
+				overrideMaterial = s.overrideMaterial;
+				//fog = s.fog; FIXME
 				autoUpdate = s.autoUpdate;
 				return *this;
 			}
@@ -46,10 +46,40 @@ namespace MyUPlay {
 				return copy(s);
 			}
 
+			bool getAutoUpdate() const {
+				return autoUpdate;
+			}
+
+			void setAutoUpdate(bool b) {
+				autoUpdate = b;
+			}
+
 		};
 
 	}
 
 }
+
+#ifdef NBINDING_MODE
+
+namespace {
+
+	using namespace MyUPlay::MyEngine;
+
+	NBIND_CLASS(Scene<>, Scene) {
+		inherit(Object3D<float>);
+
+		construct<>();
+		construct<const Scene<>&>();
+
+		method(copy);
+
+		getset(getAutoUpdate, setAutoUpdate);
+
+	}
+
+}
+
+#endif
 
 #endif

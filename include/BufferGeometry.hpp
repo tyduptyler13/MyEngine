@@ -8,13 +8,14 @@
 
 #include <array>
 #include <vector>
+#include <memory>
 
 namespace MyUPlay {
 
 	namespace MyEngine {
 
 		template <typename T>
-		struct BufferGeometry : public virtual IGeometry<T>, public AGeometry<T, BufferGeometry<T>> {
+		struct BufferGeometry : public IGeometry<T> {
 
 			typedef typename IGeometry<T>::Group Group;
 
@@ -26,8 +27,6 @@ namespace MyUPlay {
 			std::vector<unsigned int> indices;
 
 			std::vector<Group> groups;
-
-			Math::UUID uuid = Math::generateUUID();
 
 			BufferGeometry(){}
 
@@ -83,7 +82,7 @@ namespace MyUPlay {
 
 				//The radius doesn't necessarily include the corners of the bounding box.
 
-				T maxRadiusSq;
+				T maxRadiusSq = 0;
 
 				Vector3<T> vertex;
 
@@ -110,6 +109,24 @@ namespace MyUPlay {
 	}
 
 }
+
+#ifdef NBINDING_MODE
+
+namespace {
+
+	using namespace MyUPlay::MyEngine;
+
+	NBIND_CLASS(BufferGeometry<float>, BufferGeometry) {
+
+		inherit(IGeometry<float>);
+
+		construct<>();
+
+	}
+
+}
+
+#endif
 
 #endif
 

@@ -12,7 +12,7 @@ namespace MyUPlay {
 #include "Math.hpp"
 #include "Camera.hpp"
 
-template <typename T>
+template <typename T = float>
 struct MyUPlay::MyEngine::PerspectiveCamera : public Camera<T> {
 
 	T zoom = 1;
@@ -114,6 +114,65 @@ struct MyUPlay::MyEngine::PerspectiveCamera : public Camera<T> {
 		return copy(c);
 	}
 
+	T getAspect() {
+		return aspect;
+	}
+
+	void setAspect(T v){
+		aspect = v;
+	}
+
+	T getFov() {
+		return fov;
+	}
+
+	void setFov(T v) {
+		fov = v;
+	}
+
+	T getNear() {
+		return near;
+	}
+
+	void setNear(T v) {
+		near = v;
+	}
+
+	T getFar() {
+		return far;
+	}
+
+	void setFar(T v){
+		far = v;
+	}
+
 };
+
+#ifdef NBINDING_MODE
+
+namespace {
+	using namespace MyUPlay::MyEngine;
+
+	NBIND_CLASS(PerspectiveCamera<float>, PerspectiveCamera) {
+		inherit(Camera<float>);
+
+		construct<float, float, float, float>();
+		construct<const PerspectiveCamera<>&>();
+		//TODO getset for the matricies
+
+		getset(getAspect, setAspect);
+		getset(getFov, setFov);
+		getset(getNear, setNear);
+		getset(getFar, setFar);
+
+		method(setLens);
+		method(setViewOffset);
+		method(updateProjectionMatrix);
+
+		method(copy);
+	}
+}
+
+#endif
 
 #endif

@@ -10,7 +10,7 @@ namespace MyUPlay {
 	namespace MyEngine {
 
 		template <typename T>
-		class BoxGeometry : public BufferGeometry<T>, public AGeometry<T, BoxGeometry<T>> {
+		class BoxGeometry : public BufferGeometry<T> {
 
 		private:
 
@@ -113,7 +113,7 @@ namespace MyUPlay {
 
 		public:
 
-			BoxGeometry(T width, T height, T depth, unsigned widthSegments = 1, unsigned heightSegments = 1, unsigned depthSegments = 1) {
+			BoxGeometry(T width, T height, T depth, unsigned widthSegments, unsigned heightSegments, unsigned depthSegments) {
 
 				const unsigned vertexCount = calculateVertexCount(widthSegments, heightSegments, depthSegments);
 				const unsigned indexCount = calculateIndexCount(widthSegments, heightSegments, depthSegments);
@@ -145,9 +145,33 @@ namespace MyUPlay {
 
 			}
 
+			BoxGeometry(T width, T height, T depth) : BoxGeometry(width, depth, height, 1, 1, 1){}
+
 		};
 
 	}
 }
+
+#ifdef NBINDING_MODE
+
+namespace {
+
+	using namespace MyUPlay::MyEngine;
+
+	//typedef AGeometry<float, IGeometry<float>> DefaultAGeometry;
+
+	NBIND_CLASS(BoxGeometry<float>, BoxGeometry) {
+
+		inherit(IGeometry<float>);
+		//inherit(DefaultAGeometry);
+
+		construct<float, float, float>();
+		construct<float, float, float, unsigned, unsigned, unsigned>();
+
+	}
+
+}
+
+#endif
 
 #endif

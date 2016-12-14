@@ -2,6 +2,7 @@
 #define MYUPLAY_MYENGINE_MESH
 
 #include <string>
+#include <cassert>
 
 namespace MyUPlay {
 	namespace MyEngine {
@@ -17,21 +18,58 @@ namespace MyUPlay {
 template <typename T = float>
 struct MyUPlay::MyEngine::Mesh : public Object3D<T> {
 
-	std::unique_ptr<IGeometry<T>> geometry;
-	std::unique_ptr<IMaterial> material;
+	std::shared_ptr<IGeometry<T>> geometry;
+	std::shared_ptr<IMaterial> material;
 
 	//void raycast(const Raycaster<T>&, std::vector<Intersection<T> >&); //TODO
 
 	Mesh(IGeometry<T>* geometry, IMaterial* material)
 	: Object3D<T>(Object3D<T>::ObjectType::MESH), geometry(geometry), material(material) {}
 
-	Mesh(const Mesh& m){
+	Mesh(std::shared_ptr<IGeometry<T>> geo, std::shared_ptr<IMaterial> mat)
+	: Object3D<T>(Object3D<T>::ObjectType::MESH), geometry(geo), material(mat) {
+		assert(geo != nullptr);
+		assert(mat != nullptr);
+	}
+
+	//Deep copy
+	Mesh(const Mesh& m) : Object3D<T>(m) {
 		*geometry = *(m.geometry);
 		*material = *(m.material);
 	}
 
-	Mesh(Mesh&& m) : geometry(std::move(m.geometry)), material(std::move(m.material)) {}
+	Mesh(Mesh&& m) : Object3D<T>(m), geometry(std::move(m.geometry)), material(std::move(m.material)) {}
+
+	std::shared_ptr<IGeometry<T>> getGeometry() {
+		return geometry;
+	}
+
+	std::shared_ptr<IMaterial> getMaterial() {
+		return material;
+	}
 
 };
+
+#ifdef NBINDING_MODE
+
+namespace {
+
+	using namespace MyUPlay::MyEngine;
+
+	NBIND_CLASS(Mesh<>, Mesh) {
+
+		inherit(Object3D<float>);
+
+		construct<std::shared_ptr<IGeometry<float>>, std::shared_ptr<IMaterial>>();
+		construct<const Mesh<>&>();
+
+		getter(getGeometry);
+		getter(getMaterial);
+
+	}
+
+}
+
+#endif
 
 #endif

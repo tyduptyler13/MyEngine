@@ -195,7 +195,9 @@ namespace MyUPlay {
 			}
 
 			inline Vector3<T> center(){
-				return center(Vector3<T>());
+				Vector3<T> v1;
+				center(v1);
+				return v1;
 			}
 
 			Vector3<T>& center(Vector3<T>& target){

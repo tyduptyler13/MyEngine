@@ -17,12 +17,14 @@
 			],
 			"include_dirs": [
 				"include",
+				"node_modules/nbind/include",
 				"deps/glfw/include",
 				"<!(pkg-config assimp --cflags)"
 			],
 			"direct_dependent_settings": {
 				"include_dirs": [
-					"include"
+					"include",
+					"node_modules/nbind/include"
 				]
 			},
 			"link_dependent_settings": {
@@ -32,7 +34,7 @@
 			},
 			"link_settings": {
 				"libraries": [
-					"../deps/Simple-OpenGL-Image-Library/libSOIL.a",
+					"-lSOIL",
 					"<!(pkg-config --static --libs-only-l glfw3)",
 					"<!(pkg-config assimp --libs-only-l assimp)",
 					"-pthread", #We might need pthread for gcc (because their std::threads are broken otherwise)
@@ -40,7 +42,9 @@
 					"-lGL",
 				],
 				"ldflags": [
-					"-Wl,-rpath ."
+					"-Wl,-rpath,.",
+					"-Wl,-rpath,build/Debug",
+					"-Wl,-rpath,build/Release"
 				]
 			},
 			"dependencies": [
@@ -54,9 +58,7 @@
 				"-Wextra",
 				"-pedantic",
 				"-std=c++14",
-				"-g",
-				"-fpic",
-				"-O2",
+				"-fpic"
 			],
 			'cflags!': [ '-fno-exceptions' ],
 			'cflags_cc!': [
@@ -92,9 +94,13 @@
 				"<(root)/src/glsl/main.cpp",
 				"<(root)/src/glsl/buildin_stubs.cpp"
 			],
+			"cflags!": [
+				"-O3",
+				"-g"
+			],
 			"cflags": [
-				"-O2",
-				"-fpic"
+				"-fpic",
+				"-O2"
 			],
 			"direct_dependent_settings": {
 				"include_dirs": [
@@ -112,9 +118,7 @@
 				"-Wall",
 				"-Wextra",
 				"-pedantic",
-				"-std=c++14",
-				"-O3",
-				"-g"
+				"-std=c++14"
 			]
 		}
 	]

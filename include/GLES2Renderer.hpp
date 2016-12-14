@@ -72,6 +72,8 @@ namespace MyUPlay {
 
 			void setVsync(bool);
 
+			bool needsToClose();
+
 		private:
 
 			Matrix4f projScreenMatrix;
@@ -122,5 +124,20 @@ namespace MyUPlay {
 
 }
 
+#ifdef NBINDING_MODE
+
+namespace {
+
+	NBIND_CLASS(GLES2Renderer) {
+
+		inherit(Renderer<float>);
+
+		construct<unsigned>();
+
+	}
+
+}
+
+#endif
 
 #endif

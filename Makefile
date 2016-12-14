@@ -9,7 +9,7 @@ node_modules:
 	npm install
 
 configure: node_modules binding.gyp build.gyp Makefile
-	node-gyp configure -DCXX=$(CXX) -DCC=$(CC)
+	node-gyp configure
 
 test:
 	$(MAKE) -C ./test
@@ -21,4 +21,3 @@ compile: configure
 
 clean:
 	rm -rf ./build
-

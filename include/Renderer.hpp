@@ -31,8 +31,6 @@ namespace MyUPlay {
 #include "Shader/Shader.hpp"
 #include "Quaternion.hpp"
 
-
-
 template <typename T = float>
 class MyUPlay::MyEngine::Renderer {
 
@@ -111,6 +109,9 @@ public:
 	virtual void renderBufferDirect(Camera<T>*, Fog<T>*, IGeometry<T>*, IMaterial*, Mesh<T>* object, int group) = 0;
 
 	virtual void render(Scene<T>& scene, Camera<T>* camera, std::shared_ptr<IRenderTarget> renderTarget = nullptr, bool forceClear = false) = 0;
+	void render(std::shared_ptr<Scene<T>> scene, std::shared_ptr<Camera<T>> camera) {
+		render(*scene, camera.get());
+	}
 
 	virtual void setFaceCulling(CullConstant cullFace, CullDirection frontFaceDirection) = 0;
 	virtual void setTexture(std::shared_ptr<Texture> texture, unsigned slot = 0) = 0;
@@ -153,7 +154,18 @@ public:
 	 */
 	virtual void loop(std::function<bool(double delta)>) = 0;
 
+	virtual bool needsToClose() = 0;
+
 	virtual void onResize(std::function<void(int, int)>) = 0;
+
+	template <typename T2>
+	void onResize(T2& func) {
+		//We have to create a pointer because the lambda will make the function const.
+		T2* pfunc = new T2(func); //We don't actually own the memory! Node will clean it up.
+		onResize([pfunc](int width, int height){ //Func will be copied and stored with this lambda.
+			(*pfunc)(width, height);
+		});
+	}
 
 protected:
 
@@ -192,5 +204,37 @@ protected:
 	Quaternionf lastSortedRot;
 
 };
+
+#ifdef NBINDING_MODE
+
+#include "nbind/api.h"
+
+namespace {
+
+	using namespace MyUPlay::MyEngine;
+
+	NBIND_CLASS(Renderer<float>, Renderer) {
+
+		method(getSize);
+		method(setSize);
+		method(setViewport);
+		method(getViewport);
+
+		multimethod(render, args(std::shared_ptr<Scene<float>>, std::shared_ptr<Camera<float>>));
+
+		method(setFullScreen);
+		method(setWindowed);
+
+		multimethod(template onResize<nbind::cbFunction>, args(nbind::cbFunction&), "onResize");
+		//Note: Loop is not recommended to be exposed to javascript as it is a long term blocking call.
+		//If you wish to use loop behavior, duplicate its code in javascript using a callback and settimeout.
+
+		method(needsToClose);
+
+	}
+
+}
+
+#endif
 
 #endif

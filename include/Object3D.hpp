@@ -55,7 +55,7 @@ public:
 	/**
 	 * All children are unique. Copies may be made, but no copies of pointers.
 	 */
-	std::vector<std::unique_ptr<Object3D> > children;
+	std::vector<std::shared_ptr<Object3D>> children;
 
 	Vector3<T> up = Vector3<T>(0, 1, 0);
 
@@ -181,7 +181,18 @@ public:
 		}
 
 		object->parent = this;
-		children.emplace_back(std::unique_ptr<Object3D>(object));
+		children.emplace_back(std::shared_ptr<Object3D>(object));
+
+		return *this;
+	}
+
+	Object3D& add(std::shared_ptr<Object3D> object) {
+		if (object->parent != nullptr){
+			object->parent->remove(object);
+		}
+
+		object->parent = this;
+		children.push_back(object);
 
 		return *this;
 	}
@@ -196,26 +207,32 @@ public:
 	/**
 	 * Removes a child from this object.
 	 *
-	 * WARNING: Removing an object will automatically free its memory.
+	 * WARNING: Removing an object could automatically free its memory.
 	 *
-	 * By setting release to true, you assume responsibility for freeing the objects memory later.
+	 * If you wish to keep the object after removal, be sure you have obtained a copy of the shared
+	 * pointer created either in the add function or passed to the add function.
 	 */
-	Object3D& remove(Object3D* object, bool release = false){
+	Object3D& remove(Object3D* object){
 
-		auto loc = std::find_if(children.begin(), children.end(), [object](const std::unique_ptr<Object3D>& p){
+		auto loc = std::find_if(children.begin(), children.end(), [object](const std::shared_ptr<Object3D>& p){
 			return p.get() == object;
 		});
 
 		if (loc != children.end()){
 			object->parent = nullptr; //Reset parent pointer to null;
-			if (release){
-				loc->release();
-			}
 			children.erase(loc);
 		}
 
 		return *this;
 
+	}
+
+	/**
+	 * This assumes that you still have a reference to the objects shared_ptr
+	 * and thus there is little risk of accidental memory freeing.
+	 */
+	Object3D& remove(std::shared_ptr<Object3D> obj){
+		return remove(obj.get());
 	}
 
 	Object3D* getObjectById(const Math::UUID& id) const {
@@ -422,6 +439,22 @@ public:
 		matrixWorldNeedsUpdate = b;
 	}
 
+	Vector3<T>& getScale() {
+		return scale;
+	}
+
+	void setScale(const Vector3<T>& v) {
+		scale = v;
+	}
+
+	std::string& getName() {
+		return name;
+	}
+
+	void setName(const std::string& name) {
+		this->name = name;
+	}
+
 	unsigned getId() const {
 		return id;
 	}
@@ -453,23 +486,33 @@ namespace {
 		construct<>();
 		construct<Object3D<float>>();
 
-		multimethod(add, args(Object3D<float>*));
-		multimethod(remove, args(Object3D<float>*, bool));
+		multimethod(add, args(std::shared_ptr<Object3D<float>>));
+		multimethod(remove, args(std::shared_ptr<Object3D<float>>));
 
 		getset(getVisible, setVisible);
 		getset(getFrustumCulled, setFrustumCulled);
 		getset(getMatrixWorldNeedsUpdate, setMatrixWorldNeedsUpdate);
 		getset(getPosition, setPosition);
+		getset(getScale, setScale);
+		getset(getName, setName);
 
 		getter(getId);
 		getter(getUUID);
 
 		method(copy);
+
+		method(updateMatrix);
 		method(updateMatrixWorld);
+
 		multimethod(getWorldDirection, args());
 		multimethod(getWorldScale, args());
 
 		multimethod(getObjectByName, args(const std::string&));
+
+		method(localToWorld);
+		method(worldToLocal);
+
+		method(lookAt);
 
 		method(rotateX);
 		method(rotateY);

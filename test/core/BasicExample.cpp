@@ -22,7 +22,6 @@ int main(){
 
 	GLES2Renderer renderer(4);
 
-	renderer.setSize(800, 600);
 	renderer.onResize([&camera](int width, int height){
 		camera->aspect = float(width) / float(height);
 		camera->updateProjectionMatrix();
