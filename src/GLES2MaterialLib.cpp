@@ -2,7 +2,7 @@
 
 #include "GLES2MaterialLib.hpp"
 
-#include "Shader/ShaderGLES2.hpp"
+#include "../include/Shader/GLES2Shader.hpp"
 
 using namespace std;
 using namespace MyUPlay::MyEngine;

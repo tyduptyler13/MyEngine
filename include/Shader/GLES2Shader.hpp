@@ -14,7 +14,84 @@ namespace MyUPlay {
 	namespace MyEngine {
 		namespace Shader {
 
-			struct GLES2Shader;
+			struct GLES2Shader : public virtual Shader {
+
+				std::unordered_map<std::string, GLint> pos;
+				GLuint program = 0;
+
+				virtual ~GLES2Shader(){
+					if (program != 0){
+						glDeleteProgram(program);
+					}
+				}
+
+				GLES2Shader(){}
+
+				void compile() override;
+
+				inline void bind() override {
+					glUseProgram(program);
+				}
+
+				GLint getAttribLoc(std::string name) {
+					auto it = pos.find(name);
+					if (it == pos.end()){
+						GLint i = glGetAttribLocation(program, name.c_str());
+						pos[name] = i;
+						return i;
+					} else {
+						return it->second;
+					}
+				}
+
+				GLint getUniformLoc(std::string name) {
+					auto it = pos.find(name);
+					if (it == pos.end()){
+						GLint i = glGetUniformLocation(program, name.c_str());
+						pos[name] = i;
+						return i;
+					} else {
+						return it->second;
+					}
+				}
+
+			};
+
+			struct GLES2FlatShader : public GLES2Shader {
+
+				IShaderNode* getVertRoot() {
+					return &vert;
+				}
+
+				IShaderNode* getFragRoot() {
+					return &frag;
+				}
+
+			private:
+
+				struct : public IShaderNode {
+					std::string getStatic() {
+						return "const vec2 madd=vec2(0.5,0.5);"
+								"attribute vec2 vertex;"
+								"varying vec2 texCoord;";
+					}
+					std::string getInstance() {
+						return "texCoord = vertex*madd+madd;"
+								"gl_position = vec4(vertex,0.0,1.1);";
+					}
+				} vert;
+
+				struct : public IShaderNode {
+					std::string getStatic() {
+						return "varying vec2 texCoord;"
+								"sampler2D tex;";
+					}
+					std::string getInstance() {
+						return "gl_FragColor = texture2D(tex, texCoord);";
+					}
+				} frag;
+
+			};
 
 			/**
 			 * This is a GLES2 Specialization of the VertexBase class.
@@ -126,54 +203,12 @@ namespace MyUPlay {
 
 			};
 
-			struct GLES2Shader : public virtual Shader {
-
-				std::unordered_map<std::string, GLint> pos;
-				GLuint program = 0;
-
-				virtual ~GLES2Shader(){
-					glDeleteProgram(program);
-				}
-
-				GLES2Shader() {
-					vertexShaderRoot = std::make_unique<GLES2Vertex>(this);
-				}
-
-				inline void bind() override {
-					glUseProgram(program);
-				}
-
-				GLint getAttribLoc(std::string name) {
-					auto it = pos.find(name);
-					if (it == pos.end()){
-						GLint i = glGetAttribLocation(program, name.c_str());
-						pos[name] = i;
-						return i;
-					} else {
-						return it->second;
-					}
-				}
-
-				GLint getUniformLoc(std::string name) {
-					auto it = pos.find(name);
-					if (it == pos.end()){
-						GLint i = glGetUniformLocation(program, name.c_str());
-						pos[name] = i;
-						return i;
-					} else {
-						return it->second;
-					}
-				}
-
-			};
-
 			struct GLES2ForwardShader : public ForwardShader, public GLES2Shader {
 
 				GLES2ForwardShader() : GLES2Shader() {
+					vertexShaderRoot = std::make_unique<GLES2Vertex>(this);
 					fragmentShaderRoot = std::make_unique<GLES2Fragment>(this);
 				}
-
-				void compile() override;
 
 				void prepare(Camera<float>* camera, Mesh<float>* object, const std::vector<Light<float>*>& lights) override;
 

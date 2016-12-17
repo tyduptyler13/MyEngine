@@ -30,13 +30,23 @@ struct MyUPlay::MyEngine::Shader::Shader {
 
 	virtual void prepare(Camera<float>* camera, Mesh<float>* o, const std::vector<Light<float>*>& lights) = 0;
 
-	std::unique_ptr<VertexBase> vertexShaderRoot;
+	virtual IShaderNode* getVertexRoot() = 0;
+	virtual IShaderNode* getFragmentRoot() = 0;
 
 };
 
 struct MyUPlay::MyEngine::Shader::ForwardShader : public virtual Shader {
 
+	std::unique_ptr<VertexBase> vertexShaderRoot;
 	std::unique_ptr<FragmentBase> fragmentShaderRoot;
+
+	IShaderNode* getVertexRoot(){
+		return vertexShaderRoot;
+	}
+
+	IShaderNode* getFragmentRoot() {
+		return fragmentShaderRoot;
+	}
 
 };
 

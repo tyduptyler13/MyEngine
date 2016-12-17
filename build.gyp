@@ -4,16 +4,16 @@
 			"target_name": "libMyEngine",
 			"type": "shared_library",
 			"sources": [
- 				"src/GLES2Renderer.cpp",
-  				"src/Log.cpp",
-  				"src/Math.cpp",
-  				"src/ShaderUtil.cpp",
-  				"src/ShaderGLES2.cpp",
-  				"src/Material.cpp",
-  				"src/GLES2MaterialLib.cpp",
-  				"src/GLES2RenderTarget.cpp",
-  				"src/Texture.cpp",
-  				"src/GeometryImporter.cpp"
+				"src/Material.cpp",
+				"src/Log.cpp",
+				"src/Math.cpp",
+				"src/ShaderUtil.cpp",
+				"src/GLES2Shader.cpp",
+				"src/GLES2Renderer.cpp",
+				"src/GLES2MaterialLib.cpp",
+				"src/GLES2RenderTarget.cpp",
+				"src/Texture.cpp",
+				"src/GeometryImporter.cpp"
 			],
 			"include_dirs": [
 				"include",

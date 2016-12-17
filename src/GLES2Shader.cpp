@@ -2,7 +2,7 @@
 #include <exception>
 #include <unordered_set>
 
-#include "Shader/ShaderGLES2.hpp"
+#include "../include/Shader/GLES2Shader.hpp"
 #include "Log.hpp"
 
 #include "glsl/glsl_optimizer.h"
@@ -52,15 +52,15 @@ static inline void reportError(GLuint shader) {
 	shaderLog.log("GL Log from previous error: \n" + infoLog);
 }
 
-void GLES2ForwardShader::compile() {
+void GLES2Shader::compile() {
 
 	static glslopt_ctx *ctx = glslopt_initialize(kGlslTargetOpenGLES20); //FIXME, This should be put somewhere more global and should be destructed.
 
 	pos.clear(); //Want to forget old positions.
 
-	string vertexCode = fetchCode(vertexShaderRoot.get());
+	string vertexCode = fetchCode(getVertexRoot());
 	shaderLog.debug("Vertex shader:\n" + vertexCode);
-	string fragmentCode = fetchCode(fragmentShaderRoot.get());
+	string fragmentCode = fetchCode(getFragmentRoot());
 	shaderLog.debug("Fragment shader:\n" + fragmentCode);
 
 	glslopt_shader* shader = glslopt_optimize(ctx, kGlslOptShaderVertex, vertexCode.c_str(), 0);
