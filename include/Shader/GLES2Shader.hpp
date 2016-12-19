@@ -70,23 +70,23 @@ namespace MyUPlay {
 			private:
 
 				struct : public IShaderNode {
-					std::string getStatic() {
+					std::string getStatic() const {
 						return "const vec2 madd=vec2(0.5,0.5);"
 								"attribute vec2 vertex;"
 								"varying vec2 texCoord;";
 					}
-					std::string getInstance() {
+					std::string getInstance() const {
 						return "texCoord = vertex*madd+madd;"
 								"gl_position = vec4(vertex,0.0,1.1);";
 					}
 				} vert;
 
 				struct : public IShaderNode {
-					std::string getStatic() {
+					std::string getStatic() const {
 						return "varying vec2 texCoord;"
 								"sampler2D tex;";
 					}
-					std::string getInstance() {
+					std::string getInstance() const {
 						return "gl_FragColor = texture2D(tex, texCoord);";
 					}
 				} frag;

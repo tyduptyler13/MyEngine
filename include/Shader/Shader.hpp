@@ -41,11 +41,11 @@ struct MyUPlay::MyEngine::Shader::ForwardShader : public virtual Shader {
 	std::unique_ptr<FragmentBase> fragmentShaderRoot;
 
 	IShaderNode* getVertexRoot(){
-		return vertexShaderRoot;
+		return vertexShaderRoot.get();
 	}
 
 	IShaderNode* getFragmentRoot() {
-		return fragmentShaderRoot;
+		return fragmentShaderRoot.get();
 	}
 
 };

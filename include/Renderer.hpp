@@ -7,6 +7,7 @@
 #include <unordered_map>
 #include <tuple>
 #include <functional>
+#include <thread>
 
 namespace MyUPlay {
 
@@ -111,6 +112,15 @@ public:
 	virtual void render(Scene<T>& scene, Camera<T>* camera, std::shared_ptr<IRenderTarget> renderTarget = nullptr, bool forceClear = false) = 0;
 	void render(std::shared_ptr<Scene<T>> scene, std::shared_ptr<Camera<T>> camera) {
 		render(*scene, camera.get());
+	}
+	template <class CB>
+	void renderAsync(std::shared_ptr<Scene<T>> scene, std::shared_ptr<Camera<T>> camera, CB& cb){
+		CB* cbpointer = new CB(cb);
+		std::thread([this, scene, camera, cbpointer]{
+			this->render(scene, camera);
+			(*cbpointer)();
+			delete cbpointer;
+		}).detach();
 	}
 
 	virtual void setFaceCulling(CullConstant cullFace, CullDirection frontFaceDirection) = 0;
@@ -221,6 +231,7 @@ namespace {
 		method(getViewport);
 
 		multimethod(render, args(std::shared_ptr<Scene<float>>, std::shared_ptr<Camera<float>>));
+		multimethod(template renderAsync<nbind::cbFunction>, args(std::shared_ptr<Scene<float>>, std::shared_ptr<Camera<float>>, nbind::cbFunction&), "renderAsync");
 
 		method(setFullScreen);
 		method(setWindowed);
@@ -228,6 +239,7 @@ namespace {
 		multimethod(template onResize<nbind::cbFunction>, args(nbind::cbFunction&), "onResize");
 		//Note: Loop is not recommended to be exposed to javascript as it is a long term blocking call.
 		//If you wish to use loop behavior, duplicate its code in javascript using a callback and settimeout.
+
 
 		method(needsToClose);
 

@@ -7,7 +7,18 @@
 				'src/binding.cpp' #Allows include guards to work.
 			],
 			'dependencies': [ 'build.gyp:libMyEngine' ],
-			'ldflags': [ '-Wl,-rpath .' ],
+			"configurations": {
+				"Debug": {
+					"ldflags": [
+						"-Wl,-rpath,build/Debug"
+					]
+				},
+				"Release": {
+					"ldflags": [
+						"-Wl,-rpath,."
+					]
+				}
+			},
 			'cflags': [
 				'-std=c++14'
 			],

@@ -40,11 +40,6 @@
 					"-pthread", #We might need pthread for gcc (because their std::threads are broken otherwise)
 					"-lGLESv2",
 					"-lGL",
-				],
-				"ldflags": [
-					"-Wl,-rpath,.",
-					"-Wl,-rpath,build/Debug",
-					"-Wl,-rpath,build/Release"
 				]
 			},
 			"dependencies": [
