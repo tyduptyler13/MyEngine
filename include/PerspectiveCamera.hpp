@@ -12,6 +12,23 @@ namespace MyUPlay {
 #include "Math.hpp"
 #include "Camera.hpp"
 
+template <typename T>
+struct View {
+	T fullWidth;
+	T fullHeight;
+	T x;
+	T y;
+	T width;
+	T height;
+
+	View(T fullWidth, T fullHeight, T x, T y, T width, T height) :
+		fullWidth(fullWidth), fullHeight(fullHeight), x(x), y(y), width(width), height(height) {}
+
+	View(const View& v) :
+		fullWidth(v.fullWidth), fullHeight(v.fullHeight), x(v.x), y(v.y), width(v.width), height(v.height) {}
+
+};
+
 template <typename T = float>
 struct MyUPlay::MyEngine::PerspectiveCamera : public Camera<T> {
 
@@ -22,12 +39,12 @@ struct MyUPlay::MyEngine::PerspectiveCamera : public Camera<T> {
 	T near = 0.1;
 	T far = 2000;
 
-	T fullWidth = -1;
-	T fullHeight = -1;
-	T x = -1;
-	T y = -1;
-	T width = -1;
-	T height = -1;
+	T focus = 10;
+
+	T filmGauge = 35;
+	T filmOffset = 0;
+
+	std::unique_ptr<View<T>> view;
 
 	PerspectiveCamera(T fov = 50, T aspect = 1, T near = 0.1, T far = 2000) : Camera<T>(),
 			fov(fov), aspect(aspect), near(near), far(far) {
@@ -43,55 +60,89 @@ struct MyUPlay::MyEngine::PerspectiveCamera : public Camera<T> {
 		near = c.near;
 		far = c.far;
 
+		focus = c.focus;
+
+		filmGauge = c.filmGauge;
+		filmOffset = c.filmOffset;
+
+		*view = *c.view;
+
+	}
+
+	/**
+	 * Sets the FOV by focal length in respect to the current .filmGauge.
+	 *
+	 * The default film gauge is 35, so that the focal length can be specified for
+	 * a 35mm (full frame) camera.
+	 *
+	 * Values for focal length and film gauge must have the same unit.
+	 */
+	void setFocalLength(T focalLength) {
+
+		// see http://www.bobatkins.com/photography/technical/field_of_view.html
+		T vExtentSlope = 0.5 * getFilmHeight() / focalLength;
+
+		fov = Math::radToDeg<T>(2 * std::atan(vExtentSlope));
+		updateProjectionMatrix();
+	}
+
+	T getFocalLength() {
+		T vExtentSlope = std::tan(Math::degToRad<T>(0.5 * fov));
+
+		return 0.5 * getFilmHeight() / vExtentSlope;
+	}
+
+	T getEffectiveFov() {
+		return Math::radToDeg<T>(2 * std::atan(std::tan(Math::degToRad<T>(0.5 * fov)) / zoom));
+	}
+
+	T getFilmWidth() {
+		return filmGauge * Math::min<T>(aspect, 1);
+	}
+
+	T getFilmHeight() {
+		return filmGauge / Math::max<T>(aspect, 1);
 	}
 
 	void setViewOffset (T fullWidth, T fullHeight, T x, T y, T width, T height){
-		this->fullWidth = fullWidth;
-		this->fullHeight = fullHeight;
-		this->x = x;
-		this->y = y;
-		this->width = width;
-		this->height = height;
+
+		aspect = fullWidth / fullHeight;
+
+		view = std::make_unique<View<T>>(fullWidth, fullHeight, x, y, width, height);
 
 		updateProjectionMatrix();
 
 	}
 
-	void setLens(T focalLength, T frameHeight){
-
-		fov = 2 * Math::radToDeg<T>(std::atan(frameHeight / (focalLength * 2)));
+	void clearViewOffset () {
+		view = nullptr;
 		updateProjectionMatrix();
-
 	}
 
 	void updateProjectionMatrix(){
 
-		T fov = Math::radToDeg<T>(2 * std::atan(std::tan( Math::degToRad<T>(this->fov) * 0.5) / zoom ));
+		T near = this->near,
+				top = near * std::tan(Math::degToRad<T>( 0.5 * fov )) / zoom,
+				height = 2 * top,
+				width = aspect * height,
+				left = - 0.5 * width;
 
-		if (fullWidth != -1){
+		if ( view != nullptr ) {
 
-			T aspect = fullWidth / fullHeight;
-			T top = std::tan(Math::degToRad<T>(fov * 0.5) ) * near;
-			T bottom = -top;
-			T left = aspect * bottom;
-			T right = aspect * top;
-			T width = std::abs(right - left);
-			T height = std::abs(top - bottom);
+			T& fullWidth = view->fullWidth,
+					fullHeight = view->fullHeight;
 
-			this->projectionMatrix.makeFrustum(
-					left + x * width / fullWidth,
-					left + (x + width) * width / fullWidth,
-					top - (y + height) * height / fullHeight,
-					top - y * height / fullHeight,
-					near,
-					far
-			);
-
-		} else {
-
-			this->projectionMatrix.makePerspective(fov, aspect, near, far);
+			left += view->x * width / fullWidth;
+			top -= view->y * height / fullHeight;
+			width *= view->width / fullWidth;
+			height *= view->height / fullHeight;
 
 		}
+
+		T skew = filmOffset;
+		if ( skew != 0 ) left += near * skew / getFilmWidth();
+
+		this->projectionMatrix.makePerspective( left, left + width, top, top - height, near, far );
 
 	}
 
@@ -105,6 +156,13 @@ struct MyUPlay::MyEngine::PerspectiveCamera : public Camera<T> {
 		far = c.far;
 
 		zoom = c.zoom;
+
+		focus = c.focus;
+
+		filmGauge = c.filmGauge;
+		filmOffset = c.filmOffset;
+
+		*view = *c.view;
 
 		return *this;
 
@@ -153,6 +211,11 @@ struct MyUPlay::MyEngine::PerspectiveCamera : public Camera<T> {
 namespace {
 	using namespace MyUPlay::MyEngine;
 
+	NBIND_CLASS(View<float>, View) {
+		construct<float, float, float, float, float, float>();
+		construct<const View<float>&>();
+	}
+
 	NBIND_CLASS(PerspectiveCamera<float>, PerspectiveCamera) {
 		inherit(Camera<float>);
 
@@ -165,8 +228,8 @@ namespace {
 		getset(getNear, setNear);
 		getset(getFar, setFar);
 
-		method(setLens);
 		method(setViewOffset);
+		method(clearViewOffset);
 		method(updateProjectionMatrix);
 
 		method(copy);

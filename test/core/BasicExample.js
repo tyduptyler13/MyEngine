@@ -47,11 +47,31 @@ function render() {
 	var rot = delta * Math.PI * 0.5;
 	box.rotateY(rot);
 	suzane.rotateY(rot);
+	
+	/*
+	renderer.render(scene, camera);
+	
+	if (!renderer.needsToClose()){
+		process.nextTick(render);
+	}
+	*/
+
 	renderer.renderAsync(scene, camera, ()=>{
 		if (!renderer.needsToClose()){
 			render();
 		}
 	});
+
 }
+
+/*
+setTimeout(()=>{
+	renderer.setFullScreen();
+}, 10000);
+
+setTimeout(()=>{
+	renderer.setWindowed();
+}, 20000);
+*/
 
 render();

@@ -102,19 +102,6 @@
 					"deps/glsl-optimizer/src"
 				]
 			}
-		},
-		# This is our test build to check if the engine can compile properly.
-		{
-			"target_name": "BasicExample",
-			"type": "executable",
-			"sources": [ "test/core/BasicExample.cpp" ],
-			"dependencies": [ "libMyEngine" ],
-			"cflags": [
-				"-Wall",
-				"-Wextra",
-				"-pedantic",
-				"-std=c++14"
-			]
 		}
 	]
 }

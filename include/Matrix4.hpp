@@ -744,6 +744,8 @@ public:
 		return *this;
 
 	}
+
+	[[deprecated]]
 	Matrix4& makePerspective(T fov, T aspect, T near, T far){
 
 		T ymax = near * tan(Math::degToRad<T>(fov * 0.5));
@@ -752,6 +754,26 @@ public:
 		T xmax = ymax * aspect;
 
 		return makeFrustum(xmin, xmax, ymin, ymax, near, far);
+
+	}
+
+	Matrix4& makePerspective(T left, T right, T top, T bottom, T near, T far) {
+
+		auto& te = elements;
+		T x = 2 * near / (right - left);
+		T y = 2 * near / (top - bottom);
+
+		T a = (right + left) / (right - left);
+		T b = (top + bottom) / (top - bottom);
+		T c = - (far + near) / (far - near);
+		T d = - 2 * far * near / (far - near);
+
+		te[ 0 ] = x;	te[ 4 ] = 0;	te[ 8 ] = a;	te[ 12 ] = 0;
+		te[ 1 ] = 0;	te[ 5 ] = y;	te[ 9 ] = b;	te[ 13 ] = 0;
+		te[ 2 ] = 0;	te[ 6 ] = 0;	te[ 10 ] = c;	te[ 14 ] = d;
+		te[ 3 ] = 0;	te[ 7 ] = 0;	te[ 11 ] = - 1;	te[ 15 ] = 0;
+
+		return *this;
 
 	}
 

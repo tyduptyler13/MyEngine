@@ -7,7 +7,7 @@
 #include <unordered_map>
 #include <tuple>
 #include <functional>
-#include <thread>
+#include <mutex>
 
 namespace MyUPlay {
 
@@ -34,6 +34,9 @@ namespace MyUPlay {
 
 template <typename T = float>
 class MyUPlay::MyEngine::Renderer {
+protected:
+
+	std::recursive_mutex rendLock;
 
 public:
 
@@ -99,11 +102,21 @@ public:
 	virtual unsigned getMaxAnisotripy() const = 0;
 
 	virtual std::tuple<unsigned, unsigned> getSize() const = 0;
+	std::array<unsigned, 2> getSizeArray() const {
+		std::array<unsigned, 2> array;
+		std::tie(array[0], array[1]) = getSize();
+		return array;
+	}
 	virtual void setSize(unsigned width, unsigned height) = 0;
 	virtual void setPos(unsigned x, unsigned y) = 0;
 
 	virtual void setViewport(int x, int y, unsigned width, unsigned height) = 0;
 	virtual std::tuple<int, int, unsigned, unsigned> getViewport() const = 0;
+	std::array<int, 4> getViewportArray() const { //Used in node.
+		std::array<int, 4> array;
+		std::tie(array[0], array[1], array[2], array[3]) = getViewport();
+		return array;
+	}
 	virtual void setDefaultViewport() = 0;
 
 	virtual void renderBufferImmediate(Mesh<T>* object, std::shared_ptr<Shader::Shader> shader, IMaterial* material) = 0;
@@ -216,16 +229,52 @@ protected:
 
 #include "nbind/api.h"
 
+namespace MyUPlay {
+	namespace MyEngine {
+#ifdef BUILDING_NODE_EXTENSION
+
+		class LambdaWorker : public Nan::AsyncWorker {
+
+			std::function<void()> exec;
+
+		public:
+
+			LambdaWorker(Nan::Callback* callback, std::function<void()> exec) :
+				Nan::AsyncWorker(callback), exec(exec) {}
+
+			void Execute() {
+				exec();
+			}
+
+		};
+
+		template <>
+		template <>
+		void Renderer<float>::renderAsync<nbind::cbFunction>(
+				std::shared_ptr<Scene<float>> scene, std::shared_ptr<Camera<float>> camera, nbind::cbFunction& cb){
+
+			Nan::Callback* callback = new Nan::Callback(cb.getJsFunction());
+
+			Nan::AsyncQueueWorker(new LambdaWorker(callback, [this, scene, camera]{
+				this->render(scene, camera);
+			}));
+
+		}
+
+#endif
+	}
+}
+
 namespace {
 
 	using namespace MyUPlay::MyEngine;
 
 	NBIND_CLASS(Renderer<float>, Renderer) {
 
-		method(getSize);
+		method(getSizeArray, "getSize");
 		method(setSize);
 		method(setViewport);
-		method(getViewport);
+		method(getViewportArray, "getViewport");
 
 		multimethod(render, args(std::shared_ptr<Scene<float>>, std::shared_ptr<Camera<float>>));
 		method(template renderAsync<nbind::cbFunction>, "renderAsync");

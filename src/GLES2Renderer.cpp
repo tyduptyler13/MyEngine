@@ -112,6 +112,7 @@ GLES2Renderer::GLES2Renderer(unsigned antialias) {
 }
 
 GLES2Renderer::~GLES2Renderer(){
+	std::lock_guard<std::recursive_mutex> lock(this->rendLock);
 	glfwDestroyWindow(this->window);
 }
 
@@ -192,30 +193,38 @@ std::tuple<unsigned, unsigned> GLES2Renderer::getSize() const {
 }
 
 void GLES2Renderer::setSize(unsigned width, unsigned height) {
+	std::lock_guard<std::recursive_mutex> lock(this->rendLock);
 	glfwSetWindowSize(window, width, height);
 }
 
 void GLES2Renderer::setPos(unsigned x, unsigned y) {
+	std::lock_guard<std::recursive_mutex> lock(this->rendLock);
 	glfwSetWindowPos(window, x, y);
 }
 
 void GLES2Renderer::setViewport(int x, int y, unsigned width, unsigned height)  {
+	std::lock_guard<std::recursive_mutex> lock(this->rendLock);
 	glViewport(x, y, width, height);
 }
-std::tuple<int, int, unsigned, unsigned> GLES2Renderer::getViewport() const  {
+std::tuple<int, int, unsigned, unsigned> GLES2Renderer::getViewport() const {
 	int viewport[4];
 	glGetIntegerv(GL_VIEWPORT, viewport);
 	return make_tuple(viewport[0], viewport[1], viewport[2], viewport[3]);
 }
 void GLES2Renderer::setDefaultViewport() {
+	std::lock_guard<std::recursive_mutex> lock(this->rendLock);
 	int w, h;
 	glfwGetFramebufferSize(window, &w, &h);
 	setViewport(0, 0, w, h);
 }
 
-void GLES2Renderer::setFullScreen() { //We use the existing size of the viewport for the new resolution. (It might not stay that way)
-	auto size = getViewport();
-	glfwSetWindowMonitor(window, glfwGetPrimaryMonitor(), 0, 0, std::get<0>(size), std::get<1>(size), GLFW_DONT_CARE);
+void GLES2Renderer::setFullScreen() {
+	std::lock_guard<std::recursive_mutex> lock(this->rendLock);
+	GLFWmonitor* const mon = glfwGetPrimaryMonitor();
+	const GLFWvidmode* const mode = glfwGetVideoMode(mon);
+	glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
+	glfwSetWindowMonitor(window, mon, 0, 0, mode->width, mode->height, GLFW_DONT_CARE);
+
 }
 
 void GLES2Renderer::setFakeFullScreen() {
@@ -224,9 +233,12 @@ void GLES2Renderer::setFakeFullScreen() {
 }
 
 void GLES2Renderer::setWindowed() {
-	auto size = getViewport();
-	//Use the old x y values. (So long as the callback didn't overwrite them for some reason).
-	glfwSetWindowMonitor(window, nullptr, windowX, windowY, std::get<0>(size), std::get<1>(size), GLFW_DONT_CARE);
+	std::lock_guard<std::recursive_mutex> lock(this->rendLock);
+	GLFWmonitor* const mon = glfwGetWindowMonitor(window);
+	if (mon == nullptr) return; //Already windowed.
+	const GLFWvidmode* const mode = glfwGetVideoMode(mon);
+	glfwWindowHint(GLFW_DECORATED, GLFW_TRUE);
+	glfwSetWindowMonitor(window, nullptr, windowX, windowY, mode->width, mode->height, GLFW_DONT_CARE);
 }
 
 void GLES2Renderer::loop(std::function<bool(double)> func) {
@@ -243,12 +255,17 @@ void GLES2Renderer::loop(std::function<bool(double)> func) {
 }
 
 bool GLES2Renderer::needsToClose() {
+	std::lock_guard<std::recursive_mutex> lock(this->rendLock);
 	glfwPollEvents(); //Sneaking in some event handling.
 	return glfwWindowShouldClose(window);
 }
 
 void GLES2Renderer::onResize(std::function<void(int, int)> func) {
-	FrameSizer.addHandler(window, func);
+	std::lock_guard<std::recursive_mutex> lock(this->rendLock);
+	FrameSizer.addHandler(window, [this, func](int width, int height){
+		std::lock_guard<std::recursive_mutex> lock(this->rendLock);
+		func(width, height);
+	});
 }
 
 void GLES2Renderer::renderBufferImmediate(Mesh<float>* object, std::shared_ptr<Shader::Shader> program, IMaterial* material)  {
@@ -309,6 +326,9 @@ float GLES2Renderer::reverseStablePainterSort(const RenderItem<Mesh<float>>& a, 
 }
 
 void GLES2Renderer::render(Scene<float>& scene, Camera<float>* camera, std::shared_ptr<IRenderTarget> renderTarget, bool forceClear)  {
+
+	//Only one render may be in progress at a time.
+	std::lock_guard<std::recursive_mutex> lock(this->rendLock);
 
 	glfwMakeContextCurrent(window);
 
@@ -638,6 +658,7 @@ void GLES2Renderer::setTexture(shared_ptr<Texture> texture, unsigned slot)  {
 }
 
 void GLES2Renderer::setRenderTarget(std::shared_ptr<IRenderTarget> target) {
+	std::lock_guard<std::recursive_mutex> lock(this->rendLock);
 	if (target == nullptr){
 		glBindFramebuffer(GL_FRAMEBUFFER, 0); //Bind to default target (screen)
 	} else {
@@ -657,6 +678,7 @@ std::vector<unsigned char> GLES2Renderer::readRenderTargetPixels(std::shared_ptr
 }
 
 void GLES2Renderer::setVsync(bool enable) {
+	std::lock_guard<std::recursive_mutex> lock(this->rendLock);
 	glfwSwapInterval(enable ? 1 : 0);
 }
 
