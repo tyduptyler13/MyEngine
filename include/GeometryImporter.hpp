@@ -11,7 +11,6 @@ namespace MyUPlay {
 		struct GeometryImporter {
 
 			static Object3D<float>* ImportAsset(std::string);
-			static void ImportAssetAsync(std::string, std::function<void(Object3D<float>*)>);
 
 			static std::shared_ptr<Object3D<float>> ImportSharedAsset(std::string s) {
 				return std::shared_ptr<Object3D<float>>(ImportAsset(s));
@@ -29,7 +28,7 @@ namespace {
 
 	NBIND_CLASS(GeometryImporter) {
 
-		multimethod(ImportSharedAsset, args(std::string), "ImportAsset"); //The only one that actually wanted a string in quotes...
+		multimethod(ImportSharedAsset, args(std::string), "ImportAsset");
 
 	}
 

@@ -1,4 +1,5 @@
 #include <memory>
+#include <cassert>
 
 #include "GLES2MaterialLib.hpp"
 
@@ -9,11 +10,13 @@ using namespace MyUPlay::MyEngine;
 using namespace MyUPlay::MyEngine::Shader;
 
 template <>
-IMaterial* MyUPlay::MyEngine::createNormalMaterial<GLES2Renderer>() {
+std::shared_ptr<IMaterial> MyUPlay::MyEngine::createNormalMaterial<GLES2Renderer>() {
 
-	IMaterial* mat = new IMaterial("NormalMaterial");
+	std::shared_ptr<IMaterial> mat = make_shared<IMaterial>("NormalMaterial");
 
-	mat->shader = make_unique<GLES2ForwardShader>(); //The default shader is a normal shader.
+	mat->shader = make_shared<GLES2ForwardShader>(); //The default shader is a normal shader.
+
+	assert(mat != nullptr);
 
 	return mat;
 

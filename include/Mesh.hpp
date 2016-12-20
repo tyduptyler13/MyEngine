@@ -24,7 +24,10 @@ struct MyUPlay::MyEngine::Mesh : public Object3D<T> {
 	//void raycast(const Raycaster<T>&, std::vector<Intersection<T> >&); //TODO
 
 	Mesh(IGeometry<T>* geometry, IMaterial* material)
-	: Object3D<T>(Object3D<T>::ObjectType::MESH), geometry(geometry), material(material) {}
+	: Object3D<T>(Object3D<T>::ObjectType::MESH), geometry(geometry), material(material) {
+		assert(geometry != nullptr);
+		assert(material != nullptr);
+	}
 
 	Mesh(std::shared_ptr<IGeometry<T>> geo, std::shared_ptr<IMaterial> mat)
 	: Object3D<T>(Object3D<T>::ObjectType::MESH), geometry(geo), material(mat) {

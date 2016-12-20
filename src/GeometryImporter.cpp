@@ -1,7 +1,7 @@
 #include "GeometryImporter.hpp"
 #include "Mesh.hpp"
 #include "BufferGeometry.hpp"
-#include "MaterialLib.hpp"
+#include "GLES2MaterialLib.hpp"
 
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
@@ -9,6 +9,8 @@
 
 #include <thread>
 #include <memory>
+
+#include <cassert>
 
 using namespace std;
 using namespace MyUPlay::MyEngine;
@@ -37,8 +39,10 @@ Object3D<float>* GeometryImporter::ImportAsset(string s) {
 
 	//TODO Meshes
 	for (unsigned i = 0; i < scene->mNumMeshes; ++i){
-		BufferGeometry<float>* geo = new BufferGeometry<float>();
-		IMaterial* mat = createNormalMaterial<GLES2Renderer>();
+		shared_ptr<BufferGeometry<float>> geo = make_shared<BufferGeometry<float>>();
+		shared_ptr<IMaterial> mat = createNormalMaterial<GLES2Renderer>();
+		assert(geo != nullptr);
+		assert(mat != nullptr);
 		Mesh<float>* mesh = new Mesh<float>(geo, mat); //TODO Replace this material with correct material above when finished
 
 		mesh->name = scene->mMeshes[i]->mName.C_Str();
@@ -83,8 +87,3 @@ Object3D<float>* GeometryImporter::ImportAsset(string s) {
 
 }
 
-void GeometryImporter::ImportAssetAsync(string s, function<void(Object3D<float>*)> func){
-	thread([s, func]{
-		func(ImportAsset(s));
-	}).detach();
-}

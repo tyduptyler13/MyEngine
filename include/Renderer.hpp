@@ -113,14 +113,11 @@ public:
 	void render(std::shared_ptr<Scene<T>> scene, std::shared_ptr<Camera<T>> camera) {
 		render(*scene, camera.get());
 	}
-	template <class CB>
+	template<typename CB>
 	void renderAsync(std::shared_ptr<Scene<T>> scene, std::shared_ptr<Camera<T>> camera, CB& cb){
-		CB* cbpointer = new CB(cb);
-		std::thread([this, scene, camera, cbpointer]{
-			this->render(scene, camera);
-			(*cbpointer)();
-			delete cbpointer;
-		}).detach();
+		//Fallback behavior of just executing right away. Callback will be called as if async.
+		render(scene, camera);
+		cb();
 	}
 
 	virtual void setFaceCulling(CullConstant cullFace, CullDirection frontFaceDirection) = 0;
@@ -231,7 +228,7 @@ namespace {
 		method(getViewport);
 
 		multimethod(render, args(std::shared_ptr<Scene<float>>, std::shared_ptr<Camera<float>>));
-		multimethod(template renderAsync<nbind::cbFunction>, args(std::shared_ptr<Scene<float>>, std::shared_ptr<Camera<float>>, nbind::cbFunction&), "renderAsync");
+		method(template renderAsync<nbind::cbFunction>, "renderAsync");
 
 		method(setFullScreen);
 		method(setWindowed);

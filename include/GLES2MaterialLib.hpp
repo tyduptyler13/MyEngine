@@ -8,7 +8,7 @@ namespace MyUPlay {
 	namespace MyEngine {
 
 		template <>
-		IMaterial* createNormalMaterial<GLES2Renderer>();
+		std::shared_ptr<IMaterial> createNormalMaterial<GLES2Renderer>();
 
 	}
 }
@@ -19,13 +19,9 @@ namespace {
 
 	using namespace MyUPlay::MyEngine;
 
-	std::shared_ptr<IMaterial> createGLES2NormalMaterial() {
-		return std::shared_ptr<IMaterial>(createNormalMaterial<GLES2Renderer>());
-	}
-
 	NBIND_GLOBAL() {
 
-		function(createGLES2NormalMaterial);
+		function(createNormalMaterial<GLES2Renderer>, "createGLES2NormalMaterial");
 
 	}
 

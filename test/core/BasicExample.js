@@ -47,10 +47,11 @@ function render() {
 	var rot = delta * Math.PI * 0.5;
 	box.rotateY(rot);
 	suzane.rotateY(rot);
-	renderer.render(scene, camera);
-	if (!renderer.needsToClose()){
-		process.nextTick(render, 1); //Delay the next render only a little.
-	}
+	renderer.renderAsync(scene, camera, ()=>{
+		if (!renderer.needsToClose()){
+			render();
+		}
+	});
 }
 
 render();
