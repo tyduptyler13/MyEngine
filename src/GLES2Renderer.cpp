@@ -73,7 +73,7 @@ static StaticInstanceEventMapper<0, int, int> WindowSizer; //Handles window resi
 static StaticInstanceEventMapper<1, int, int> FrameSizer; //Handles framebuffer resizing
 
 
-GLES2Renderer::GLES2Renderer(unsigned antialias) {
+GLES2Renderer::GLES2Renderer(unsigned antialias) : Renderer() {
 
 	if (!glfwInitStatus){
 		logger.warn("Failed to init glfw");
@@ -103,7 +103,7 @@ GLES2Renderer::GLES2Renderer(unsigned antialias) {
 
 	glfwSetFramebufferSizeCallback(window, FrameSizer.handleEvent);
 
-	FrameSizer.addHandler(window, [](int width, int height){
+	onResize([](int width, int height){
 		glViewport(0, 0, width, height);
 	});
 
@@ -204,6 +204,7 @@ void GLES2Renderer::setPos(unsigned x, unsigned y) {
 
 void GLES2Renderer::setViewport(int x, int y, unsigned width, unsigned height)  {
 	std::lock_guard<std::recursive_mutex> lock(this->rendLock);
+	glfwMakeContextCurrent(window);
 	glViewport(x, y, width, height);
 }
 std::tuple<int, int, unsigned, unsigned> GLES2Renderer::getViewport() const {

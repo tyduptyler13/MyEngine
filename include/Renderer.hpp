@@ -229,9 +229,11 @@ protected:
 
 #include "nbind/api.h"
 
+#ifdef BUILDING_NODE_EXTENSION
+
 namespace MyUPlay {
 	namespace MyEngine {
-#ifdef BUILDING_NODE_EXTENSION
+
 
 		class LambdaWorker : public Nan::AsyncWorker {
 
@@ -260,10 +262,10 @@ namespace MyUPlay {
 			}));
 
 		}
-
-#endif
 	}
 }
+
+#endif
 
 namespace {
 
