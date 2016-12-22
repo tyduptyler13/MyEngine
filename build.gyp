@@ -2,7 +2,7 @@
 	"targets": [
 		{
 			"target_name": "libMyEngine",
-			"type": "shared_library",
+			"type": "<(library)",
 			"sources": [
 				"src/Material.cpp",
 				"src/Log.cpp",
@@ -18,8 +18,6 @@
 			"include_dirs": [
 				"include",
 				"node_modules/nbind/include",
-				"deps/glfw/include",
-				"<!(pkg-config assimp --cflags)"
 			],
 			"direct_dependent_settings": {
 				"include_dirs": [
@@ -35,19 +33,16 @@
 			"link_settings": {
 				"libraries": [
 					"-lSOIL",
-					"<!(pkg-config --static --libs-only-l glfw3)",
-					"<!(pkg-config assimp --libs-only-l assimp)",
+					"-lglfw3",
+					"-lassimp",
 					"-pthread", #We might need pthread for gcc (because their std::threads are broken otherwise)
-					"-lGLESv2",
-					"-lGL",
+					"-lGLESv2"
 				]
 			},
 			"dependencies": [
 				"glsl-optimizer"
 			],
-			"variables": {
-				"pkg-config": "pkg-config"
-			},
+			"ldflags": [ "-L../lib" ],
 			"cflags": [
 				"-Wall",
 				"-Wextra",
@@ -55,11 +50,33 @@
 				"-std=c++14",
 				"-fpic"
 			],
+			"conditions": [
+				['target=="win"', {
+					'ldflags!': [ '-rdynamic' ],
+					"link_settings": {
+						"libraries": [
+							"-lgdi32",
+							"-lglu32",
+							"-lopengl32",
+							"-lkernel32",
+							"-luser32",
+							"-lwinspool",
+							"-lcomdlg32",
+							"-ladvapi32",
+							"-lshell32",
+							"-lole32",
+							"-loleaut32",
+							"-luuid",
+							"-lodbc32"
+						]
+					}
+				}]
+			],
 			'cflags!': [ '-fno-exceptions' ],
 			'cflags_cc!': [
 				'-fno-exceptions',
 				'-fno-rtti',
-				'-std=gnu++0x'
+				'-std=gnu++0x',
 			]
 		},
 		# glsl-optimizer code is a dependency of the engines shader compiler.

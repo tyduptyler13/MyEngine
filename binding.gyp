@@ -7,6 +7,12 @@
 				'src/binding.cpp' #Allows include guards to work.
 			],
 			'dependencies': [ 'build.gyp:libMyEngine' ],
+			"conditions": [
+				['target=="win"', {
+					"cflags_cc!": [ "-rdynamic" ],
+					"cflags": [ "-target x86_64-w64-mingw32" ]
+				}]
+			],
 			"configurations": {
 				"Debug": {
 					"ldflags": [
@@ -22,10 +28,9 @@
 			'cflags': [
 				'-std=c++14'
 			],
-			'cflags!': [ 
+			'cflags!': [
 				'-fno-exceptions',
 				'-std=gnu++0x',
-				'-std=c++11'
 			],
 			'cflags_cc!': [
 				'-fno-exceptions',

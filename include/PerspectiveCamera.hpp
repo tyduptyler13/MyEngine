@@ -6,6 +6,7 @@
 namespace MyUPlay {
 	namespace MyEngine {
 		template <typename T> struct PerspectiveCamera;
+		template <typename T> struct View;
 	}
 }
 
@@ -13,7 +14,7 @@ namespace MyUPlay {
 #include "Camera.hpp"
 
 template <typename T>
-struct View {
+struct MyUPlay::MyEngine::View {
 	T fullWidth;
 	T fullHeight;
 	T x;
