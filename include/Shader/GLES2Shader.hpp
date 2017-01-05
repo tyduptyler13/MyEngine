@@ -6,6 +6,8 @@
 
 #include "Shader/ShaderLib.hpp"
 
+#include "Vector2.hpp"
+
 #include "GLES2/gl2.h"
 
 #include <unordered_map>
@@ -59,32 +61,35 @@ namespace MyUPlay {
 
 			struct GLES2FlatShader : public GLES2Shader {
 
-				IShaderNode* getVertRoot() {
+				IShaderNode* getVertexRoot() {
 					return &vert;
 				}
 
-				IShaderNode* getFragRoot() {
+				IShaderNode* getFragmentRoot() {
 					return &frag;
 				}
+
+				void prepare(Camera<float>*, Mesh<float>*, const std::vector<Light<float>*>&){} //Do nothing.
+				void prepare(GLuint tex);
 
 			private:
 
 				struct : public IShaderNode {
 					std::string getStatic() const {
-						return "const vec2 madd=vec2(0.5,0.5);"
-								"attribute vec2 vertex;"
+						return "const vec2 madd=vec2(0.5,0.5);\n"
+								"attribute vec2 vertex;\n"
 								"varying vec2 texCoord;";
 					}
 					std::string getInstance() const {
-						return "texCoord = vertex*madd+madd;"
+						return "texCoord = vertex*madd+madd;\n"
 								"gl_position = vec4(vertex,0.0,1.1);";
 					}
 				} vert;
 
 				struct : public IShaderNode {
 					std::string getStatic() const {
-						return "varying vec2 texCoord;"
-								"sampler2D tex;";
+						return "varying vec2 texCoord;\n"
+								"attribute sampler2D tex;";
 					}
 					std::string getInstance() const {
 						return "gl_FragColor = texture2D(tex, texCoord);";

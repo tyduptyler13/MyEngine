@@ -75,6 +75,8 @@ static StaticInstanceEventMapper<1, int, int> FrameSizer; //Handles framebuffer 
 
 GLES2Renderer::GLES2Renderer(unsigned antialias) : Renderer() {
 
+	std::lock_guard<std::recursive_mutex> lock(GLES2Renderer::glfwLock);
+
 	if (!glfwInitStatus){
 		logger.warn("Failed to init glfw");
 		throw runtime_error("Failed to initialize glfw");
@@ -113,6 +115,7 @@ GLES2Renderer::GLES2Renderer(unsigned antialias) : Renderer() {
 
 GLES2Renderer::~GLES2Renderer(){
 	std::lock_guard<std::recursive_mutex> lock(this->rendLock);
+	std::lock_guard<std::recursive_mutex> lock2(GLES2Renderer::glfwLock);
 	glfwDestroyWindow(this->window);
 }
 
@@ -188,23 +191,25 @@ unsigned GLES2Renderer::getMaxAnisotripy() const  {
 
 std::tuple<unsigned, unsigned> GLES2Renderer::getSize() const {
 	int w, h;
+	std::lock_guard<std::recursive_mutex> lock(GLES2Renderer::glfwLock);
 	glfwGetWindowSize(window, &w, &h);
 	return make_tuple(w, h);
 }
 
 void GLES2Renderer::setSize(unsigned width, unsigned height) {
 	std::lock_guard<std::recursive_mutex> lock(this->rendLock);
+	std::lock_guard<std::recursive_mutex> lock2(GLES2Renderer::glfwLock);
 	glfwSetWindowSize(window, width, height);
 }
 
 void GLES2Renderer::setPos(unsigned x, unsigned y) {
 	std::lock_guard<std::recursive_mutex> lock(this->rendLock);
+	std::lock_guard<std::recursive_mutex> lock2(GLES2Renderer::glfwLock);
 	glfwSetWindowPos(window, x, y);
 }
 
 void GLES2Renderer::setViewport(int x, int y, unsigned width, unsigned height)  {
 	std::lock_guard<std::recursive_mutex> lock(this->rendLock);
-	glfwMakeContextCurrent(window);
 	glViewport(x, y, width, height);
 }
 std::tuple<int, int, unsigned, unsigned> GLES2Renderer::getViewport() const {
@@ -214,6 +219,7 @@ std::tuple<int, int, unsigned, unsigned> GLES2Renderer::getViewport() const {
 }
 void GLES2Renderer::setDefaultViewport() {
 	std::lock_guard<std::recursive_mutex> lock(this->rendLock);
+	std::lock_guard<std::recursive_mutex> lock2(GLES2Renderer::glfwLock);
 	int w, h;
 	glfwGetFramebufferSize(window, &w, &h);
 	setViewport(0, 0, w, h);
@@ -221,6 +227,7 @@ void GLES2Renderer::setDefaultViewport() {
 
 void GLES2Renderer::setFullScreen() {
 	std::lock_guard<std::recursive_mutex> lock(this->rendLock);
+	std::lock_guard<std::recursive_mutex> lock2(GLES2Renderer::glfwLock);
 	GLFWmonitor* const mon = glfwGetPrimaryMonitor();
 	const GLFWvidmode* const mode = glfwGetVideoMode(mon);
 	glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
@@ -235,6 +242,7 @@ void GLES2Renderer::setFakeFullScreen() {
 
 void GLES2Renderer::setWindowed() {
 	std::lock_guard<std::recursive_mutex> lock(this->rendLock);
+	std::lock_guard<std::recursive_mutex> lock2(GLES2Renderer::glfwLock);
 	GLFWmonitor* const mon = glfwGetWindowMonitor(window);
 	if (mon == nullptr) return; //Already windowed.
 	const GLFWvidmode* const mode = glfwGetVideoMode(mon);
@@ -243,6 +251,8 @@ void GLES2Renderer::setWindowed() {
 }
 
 void GLES2Renderer::loop(std::function<bool(double)> func) {
+
+	std::lock_guard<std::recursive_mutex> lock(GLES2Renderer::glfwLock);
 
 	Clock<> clock;
 
@@ -257,6 +267,7 @@ void GLES2Renderer::loop(std::function<bool(double)> func) {
 
 bool GLES2Renderer::needsToClose() {
 	std::lock_guard<std::recursive_mutex> lock(this->rendLock);
+	std::lock_guard<std::recursive_mutex> lock2(GLES2Renderer::glfwLock);
 	glfwPollEvents(); //Sneaking in some event handling.
 	return glfwWindowShouldClose(window);
 }
@@ -265,6 +276,8 @@ void GLES2Renderer::onResize(std::function<void(int, int)> func) {
 	std::lock_guard<std::recursive_mutex> lock(this->rendLock);
 	FrameSizer.addHandler(window, [this, func](int width, int height){
 		std::lock_guard<std::recursive_mutex> lock(this->rendLock);
+		std::lock_guard<std::recursive_mutex> lock2(GLES2Renderer::glfwLock);
+		glfwMakeContextCurrent(window);
 		func(width, height);
 	});
 }
@@ -294,12 +307,17 @@ void GLES2Renderer::renderBufferDirect(Camera<float>* camera, Fog<float>* fog, I
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, object->geometry->indexBuffer);
 
+	info.renderer.calls++;
+
 	if (group != -1) {
 		auto groups = object->geometry->getGroups();
-
 		glDrawElements(GL_TRIANGLES, groups[group].count, GL_UNSIGNED_INT, reinterpret_cast<void*>(groups[group].start * sizeof(unsigned short)));
+		info.renderer.faces += groups[group].count / 3;
+		info.renderer.vertices += groups[group].count;
 	} else {
 		glDrawElements(GL_TRIANGLES, object->geometry->size(), GL_UNSIGNED_INT, nullptr);
+		info.renderer.faces += object->geometry->size() / 3;
+		info.renderer.vertices += object->geometry->size();
 	}
 
 }
@@ -330,8 +348,13 @@ void GLES2Renderer::render(Scene<float>& scene, Camera<float>* camera, std::shar
 
 	//Only one render may be in progress at a time.
 	std::lock_guard<std::recursive_mutex> lock(this->rendLock);
+	std::lock_guard<std::recursive_mutex> lock2(GLES2Renderer::glfwLock);
 
 	glfwMakeContextCurrent(window);
+
+	for (auto& pair : this->prePlugins) {
+		pair.second(scene, camera);
+	}
 
 	if (scene.autoUpdate) scene.updateMatrixWorld();
 
@@ -380,6 +403,10 @@ void GLES2Renderer::render(Scene<float>& scene, Camera<float>* camera, std::shar
 		renderObjects(opaqueObjects, scene, camera);
 		renderObjects(transparentObjects, scene, camera);
 
+	}
+
+	for (auto& pair : this->postPlugins) {
+		pair.second(scene, camera);
 	}
 
 	glfwSwapBuffers(window);
@@ -680,6 +707,7 @@ std::vector<unsigned char> GLES2Renderer::readRenderTargetPixels(std::shared_ptr
 
 void GLES2Renderer::setVsync(bool enable) {
 	std::lock_guard<std::recursive_mutex> lock(this->rendLock);
+	std::lock_guard<std::recursive_mutex> lock2(GLES2Renderer::glfwLock);
 	glfwSwapInterval(enable ? 1 : 0);
 }
 
@@ -707,6 +735,8 @@ bool GLES2Renderer::isSphereViewable(Spheref s) {
 	return true;
 
 }
+
+recursive_mutex GLES2Renderer::glfwLock;
 
 //Specializations for shaders (Allows a renderer to work)
 template <> const char* Shader::Utility<GLES2Renderer, bool>::type = "bool";

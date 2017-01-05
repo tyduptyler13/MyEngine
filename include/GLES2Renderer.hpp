@@ -78,10 +78,32 @@ namespace MyUPlay {
 			 * The following two functions append render plugins to the render process either before
 			 * or after the render of the scene starts/ends.
 			 */
-			void registerPreRenderPlugin(Math::UUID id, std::function<void(Scene<float>& s, Camera<float>*)>);
-			void registerPostRenderPlugin(Math::UUID id, std::function<void(Scene<float>& s, Camera<float>*)>);
+			void registerPreRenderPlugin(Math::UUID& id, std::function<void(Scene<float>& s, Camera<float>*)> func){
+				prePlugins[id] = func;
+			}
+			void registerPostRenderPlugin(Math::UUID& id, std::function<void(Scene<float>& s, Camera<float>*)> func){
+				postPlugins[id] = func;
+			}
 
-		private:
+			void unregisterPreRenderPlugin(Math::UUID& id) {
+				auto it = prePlugins.find(id);
+				if (it != prePlugins.end()){
+					prePlugins.erase(it);
+				}
+			}
+			void unregisterPostRenderPlugin(Math::UUID& id) {
+				auto it = postPlugins.find(id);
+				if (it != postPlugins.end()) {
+					postPlugins.erase(it);
+				}
+			}
+
+		protected:
+
+			static std::recursive_mutex glfwLock;
+
+			std::unordered_map<Math::UUID, std::function<void(Scene<float>& s, Camera<float>*)>> prePlugins;
+			std::unordered_map<Math::UUID, std::function<void(Scene<float>& s, Camera<float>*)>> postPlugins;
 
 			Matrix4f projScreenMatrix;
 			Frustum<float> frustum;

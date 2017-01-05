@@ -725,6 +725,14 @@ public:
 
 	}
 
+//These are defined in a windows header. -_-
+#ifdef near
+#undef near
+#endif
+#ifdef far
+#undef far
+#endif
+
 	Matrix4& makeFrustum(T left, T right, T bottom, T top, T near, T far){
 
 		auto& te = elements;

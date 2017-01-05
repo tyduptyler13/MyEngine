@@ -4,27 +4,9 @@
 			'target_name': 'nbind',
 			'defines': [ 'V8_DEPRECATION_WARNINGS=1' ],
 			'sources': [
-				'src/binding.cpp' #Allows include guards to work.
+				'src/node/binding.cpp' #Allows include guards to work.
 			],
 			'dependencies': [ 'build.gyp:libMyEngine' ],
-			"conditions": [
-				['target=="win"', {
-					"cflags_cc!": [ "-rdynamic" ],
-					"cflags": [ "-target x86_64-w64-mingw32" ]
-				}]
-			],
-			"configurations": {
-				"Debug": {
-					"ldflags": [
-						"-Wl,-rpath,build/Debug"
-					]
-				},
-				"Release": {
-					"ldflags": [
-						"-Wl,-rpath,."
-					]
-				}
-			},
 			'cflags': [
 				'-std=c++14'
 			],

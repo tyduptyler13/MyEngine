@@ -14,6 +14,8 @@ std::shared_ptr<IMaterial> MyUPlay::MyEngine::createNormalMaterial<GLES2Renderer
 
 	std::shared_ptr<IMaterial> mat = make_shared<IMaterial>("NormalMaterial");
 
+	//TODO We can cache shaders IF we know that the shader exists in the same context.
+
 	mat->shader = make_shared<GLES2ForwardShader>(); //The default shader is a normal shader.
 
 	assert(mat != nullptr);

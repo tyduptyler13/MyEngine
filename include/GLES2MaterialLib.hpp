@@ -21,7 +21,7 @@ namespace {
 
 	NBIND_GLOBAL() {
 
-		function(createNormalMaterial<GLES2Renderer>, "createGLES2NormalMaterial");
+		NBIND_FUNCTION(createNormalMaterial<GLES2Renderer>, "createGLES2NormalMaterial");
 
 	}
 

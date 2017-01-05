@@ -151,6 +151,16 @@ void GLES2Shader::compile() {
 
 }
 
+void GLES2FlatShader::prepare(GLuint tex) {
+
+	GLint texLoc = this->getUniformLoc("tex");
+
+	glUniform1i(texLoc, 0);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, tex);
+
+}
+
 void GLES2ForwardShader::prepare(Camera<float>* camera, Mesh<float>* object, const vector<Light<float>*>& lights){
 	this->vertexShaderRoot->prepare(camera, object, lights);
 	this->fragmentShaderRoot->prepare(camera, object, lights);

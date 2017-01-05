@@ -1,20 +1,19 @@
 {
-	"name": "MyEngine",
-	"description": "A powerful mixture of nodejs, chrome, and a game engine.",
-	"version": "0.0.1",
-	"license": "MIT",
-	"repository": "https://github.com/MyUPlay/MyEngine",
-	"devDependencies": {
-		"electron": "^1.4.3"
-	},
-	"main": "game.js",
-	"dependencies": {
-		"electron": "^1.4.10",
-		"nbind": "^0.3.6",
-		"node-gyp": "^3.4.0"
-	},
-	"scripts": {
-		"build": "node-gyp configure build",
-		"clean": "rm -rf build"
-	}
+  "name": "MyEngine",
+  "description": "A powerful mixture of nodejs, chrome, and a game engine.",
+  "version": "0.0.1",
+  "license": "MIT",
+  "repository": "https://github.com/MyUPlay/MyEngine",
+  "devDependencies": {
+    "electron": "^1.4.3"
+  },
+  "main": "game.js",
+  "dependencies": {
+    "electron": "^1.4.10",
+    "nbind": "^0.3.6"
+  },
+  "scripts": {
+    "build": "node-gyp configure build",
+    "clean": "rm -rf build"
+  }
 }

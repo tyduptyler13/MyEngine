@@ -2,7 +2,7 @@
 	"targets": [
 		{
 			"target_name": "libMyEngine",
-			"type": "<(library)",
+			"type": "static_library",
 			"sources": [
 				"src/Material.cpp",
 				"src/Log.cpp",
@@ -17,7 +17,7 @@
 			],
 			"include_dirs": [
 				"include",
-				"node_modules/nbind/include",
+				"node_modules/nbind/include"
 			],
 			"direct_dependent_settings": {
 				"include_dirs": [
@@ -32,13 +32,29 @@
 			},
 			"link_settings": {
 				"libraries": [
-					"-lSOIL",
-					"-lglfw3",
-					"-lassimp",
-					"-pthread", #We might need pthread for gcc (because their std::threads are broken otherwise)
+					"<!(pwd)/deps/Simple-OpenGL-Image-Library/libSOIL.a",
+					"<!(pwd)/deps/assimp/lib/libassimp.a",
 					"-lGLESv2"
 				]
 			},
+			"conditions": [
+				['OS=="win"', {
+					"link_settings": {
+						"libraries": [
+							"-lgdi32",
+							"-lglfw3"
+						]
+					}
+				}],
+				['OS=="linux"', {
+					"link_settings": {
+						"libraries": [
+							"-L<!(pwd)/deps/glfw/src <!(PKG_CONFIG_PATH=<!(pwd)/deps/glfw/src pkg-config glfw3 --static --libs-only-l)",
+							"-pthread" #We might need pthread for gcc (because their std::threads are broken otherwise)
+						]
+					}
+				}]
+			],
 			"dependencies": [
 				"glsl-optimizer"
 			],
@@ -49,28 +65,6 @@
 				"-pedantic",
 				"-std=c++14",
 				"-fpic"
-			],
-			"conditions": [
-				['target=="win"', {
-					'ldflags!': [ '-rdynamic' ],
-					"link_settings": {
-						"libraries": [
-							"-lgdi32",
-							"-lglu32",
-							"-lopengl32",
-							"-lkernel32",
-							"-luser32",
-							"-lwinspool",
-							"-lcomdlg32",
-							"-ladvapi32",
-							"-lshell32",
-							"-lole32",
-							"-loleaut32",
-							"-luuid",
-							"-lodbc32"
-						]
-					}
-				}]
 			],
 			'cflags!': [ '-fno-exceptions' ],
 			'cflags_cc!': [
