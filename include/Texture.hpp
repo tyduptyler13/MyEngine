@@ -6,7 +6,7 @@
 #include <functional>
 #include <vector>
 
-#include <SOIL/SOIL.h>
+#include <SOIL.h>
 
 #include "Math.hpp"
 #include "Constants.hpp"

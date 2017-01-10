@@ -1,7 +1,6 @@
 #ifndef MYUPLAY_MYENGINE_BOXGEOMETRY
 #define MYUPLAY_MYENGINE_BOXGEOMETRY
 
-#include "Geometry.hpp"
 #include "BufferGeometry.hpp"
 
 #include <functional>
@@ -151,27 +150,5 @@ namespace MyUPlay {
 
 	}
 }
-
-#ifdef NBINDING_MODE
-
-namespace {
-
-	using namespace MyUPlay::MyEngine;
-
-	//typedef AGeometry<float, IGeometry<float>> DefaultAGeometry;
-
-	NBIND_CLASS(BoxGeometry<float>, BoxGeometry) {
-
-		inherit(IGeometry<float>);
-		//inherit(DefaultAGeometry);
-
-		construct<float, float, float>();
-		construct<float, float, float, unsigned, unsigned, unsigned>();
-
-	}
-
-}
-
-#endif
 
 #endif

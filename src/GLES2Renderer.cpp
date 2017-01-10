@@ -5,9 +5,8 @@
 
 //See http://www.glfw.org/docs/latest/build_guide.html#build_macros
 #define GLFW_INCLUDE_ES2
-#define GLFW_INCLUDE_GLEXT
 
-#include <SOIL/SOIL.h>
+#include <SOIL.h>
 
 #include "Log.hpp"
 #include "GLES2Renderer.hpp"
@@ -15,6 +14,26 @@
 #include "Shader/Shader.hpp"
 #include "Frustum.hpp"
 #include "Clock.hpp"
+
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
+
+//Must come after GLES2Renderer aka GLFW3.h which includes GLES2/gl2.h
+#include <GLES2/gl2ext.h>
+
+//Emscriptens headers are missing these.
+#ifndef GLFW_FALSE
+#define GLFW_FALSE 0
+#endif
+
+#ifndef GLFW_TRUE
+#define GLFW_TRUE 1
+#endif
+
+#ifndef GLFW_DONT_CARE
+#define GLFW_DONT_CARE -1
+#endif
 
 using namespace std;
 using namespace MyUPlay::MyEngine;
@@ -226,12 +245,18 @@ void GLES2Renderer::setDefaultViewport() {
 }
 
 void GLES2Renderer::setFullScreen() {
+#ifndef __EMSCRIPTEN__
 	std::lock_guard<std::recursive_mutex> lock(this->rendLock);
 	std::lock_guard<std::recursive_mutex> lock2(GLES2Renderer::glfwLock);
 	GLFWmonitor* const mon = glfwGetPrimaryMonitor();
 	const GLFWvidmode* const mode = glfwGetVideoMode(mon);
 	glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
 	glfwSetWindowMonitor(window, mon, 0, 0, mode->width, mode->height, GLFW_DONT_CARE);
+#else
+	EM_ASM(
+			Document.requestFullscreen();
+	);
+#endif
 
 }
 
@@ -241,6 +266,7 @@ void GLES2Renderer::setFakeFullScreen() {
 }
 
 void GLES2Renderer::setWindowed() {
+#ifndef __EMSCRIPTEN__
 	std::lock_guard<std::recursive_mutex> lock(this->rendLock);
 	std::lock_guard<std::recursive_mutex> lock2(GLES2Renderer::glfwLock);
 	GLFWmonitor* const mon = glfwGetWindowMonitor(window);
@@ -248,6 +274,11 @@ void GLES2Renderer::setWindowed() {
 	const GLFWvidmode* const mode = glfwGetVideoMode(mon);
 	glfwWindowHint(GLFW_DECORATED, GLFW_TRUE);
 	glfwSetWindowMonitor(window, nullptr, windowX, windowY, mode->width, mode->height, GLFW_DONT_CARE);
+#else
+	EM_ASM(
+			Document.exitFullscreen();
+	);
+#endif
 }
 
 void GLES2Renderer::loop(std::function<bool(double)> func) {

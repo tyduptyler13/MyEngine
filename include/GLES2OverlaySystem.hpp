@@ -89,23 +89,4 @@ namespace MyUPlay {
 
 }
 
-#ifdef NBINDING_MODE
-
-namespace {
-
-	using namespace MyUPlay::MyEngine;
-
-	NBIND_CLASS(GLES2OverlaySystem){
-
-		construct<>();
-
-		method(template updatePixelData<nbind::Buffer>, "updatePixelData");
-		method(attach);
-
-	}
-
-}
-
-#endif
-
 #endif

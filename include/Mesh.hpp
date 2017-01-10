@@ -53,26 +53,4 @@ struct MyUPlay::MyEngine::Mesh : public Object3D<T> {
 
 };
 
-#ifdef NBINDING_MODE
-
-namespace {
-
-	using namespace MyUPlay::MyEngine;
-
-	NBIND_CLASS(Mesh<>, Mesh) {
-
-		inherit(Object3D<float>);
-
-		construct<std::shared_ptr<IGeometry<float>>, std::shared_ptr<IMaterial>>();
-		construct<const Mesh<>&>();
-
-		getter(getGeometry);
-		getter(getMaterial);
-
-	}
-
-}
-
-#endif
-
 #endif

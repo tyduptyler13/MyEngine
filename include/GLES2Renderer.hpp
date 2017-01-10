@@ -4,6 +4,8 @@
 #include <string>
 #include <unordered_map>
 
+#define GLFW_INCLUDE_ES2
+
 #include <GLFW/glfw3.h>
 
 #include "Renderer.hpp"
@@ -152,21 +154,5 @@ namespace MyUPlay {
 	}
 
 }
-
-#ifdef NBINDING_MODE
-
-namespace {
-
-	NBIND_CLASS(GLES2Renderer) {
-
-		inherit(Renderer<float>);
-
-		construct<unsigned>();
-
-	}
-
-}
-
-#endif
 
 #endif

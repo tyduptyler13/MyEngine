@@ -40,7 +40,7 @@ Object3D<float>* GeometryImporter::ImportAsset(string s) {
 	//TODO Meshes
 	for (unsigned i = 0; i < scene->mNumMeshes; ++i){
 		shared_ptr<BufferGeometry<float>> geo = make_shared<BufferGeometry<float>>();
-		shared_ptr<IMaterial> mat = createNormalMaterial<GLES2Renderer>();
+		shared_ptr<IMaterial> mat = GLES2CreateNormalMaterial();
 		assert(geo != nullptr);
 		assert(mat != nullptr);
 		Mesh<float>* mesh = new Mesh<float>(geo, mat); //TODO Replace this material with correct material above when finished
@@ -86,4 +86,3 @@ Object3D<float>* GeometryImporter::ImportAsset(string s) {
 	return obj;
 
 }
-

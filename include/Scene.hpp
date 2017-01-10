@@ -60,26 +60,4 @@ namespace MyUPlay {
 
 }
 
-#ifdef NBINDING_MODE
-
-namespace {
-
-	using namespace MyUPlay::MyEngine;
-
-	NBIND_CLASS(Scene<>, Scene) {
-		inherit(Object3D<float>);
-
-		construct<>();
-		construct<const Scene<>&>();
-
-		method(copy);
-
-		getset(getAutoUpdate, setAutoUpdate);
-
-	}
-
-}
-
-#endif
-
 #endif

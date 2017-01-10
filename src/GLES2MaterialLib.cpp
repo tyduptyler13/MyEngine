@@ -1,4 +1,3 @@
-#include <memory>
 #include <cassert>
 
 #include "GLES2MaterialLib.hpp"
@@ -9,8 +8,7 @@ using namespace std;
 using namespace MyUPlay::MyEngine;
 using namespace MyUPlay::MyEngine::Shader;
 
-template <>
-std::shared_ptr<IMaterial> MyUPlay::MyEngine::createNormalMaterial<GLES2Renderer>() {
+std::shared_ptr<IMaterial> MyUPlay::MyEngine::GLES2CreateNormalMaterial() {
 
 	std::shared_ptr<IMaterial> mat = make_shared<IMaterial>("NormalMaterial");
 

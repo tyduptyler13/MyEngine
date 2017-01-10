@@ -20,20 +20,4 @@ namespace MyUPlay {
 	}
 }
 
-#ifdef NBINDING_MODE
-
-namespace {
-
-	using namespace MyUPlay::MyEngine;
-
-	NBIND_CLASS(GeometryImporter) {
-
-		multimethod(ImportSharedAsset, args(std::string), "ImportAsset");
-
-	}
-
-}
-
-#endif
-
 #endif

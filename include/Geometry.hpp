@@ -9,7 +9,15 @@
 #include <array>
 #include <algorithm>
 
-#include "EventDispatcher.hpp"
+namespace MyUPlay {
+	namespace MyEngine {
+
+		template <typename T>
+		struct IGeometry;
+
+	}
+}
+
 #include "Math.hpp"
 #include "Vector3.hpp"
 #include "Color.hpp"
@@ -22,418 +30,163 @@
 #include "Matrix4.hpp"
 #include "Mesh.hpp"
 
-namespace MyUPlay {
+/**
+ * Geometry Interface, for pointers that don't care about the underlying geometry.
+ */
+template <typename T>
+struct MyUPlay::MyEngine::IGeometry {
 
-	namespace MyEngine {
+	struct Group {
+		unsigned start,
+		count,
+		materialIndex;
+		Group(unsigned start, unsigned count, unsigned materialIndex)
+		: start(start), count(count), materialIndex(materialIndex) {}
+	};
 
-		template <typename T>
-		struct Mesh;
+	Math::UUID uuid = Math::generateUUID();
 
-		/**
-		 * Geometry Interface, for pointers that don't care about the underlying geometry.
-		 */
-		template <typename T>
-		struct IGeometry {
+	std::string name;
 
-			struct Group {
-				unsigned start,
-				count,
-				materialIndex;
-				Group(unsigned start, unsigned count, unsigned materialIndex)
-				: start(start), count(count), materialIndex(materialIndex) {}
-			};
+	std::unique_ptr<Box3<T> > boundingBox;
+	std::unique_ptr<Sphere<T> > boundingSphere;
 
-			Math::UUID uuid = Math::generateUUID();
+	bool multiMaterial = false;
 
-			std::string name;
+	bool verticesNeedUpdate = true,
+			normalsNeedUpdate = true,
+			indicesNeedUpdate = false,
+			boundingBoxDirty = true, //Must be set to true for it to recalculate
+			boundingSphereDirty = true; //Must be set to true for it to recalculate
 
-			std::unique_ptr<Box3<T> > boundingBox;
-			std::unique_ptr<Sphere<T> > boundingSphere;
+	//These will later be added to a specialized class to manage their destruction and renderer type.
+	unsigned vertexObject = 0, vertexBuffer = 0, indexBuffer = 0, normalBuffer = 0; //Internal use
 
-			bool multiMaterial = false;
+	virtual void applyMatrix(const Matrix4<T>& matrix) = 0;
 
-			bool verticesNeedUpdate = true,
-					normalsNeedUpdate = true,
-					indicesNeedUpdate = false,
-					boundingBoxDirty = true, //Must be set to true for it to recalculate
-					boundingSphereDirty = true; //Must be set to true for it to recalculate
+	virtual void computeBoundingBox() = 0;
+	virtual void computeBoundingSphere() = 0;
 
-			//These will later be added to a specialized class to manage their destruction and renderer type.
-			unsigned vertexObject = 0, vertexBuffer = 0, indexBuffer = 0, normalBuffer = 0; //Internal use
-
-			virtual void applyMatrix(const Matrix4<T>& matrix) = 0;
-
-			virtual void computeBoundingBox() = 0;
-			virtual void computeBoundingSphere() = 0;
-
-			virtual bool isIndexed() const {
-				return false;
-			}
-
-			virtual std::vector<T> getVertices() const = 0;
-
-			virtual std::vector<T> getNormals() const = 0;
-
-			virtual std::vector<unsigned int> getIndices() const {
-				return {};
-			}
-
-			/**
-			 * Returns the number elements in the Geometry.
-			 *
-			 * An element is a single set of Vertex, Normal, and Color.
-			 *
-			 * To get faces divide this by 3. (All faces are triangles)
-			 */
-			virtual unsigned size() const = 0;
-
-			bool isMultiMaterial() const {
-				return multiMaterial;
-			}
-			virtual std::vector<Group> getGroups() const {
-				return {};
-			}
-
-			IGeometry& operator=(const IGeometry& geometry) {
-				name = geometry.name;
-				return *this;
-			}
-
-			IGeometry& operator=(IGeometry&& geometry) {
-				name = std::move(geometry.name);
-				return *this;
-			}
-
-			virtual ~IGeometry(){}
-
-			IGeometry(){}
-			IGeometry(std::string name) : name(name) {}
-
-			template <typename T2>
-			IGeometry(const IGeometry<T2>& g) : name(g.name) {}
-
-			template <typename T2>
-			IGeometry(IGeometry<T2>&& g) : name(std::move(g.name)) {}
-
-			IGeometry& rotateX(T angle) {
-				Matrix4<T> m1;
-				m1.makeRotationX(angle);
-				this->applyMatrix(m1);
-				return *this;
-			}
-
-			IGeometry& rotateY(T angle) {
-				Matrix4<T> m1;
-				m1.makeRotationY(angle);
-				this->applyMatrix(m1);
-				return *this;
-			}
-
-			IGeometry& rotateZ(T angle) {
-				Matrix4<T> m1;
-				m1.makeRotationZ(angle);
-				this->applyMatrix(m1);
-				return *this;
-			}
-
-			IGeometry& translate(T x, T y, T z) {
-				Matrix4<T> m1;
-				m1.makeTranslation(x, y, z);
-				this->applyMatrix(m1);
-				return *this;
-			}
-
-			IGeometry& scale(T x, T y, T z) {
-				Matrix4<T> m1;
-				m1.makeScale(x, y, z);
-				this->applyMatrix(m1);
-				return *this;
-			}
-
-			IGeometry& lookAt(const Vector3<T>& v){
-				Object3D<T> obj;
-				obj.lookAt(v);
-				obj.updateMatrix();
-				this->applyMatrix(obj.matrix);
-				return *this;
-			}
-
-			Vector3<T> center(){
-				this->computeBoundingBox();
-				Vector3<T> offset = this->boundingBox->center().negate();
-				translate(offset.x, offset.y, offset.z);
-				return offset;
-			}
-
-			IGeometry& normalize(){
-				this->computeBoundingSphere();
-
-				Vector3<T> center = this->boundingSphere->center;
-				T radius = this->boundingSphere->radius;
-
-				T s = radius == 0 ? 1 : 1.0 / radius;
-
-				Matrix4<T> matrix;
-				matrix.set(
-						s, 0, 0, - s * center.x,
-						0, s, 0, - s * center.y,
-						0, 0, s, - s * center.z,
-						0, 0, 0, 1
-				);
-
-				this->applyMatrix( matrix );
-
-				return *this;
-			}
-
-		};
-
-		/**
-		 * This is the simplest geometry. All faces are explicitly present and modifications are
-		 * as simple as locating a face and modifying its values. A counter example would be the buffer
-		 * geometry, which all faces have indexed values and thus requires extra work to modify a value.
-		 */
-		template <typename T>
-		struct SimpleGeometry : public IGeometry<T> {
-
-			std::vector<Face3<T> > faces;
-
-			SimpleGeometry(const SimpleGeometry& geometry) : IGeometry<T>(geometry), faces(geometry.faces) {}
-			SimpleGeometry(SimpleGeometry&& geometry) : IGeometry<T>(geometry), faces(geometry.faces) {}
-
-			void applyMatrix(const  Matrix4<T>& matrix) override {
-				Matrix3<T> normalMatrix = Matrix3<T>().getNormalMatrix( matrix );
-
-				for (Face3<T>& f : faces){
-
-					for (Vector3<T>& v : f.vertices){
-						v = v.applyMatrix4(matrix);
-					}
-
-					for (Vector3<T>& n : f.normals){
-						n = n.applyMatrix3(normalMatrix).normalize();
-					}
-
-				}
-
-				if ( this->boundingBox != NULL ) {
-
-					computeBoundingBox();
-
-				}
-
-				if ( this->boundingSphere != NULL ) {
-
-					computeBoundingSphere();
-
-				}
-
-				this->verticesNeedUpdate = true;
-				this->normalsNeedUpdate = true;
-
-			}
-
-
-
-			void computeFaceNormals(){
-				Vector3<T> cb;
-				Vector3<T> ab;
-
-				for (Face3<T>& face : faces) {
-
-					Vector3<T>& vA = face.vertices[0];
-					Vector3<T>& vB = face.vertices[1];
-					Vector3<T>& vC = face.vertices[2];
-
-					cb.subVectors( vC, vB );
-					ab.subVectors( vA, vB );
-					cb.cross( ab );
-
-					cb.normalize();
-
-					face.normals.fill(cb);
-
-				}
-			}
-
-			void computeVertexNormals(bool areaWeighted = true){
-
-				std::vector<Vector3<T>> tmp;
-				tmp.reserve(faces.size() * 3);
-
-				if ( areaWeighted ) {
-
-					// vertex normals weighted by triangle areas
-					// http://www.iquilezles.org/www/articles/normals/normals.htm
-
-					Vector3<T> cb;
-					Vector3<T> ab;
-
-					for (Face3<T>& face : faces) {
-
-						Vector3<T>& vA = face.vertices[0];
-						Vector3<T>& vB = face.vertices[1];
-						Vector3<T>& vC = face.vertices[2];
-
-						cb.subVectors( vC, vB );
-						ab.subVectors( vA, vB );
-						cb.cross( ab );
-
-						tmp.insert(tmp.end(), {cb, cb, cb});
-
-					}
-
-				} else {
-
-					computeFaceNormals();
-
-					for (Face3<T>& face : faces){
-						tmp.insert(tmp.end(), face.normals.begin(), face.normals.end());
-					}
-
-				}
-
-				for (Vector3<T>& v : tmp){
-					v.normalize();
-				}
-
-				for (int i = 0; i < faces.size(); ++i){
-
-					Face3<T>& face = faces[i];
-
-					face.normals = { tmp[i*3], tmp[i*3 + 1], tmp[i*3 + 2] };
-
-				}
-
-			}
-
-			void computeFlatVertexNormals(){
-
-				computeFaceNormals();
-
-			}
-
-			void computeMorphNormals(); //TODO Reimplement morph targets.
-
-
-			void computeBoundingBox() {
-				if (!this->boundingBoxDirty) return;
-				if (this->boundingBox == nullptr){
-					this->boundingBox = new Box3<T>();
-				}
-				std::vector<Vector3<T>> vertices;
-				vertices.reserve(faces.size() * 3);
-				for (Face3<T>& face : faces){
-					vertices.insert(vertices.end(), face.vertices.begin(), face.vertices.end());
-				}
-				this->boundingBox.setFromPoints(vertices);
-			}
-
-			void computeBoundingSphere() {
-				if (!this->boundingSphereDirty) return;
-				if (this->boundingSphere == nullptr){
-					this->boundingSphere = new Sphere<T>();
-				}
-				std::vector<Vector3<T>> vertices;
-				vertices.reserve(faces.size() * 3);
-				for (Face3<T>& face : faces){
-					vertices.insert(vertices.end(), face.vertices.begin(), face.vertices.end());
-				}
-				this->boundingSphere.setFromPoints(vertices);
-			}
-
-			void merge(const SimpleGeometry& geometry, const Matrix4<T>& matrix, int materialIndexOffset); //TODO
-
-			void mergeMesh(std::shared_ptr<Mesh<T>> mesh){
-				//Shorthand if?
-				mesh->matrixAutoUpdate && mesh->updateMatrix();
-
-				merge( mesh->geometry, mesh->matrix );
-
-			}
-
-			static inline unsigned materialIndexSort(const Face3<T>& a, const Face3<T>& b){
-				return a.materialIndex - b.materialIndex;
-			}
-
-			void sortFacesByMaterialIndex(){
-
-				std::sort(faces.begin(), faces.end(), materialIndexSort);
-
-			}
-
-			SimpleGeometry& copy(const SimpleGeometry& geometry){
-
-				IGeometry<T>::operator=(geometry);
-
-				faces = geometry.faces;
-
-				return *this;
-
-			}
-
-			SimpleGeometry& move(SimpleGeometry&& geometry){
-
-				IGeometry<T>::operator=(geometry);
-
-				faces = std::move(geometry.faces);
-
-				return *this;
-
-			}
-
-			SimpleGeometry& operator=(const SimpleGeometry& geometry){
-				return copy(geometry);
-			}
-
-			SimpleGeometry& operator=(SimpleGeometry&& geometry) {
-				return move(geometry);
-			}
-
-		};
-
+	virtual bool isIndexed() const {
+		return false;
 	}
 
-}
+	virtual std::vector<T> getVertices() const = 0;
 
-#ifdef NBINDING_MODE
+	virtual std::vector<T> getNormals() const = 0;
 
-namespace {
-	using namespace MyUPlay::MyEngine;
-
-	NBIND_CLASS(IGeometry<float>, IGeometry) {
-
-		//TODO add getsets
-
-		//Disabled until box and sphere are added.
-		//method(computeBoundingBox);
-		//method(computeBoundingSphere);
-
+	virtual std::vector<unsigned int> getIndices() const {
+		return {};
 	}
 
-	//typedef AGeometry<float, IGeometry<float>> DefaultAGeometry;
-
-	/* Disabled for now
-	NBIND_CLASS(DefaultAGeometry, AGeometry) {
-
-		inherit(IGeometry<float>);
-
-		method(rotateX);
-		method(rotateY);
-		method(rotateZ);
-
-		method(translate);
-		method(scale);
-		method(lookAt);
-
-		method(center);
-		method(normalize);
-
-	}
+	/**
+	 * Returns the number elements in the Geometry.
+	 *
+	 * An element is a single set of Vertex, Normal, and Color.
+	 *
+	 * To get faces divide this by 3. (All faces are triangles)
 	 */
+	virtual unsigned size() const = 0;
 
-}
+	bool isMultiMaterial() const {
+		return multiMaterial;
+	}
+	virtual std::vector<Group> getGroups() const {
+		return {};
+	}
 
-#endif
+	IGeometry& operator=(const IGeometry& geometry) {
+		name = geometry.name;
+		return *this;
+	}
+
+	IGeometry& operator=(IGeometry&& geometry) {
+		name = std::move(geometry.name);
+		return *this;
+	}
+
+	virtual ~IGeometry(){}
+
+	IGeometry(){}
+	IGeometry(std::string name) : name(name) {}
+
+	template <typename T2>
+	IGeometry(const IGeometry<T2>& g) : name(g.name) {}
+
+	template <typename T2>
+	IGeometry(IGeometry<T2>&& g) : name(std::move(g.name)) {}
+
+	IGeometry& rotateX(T angle) {
+		Matrix4<T> m1;
+		m1.makeRotationX(angle);
+		this->applyMatrix(m1);
+		return *this;
+	}
+
+	IGeometry& rotateY(T angle) {
+		Matrix4<T> m1;
+		m1.makeRotationY(angle);
+		this->applyMatrix(m1);
+		return *this;
+	}
+
+	IGeometry& rotateZ(T angle) {
+		Matrix4<T> m1;
+		m1.makeRotationZ(angle);
+		this->applyMatrix(m1);
+		return *this;
+	}
+
+	IGeometry& translate(T x, T y, T z) {
+		Matrix4<T> m1;
+		m1.makeTranslation(x, y, z);
+		this->applyMatrix(m1);
+		return *this;
+	}
+
+	IGeometry& scale(T x, T y, T z) {
+		Matrix4<T> m1;
+		m1.makeScale(x, y, z);
+		this->applyMatrix(m1);
+		return *this;
+	}
+
+	IGeometry& lookAt(const Vector3<T>& v){
+		Object3D<T> obj;
+		obj.lookAt(v);
+		obj.updateMatrix();
+		this->applyMatrix(obj.matrix);
+		return *this;
+	}
+
+	Vector3<T> center(){
+		this->computeBoundingBox();
+		Vector3<T> offset = this->boundingBox->center().negate();
+		translate(offset.x, offset.y, offset.z);
+		return offset;
+	}
+
+	IGeometry& normalize(){
+		this->computeBoundingSphere();
+
+		Vector3<T> center = this->boundingSphere->center;
+		T radius = this->boundingSphere->radius;
+
+		T s = radius == 0 ? 1 : 1.0 / radius;
+
+		Matrix4<T> matrix;
+		matrix.set(
+				s, 0, 0, - s * center.x,
+				0, s, 0, - s * center.y,
+				0, 0, s, - s * center.z,
+				0, 0, 0, 1
+		);
+
+		this->applyMatrix( matrix );
+
+		return *this;
+	}
+
+};
 
 #endif
