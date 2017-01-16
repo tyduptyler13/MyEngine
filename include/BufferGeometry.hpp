@@ -110,23 +110,5 @@ namespace MyUPlay {
 
 }
 
-#ifdef NBINDING_MODE
-
-namespace {
-
-	using namespace MyUPlay::MyEngine;
-
-	NBIND_CLASS(BufferGeometry<float>, BufferGeometry) {
-
-		inherit(IGeometry<float>);
-
-		construct<>();
-
-	}
-
-}
-
-#endif
-
 #endif
 

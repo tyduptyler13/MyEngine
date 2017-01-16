@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+
+<head>
+
+	<title>MyEngine - Basic Example</title>
+	<script src="nbind.js"></script>
+
+</head>
+
+<body>
+
+	<canvas id="canvas"></canvas>
+
+	<script>
+		var Module = {
+			canvas: document.getElementById('canvas'),
+			print: (text)=>{console.log(text)},
+			printErr: (err)=>{console.error(err)}
+		};
+	</script>
+
+	<script src="BasicExample-web.js"></script>
+
+</body>
+
+</html>

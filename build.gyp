@@ -35,8 +35,9 @@
 			},
 			"link_settings": {
 				"libraries": [
-					"<!(pwd)/deps/Simple-OpenGL-Image-Library/libSOIL.a",
-					"<!(pwd)/deps/assimp/lib/libassimp.a",
+					"../deps/Simple-OpenGL-Image-Library/libSOIL.a",
+					"../deps/assimp/lib/libassimp.a",
+					"../deps/assimp/lib/libzlibstatic.a",
 					"-lGLESv2"
 				]
 			},
@@ -78,17 +79,15 @@
 				"-Wextra",
 				"-pedantic",
 				"-std=c++14",
-				#"-fpic"
+				"-fpic"
 			],
 			'cflags!': [
-				'-fno-exceptions',
-				'-fPIC' #Using little pic, not large
+				'-fno-exceptions'
 			],
 			'cflags_cc!': [
 				'-fno-exceptions',
 				'-fno-rtti',
-				'-std=gnu++0x',
-				'-fPIC'
+				'-std=gnu++0x'
 			]
 		},
 		# glsl-optimizer code is a dependency of the engines shader compiler.
@@ -215,19 +214,16 @@
 			"cflags!": [
 				"-O3",
 				"-g",
-				'-fno-exceptions',
-				'-fPIC'
+				'-fno-exceptions'
 			],
 			"cflags": [
 				"-fpic",
-				"-O2",
-				"-g"
+				"-O2"
 			],
 			'cflags_cc!': [
 				'-fno-exceptions',
 				'-fno-rtti',
-				'-std=gnu++0x',
-				'-fPIC'
+				'-std=gnu++0x'
 			],
 			'cflags_cc': [
 				'-std=c++11'

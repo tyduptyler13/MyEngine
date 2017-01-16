@@ -15,7 +15,10 @@
 				'src/node/Mesh.cpp',
 				'src/node/GeometryImporter.cpp',
 				'src/node/GLES2OverlaySystem.cpp',
-				'src/node/GLES2MaterialLib.cpp'
+				'src/node/GLES2MaterialLib.cpp',
+				'src/node/Material.cpp',
+				'src/node/BufferGeometry.cpp',
+				'src/node/Geometry.cpp'
 			],
 			'dependencies': [ 'build.gyp:libMyEngine' ],
 			'cflags': [
