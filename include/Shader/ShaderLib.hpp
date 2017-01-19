@@ -188,7 +188,7 @@ namespace MyUPlay {
 
 				std::string getStatic() const override {
 					return std::string("const ") + Utility<GLES2Renderer, T>::type + " " + out.name  + " = " + Utility<GLES2Renderer, T>::toString(value) + ";\n";
-				} //TODO replace to_string with internal function that handles vector3-4 and matrix3-4, etc.
+				}
 
 				std::string getInstance() const override {
 					return ""; //Other nodes will use the out, not the get instance method.
@@ -198,7 +198,7 @@ namespace MyUPlay {
 
 			};
 
-			/* Working
+			/* Incorrect, shouldn't depend on light position.
 			struct Fresnel : public IShaderNode {
 
 				Input<float> fac;
@@ -256,6 +256,76 @@ namespace MyUPlay {
 
 			};
 
+			struct MapFragment : public IShaderNode {
+
+				Input<Vector2<float>> uv;
+				Input<GLuint> map;
+
+				Output<Vector4<float>> color;
+
+				std::string getInstance() const override {
+					return "vec4 " + color.name + " = texture2D(" + map.output->name + ", " + uv.output->name + ");\n";
+				}
+
+				void traverseChildren(ShaderTraverser s) override {
+					s(uv.node);
+					s(map.node);
+				}
+
+			};
+
+			/**
+			 * Per-Pixel Tangent Space Normal Mapping
+			 * http://hacksoflife.blogspot.ch/2009/11/per-pixel-tangent-space-normal-mapping.html
+			 */
+			struct PerturbNormal2Arb : public IShaderNode {
+
+				Input<Vector3<float>> eye_pos;
+				Input<Vector3<float>> surf_norm;
+				Input<GLuint> normalMap;
+				Input<Vector2<float>> normalScale;
+				Input<Vector2<float>> uv;
+
+				Output<Vector3<float>> out;
+
+				std::string getStatic() const override {
+					return "#extension GL_OES_standard_derivatives : enable\n"
+							"\n"
+							"vec3 PerturbNormal2Arb(vec3 eye_pos, vec3 surf_norm, sampler2D normalMap, vec2 normalScale, vec2 uv){\n"
+							"	vec3 q0 = dFdx( eye_pos.xyz );\n"
+							"	vec3 q1 = dFdy( eye_pos.xyz );\n"
+							"	vec2 st0 = dFdx ( uv.st );\n"
+							"	vec2 st1 = dFdy ( uv.st );\n"
+							"\n"
+							"	vec3 S = normalize( q0 * st1.t - q1 * st0.t );\n"
+							"	vec3 T = normalize( -q0 * st1.s + q1 * st0.s );\n"
+							"	vec3 N = normalize( surf_norm );\n"
+							"\n"
+							"	vec3 mapN = texture2D( normalMap, uv ).xyz * 2.0 - 1.0;\n"
+							"	mapN.xy = normalScale * mapN.xy;\n"
+							"	mat3 tsn = mat3(S, T, N);\n"
+							"	return normalize( tsn * mapN );\n"
+							"}\n";
+				}
+
+				std::string getInstance() const override {
+					return "vec3 " + out.name + " = PerturbNormal2Arb(" +
+							eye_pos.output->name + ", " +
+							surf_norm.output->name + ", " +
+							normalMap.output->name + ", " +
+							normalScale.output->name + ", " +
+							uv.output->name + ");\n";
+				}
+
+				void traverseChildren(ShaderTraverser s) override {
+					s(eye_pos.node);
+					s(surf_norm.node);
+					s(normalMap.node);
+					s(normalScale.node);
+					s(uv.node);
+				}
+
+			};
 
 
 			struct DielectricShader : public IShaderNode {
