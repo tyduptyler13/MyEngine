@@ -1,47 +1,55 @@
 
 #include "Renderer.hpp"
 
-#include "nbind/nbind.h"
-
 using namespace MyUPlay::MyEngine;
 
 #ifdef BUILDING_NODE_EXTENSION
 
 #include "nbind/api.h"
 
-/**
- * The following is an override for the default behavior,
- * but only when building a nodejs addon.
- */
-class LambdaWorker : public Nan::AsyncWorker {
+namespace MyUPlay {
 
-	std::function<void()> exec;
+	namespace MyEngine {
 
-public:
+		/**
+		 * The following is an override for the default behavior,
+		 * but only when building a nodejs addon.
+		 */
+		class LambdaWorker : public Nan::AsyncWorker {
 
-	LambdaWorker(Nan::Callback* callback, std::function<void()> exec) :
-		Nan::AsyncWorker(callback), exec(exec) {}
+			std::function<void()> exec;
 
-	void Execute() {
-		exec();
+		public:
+
+			LambdaWorker(Nan::Callback* callback, std::function<void()> exec) :
+				Nan::AsyncWorker(callback), exec(exec) {}
+
+			void Execute() {
+				exec();
+			}
+
+		};
+
+		template <>
+		template <>
+		void Renderer<float>::renderAsync<nbind::cbFunction>(
+				std::shared_ptr<Scene<float>> scene, std::shared_ptr<Camera<float>> camera, nbind::cbFunction& cb){
+
+			Nan::Callback* callback = new Nan::Callback(cb.getJsFunction());
+
+			Nan::AsyncQueueWorker(new LambdaWorker(callback, [this, scene, camera]{
+				this->render(scene, camera);
+			}));
+
+		}
+
 	}
-
-};
-
-template <>
-template <>
-void Renderer<float>::renderAsync<nbind::cbFunction>(
-		std::shared_ptr<Scene<float>> scene, std::shared_ptr<Camera<float>> camera, nbind::cbFunction& cb){
-
-	Nan::Callback* callback = new Nan::Callback(cb.getJsFunction());
-
-	Nan::AsyncQueueWorker(new LambdaWorker(callback, [this, scene, camera]{
-		this->render(scene, camera);
-	}));
 
 }
 
 #endif
+
+#include "nbind/nbind.h"
 
 NBIND_CLASS(Renderer<float>, Renderer) {
 

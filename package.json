@@ -10,7 +10,7 @@
   "main": "game.js",
   "dependencies": {
     "electron": "^1.4.10",
-    "nbind": "github:charto/nbind"
+    "nbind": "^0.3.9"
   },
   "scripts": {
     "build": "node-gyp configure build",

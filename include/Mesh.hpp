@@ -35,10 +35,10 @@ struct MyUPlay::MyEngine::Mesh : public Object3D<T> {
 		assert(mat != nullptr);
 	}
 
-	//Deep copy
+	//Shallow copy
 	Mesh(const Mesh& m) : Object3D<T>(m) {
-		*geometry = *(m.geometry);
-		*material = *(m.material);
+		geometry = m.geometry;
+		material = m.material;
 	}
 
 	Mesh(Mesh&& m) : Object3D<T>(m), geometry(std::move(m.geometry)), material(std::move(m.material)) {}

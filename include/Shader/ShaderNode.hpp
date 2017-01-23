@@ -44,7 +44,7 @@ namespace MyUPlay {
 				/**
 				 * This needs to be implemented for every shader node in order to dynamically build the shader list.
 				 */
-				virtual void traverseChildren(ShaderTraverser) {
+				virtual void traverseChildren(ShaderTraverser) const {
 					return; //No children by default.
 				}
 

@@ -38,7 +38,7 @@ namespace MyUPlay {
 					return "vec3 " + ret.name + " = transformDirection(" + dir.output->name + ", " + matrix.output->name + ");\n";
 				}
 
-				void traverseChildren(ShaderTraverser s) override {
+				void traverseChildren(ShaderTraverser s) const override {
 					s(dir.node);
 					s(matrix.node);
 				}
@@ -62,7 +62,7 @@ namespace MyUPlay {
 					return "vec3 " + ret.name + " = transformLocation(" + loc.output->name + ", " + matrix.output->name + ");\n";
 				}
 
-				void traverseChildren(ShaderTraverser s) override {
+				void traverseChildren(ShaderTraverser s) const override {
 					s(loc.node);
 					s(matrix.node);
 				}
@@ -81,7 +81,7 @@ namespace MyUPlay {
 					return Utility<GLES2Renderer, T>::type + " " + ret.name + " = " + a.output->name + " + " + b.output->name + ";\n";
 				}
 
-				void traverseChildren(ShaderTraverser s) override{
+				void traverseChildren(ShaderTraverser s) const override{
 					s(a.node);
 					s(b.node);
 				}
@@ -101,7 +101,7 @@ namespace MyUPlay {
 					return std::string(Utility<GLES2Renderer, R>::type) + " " + ret.name + " = " + a.output->name + " * " + b.output->name + ";\n";
 				}
 
-				void traverseChildren(ShaderTraverser s) override {
+				void traverseChildren(ShaderTraverser s) const override {
 					s(a.node);
 					s(b.node);
 				}
@@ -122,7 +122,7 @@ namespace MyUPlay {
 							Utility<GLES2Renderer, R>::type + "(" + a.output->name + ", " + b.output->name + ");\n";
 				}
 
-				void traverseChildren(ShaderTraverser s) override {
+				void traverseChildren(ShaderTraverser s) const override {
 					s(a.node);
 					s(b.node);
 				}
@@ -145,7 +145,7 @@ namespace MyUPlay {
 					return Utility<GLES2Renderer, R>::type + " " + ret.name + " = " + a.output->name + swiz + ";\n";
 				}
 
-				void traverseChildren(ShaderTraverser s) override {
+				void traverseChildren(ShaderTraverser s) const override {
 					s(a.node);
 				}
 
@@ -166,7 +166,7 @@ namespace MyUPlay {
 							", " + b.output->name + ", " + fac.output->name + ");\n";
 				}
 
-				void traverseChildren(ShaderTraverser s) override {
+				void traverseChildren(ShaderTraverser s) const override {
 					s(a.node);
 					s(b.node);
 					s(fac.node);
@@ -220,7 +220,7 @@ namespace MyUPlay {
 							+ lightDir.output->name + ", " + fac.output->name + ");\n";
 				}
 
-				void traverseChildren(ShaderTraverser s){
+				void traverseChildren(ShaderTraverser s) const{
 					s(fac);
 					s(normal);
 					s(lightDir);
@@ -250,7 +250,7 @@ namespace MyUPlay {
 					return "float " + out.name + " = rand(" + seed.output->name + ");\n";
 				}
 
-				void traverseChildren(ShaderTraverser s) override {
+				void traverseChildren(ShaderTraverser s) const override {
 					s(seed.node);
 				}
 
@@ -259,7 +259,7 @@ namespace MyUPlay {
 			struct MapFragment : public IShaderNode {
 
 				Input<Vector2<float>> uv;
-				Input<GLuint> map;
+				Input<unsigned> map;
 
 				Output<Vector4<float>> color;
 
@@ -267,7 +267,7 @@ namespace MyUPlay {
 					return "vec4 " + color.name + " = texture2D(" + map.output->name + ", " + uv.output->name + ");\n";
 				}
 
-				void traverseChildren(ShaderTraverser s) override {
+				void traverseChildren(ShaderTraverser s) const override {
 					s(uv.node);
 					s(map.node);
 				}
@@ -282,7 +282,7 @@ namespace MyUPlay {
 
 				Input<Vector3<float>> eye_pos;
 				Input<Vector3<float>> surf_norm;
-				Input<GLuint> normalMap;
+				Input<unsigned> normalMap;
 				Input<Vector2<float>> normalScale;
 				Input<Vector2<float>> uv;
 
@@ -317,7 +317,7 @@ namespace MyUPlay {
 							uv.output->name + ");\n";
 				}
 
-				void traverseChildren(ShaderTraverser s) override {
+				void traverseChildren(ShaderTraverser s) const override {
 					s(eye_pos.node);
 					s(surf_norm.node);
 					s(normalMap.node);

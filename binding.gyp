@@ -1,7 +1,7 @@
 {
 	'targets': [
 		{
-			'target_name': 'nbind',
+			'target_name': 'MyEngineBinding',
 			'defines': [ 'V8_DEPRECATION_WARNINGS=1' ],
 			'sources': [
 				'src/nbind/Vector3.cpp',
@@ -23,7 +23,7 @@
 			'dependencies': [ 'build.gyp:libMyEngine' ],
 			'cflags': [
 				'-std=c++14',
-				#'-fpic'
+				'-fpic'
 			],
 			'cflags!': [
 				'-fno-exceptions',

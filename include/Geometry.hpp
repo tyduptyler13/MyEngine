@@ -95,17 +95,9 @@ struct MyUPlay::MyEngine::IGeometry {
 		return {};
 	}
 
-	IGeometry& operator=(const IGeometry& geometry) {
-		name = geometry.name;
-		return *this;
-	}
-
-	IGeometry& operator=(IGeometry&& geometry) {
-		name = std::move(geometry.name);
-		return *this;
-	}
-
 	virtual ~IGeometry(){}
+
+protected:
 
 	IGeometry(){}
 	IGeometry(std::string name) : name(name) {}
@@ -116,47 +108,49 @@ struct MyUPlay::MyEngine::IGeometry {
 	template <typename T2>
 	IGeometry(IGeometry<T2>&& g) : name(std::move(g.name)) {}
 
-	IGeometry& rotateX(T angle) {
+public:
+
+	IGeometry* rotateX(T angle) {
 		Matrix4<T> m1;
 		m1.makeRotationX(angle);
 		this->applyMatrix(m1);
-		return *this;
+		return this;
 	}
 
-	IGeometry& rotateY(T angle) {
+	IGeometry* rotateY(T angle) {
 		Matrix4<T> m1;
 		m1.makeRotationY(angle);
 		this->applyMatrix(m1);
-		return *this;
+		return this;
 	}
 
-	IGeometry& rotateZ(T angle) {
+	IGeometry* rotateZ(T angle) {
 		Matrix4<T> m1;
 		m1.makeRotationZ(angle);
 		this->applyMatrix(m1);
-		return *this;
+		return this;
 	}
 
-	IGeometry& translate(T x, T y, T z) {
+	IGeometry* translate(T x, T y, T z) {
 		Matrix4<T> m1;
 		m1.makeTranslation(x, y, z);
 		this->applyMatrix(m1);
-		return *this;
+		return this;
 	}
 
-	IGeometry& scale(T x, T y, T z) {
+	IGeometry* scale(T x, T y, T z) {
 		Matrix4<T> m1;
 		m1.makeScale(x, y, z);
 		this->applyMatrix(m1);
-		return *this;
+		return this;
 	}
 
-	IGeometry& lookAt(const Vector3<T>& v){
+	IGeometry* lookAt(const Vector3<T>& v){
 		Object3D<T> obj;
 		obj.lookAt(v);
 		obj.updateMatrix();
 		this->applyMatrix(obj.matrix);
-		return *this;
+		return this;
 	}
 
 	Vector3<T> center(){
@@ -166,7 +160,7 @@ struct MyUPlay::MyEngine::IGeometry {
 		return offset;
 	}
 
-	IGeometry& normalize(){
+	IGeometry* normalize(){
 		this->computeBoundingSphere();
 
 		Vector3<T> center = this->boundingSphere->center;
@@ -184,7 +178,7 @@ struct MyUPlay::MyEngine::IGeometry {
 
 		this->applyMatrix( matrix );
 
-		return *this;
+		return this;
 	}
 
 };

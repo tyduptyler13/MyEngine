@@ -81,7 +81,7 @@ namespace MyUPlay {
 				Input<Vector3f> fPosition; //World coords
 				Input<Vector3f> fNormal; //Output the normalized normal vector for use in the fragment shader.
 
-				virtual void traverseChildren(ShaderTraverser s) override {
+				virtual void traverseChildren(ShaderTraverser s) const override {
 					s(fPosition.node);
 					s(fNormal.node);
 				}
@@ -102,7 +102,7 @@ namespace MyUPlay {
 				Input<Vector3f> color;
 				Input<float> alpha;
 
-				void traverseChildren(ShaderTraverser s) override {
+				void traverseChildren(ShaderTraverser s) const override {
 					s(color.node);
 				}
 
@@ -121,7 +121,7 @@ namespace MyUPlay {
 				Input<Color> color;
 				Input<Color> emission;
 
-				void traverseChildren(ShaderTraverser s) override {
+				void traverseChildren(ShaderTraverser s) const override {
 					s(position.node);
 					s(normal.node);
 					s(color.node);
@@ -137,7 +137,7 @@ namespace MyUPlay {
 
 				Input<Color> finalColor;
 
-				void traverseChildren(ShaderTraverser s) override {
+				void traverseChildren(ShaderTraverser s) const override {
 					s(finalColor.node);
 				}
 			};

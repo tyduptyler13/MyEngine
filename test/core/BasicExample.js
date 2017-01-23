@@ -28,7 +28,7 @@ scene.add(camera);
 
 var geo = new lib.BoxGeometry(10, 10, 10, 8, 4, 2);
 
-var mat = lib.createGLES2NormalMaterial();
+var mat = lib.GLES2CreateNormalMaterial();
 
 var box = new lib.Mesh(geo, mat);
 box.position = new lib.Vector3(-10, 0, 0);

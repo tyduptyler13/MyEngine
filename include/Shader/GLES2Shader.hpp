@@ -132,7 +132,7 @@ namespace MyUPlay {
 							"gl_Position = " + gl_Position.output->name + ";\n";
 				}
 
-				void traverseChildren(ShaderTraverser s) override {
+				void traverseChildren(ShaderTraverser s) const override {
 					s(fPosition.node);
 					s(fNormal.node);
 					s(gl_Position.node);
@@ -201,7 +201,7 @@ namespace MyUPlay {
 					color.set(&normal);
 				}
 
-				void traverseChildren(ShaderTraverser s) override {
+				void traverseChildren(ShaderTraverser s) const override {
 					s(alpha.node);
 					s(color.node);
 				}

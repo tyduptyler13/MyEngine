@@ -37,9 +37,11 @@
 				"libraries": [
 					"../deps/Simple-OpenGL-Image-Library/libSOIL.a",
 					"../deps/assimp/lib/libassimp.a",
-					"../deps/assimp/lib/libzlibstatic.a",
 					"-lGLESv2"
 				]
+			},
+			"variables": {
+				"asmjs%": "0"
 			},
 			"conditions": [
 				['OS=="win"', {
@@ -56,13 +58,14 @@
 							"link_settings": {
 								"libraries": [
 									"-s USE_GLFW=3",
-									"-lglfw3"
+									"-lglfw3",
+									"../deps/assimp/lib/libzlibstatic.a"
 								]
 							}
 						}, {
 							"link_settings": {
 								"libraries": [
-									"-L<!(pwd)/deps/glfw/src <!(PKG_CONFIG_PATH=<!(pwd)/deps/glfw/src pkg-config glfw3 --static --libs-only-l)",
+									"<!(pkg-config glfw3 --static --libs-only-l)",
 									"-pthread" #We might need pthread for gcc (because their std::threads are broken otherwise)
 								]
 							}
