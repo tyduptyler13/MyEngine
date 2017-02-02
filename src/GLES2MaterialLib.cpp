@@ -2,22 +2,12 @@
 
 #include "GLES2MaterialLib.hpp"
 
-#include "../include/Shader/GLES2Shader.hpp"
+#include "Materials/GLES2NormalMaterial.hpp"
 
 using namespace std;
 using namespace MyUPlay::MyEngine;
 using namespace MyUPlay::MyEngine::Shader;
 
-std::shared_ptr<IMaterial> MyUPlay::MyEngine::GLES2CreateNormalMaterial() {
-
-	std::shared_ptr<IMaterial> mat = make_shared<IMaterial>("NormalMaterial");
-
-	//TODO We can cache shaders IF we know that the shader exists in the same context.
-
-	mat->shader = make_shared<GLES2ForwardShader>(); //The default shader is a normal shader.
-
-	assert(mat != nullptr);
-
-	return mat;
-
+shared_ptr<IMaterial> MyUPlay::MyEngine::GLES2CreateNormalMaterial() {
+	return make_shared<GLES2NormalMaterial>();
 }
