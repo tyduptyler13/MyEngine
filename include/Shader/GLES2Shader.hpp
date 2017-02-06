@@ -69,8 +69,12 @@ namespace MyUPlay {
 					return &frag;
 				}
 
-				void prepare(Camera<float>*, Mesh<float>*, const std::vector<Light<float>*>&){} //Do nothing.
+				void prepare(Camera<float>*, Mesh<float>*, const std::vector<Light<float>*>&){
+					if (this->dirty) compile();
+				}
 				void prepare(GLuint tex);
+
+				GLES2FlatShader(){}
 
 			private:
 
@@ -78,21 +82,23 @@ namespace MyUPlay {
 					std::string getStatic() const {
 						return "const vec2 madd=vec2(0.5,0.5);\n"
 								"attribute vec2 vertex;\n"
-								"varying vec2 texCoord;";
+								"varying vec2 texCoord;\n";
 					}
 					std::string getInstance() const {
 						return "texCoord = vertex*madd+madd;\n"
-								"gl_position = vec4(vertex,0.0,1.1);";
+								"texCoord.t = 1.0 - texCoord.t;\n"
+								"gl_Position = vec4(vertex,0.0,1.0);\n";
 					}
 				} vert;
 
 				struct : public IShaderNode {
 					std::string getStatic() const {
 						return "varying vec2 texCoord;\n"
-								"attribute sampler2D tex;";
+								"uniform sampler2D tex;\n";
 					}
 					std::string getInstance() const {
-						return "gl_FragColor = texture2D(tex, texCoord);";
+						return "gl_FragColor = texture2D(tex, texCoord);\n";
+								//"gl_FragColor = vec4(1.0,0.0,0.0,0.5);\n";
 					}
 				} frag;
 

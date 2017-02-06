@@ -303,13 +303,19 @@ bool GLES2Renderer::needsToClose() {
 	return glfwWindowShouldClose(window);
 }
 
+void GLES2Renderer::glfwFunction(std::function<void()> func) {
+	std::lock_guard<std::recursive_mutex> lock(this->rendLock);
+	std::lock_guard<std::recursive_mutex> lock2(GLES2Renderer::glfwLock);
+	if (glfwGetCurrentContext() != window) glfwMakeContextCurrent(window);
+	func();
+}
+
 void GLES2Renderer::onResize(std::function<void(int, int)> func) {
 	std::lock_guard<std::recursive_mutex> lock(this->rendLock);
 	FrameSizer.addHandler(window, [this, func](int width, int height){
-		std::lock_guard<std::recursive_mutex> lock(this->rendLock);
-		std::lock_guard<std::recursive_mutex> lock2(GLES2Renderer::glfwLock);
-		glfwMakeContextCurrent(window);
-		func(width, height);
+		this->glfwFunction([&]{
+			func(width, height);
+		});
 	});
 }
 

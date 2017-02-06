@@ -153,6 +153,10 @@ void GLES2Shader::compile() {
 
 void GLES2FlatShader::prepare(GLuint tex) {
 
+	if (this->dirty) compile();
+
+	bind();
+
 	GLint texLoc = this->getUniformLoc("tex");
 
 	glUniform1i(texLoc, 0);

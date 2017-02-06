@@ -77,6 +77,11 @@ namespace MyUPlay {
 			bool needsToClose();
 
 			/**
+			 * Runs code with the renderer locked and glfw context current.
+			 */
+			void glfwFunction(std::function<void()> func);
+
+			/**
 			 * The following two functions append render plugins to the render process either before
 			 * or after the render of the scene starts/ends.
 			 */

@@ -7,9 +7,8 @@ using namespace MyUPlay::MyEngine;
 
 NBIND_CLASS(GLES2OverlaySystem){
 
-	construct<>();
+	construct<GLES2Renderer&>();
 
 	method(template updatePixelData<nbind::Buffer>, "updatePixelData");
-	method(attach);
 
 }
