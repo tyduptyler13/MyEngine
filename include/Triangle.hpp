@@ -36,7 +36,7 @@ namespace MyUPlay {
 
 			}
 
-			static Vector3<T> barycoordFromPoint(const Vector3<T>& point, const Vector3<T>& a, const Vector3<T>& b, const Vector3<T>& c) {
+			static Vector3<T>& barycoordFromPoint(const Vector3<T>& point, const Vector3<T>& a, const Vector3<T>& b, const Vector3<T>& c, Vector3<T>& target) {
 
 				Vector3<T> v0 = c - a;
 				Vector3<T> v1 = b - a;
@@ -58,11 +58,14 @@ namespace MyUPlay {
 				T u = (dot11 * dot02 - dot01 * dot12) * invDenom;
 				T v = (dot00 * dot12 - dot01 * dot02) * invDenom;
 
-				return Vector3<T>(1 - u - v, v, u);
+				return target.set(1 - u - v, v, u);
 
 			}
 
-
+			static Vector3<T> barycoordFromPoint(const Vector3<T>& point, const Vector3<T>& a, const Vector3<T>& b, const Vector3<T>& c) {
+				Vector3<T> v;
+				return barycoordFromPoint(point, a, b, c, v);
+			}
 
 		};
 

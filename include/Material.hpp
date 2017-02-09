@@ -6,7 +6,7 @@
 
 namespace MyUPlay {
 	namespace MyEngine {
-		class IMaterial;
+		struct IMaterial;
 	}
 }
 
@@ -14,9 +14,7 @@ namespace MyUPlay {
 #include "Math.hpp"
 #include "Shader/Shader.hpp"
 
-class MyUPlay::MyEngine::IMaterial {
-
-public:
+struct MyUPlay::MyEngine::IMaterial {
 
 	static unsigned materialIdCounter;
 

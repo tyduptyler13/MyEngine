@@ -588,6 +588,8 @@ void GLES2Renderer::projectObject(Object3D<>* o, Camera<float>* camera) {
 			Mesh<float>* m = dynamic_cast<Mesh<float>*>(o);
 			Vector3f vector;
 
+			if (m->material == nullptr || m->geometry == nullptr) break; //Don't add misformed meshes.
+
 			//TODO handle skins
 
 			if (o->frustumCulled == false || isObjectViewable(m) == true){
@@ -678,7 +680,6 @@ void GLES2Renderer::setFaceCulling(CullConstant cullFace, CullDirection frontFac
 			break;
 		case CullFaceFrontBack:
 			glCullFace(GL_FRONT_AND_BACK);
-		default:
 			break;
 		}
 

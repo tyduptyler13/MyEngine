@@ -5,9 +5,6 @@
 #include <string>
 #include <memory>
 #include <string>
-#include <unordered_map>
-#include <array>
-#include <algorithm>
 
 namespace MyUPlay {
 	namespace MyEngine {
@@ -19,16 +16,14 @@ namespace MyUPlay {
 }
 
 #include "Math.hpp"
-#include "Vector3.hpp"
-#include "Color.hpp"
-#include "Face3.hpp"
+//#include "Color.hpp" //TODO Implement per vertex colors.
 #include "Vector2.hpp"
+#include "Vector3.hpp"
 #include "Vector4.hpp"
 #include "Box3.hpp"
 #include "Sphere.hpp"
 #include "Matrix3.hpp"
 #include "Matrix4.hpp"
-#include "Mesh.hpp"
 
 /**
  * Geometry Interface, for pointers that don't care about the underlying geometry.
@@ -109,6 +104,11 @@ protected:
 	IGeometry(IGeometry<T2>&& g) : name(std::move(g.name)) {}
 
 public:
+
+	/*
+	 * The following functions do permanent manipulations of the actual points.
+	 * This is sometimes called baked transformations.
+	 */
 
 	IGeometry* rotateX(T angle) {
 		Matrix4<T> m1;
