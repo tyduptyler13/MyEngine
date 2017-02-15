@@ -6,13 +6,15 @@
 
 namespace MyUPlay {
 	namespace MyEngine {
+		namespace Shader {
+			struct Shader;
+		}
 		struct IMaterial;
 	}
 }
 
 #include "Constants.hpp"
 #include "Math.hpp"
-#include "Shader/Shader.hpp"
 
 struct MyUPlay::MyEngine::IMaterial {
 
@@ -25,25 +27,29 @@ struct MyUPlay::MyEngine::IMaterial {
 
 	std::string name;
 
-	short side = FrontSide;
+	BlendingMode blending = NormalBlending;
+	SideConstant side = FrontSide;
+	ShadeConstant shading = SmoothShading;
+	ColorConstant vertexColors = NoColors;
 
 	float opacity = 1;
 	bool transparent = false;
 
-	short blending = NormalBlending;
-	short blendSrc = SrcAlphaFactor;
-	short blendDst = OneMinusSrcAlphaFactor;
-	short blendEquation = AddEquation;
-	short blendSrcAlpha = -1;
-	short blendDstAlpha = -1;
-	short blendEquationAlpha = -1;
+	BlendingFunc blendSrc = SrcAlphaFactor;
+	BlendingFunc blendDst = OneMinusSrcAlphaFactor;
+	BlendingEquation blendEquation = AddEquation;
+	BlendingFunc blendSrcAlpha = NoBlendingFunc;
+	BlendingFunc blendDstAlpha = NoBlendingFunc;
+	BlendingEquation blendEquationAlpha = NoBlendingEq;
 
-	short depthFunc = LessEqualDepth;
+	DepthMode depthFunc = LessEqualDepth;
 	bool depthTest = true;
 	bool depthWrite = true;
+
 	bool colorWrite = true;
 
-	short precision = -1;
+	//Unused for now.
+	//short precision = -1;
 
 	bool polygonOffset = false;
 	int polygonOffsetFactor = 0;
@@ -51,7 +57,8 @@ struct MyUPlay::MyEngine::IMaterial {
 
 	short alphaTest = 0;
 
-	float overdraw = 0;
+	//Unused in current renderers
+	//float overdraw = 0;
 
 	bool visible = true;
 
@@ -73,43 +80,7 @@ struct MyUPlay::MyEngine::IMaterial {
 		copy(m);
 	}
 
-	IMaterial& copy(const IMaterial& mat) {
-
-		shader = mat.shader;
-
-		name = mat.name;
-
-		side = mat.side;
-
-		opacity = mat.opacity;
-		transparent = mat.transparent;
-
-		blendSrc = mat.blendSrc;
-		blendDst = mat.blendDst;
-		blendEquation = mat.blendEquation;
-		blendSrcAlpha = mat.blendSrcAlpha;
-		blendDstAlpha = mat.blendDstAlpha;
-		blendEquationAlpha = mat.blendEquationAlpha;
-
-		depthFunc = mat.depthFunc;
-		depthTest = mat.depthTest;
-		depthWrite = mat.depthWrite;
-
-		precision = mat.precision;
-
-		polygonOffset = mat.polygonOffset;
-		polygonOffsetFactor = mat.polygonOffsetFactor;
-		polygonOffsetUnits = mat.polygonOffsetUnits;
-
-		alphaTest = mat.alphaTest;
-
-		overdraw = mat.overdraw;
-
-		visible = mat.visible;
-
-		return *this;
-
-	}
+	IMaterial& copy(const IMaterial& mat);
 
 	IMaterial& operator=(const IMaterial& mat) {
 		return copy(mat);

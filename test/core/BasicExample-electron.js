@@ -74,9 +74,13 @@ electron.app.on('ready', ()=>{
 	scene.add(box);
 
 	var suzane = lib.GeometryImporter.ImportAsset("suzane.obj");
-	suzane.position = new lib.Vector3(10, 0, 0);
+	if (suzane == null){
+		console.log("Suzane.obj was probably missing, skipping.");
+	} else {
+		suzane.position = new lib.Vector3(10, 0, 0);
 
-	scene.add(suzane);
+		scene.add(suzane);
+	}
 
 	var clock = new Clock();
 
@@ -86,7 +90,9 @@ electron.app.on('ready', ()=>{
 		var delta = clock.getDelta();
 		var rot = delta * Math.PI * 0.5;
 		box.rotateY(rot);
-		suzane.rotateY(rot);
+		if (suzane != null){
+			suzane.rotateY(rot);
+		}
 
 /*
 		//console.log("Rendering.");

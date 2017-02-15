@@ -203,11 +203,11 @@ protected:
 
 	//TODO type? currentBlending;
 	BlendingEquation currentBlendEquation;
-	BlendingSource currentBlendSrc;
-	BlendingDestination currentBlendDst;
+	BlendingFunc currentBlendSrc;
+	BlendingFunc currentBlendDst;
 	BlendingEquation currentBlendEquationAlpha;
-	BlendingSource currentBlendSrcAlpha;
-	BlendingDestination currentBlendDstAlpha;
+	BlendingFunc currentBlendSrcAlpha;
+	BlendingFunc currentBlendDstAlpha;
 
 	/**
 	 * This variable is for tracking the last known good sorting of objects for the camera.

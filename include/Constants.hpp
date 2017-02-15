@@ -64,6 +64,7 @@ namespace MyUPlay {
 
 		//custom blending equations
 		enum BlendingEquation {
+			NoBlendingEq = 0,
 			AddEquation = 100,
 			SubtractEquation = 101,
 			ReverseSubtractEquation = 102,
@@ -72,7 +73,8 @@ namespace MyUPlay {
 		};
 
 		//custom blending destination factors
-		enum BlendingDestination {
+		enum BlendingFunc {
+			NoBlendingFunc = 0,
 			ZeroFactor = 200,
 			OneFactor = 201,
 			SrcColorFactor = 202,
@@ -80,11 +82,7 @@ namespace MyUPlay {
 			SrcAlphaFactor = 204,
 			OneMinusSrcAlphaFactor = 205,
 			DstAlphaFactor = 206,
-			OneMinusDstAlphaFactor = 207
-		};
-
-		//Custom blending source factors
-		enum BlendingSource {
+			OneMinusDstAlphaFactor = 207,
 			DstColorFactor = 208,
 			OneMinusDstColorFactor = 209,
 			SrcAlphaSaturateFactor = 210

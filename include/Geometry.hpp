@@ -22,8 +22,9 @@ namespace MyUPlay {
 #include "Vector4.hpp"
 #include "Box3.hpp"
 #include "Sphere.hpp"
-#include "Matrix3.hpp"
 #include "Matrix4.hpp"
+#include "Raycaster.hpp"
+#include "Constants.hpp"
 
 /**
  * Geometry Interface, for pointers that don't care about the underlying geometry.
@@ -89,6 +90,8 @@ struct MyUPlay::MyEngine::IGeometry {
 	virtual std::vector<Group> getGroups() const {
 		return {};
 	}
+
+	virtual void raycast(const Raycaster<T>& r, std::vector<Intersection<T>>& intersections, SideConstant s) = 0;
 
 	virtual ~IGeometry(){}
 

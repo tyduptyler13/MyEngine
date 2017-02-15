@@ -1,7 +1,8 @@
 #include "GeometryImporter.hpp"
+#include "Material.hpp"
 #include "Mesh.hpp"
 #include "BufferGeometry.hpp"
-#include "GLES2MaterialLib.hpp"
+#include "Materials/GLES2NormalMaterial.hpp"
 
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
@@ -40,7 +41,7 @@ Object3D<float>* GeometryImporter::ImportAsset(string s) {
 	//TODO Meshes
 	for (unsigned i = 0; i < scene->mNumMeshes; ++i){
 		shared_ptr<BufferGeometry<float>> geo = make_shared<BufferGeometry<float>>();
-		shared_ptr<IMaterial> mat = GLES2CreateNormalMaterial();
+		shared_ptr<IMaterial> mat = std::make_shared<GLES2NormalMaterial>();
 		assert(geo != nullptr);
 		assert(mat != nullptr);
 		Mesh<float>* mesh = new Mesh<float>(geo, mat); //TODO Replace this material with correct material above when finished
