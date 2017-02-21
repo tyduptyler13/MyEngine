@@ -1,0 +1,19 @@
+{
+	"name": "MyEngine-Demo",
+	"version": "1.0.0",
+	"main": "BasicExample-electron.js",
+	"dependencies": {
+    "electron": "^1.4.10",
+    "nbind": "^0.3.9"
+  },
+	"scripts": {
+		"start": "electron BasicExample-electron.js"
+	},
+	"files": [
+		"suzane.obj",
+		"nbind.node",
+		"Clock.js",
+		"BasicExample-electron.js",
+		"ui.html"
+	]
+}

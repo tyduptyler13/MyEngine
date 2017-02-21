@@ -670,13 +670,12 @@ public:
 		return !equals(v);
 	}
 
-	Vector3& toArray(std::vector<T>& array, unsigned offset){
+	void toArray(std::vector<T>& array, unsigned offset) const {
 		array[offset] = x;
 		array[offset + 1] = y;
 		array[offset + 2] = z;
-		return *this;
 	}
-	Vector3& fromArray(std::vector<T>& array, unsigned offset){
+	Vector3& fromArray(const std::vector<T>& array, unsigned offset){
 		x = array[offset];
 		y = array[offset + 1];
 		z = array[offset + 2];

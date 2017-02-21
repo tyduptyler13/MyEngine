@@ -45,7 +45,7 @@ struct MyUPlay::MyEngine::Mesh : public Object3D<T> {
 		return material;
 	}
 
-	virtual void raycast(const Raycaster<T>& r, std::vector<Intersection<T> >& intersections) const {
+	virtual void raycast(std::shared_ptr<Object3D<T>>& obj, const Raycaster<T>& r, std::vector<Intersection<T> >& intersections) const {
 
 		//Both material and geometry must be properly set.
 		if (material == nullptr || geometry == nullptr) return;
@@ -67,7 +67,7 @@ struct MyUPlay::MyEngine::Mesh : public Object3D<T> {
 			if (!ray.intersectBox(*geometry->boundingBox)) return;
 		}
 
-		geometry->raycast(r, intersections, material->side);
+		geometry->raycast(obj, r, intersections, material->side);
 
 	}
 

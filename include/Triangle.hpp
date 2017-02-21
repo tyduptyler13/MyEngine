@@ -51,7 +51,7 @@ namespace MyUPlay {
 				T denom = (dot00 * dot11 - dot01 * dot01);
 
 				if (denom == 0) {
-					return Vector3<T>(-2, -1, -1);
+					return target.set(-2, -1, -1);
 				}
 
 				T invDenom = 1 / denom;

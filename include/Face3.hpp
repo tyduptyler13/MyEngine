@@ -40,8 +40,7 @@ namespace MyUPlay {
 				vertices[2] = c;
 			}
 
-			template <typename T2>
-			Face3(const Face3<T2>& f){
+			Face3(const Face3<T>& f){
 				vertices = f.vertices;
 				normals = f.normals;
 				colors = f.colors;
@@ -56,8 +55,7 @@ namespace MyUPlay {
 				materialIndex = f.materialIndex;
 			}
 
-			template <typename T2>
-			Face3& operator=(const Face3<T2>& f){
+			Face3& operator=(const Face3<T>& f){
 				vertices = f.vertices;
 				normals = f.normals;
 				colors = f.colors;

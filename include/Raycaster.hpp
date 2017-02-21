@@ -35,7 +35,18 @@ struct MyUPlay::MyEngine::Intersection {
 	std::shared_ptr<Object3D<T>> object;
 	Vector2<T> uv;
 	Face3<T> face;
-	unsigned faceIndex;
+	unsigned faceIndex = 0;
+
+	Intersection(){}
+	Intersection(const Intersection& i){
+		distance = i.distance;
+		point = i.point;
+		object = i.object;
+		uv = i.uv;
+		face = i.face;
+		faceIndex = i.faceIndex;
+	}
+
 };
 
 template <typename T>
@@ -101,7 +112,7 @@ public:
 
 	}
 
-	static Vector3<T> uvIntersection(const Vector3<T>& point, const Vector3<T>& p1, const Vector3<T>& p2, const Vector3<T>& p3, Vector3<T> uv1, Vector3<T> uv2, Vector3<T> uv3) {
+	static Vector2<T> uvIntersection(const Vector3<T>& point, const Vector3<T>& p1, const Vector3<T>& p2, const Vector3<T>& p3, Vector2<T> uv1, Vector2<T> uv2, Vector2<T> uv3) {
 
 		Vector3<T> barycoord = Triangle<T>::barycoordFromPoint(point, p1, p2, p3);
 
@@ -115,7 +126,7 @@ public:
 
 	}
 
-	std::unique_ptr<Intersection<T>> checkIntersection(std::shared_ptr<Object3D<T>> o, SideConstant side,
+	std::unique_ptr<Intersection<T>> checkIntersection(std::shared_ptr<Object3D<T>>& o, SideConstant side,
 			const Vector3<T>& pA, const Vector3<T>& pB, const Vector3<T>& pC) const {
 
 		std::shared_ptr<Vector3<T>> intersect;
@@ -128,16 +139,16 @@ public:
 
 		if (intersect == nullptr) return nullptr;
 
-		intersect.applyMatrix4(o->matrixWorld);
+		intersect->applyMatrix4(o->matrixWorld);
 
-		T distance = ray.origin.distanceTo(intersect);
+		T distance = ray.origin.distanceTo(*intersect);
 
 		if (distance < near || distance > far) return nullptr;
 
 		auto intersection = std::make_unique<Intersection<T>>();
 
 		intersection->distance = distance;
-		intersection->point = intersect;
+		intersection->point = *intersect;
 		intersection->object = o;
 
 		return intersection;

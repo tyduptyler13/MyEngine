@@ -91,7 +91,7 @@ struct MyUPlay::MyEngine::IGeometry {
 		return {};
 	}
 
-	virtual void raycast(const Raycaster<T>& r, std::vector<Intersection<T>>& intersections, SideConstant s) = 0;
+	virtual void raycast(std::shared_ptr<Object3D<T>>& obj, const Raycaster<T>& r, std::vector<Intersection<T>>& intersections, SideConstant s) const = 0;
 
 	virtual ~IGeometry(){}
 

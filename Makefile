@@ -17,7 +17,7 @@ test:
 check: test
 
 compile: configure deps/assimp/lib/libassimp.a deps/glfw/src/libglfw3.a deps/Simple-OpenGL-Image-Library/libSOIL.a
-	node-gyp build
+	node-gyp build --target=1.4.15 --arch=x64 --dist-url=https://atom.io/download/atom-shell -- -j8
 
 clean:
 	node-gyp clean
