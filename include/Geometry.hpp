@@ -100,11 +100,9 @@ protected:
 	IGeometry(){}
 	IGeometry(std::string name) : name(name) {}
 
-	template <typename T2>
-	IGeometry(const IGeometry<T2>& g) : name(g.name) {}
+	IGeometry(const IGeometry<T>& g) : name(g.name) {}
 
-	template <typename T2>
-	IGeometry(IGeometry<T2>&& g) : name(std::move(g.name)) {}
+	IGeometry(IGeometry<T>&& g) : name(std::move(g.name)) {}
 
 public:
 

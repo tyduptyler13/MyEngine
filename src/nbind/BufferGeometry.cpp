@@ -10,5 +10,6 @@ NBIND_CLASS(BufferGeometry<float>, BufferGeometry) {
 	inherit(IGeometry<float>);
 
 	construct<>();
+	construct<const BufferGeometry<float>&>();
 
 }

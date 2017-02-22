@@ -2,6 +2,7 @@
 #define MYUPLAY_MYENGINE_VECTOR2
 
 #include <cmath>
+#include <vector>
 
 #include "Math.hpp"
 
@@ -27,6 +28,7 @@ struct MyUPlay::MyEngine::Vector2 {
 
 	Vector2() : x(0), y(0) {}
 	Vector2(T x, T y) : x(x), y(y) {}
+	Vector2(const Vector2& v) : x(v.x), y(v.y) {}
 
 	Vector2& set(T x, T y){
 		this->x = x;
@@ -40,9 +42,17 @@ struct MyUPlay::MyEngine::Vector2 {
 		return *this;
 	}
 
+	T getX() const {
+		return x;
+	}
+
 	Vector2& setX(T x){
 		this->x = x;
 		return *this;
+	}
+
+	T getY() const {
+		return y;
 	}
 
 	Vector2& setY(T y){
@@ -98,7 +108,7 @@ struct MyUPlay::MyEngine::Vector2 {
 		return *this;
 	}
 
-	Vector2& multiplyScalar(T scalar){
+	Vector2& multiply(T scalar){
 		x *= scalar;
 		y *= scalar;
 		return *this;
@@ -202,7 +212,7 @@ struct MyUPlay::MyEngine::Vector2 {
 	}
 
 	inline Vector2 operator*=(T s) const {
-		return Vector2(*this).multiplyScalar(s);
+		return Vector2(*this).multiply(s);
 	}
 
 	inline Vector2 operator*=(const Vector2& v) const {
@@ -336,7 +346,7 @@ struct MyUPlay::MyEngine::Vector2 {
 	}
 
 	Vector2& setLength(T length){
-		return multiplyScalar(length / this->length());
+		return multiply(length / this->length());
 	}
 
 	Vector2& lerp(const Vector2& v, T alpha){
@@ -346,7 +356,7 @@ struct MyUPlay::MyEngine::Vector2 {
 	}
 
 	Vector2& lerpVectors(const Vector2& v1, const Vector2& v2, T alpha){
-		return subVectors(v2, v1).multiplyScalar(alpha).add(v1);
+		return subVectors(v2, v1).multiply(alpha).add(v1);
 	}
 
 	Vector2& rotateAround(const Vector2& center, T angle){

@@ -35,6 +35,14 @@ namespace MyUPlay {
 			std::vector<Group> groups;
 
 			BufferGeometry(){}
+			BufferGeometry(const BufferGeometry& geo) : IGeometry<T>(geo) {
+				vertices = geo.vertices;
+				normals = geo.normals;
+				uvs = geo.uvs;
+				colors = geo.colors;
+				indices = geo.indices;
+				groups = geo.groups;
+			}
 
 			//TODO Add optimization method
 

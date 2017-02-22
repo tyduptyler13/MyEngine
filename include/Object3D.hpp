@@ -471,7 +471,7 @@ public:
 		return id == o.id;
 	}
 
-	virtual void raycast(const Raycaster<T>&, std::vector<Intersection<T> >&) const {} //TODO
+	virtual void raycast(std::shared_ptr<Object3D>&, const Raycaster<T>&, std::vector<Intersection<T> >&) const {} //TODO
 
 };
 

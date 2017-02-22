@@ -100,7 +100,7 @@ public:
 
 	}
 
-	std::vector<Intersection<T>> intersectObject(const std::shared_ptr<Object3D<T>>& o, bool recursive) const {
+	std::vector<Intersection<T>> intersectObject(const std::shared_ptr<Object3D<T>>& o, bool recursive = false) const {
 
 		std::vector<Intersection<T>> intersects;
 

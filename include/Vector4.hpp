@@ -22,6 +22,7 @@ namespace MyUPlay {
 		public:
 			T x = 0, y = 0, z = 0, w = 1;
 
+			Vector4(){}
 			Vector4(T x, T y, T z, T w) : x(x), y(y), z(z), w(w) {}
 			Vector4(const Vector4& v) : x(v.x), y(v.y), z(v.z), w(v.w) {}
 
@@ -40,6 +41,22 @@ namespace MyUPlay {
 
 			Vector4& operator=(T s) {
 				return set(s);
+			}
+
+			T getX() const {
+				return x;
+			}
+
+			T getY() const {
+				return y;
+			}
+
+			T getZ() const {
+				return z;
+			}
+
+			T getW() const {
+				return w;
 			}
 
 			Vector4& setX(T s){
@@ -86,6 +103,14 @@ namespace MyUPlay {
 				return *this;
 			}
 
+			Vector4& addVectors(const Vector4& v1, const Vector4& v2) {
+				x = v1.x + v2.x;
+				y = v1.y + v2.y;
+				z = v1.z + v2.z;
+				w = v1.w + v2.w;
+				return *this;
+			}
+
 			Vector4& operator+=(T s){
 				return add(s);
 			}
@@ -107,6 +132,14 @@ namespace MyUPlay {
 				y -= v.y;
 				z -= v.z;
 				w -= v.w;
+				return *this;
+			}
+
+			Vector4& subVectors(const Vector4& v1, const Vector4& v2) {
+				x = v1.x - v2.x;
+				y = v1.y - v2.y;
+				z = v1.z - v2.z;
+				w = v1.w - v2.w;
 				return *this;
 			}
 
@@ -202,13 +235,13 @@ namespace MyUPlay {
 				const T angle = acos(-1); //PI
 				T x, y, z; // variables for result
 				const T epsilon = 0.01, // margin to allow for rounding errors
-								epsilon2 = 0.1; // margin to distinguish between 0 and 180 degrees
+						epsilon2 = 0.1; // margin to distinguish between 0 and 180 degrees
 
 				const auto& te = m.elements;
 
 				const T& m11 = te[ 0 ], m12 = te[ 4 ], m13 = te[ 8 ],
-				m21 = te[ 1 ], m22 = te[ 5 ], m23 = te[ 9 ],
-				m31 = te[ 2 ], m32 = te[ 6 ], m33 = te[ 10 ];
+						m21 = te[ 1 ], m22 = te[ 5 ], m23 = te[ 9 ],
+						m31 = te[ 2 ], m32 = te[ 6 ], m33 = te[ 10 ];
 
 				if ((std::abs(m12 - m21) < epsilon) &&
 						(std::abs(m13 - m31) < epsilon) &&
@@ -280,20 +313,20 @@ namespace MyUPlay {
 				// as we have reached here there are no singularities so we can handle normally
 
 				T s = std::sqrt(( m32 - m23 ) * ( m32 - m23 ) +
-		                   ( m13 - m31 ) * ( m13 - m31 ) +
-		                   ( m21 - m12 ) * ( m21 - m12 )); //used to normalize
+						( m13 - m31 ) * ( m13 - m31 ) +
+						( m21 - m12 ) * ( m21 - m12 )); //used to normalize
 
-				if (std::abs(s) < 0.001) s = 1;
+						if (std::abs(s) < 0.001) s = 1;
 
-				// prevent divide by zero, should not happen if matrix is orthogonal and should be
-				// caught by singularity test above, but I've left it in just in case
+						// prevent divide by zero, should not happen if matrix is orthogonal and should be
+						// caught by singularity test above, but I've left it in just in case
 
-				this->x = (m32 - m23) / s;
-				this->y = (m13 - m31) / s;
-				this->z = (m21 - m12) / s;
-				this->w = acos((m11 + m22 + m33 - 1) / 2);
+						this->x = (m32 - m23) / s;
+						this->y = (m13 - m31) / s;
+						this->z = (m21 - m12) / s;
+						this->w = acos((m11 + m22 + m33 - 1) / 2);
 
-				return *this;
+						return *this;
 
 			}
 
@@ -384,11 +417,11 @@ namespace MyUPlay {
 			}
 
 			Vector4& normalize(){
-				return divideScalar(length());
+				return divide(length());
 			}
 
 			Vector4& setLength(T length){
-				return multiplyScalar(length / this->length());
+				return multiply(length / this->length());
 			}
 
 			Vector4& lerp(const Vector4& v, T alpha){
@@ -400,7 +433,7 @@ namespace MyUPlay {
 			}
 
 			Vector4& lerpVectors(const Vector4& v1, const Vector4& v2, T alpha){
-				return set(v1 - v2 * alpha + v1);
+				return subVectors(v2, v1).multiply(alpha).add(v1);
 			}
 
 			bool equals(const Vector4& v) const {
