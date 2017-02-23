@@ -21,6 +21,13 @@ compile: configure deps/assimp/lib/libassimp.a deps/glfw/src/libglfw3.a deps/Sim
 
 clean:
 	node-gyp clean
+	$(MAKE) -C deps/assimp clean
+	$(MAKE) -C deps/Simple-OpenGL-Image-Library clean
+
+fullclean:
+	rm build
+	cd deps/assimp/ && git clean -xdf
+	cd deps/Simple-OpenGL-Image-Library && git clean -xdf
 
 deps/assimp/lib/libassimp.a: deps/assimp
 	cd deps/assimp && cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -DCMAKE_CXX_FLAGS=-fpic -DCMAKE_CC_FLAGS=-fpic
@@ -29,7 +36,7 @@ deps/assimp/lib/libassimp.a: deps/assimp
 deps/assimp:
 	git submodule init deps/assimp && git submodule update deps/assimp
 
-deps/Simple-OpenGL-Image-Library/libSOI.a: deps/Simple-OpenGL-Image-Library
+deps/Simple-OpenGL-Image-Library/libSOIL.a: deps/Simple-OpenGL-Image-Library
 	cd deps/Simple-OpenGL-Image-Library && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS=-fpic -DCMAKE_CC_FLAGS=-fpic
 	$(MAKE) -C deps/Simple-OpenGL-Image-Library
 

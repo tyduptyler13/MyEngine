@@ -324,7 +324,7 @@ struct MyUPlay::MyEngine::Vector2 {
 		return x * x + y * y;
 	}
 	T lengthManhattan() const {
-		return abs(x) + abs(y);
+		return std::abs(x) + std::abs(y);
 	}
 
 	Vector2& normalize(){

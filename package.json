@@ -10,9 +10,6 @@
     "nbind": "^0.3.9"
   },
   "scripts": {
-    "start": "electron .",
-    "build": "node-gyp configure build",
-    "clean": "rm -rf build",
-    "emcc-path": ""
+    "install": "make"
   }
 }
