@@ -1,13 +1,13 @@
 "use strict";
 
 nbind.init(Module, (err, binding) => {
-	var lib = binding.lib;
+	var lib = window.lib = binding.lib;
 
-	var scene = new lib.Scene();
+	var scene = window.scene = new lib.Scene();
 
-	var renderer = new lib.GLES2Renderer(4);
+	var renderer = window.renderer = new lib.GLES2Renderer(4);
 
-	var camera = new lib.PerspectiveCamera(90, 800/600, 0.1, 2000);
+	var camera = window.camera = new lib.PerspectiveCamera(90, $(window).width() / $(window).height(), 0.1, 2000);
 
 	/**
 	 * Note to future implementers:
@@ -19,7 +19,9 @@ nbind.init(Module, (err, binding) => {
 	camera.position = new lib.Vector3(0, 0, 20);
 	camera.lookAt(scene.position);
 
-	renderer.onResize((width, height) => {
+	$(window).resize(() => {
+		var width = $(window).width();
+		var height = $(window).height();
 		camera.aspect = width / height;
 		camera.updateProjectionMatrix();
 	});
@@ -30,15 +32,19 @@ nbind.init(Module, (err, binding) => {
 
 	var mat = lib.GLES2CreateNormalMaterial();
 
-	var box = new lib.Mesh(geo, mat);
+	var box = window.box = new lib.Mesh(geo, mat);
 	box.position = new lib.Vector3(-10, 0, 0);
 
 	scene.add(box);
 
-	//var suzane = lib.GeometryImporter.ImportAsset("suzane.obj");
-	//suzane.position = new lib.Vector3(10, 0, 0);
+	var suzane;
 
-	//scene.add(suzane);
+	$.ajax('./suzane.obj')
+	.done((data) => {
+		suzane = lib.GeometryImporter.ImportAsset(data, true, '.obj');
+		suzane.position = new lib.Vector3(10, 0, 0);
+		scene.add(suzane);
+	});
 
 	var clock = new Clock();
 
@@ -46,19 +52,13 @@ nbind.init(Module, (err, binding) => {
 		var delta = clock.getDelta();
 		var rot = delta * Math.PI * 0.5;
 		box.rotateY(rot);
-		//suzane.rotateY(rot);
 
-		/*
-		renderer.render(scene, camera);
-
-		if (!renderer.needsToClose()){
-			process.nextTick(render);
+		if (suzane) {
+			suzane.rotateY(rot);
 		}
-		*/
 
 		renderer.render(scene, camera);
 		requestAnimationFrame(()=>{
-			//console.log("Rendered Frame");
 			render();
 		});
 
