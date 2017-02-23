@@ -7,7 +7,11 @@ nbind.init(Module, (err, binding) => {
 
 	var renderer = window.renderer = new lib.GLES2Renderer(4);
 
-	var camera = window.camera = new lib.PerspectiveCamera(90, $(window).width() / $(window).height(), 0.1, 2000);
+	var width = $(window).width();
+	var height = $(window).height();
+	var camera = window.camera = new lib.PerspectiveCamera(90,  width/height , 0.1, 2000);
+	renderer.setSize(width, height);
+	renderer.setViewport(0, 0, width, height);
 
 	/**
 	 * Note to future implementers:
@@ -24,6 +28,8 @@ nbind.init(Module, (err, binding) => {
 		var height = $(window).height();
 		camera.aspect = width / height;
 		camera.updateProjectionMatrix();
+		renderer.setSize(width, height);
+		renderer.setViewport(0, 0, width, height);
 	});
 
 	scene.add(camera);
