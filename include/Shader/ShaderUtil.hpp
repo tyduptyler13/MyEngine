@@ -23,6 +23,7 @@ namespace MyUPlay {
 	namespace MyEngine {
 
 		struct GLES2Renderer;
+		class Texture;
 
 		namespace Shader {
 
@@ -32,19 +33,35 @@ namespace MyUPlay {
 			 * @return A renderer specific type related to a c type.
 			 */
 			template <typename R, typename T>
-			struct Utility {
+			const char* type;
 
-				//Types can be hidden away in cpp files. Currently these are defined in each renderers cpp file.
-				static const char* type;
-				static const char* getType(){
-					return type;
-				}
+			//Specializations for shaders (Allows a renderer to work)
+			template<> extern const char* type<GLES2Renderer, bool>;
+			template<> extern const char* type<GLES2Renderer, int>;
+			template<> extern const char* type<GLES2Renderer, unsigned>;
+			template<> extern const char* type<GLES2Renderer, float>;
+			template<> extern const char* type<GLES2Renderer, Vector2<float>>;
+			template<> extern const char* type<GLES2Renderer, Vector3<float>>;
+			template<> extern const char* type<GLES2Renderer, Vector4<float>>;
+			template<> extern const char* type<GLES2Renderer, Vector2<int>>;
+			template<> extern const char* type<GLES2Renderer, Vector3<int>>;
+			template<> extern const char* type<GLES2Renderer, Vector4<int>>;
+			template<> extern const char* type<GLES2Renderer, Vector2<unsigned>>;
+			template<> extern const char* type<GLES2Renderer, Vector3<unsigned>>;
+			template<> extern const char* type<GLES2Renderer, Vector4<unsigned>>;
+			template<> extern const char* type<GLES2Renderer, Matrix3<float>>;
+			template<> extern const char* type<GLES2Renderer, Matrix4<float>>;
+			template<> extern const char* type<GLES2Renderer, Texture>;
 
-				inline static std::string toString(const T& t){
-					return std::to_string(t); //Default fallback
-				}
-
-			};
+			/**
+			 * R - Renderer
+			 * T - Type for conversion to some shading language.
+			 * @return A renderer specific type related to a c type.
+			 */
+			template <typename R, typename T>
+			std::string toString(const T& t){
+				return std::to_string(t); //Default fallback
+			}
 
 			/**
 			 * Root shaders are special shader nodes that can provide both inputs and outputs.
@@ -147,7 +164,7 @@ namespace MyUPlay {
 
 			//Function specializations must be defined in the header for the compiler to know they exist. They will go unused in a cpp file.
 			template <>
-			inline std::string Utility<GLES2Renderer, bool>::toString(const bool& t){
+			inline std::string toString<GLES2Renderer, bool>(const bool& t){
 				if (t){
 					return "true";
 				} else {
@@ -156,71 +173,71 @@ namespace MyUPlay {
 			}
 
 			template <>
-			inline std::string Utility<GLES2Renderer, double>::toString(const double& t){
+			inline std::string toString<GLES2Renderer, double>(const double& t){
 				return std::to_string(t);
 			}
 
 			template <>
-			inline std::string Utility<GLES2Renderer, float>::toString(const float& t){
+			inline std::string toString<GLES2Renderer, float>(const float& t){
 				return std::to_string(t);
 			}
 
 			template <>
-			inline std::string Utility<GLES2Renderer, Vector3<float>>::toString(const Vector3<float>& t){
-				return "vec3(" + Utility<GLES2Renderer, float>::toString(t.x) + "," + Utility<GLES2Renderer, float>::toString(t.y) + "," + Utility<GLES2Renderer, float>::toString(t.z) + ")";
+			inline std::string toString<GLES2Renderer, Vector3<float>>(const Vector3<float>& t){
+				return "vec3(" + toString<GLES2Renderer, float>(t.x) + "," + toString<GLES2Renderer, float>(t.y) + "," + toString<GLES2Renderer, float>(t.z) + ")";
 			}
 
 			template <>
-			inline std::string Utility<GLES2Renderer, Vector4<float>>::toString(const Vector4<float>& t){
-				return "vec4(" + Utility<GLES2Renderer, float>::toString(t.x) + "," + Utility<GLES2Renderer, float>::toString(t.y) + "," + Utility<GLES2Renderer, float>::toString(t.z) + "," + Utility<GLES2Renderer, float>::toString(t.w) + ")";
+			inline std::string toString<GLES2Renderer, Vector4<float>>(const Vector4<float>& t){
+				return "vec4(" + toString<GLES2Renderer, float>(t.x) + "," + toString<GLES2Renderer, float>(t.y) + "," + toString<GLES2Renderer, float>(t.z) + "," + toString<GLES2Renderer, float>(t.w) + ")";
 			}
 
 			template <>
-			inline std::string Utility<GLES2Renderer, Matrix3<float>>::toString(const Matrix3<float>& t){
-				std::string s = "mat3(" + Utility<GLES2Renderer, float>::toString(t.elements[0]);
+			inline std::string toString<GLES2Renderer, Matrix3<float>>(const Matrix3<float>& t){
+				std::string s = "mat3(" + toString<GLES2Renderer, float>(t.elements[0]);
 				for (unsigned i = 1; i < 9; ++i){
-					s += "," + Utility<GLES2Renderer, float>::toString(t.elements[i]);
+					s += "," + toString<GLES2Renderer, float>(t.elements[i]);
 				}
 				s += ")";
 				return s;
 			}
 
 			template <>
-			inline std::string Utility<GLES2Renderer, Matrix4<float>>::toString(const Matrix4<float>& t){
-				std::string s = "mat4(" + Utility<GLES2Renderer, float>::toString(t.elements[0]);
+			inline std::string toString<GLES2Renderer, Matrix4<float>>(const Matrix4<float>& t){
+				std::string s = "mat4(" + toString<GLES2Renderer, float>(t.elements[0]);
 				for (unsigned i = 1; i < 16; ++i){
-					s += "," + Utility<GLES2Renderer, float>::toString(t.elements[i]);
+					s += "," + toString<GLES2Renderer, float>(t.elements[i]);
 				}
 				s += ")";
 				return s;
 			}
 
 			template <>
-			inline std::string Utility<GLES2Renderer, Vector3<double>>::toString(const Vector3<double>& t){
-				return "dvec3(" + Utility<GLES2Renderer, double>::toString(t.x) + "," + Utility<GLES2Renderer, double>::toString(t.y) + "," + Utility<GLES2Renderer, double>::toString(t.z) + ")";
+			inline std::string toString<GLES2Renderer, Vector3<double>>(const Vector3<double>& t){
+				return "dvec3(" + toString<GLES2Renderer, double>(t.x) + "," + toString<GLES2Renderer, double>(t.y) + "," + toString<GLES2Renderer, double>(t.z) + ")";
 			}
 
 			template <>
-			inline std::string Utility<GLES2Renderer, Vector4<double>>::toString(const Vector4<double>& t){
-				return "dvec4(" + Utility<GLES2Renderer, double>::toString(t.x) + "," + Utility<GLES2Renderer, double>::toString(t.y) + "," + Utility<GLES2Renderer, double>::toString(t.z) + "," + Utility<GLES2Renderer, double>::toString(t.w) + ")";
+			inline std::string toString<GLES2Renderer, Vector4<double>>(const Vector4<double>& t){
+				return "dvec4(" + toString<GLES2Renderer, double>(t.x) + "," + toString<GLES2Renderer, double>(t.y) + "," + toString<GLES2Renderer, double>(t.z) + "," + toString<GLES2Renderer, double>(t.w) + ")";
 			}
 
 			//TODO dmats might not be supported, haven't checked specifics for GLES2
 			template <>
-			inline std::string Utility<GLES2Renderer, Matrix3<double>>::toString(const Matrix3<double>& t){
-				std::string s = "dmat3(" + Utility<GLES2Renderer, double>::toString(t.elements[0]);
+			inline std::string toString<GLES2Renderer, Matrix3<double>>(const Matrix3<double>& t){
+				std::string s = "dmat3(" + toString<GLES2Renderer, double>(t.elements[0]);
 				for (unsigned i = 1; i < 9; ++i){
-					s += "," + Utility<GLES2Renderer, double>::toString(t.elements[i]);
+					s += "," + toString<GLES2Renderer, double>(t.elements[i]);
 				}
 				s += ")";
 				return s;
 			}
 
 			template <>
-			inline std::string Utility<GLES2Renderer, Matrix4<double>>::toString(const Matrix4<double>& t){
-				std::string s = "dmat4(" + Utility<GLES2Renderer, double>::toString(t.elements[0]);
+			inline std::string toString<GLES2Renderer, Matrix4<double>>(const Matrix4<double>& t){
+				std::string s = "dmat4(" + toString<GLES2Renderer, double>(t.elements[0]);
 				for (unsigned i = 1; i < 16; ++i){
-					s += "," + Utility<GLES2Renderer, double>::toString(t.elements[i]);
+					s += "," + toString<GLES2Renderer, double>(t.elements[i]);
 				}
 				s += ")";
 				return s;

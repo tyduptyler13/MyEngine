@@ -78,7 +78,7 @@ namespace MyUPlay {
 				Output<T> ret;
 
 				std::string getInstance() const override {
-					return Utility<GLES2Renderer, T>::type + " " + ret.name + " = " + a.output->name + " + " + b.output->name + ";\n";
+					return type<GLES2Renderer, T> + " " + ret.name + " = " + a.output->name + " + " + b.output->name + ";\n";
 				}
 
 				void traverseChildren(ShaderTraverser s) const override{
@@ -98,7 +98,7 @@ namespace MyUPlay {
 				Output<R> ret;
 
 				std::string getInstance() const override {
-					return std::string(Utility<GLES2Renderer, R>::type) + " " + ret.name + " = " + a.output->name + " * " + b.output->name + ";\n";
+					return std::string(type<GLES2Renderer, R>) + " " + ret.name + " = " + a.output->name + " * " + b.output->name + ";\n";
 				}
 
 				void traverseChildren(ShaderTraverser s) const override {
@@ -118,8 +118,8 @@ namespace MyUPlay {
 				Output<R> ret;
 
 				std::string getInstance() const override {
-					return std::string(Utility<GLES2Renderer, R>::type) + " " + ret.name + " = " +
-							Utility<GLES2Renderer, R>::type + "(" + a.output->name + ", " + b.output->name + ");\n";
+					return std::string(type<GLES2Renderer, R>) + " " + ret.name + " = " +
+							type<GLES2Renderer, R> + "(" + a.output->name + ", " + b.output->name + ");\n";
 				}
 
 				void traverseChildren(ShaderTraverser s) const override {
@@ -142,7 +142,7 @@ namespace MyUPlay {
 				Output<R> ret;
 
 				std::string getInstance() const override {
-					return Utility<GLES2Renderer, R>::type + " " + ret.name + " = " + a.output->name + swiz + ";\n";
+					return type<GLES2Renderer, R> + " " + ret.name + " = " + a.output->name + swiz + ";\n";
 				}
 
 				void traverseChildren(ShaderTraverser s) const override {
@@ -162,7 +162,7 @@ namespace MyUPlay {
 
 				std::string getInstance() const override {
 					//mix should already be defined.
-					return Utility<GLES2Renderer, T>::type + " " + ret.name + " = mix(" + a.output->name +
+					return type<GLES2Renderer, T> + " " + ret.name + " = mix(" + a.output->name +
 							", " + b.output->name + ", " + fac.output->name + ");\n";
 				}
 
@@ -187,7 +187,7 @@ namespace MyUPlay {
 				Output<T> out;
 
 				std::string getStatic() const override {
-					return std::string("const ") + Utility<GLES2Renderer, T>::type + " " + out.name  + " = " + Utility<GLES2Renderer, T>::toString(value) + ";\n";
+					return std::string("const ") + type<GLES2Renderer, T> + " " + out.name  + " = " + toString<GLES2Renderer, T>(value) + ";\n";
 				}
 
 				std::string getInstance() const override {

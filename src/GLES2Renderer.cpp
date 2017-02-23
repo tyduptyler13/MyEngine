@@ -777,20 +777,21 @@ bool GLES2Renderer::isSphereViewable(Spheref s) {
 recursive_mutex GLES2Renderer::glfwLock;
 
 //Specializations for shaders (Allows a renderer to work)
-template <> const char* Shader::Utility<GLES2Renderer, bool>::type = "bool";
-template <> const char* Shader::Utility<GLES2Renderer, int>::type = "int";
-template <> const char* Shader::Utility<GLES2Renderer, unsigned>::type = "uint";
-template <> const char* Shader::Utility<GLES2Renderer, float>::type = "float";
-template <> const char* Shader::Utility<GLES2Renderer, Vector2<float>>::type = "vec2";
-template <> const char* Shader::Utility<GLES2Renderer, Vector3<float>>::type = "vec3";
-template <> const char* Shader::Utility<GLES2Renderer, Vector4<float>>::type = "vec4";
-template <> const char* Shader::Utility<GLES2Renderer, Vector2<int>>::type = "ivec2";
-template <> const char* Shader::Utility<GLES2Renderer, Vector3<int>>::type = "ivec3";
-template <> const char* Shader::Utility<GLES2Renderer, Vector4<int>>::type = "ivec3";
-template <> const char* Shader::Utility<GLES2Renderer, Vector2<unsigned>>::type = "uvec2";
-template <> const char* Shader::Utility<GLES2Renderer, Vector3<unsigned>>::type = "uvec3";
-template <> const char* Shader::Utility<GLES2Renderer, Vector4<unsigned>>::type = "uvec4";
-template <> const char* Shader::Utility<GLES2Renderer, Matrix3<float>>::type = "mat3";
-template <> const char* Shader::Utility<GLES2Renderer, Matrix4<float>>::type = "mat4";
-template <> const char* Shader::Utility<GLES2Renderer, Texture>::type = "sampler2D";
+template <> const char* Shader::type<GLES2Renderer, bool> = "bool";
+template <> const char* Shader::type<GLES2Renderer, int> = "int";
+template <> const char* Shader::type<GLES2Renderer, unsigned> = "uint";
+template <> const char* Shader::type<GLES2Renderer, float> = "float";
+template <> const char* Shader::type<GLES2Renderer, Vector2<float>> = "vec2";
+template <> const char* Shader::type<GLES2Renderer, Vector3<float>> = "vec3";
+template <> const char* Shader::type<GLES2Renderer, Vector4<float>> = "vec4";
+template <> const char* Shader::type<GLES2Renderer, Vector2<int>> = "ivec2";
+template <> const char* Shader::type<GLES2Renderer, Vector3<int>> = "ivec3";
+template <> const char* Shader::type<GLES2Renderer, Vector4<int>> = "ivec3";
+template <> const char* Shader::type<GLES2Renderer, Vector2<unsigned>> = "uvec2";
+template <> const char* Shader::type<GLES2Renderer, Vector3<unsigned>> = "uvec3";
+template <> const char* Shader::type<GLES2Renderer, Vector4<unsigned>> = "uvec4";
+template <> const char* Shader::type<GLES2Renderer, Matrix3<float>> = "mat3";
+template <> const char* Shader::type<GLES2Renderer, Matrix4<float>> = "mat4";
+template <> const char* Shader::type<GLES2Renderer, Texture> = "sampler2D";
+
 //Other specializations left out for now.
