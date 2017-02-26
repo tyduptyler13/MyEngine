@@ -34,9 +34,10 @@ namespace MyUPlay {
 
 template <typename T = float>
 class MyUPlay::MyEngine::Renderer {
-protected:
+	//protected:
 
-	std::recursive_mutex rendLock;
+	//Removed, it is up to each renderer to define its own lock.
+	//std::recursive_mutex rendLock;
 
 public:
 
@@ -157,22 +158,6 @@ public:
 	virtual void setWindowed() = 0;
 
 	virtual void setVsync(bool enable) = 0;
-
-	/**
-	 * The following is a blocking call to a loop. The user is expected to
-	 * put a lambda function in the call of this function to handle rendering
-	 * and do any game logic expected at every frame. This function will call the
-	 * function parameter every time the screen needs to be drawn, if vsync is disabled
-	 * then the function will be called immediately after rendering is finished.
-	 * Note: A buffer swap will occur after every call of this function, not drawing may
-	 * result in a black screen if color clearing is automatic.
-	 * @param function - The function with the following params
-	 * 	@param delta - The built in clock for this function. You don't need to have
-	 *		your own.
-	 * @return - Return true to exit the loop early. False will continue the loop
-	 * 	infinitely (until window close).
-	 */
-	virtual void loop(std::function<bool(double delta)>) = 0;
 
 	virtual bool needsToClose() = 0;
 

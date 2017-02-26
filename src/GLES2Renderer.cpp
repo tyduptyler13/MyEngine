@@ -3,9 +3,6 @@
 #include <functional>
 #include <unordered_map>
 
-//See http://www.glfw.org/docs/latest/build_guide.html#build_macros
-#define GLFW_INCLUDE_ES2
-
 #include <SOIL.h>
 
 #include "Log.hpp"
@@ -20,6 +17,7 @@
 #endif
 
 //Must come after GLES2Renderer aka GLFW3.h which includes GLES2/gl2.h
+#include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
 
 //Emscriptens headers are missing these.
@@ -40,89 +38,26 @@ using namespace MyUPlay::MyEngine;
 
 static Log logger("GLES2Renderer");
 
-namespace { //Anonymous namespace
-	void errorCallback(int, const char* description) {
-		logger.error(string("glfw error: ") + description);
-	}
-
-	//Neat trick for adding static code (executes before main)
-	struct StaticBlock {
-		StaticBlock() {
-			glfwSetErrorCallback(errorCallback);
-		}
-	};
-
-	static StaticBlock s;
-}
-
-static int glfwInitStatus = glfwInit();
-
-/**
- * Due to the nature of GLFW callbacks, we use a static struct to receive the events but
- * then we have to find the actual function that wants to receive the call, thus the following
- * functions will wrap and handle things like we want them to be.
- */
-template <int, typename... Args> //The int allows you to differentiate static "instances".
-struct StaticInstanceEventMapper {
-
-	typedef function<void(Args...)> RemapperFunction;
-	typedef unordered_map<GLFWwindow*, vector<RemapperFunction>> RemapperContainer;
-
-	static RemapperContainer functionRemapper;
-
-	static void handleEvent(GLFWwindow* window, Args... args) { //GLFW calls this
-		for (auto func : functionRemapper[window]){
-			func(args...);
-		}
-	}
-	static void addHandler(GLFWwindow* window, RemapperFunction func){ //Adds a hook for when glfw calls us.
-		functionRemapper[window].push_back(func);
-	}
-};
-
-//The static maps actual declarations.
-template <>
-StaticInstanceEventMapper<0, int, int>::RemapperContainer StaticInstanceEventMapper<0, int, int>::functionRemapper
-= StaticInstanceEventMapper<0, int, int>::RemapperContainer();
-template <>
-StaticInstanceEventMapper<1, int, int>::RemapperContainer StaticInstanceEventMapper<1, int, int>::functionRemapper
-= StaticInstanceEventMapper<1, int, int>::RemapperContainer();
-
-static StaticInstanceEventMapper<0, int, int> WindowSizer; //Handles window resizing
-static StaticInstanceEventMapper<1, int, int> FrameSizer; //Handles framebuffer resizing
+GLES2Renderer::GLES2Renderer(unsigned antialias, GLFWmonitor* monitor, GLES2Renderer* share) : Renderer() {
 
 
-GLES2Renderer::GLES2Renderer(unsigned antialias) : Renderer() {
+	std::vector<std::pair<int, int>> hints = {{
+			std::make_pair(GLFW_CLIENT_API, GLFW_OPENGL_ES_API), //Hard constraint.
+			std::make_pair(GLFW_CONTEXT_VERSION_MAJOR, 2),
+			std::make_pair(GLFW_CONTEXT_VERSION_MINOR, 0),
+			std::make_pair(GLFW_SAMPLES, antialias)
+	}};
 
-	std::lock_guard<std::recursive_mutex> lock(GLES2Renderer::glfwLock);
+	glfw = new GLFWManager(hints, 800, 600, "MyEngine", monitor, share ? share->glfw : nullptr);
 
-	if (!glfwInitStatus){
-		logger.warn("Failed to init glfw");
-		throw runtime_error("Failed to initialize glfw");
-	}
-
-	glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API); //Hard constraint.
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
-
-	glfwWindowHint(GLFW_SAMPLES, antialias);
-
-	window = glfwCreateWindow(800, 600, "MyEngine", nullptr, nullptr);
-
-	if (!window){
-		logger.warn("Failed to create sdl window!");
-		throw runtime_error("Failed to create sdl window!");
-	}
+	auto lock = GLFWManager::getLock();
 
 	//Every window instance needs to be added.
-	glfwSetWindowSizeCallback(window, WindowSizer.handleEvent);
 
-	WindowSizer.addHandler(window, [this](int width, int height){
+	glfw->onResize([this](int width, int height){
 		this->windowWidth = width;
 		this->windowHeight = height;
 	});
-
-	glfwSetFramebufferSizeCallback(window, FrameSizer.handleEvent);
 
 	onResize([](int width, int height){
 		glViewport(0, 0, width, height);
@@ -133,9 +68,7 @@ GLES2Renderer::GLES2Renderer(unsigned antialias) : Renderer() {
 }
 
 GLES2Renderer::~GLES2Renderer(){
-	std::lock_guard<std::recursive_mutex> lock(this->rendLock);
-	std::lock_guard<std::recursive_mutex> lock2(GLES2Renderer::glfwLock);
-	glfwDestroyWindow(this->window);
+	delete glfw;
 }
 
 void GLES2Renderer::setScissor(int x, int y, unsigned width, unsigned height) {
@@ -210,25 +143,26 @@ unsigned GLES2Renderer::getMaxAnisotripy() const  {
 
 std::tuple<unsigned, unsigned> GLES2Renderer::getSize() const {
 	int w, h;
-	std::lock_guard<std::recursive_mutex> lock(GLES2Renderer::glfwLock);
-	glfwGetWindowSize(window, &w, &h);
+	glfw->glfwFunction([&](GLFWwindow* window){
+		glfwGetWindowSize(window, &w, &h);
+	});
 	return make_tuple(w, h);
 }
 
 void GLES2Renderer::setSize(unsigned width, unsigned height) {
-	std::lock_guard<std::recursive_mutex> lock(this->rendLock);
-	std::lock_guard<std::recursive_mutex> lock2(GLES2Renderer::glfwLock);
-	glfwSetWindowSize(window, width, height);
+	glfw->glfwFunction([width, height](GLFWwindow* window){
+		glfwSetWindowSize(window, width, height);
+	});
 }
 
 void GLES2Renderer::setPos(unsigned x, unsigned y) {
-	std::lock_guard<std::recursive_mutex> lock(this->rendLock);
-	std::lock_guard<std::recursive_mutex> lock2(GLES2Renderer::glfwLock);
-	glfwSetWindowPos(window, x, y);
+	glfw->glfwFunction([x, y](GLFWwindow* window){
+		glfwSetWindowPos(window, x, y);
+	});
 }
 
 void GLES2Renderer::setViewport(int x, int y, unsigned width, unsigned height)  {
-	std::lock_guard<std::recursive_mutex> lock(this->rendLock);
+	auto lock = glfw->getLock();
 	glViewport(x, y, width, height);
 }
 std::tuple<int, int, unsigned, unsigned> GLES2Renderer::getViewport() const {
@@ -237,21 +171,22 @@ std::tuple<int, int, unsigned, unsigned> GLES2Renderer::getViewport() const {
 	return make_tuple(viewport[0], viewport[1], viewport[2], viewport[3]);
 }
 void GLES2Renderer::setDefaultViewport() {
-	std::lock_guard<std::recursive_mutex> lock(this->rendLock);
-	std::lock_guard<std::recursive_mutex> lock2(GLES2Renderer::glfwLock);
+	auto lock = glfw->getLock();
 	int w, h;
-	glfwGetFramebufferSize(window, &w, &h);
+	glfw->glfwFunction([&](GLFWwindow* window){
+		glfwGetFramebufferSize(window, &w, &h);
+	});
 	setViewport(0, 0, w, h);
 }
 
 void GLES2Renderer::setFullScreen() {
 #ifndef __EMSCRIPTEN__
-	std::lock_guard<std::recursive_mutex> lock(this->rendLock);
-	std::lock_guard<std::recursive_mutex> lock2(GLES2Renderer::glfwLock);
-	GLFWmonitor* const mon = glfwGetPrimaryMonitor();
-	const GLFWvidmode* const mode = glfwGetVideoMode(mon);
-	glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
-	glfwSetWindowMonitor(window, mon, 0, 0, mode->width, mode->height, GLFW_DONT_CARE);
+	glfw->glfwFunction([](GLFWwindow* window){
+		GLFWmonitor* const mon = glfwGetPrimaryMonitor();
+		const GLFWvidmode* const mode = glfwGetVideoMode(mon);
+		glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
+		glfwSetWindowMonitor(window, mon, 0, 0, mode->width, mode->height, GLFW_DONT_CARE);
+	});
 #else
 	EM_ASM(
 			Document.requestFullscreen();
@@ -267,13 +202,13 @@ void GLES2Renderer::setFakeFullScreen() {
 
 void GLES2Renderer::setWindowed() {
 #ifndef __EMSCRIPTEN__
-	std::lock_guard<std::recursive_mutex> lock(this->rendLock);
-	std::lock_guard<std::recursive_mutex> lock2(GLES2Renderer::glfwLock);
-	GLFWmonitor* const mon = glfwGetWindowMonitor(window);
-	if (mon == nullptr) return; //Already windowed.
-	const GLFWvidmode* const mode = glfwGetVideoMode(mon);
-	glfwWindowHint(GLFW_DECORATED, GLFW_TRUE);
-	glfwSetWindowMonitor(window, nullptr, windowX, windowY, mode->width, mode->height, GLFW_DONT_CARE);
+	glfw->glfwFunction([&](GLFWwindow* window){
+		GLFWmonitor* const mon = glfwGetWindowMonitor(window);
+		if (mon == nullptr) return; //Already windowed.
+		const GLFWvidmode* const mode = glfwGetVideoMode(mon);
+		glfwWindowHint(GLFW_DECORATED, GLFW_TRUE);
+		glfwSetWindowMonitor(window, nullptr, this->windowX, this->windowY, mode->width, mode->height, GLFW_DONT_CARE);
+	});
 #else
 	EM_ASM(
 			Document.exitFullscreen();
@@ -281,38 +216,30 @@ void GLES2Renderer::setWindowed() {
 #endif
 }
 
-void GLES2Renderer::loop(std::function<bool(double)> func) {
-
-	std::lock_guard<std::recursive_mutex> lock(GLES2Renderer::glfwLock);
-
-	Clock<> clock;
-
-	while (!glfwWindowShouldClose(window)){
-		glfwPollEvents();
-		if (func(Clock<>::durationToSeconds(clock.getDelta()))){
-			return;
-		}
-	}
-
+void GLES2Renderer::processEvents() {
+	auto lock = glfw->getLock();
+	glfwPollEvents();
 }
 
 bool GLES2Renderer::needsToClose() {
-	std::lock_guard<std::recursive_mutex> lock(this->rendLock);
-	std::lock_guard<std::recursive_mutex> lock2(GLES2Renderer::glfwLock);
-	glfwPollEvents(); //Sneaking in some event handling.
-	return glfwWindowShouldClose(window);
+	bool shouldClose;
+	glfw->glfwFunction([&](GLFWwindow* window){
+		//Sneaking in some event handling.
+		glfwPollEvents();
+		shouldClose = glfwWindowShouldClose(window);
+	});
+	return shouldClose;
 }
 
 void GLES2Renderer::glfwFunction(std::function<void()> func) {
-	std::lock_guard<std::recursive_mutex> lock(this->rendLock);
-	std::lock_guard<std::recursive_mutex> lock2(GLES2Renderer::glfwLock);
-	if (glfwGetCurrentContext() != window) glfwMakeContextCurrent(window);
+	auto lock = glfw->getLock();
+	glfw->makeContextCurrent();
 	func();
 }
 
 void GLES2Renderer::onResize(std::function<void(int, int)> func) {
-	std::lock_guard<std::recursive_mutex> lock(this->rendLock);
-	FrameSizer.addHandler(window, [this, func](int width, int height){
+	auto lock = glfw->getLock();
+	glfw->onFrameResize([this, func](int width, int height){
 		this->glfwFunction([&]{
 			func(width, height);
 		});
@@ -384,10 +311,9 @@ float GLES2Renderer::reverseStablePainterSort(const RenderItem<Mesh<float>>& a, 
 void GLES2Renderer::render(Scene<float>& scene, Camera<float>* camera, std::shared_ptr<IRenderTarget> renderTarget, bool forceClear)  {
 
 	//Only one render may be in progress at a time.
-	std::lock_guard<std::recursive_mutex> lock(this->rendLock);
-	std::lock_guard<std::recursive_mutex> lock2(GLES2Renderer::glfwLock);
+	auto lock = glfw->getLock();
 
-	glfwMakeContextCurrent(window);
+	glfw->makeContextCurrent();
 
 	for (auto& pair : this->prePlugins) {
 		pair.second(scene, camera);
@@ -446,7 +372,9 @@ void GLES2Renderer::render(Scene<float>& scene, Camera<float>* camera, std::shar
 		pair.second(scene, camera);
 	}
 
-	glfwSwapBuffers(window);
+	glfw->glfwFunction([](GLFWwindow* window){
+		glfwSwapBuffers(window);
+	});
 
 	//TODO handle sprites and lensflares
 
@@ -724,7 +652,7 @@ void GLES2Renderer::setTexture(shared_ptr<Texture> texture, unsigned slot)  {
 }
 
 void GLES2Renderer::setRenderTarget(std::shared_ptr<IRenderTarget> target) {
-	std::lock_guard<std::recursive_mutex> lock(this->rendLock);
+	auto lock = glfw->getLock();
 	if (target == nullptr){
 		glBindFramebuffer(GL_FRAMEBUFFER, 0); //Bind to default target (screen)
 	} else {
@@ -744,8 +672,7 @@ std::vector<unsigned char> GLES2Renderer::readRenderTargetPixels(std::shared_ptr
 }
 
 void GLES2Renderer::setVsync(bool enable) {
-	std::lock_guard<std::recursive_mutex> lock(this->rendLock);
-	std::lock_guard<std::recursive_mutex> lock2(GLES2Renderer::glfwLock);
+	auto lock = glfw->getLock();
 	glfwSwapInterval(enable ? 1 : 0);
 }
 
@@ -773,8 +700,6 @@ bool GLES2Renderer::isSphereViewable(Spheref s) {
 	return true;
 
 }
-
-recursive_mutex GLES2Renderer::glfwLock;
 
 //Specializations for shaders (Allows a renderer to work)
 template <> const char* Shader::type<GLES2Renderer, bool> = "bool";

@@ -17,17 +17,35 @@ using namespace std;
 using namespace MyUPlay::MyEngine;
 using namespace Assimp;
 
-Object3D<float>* GeometryImporter::ImportAsset(string s) {
+Object3D<float>* GeometryImporter::ImportAsset(string s, bool raw, string ext) {
 	Importer importer;
 
-	const aiScene* scene = importer.ReadFile(s,
-			aiProcess_Triangulate |
-			aiProcess_GenNormals |
-			aiProcess_JoinIdenticalVertices |
-			aiProcess_SortByPType |
-			aiProcess_OptimizeMeshes |
-			aiProcess_OptimizeGraph |
-			aiProcess_GenUVCoords );
+	const aiScene* scene;
+
+	if (raw){
+		scene = importer.ReadFileFromMemory(
+				s.data(),
+				s.length(),
+				aiProcess_Triangulate |
+				aiProcess_GenNormals |
+				aiProcess_JoinIdenticalVertices |
+				aiProcess_SortByPType |
+				aiProcess_OptimizeMeshes |
+				aiProcess_OptimizeGraph |
+				aiProcess_GenUVCoords,
+				ext.data()
+		);
+	} else {
+		scene = importer.ReadFile(s,
+				aiProcess_Triangulate |
+				aiProcess_GenNormals |
+				aiProcess_JoinIdenticalVertices |
+				aiProcess_SortByPType |
+				aiProcess_OptimizeMeshes |
+				aiProcess_OptimizeGraph |
+				aiProcess_GenUVCoords );
+	}
+
 
 	if ( !scene ) return nullptr;
 

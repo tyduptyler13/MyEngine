@@ -13,7 +13,8 @@
 				"src/GLES2MaterialLib.cpp",
 				"src/GLES2RenderTarget.cpp",
 				"src/Texture.cpp",
-				"src/GeometryImporter.cpp"
+				"src/GeometryImporter.cpp",
+				"src/GLFWManager.cpp"
 			],
 			"include_dirs": [
 				"include",

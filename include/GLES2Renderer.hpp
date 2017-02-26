@@ -6,8 +6,7 @@
 
 #define GLFW_INCLUDE_ES2
 
-#include <GLFW/glfw3.h>
-
+#include "GLFWManager.hpp"
 #include "Renderer.hpp"
 #include "Frustum.hpp"
 
@@ -22,7 +21,7 @@ namespace MyUPlay {
 			/**
 			 * Antialias should be set to a value 0 (off), or 2-4 for varying samples (on).
 			 */
-			GLES2Renderer(unsigned antialias = 0);
+			GLES2Renderer(unsigned antialias = 0, GLFWmonitor* monitor = nullptr, GLES2Renderer* share = nullptr);
 			~GLES2Renderer();
 
 			void setScissor(int x, int y, unsigned width, unsigned height);
@@ -64,8 +63,6 @@ namespace MyUPlay {
 			void setFakeFullScreen();
 			void setWindowed();
 
-			void loop(std::function<bool(double delta)>);
-
 			void onResize(std::function<void(int, int)>);
 
 			void setDepthTest(bool);
@@ -74,6 +71,7 @@ namespace MyUPlay {
 
 			void setVsync(bool);
 
+			void processEvents();
 			bool needsToClose();
 
 			/**
@@ -107,15 +105,13 @@ namespace MyUPlay {
 
 		protected:
 
-			static std::recursive_mutex glfwLock;
+			GLFWManager* glfw;
 
 			std::unordered_map<Math::UUID, std::function<void(Scene<float>& s, Camera<float>*)>> prePlugins;
 			std::unordered_map<Math::UUID, std::function<void(Scene<float>& s, Camera<float>*)>> postPlugins;
 
 			Matrix4f projScreenMatrix;
 			Frustum<float> frustum;
-
-			GLFWwindow* window;
 
 			struct GPUTexture { //Wrap textures with some of our own internal variables.
 				unsigned id; //Texture handle
