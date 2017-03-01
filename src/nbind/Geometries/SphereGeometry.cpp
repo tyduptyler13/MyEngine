@@ -8,6 +8,8 @@ NBIND_CLASS(SphereGeometry<float>, SphereGeometry) {
 	inherit(BufferGeometry<float>);
 
 	construct<float, unsigned, unsigned, float, float, float, float>();
-	construct<const SphereGeometry<float>&>();
+	construct<float, unsigned, unsigned>();
+	construct<float>();
+	//construct<const SphereGeometry<float>&>();
 
 }

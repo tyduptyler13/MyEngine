@@ -28,15 +28,23 @@ scene.add(camera);
 
 var geo = new lib.BoxGeometry(10, 10, 10, 8, 4, 2);
 
-var mat = lib.GLES2CreateNormalMaterial();
+var mat = new lib.GLES2NormalMaterial();
 
 var box = new lib.Mesh(geo, mat);
-box.position = new lib.Vector3(-10, 0, 0);
+box.position = new lib.Vector3(-10, 10, 0);
 
 scene.add(box);
 
+var geo2 = new lib.SphereGeometry(5);
+var mat2 = new lib.GLES2NormalMaterial();
+
+var sphere = new lib.Mesh(geo2, mat2);
+sphere.position = new lib.Vector3(-10, -10, 0);
+
+scene.add(sphere);
+
 var suzane = lib.GeometryImporter.ImportAsset("suzane.obj");
-suzane.position = new lib.Vector3(10, 0, 0);
+suzane.position = new lib.Vector3(10, 10, 0);
 
 scene.add(suzane);
 
@@ -47,14 +55,7 @@ function render() {
 	var rot = delta * Math.PI * 0.5;
 	box.rotateY(rot);
 	suzane.rotateY(rot);
-	
-	/*
-	renderer.render(scene, camera);
-	
-	if (!renderer.needsToClose()){
-		process.nextTick(render);
-	}
-	*/
+	sphere.rotateY(rot);
 
 	renderer.renderAsync(scene, camera, ()=>{
 		if (!renderer.needsToClose()){
@@ -63,15 +64,5 @@ function render() {
 	});
 
 }
-
-/*
-setTimeout(()=>{
-	renderer.setFullScreen();
-}, 10000);
-
-setTimeout(()=>{
-	renderer.setWindowed();
-}, 20000);
-*/
 
 render();

@@ -1,9 +1,7 @@
 .PHONY: configure all clean fullclean compile
 
-export CC?=clang
-export CXX?=clang++
-
-
+export CC=clang
+export CXX=clang++
 
 ifndef NODEBUILD
 	ELECTRONFLAGS=--runtime=electron --target=1.4.15 --arch=x64 --dist-url=https://atom.io/download/electron
@@ -27,13 +25,15 @@ test:
 
 check: test
 
-compile: configure deps/assimp/lib/libassimp.a deps/Simple-OpenGL-Image-Library/libSOIL.a
+compile: configure deps/assimp/lib/libassimp.a
 	node-gyp build $(ELECTRONFLAGS) $(ASMJS) -- -j8
+
+weakclean:
+	node-gyp clean
 
 clean:
 	node-gyp clean
 	$(MAKE) -C deps/assimp clean
-	$(MAKE) -C deps/Simple-OpenGL-Image-Library clean
 
 fullclean:
 	rm -rf build
@@ -48,12 +48,3 @@ deps/assimp/lib/libassimp.a: deps/assimp/Makefile
 
 deps/assimp/CMakeLists.txt:
 	git submodule init deps/assimp && git submodule update deps/assimp
-
-deps/Simple-OpenGL-Image-Library/Makefile: deps/Simple-OpenGL-Image-Library/CMakeLists.txt
-	cd deps/Simple-OpenGL-Image-Library && $(PRECMAKE) cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS=-fpic -DCMAKE_C_FLAGS=-fpic $(SOILCMAKEFLAGS)
-
-deps/Simple-OpenGL-Image-Library/libSOIL.a: deps/Simple-OpenGL-Image-Library/Makefile
-	$(MAKE) -C deps/Simple-OpenGL-Image-Library
-
-deps/Simple-OpenGL-Image-Library/CMakeLists.txt:
-	git submodule init deps/Simple-OpenGL-Image-Library && git submodule update deps/Simple-OpenGL-Image-Library

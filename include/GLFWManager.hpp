@@ -36,10 +36,6 @@ namespace MyUPlay {
 					glfwInit();
 					glfwLog.log("Initialized");
 					glfwSetErrorCallback(errorCallback);
-
-					//Event systems
-					init();
-
 				}
 
 				instances++;
@@ -49,7 +45,13 @@ namespace MyUPlay {
 				}
 
 				window = glfwCreateWindow(width, height, title, mon, manager ? manager->window : nullptr);
+
+				if (window == nullptr) throw std::runtime_error("Failed to create GLFW window!");
+
 				glfwLog.log("Created window");
+
+				//Event systems
+				init();
 
 			}
 

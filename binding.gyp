@@ -24,7 +24,7 @@
 				'src/nbind/Geometry.cpp',
 				'src/nbind/Materials/GLES2NormalMaterial.cpp'
 			],
-			'dependencies': [ 'build.gyp:libMyEngine' ],
+			'dependencies': [ 'build.gyp:MyEngine' ],
 			'cflags': [
 				'-std=c++14',
 				'-fpic'
@@ -46,6 +46,18 @@
 			],
 			'includes': [
 				'node_modules/nbind/src/nbind.gypi'
+			],
+			"conditions": [
+				['OS=="win"', {
+					"msvs_settings": {
+						"VCCLCompilerTool": {
+							"AdditionalOptions": [
+								"/GR",
+								"/EHsc"
+							]
+						}
+					}
+				}]
 			]
 		}
 	]

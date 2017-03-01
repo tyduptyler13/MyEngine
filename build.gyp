@@ -1,7 +1,7 @@
 {
 	"targets": [
 		{
-			"target_name": "libMyEngine",
+			"target_name": "MyEngine",
 			"type": "static_library",
 			"sources": [
 				"src/Material.cpp",
@@ -22,6 +22,10 @@
 				"deps/assimp/include"
 				#glfw is expected to be installed on each system target
 			],
+			"dependencies": [
+				"glsl-optimizer",
+				"SOIL"
+			],
 			"direct_dependent_settings": {
 				"include_dirs": [
 					"include",
@@ -31,14 +35,8 @@
 			},
 			"link_dependent_settings": {
 				"dependencies": [
-					"glsl-optimizer"
-				]
-			},
-			"link_settings": {
-				"libraries": [
-					"../deps/Simple-OpenGL-Image-Library/libSOIL.a",
-					"../deps/assimp/lib/libassimp.a",
-					"-lGLESv2"
+					"glsl-optimizer",
+					"SOIL"
 				]
 			},
 			"variables": {
@@ -46,11 +44,37 @@
 			},
 			"conditions": [
 				['OS=="win"', {
+					"direct_dependent_settings": {
+						"include_dirs": [
+							"include/Graphics",
+							"deps/glfw/include"
+						]
+					},
+					"include_dirs": [
+						"include/Graphics",
+						"deps/glfw/include"
+					],
 					"link_settings": {
 						"libraries": [
+							"../lib/assimp.lib",
+							"../lib/glfw3.lib",
+							"../lib/libGLESv2.lib",
 							"-lgdi32",
+							"-lopengl32"
+						],
+						"libraries!": [
+							"-lGLESv2",
 							"-lglfw3"
 						]
+					},
+					"msvs_settings": {
+						"VCCLCompilerTool": {
+							"AdditionalOptions": [
+								"/GR",
+								"/MD",
+								"/EHsc"
+							]
+						}
 					}
 				}],
 				['OS=="linux"', {
@@ -58,14 +82,18 @@
 						['asmjs==1', {
 							"link_settings": {
 								"libraries": [
+									"../deps/assimp/lib/libassimp.a",
+									"-lGLESv2",
 									"-s USE_GLFW=3",
 									"-lglfw3",
-									"../deps/assimp/lib/libzlibstatic.a"
+									"../deps/assimp/lib/libzlibstatic.a" #last for a reason
 								]
 							}
 						}, {
 							"link_settings": {
 								"libraries": [
+									"../deps/assimp/lib/libassimp.a",
+									"-lGLESv2",
 									"<!(pkg-config glfw3 --static --libs-only-l)",
 									"-pthread" #We might need pthread for gcc (because their std::threads are broken otherwise)
 								]
@@ -73,9 +101,6 @@
 						}]
 					]
 				}]
-			],
-			"dependencies": [
-				"glsl-optimizer"
 			],
 			"ldflags": [ "-L../lib" ],
 			"cflags": [
@@ -236,7 +261,66 @@
 				"include_dirs": [
 					"deps/glsl-optimizer/src"
 				]
-			}
+			},
+			"conditions": [
+				['OS=="win"', {
+					"msvs_settings": {
+						"VCCLCompilerTool": {
+							"AdditionalOptions": [
+								"/GR",
+								"/EHsc"
+							]
+						}
+					}
+				}]
+			]
+		},
+		{
+			"target_name": "SOIL",
+			"type": "static_library",
+			"variables": {
+				"root": "deps/Simple-OpenGL-Image-Library"
+			},
+			"include_dirs": [
+				"<(root)/src"
+			],
+			"sources": [
+				"<(root)/src/image_DXT.c",
+				"<(root)/src/image_helper.c",
+				"<(root)/src/SOIL.c",
+				"<(root)/src/stb_image_aug.c"
+			],
+			"cflags!": [
+				'-fno-exceptions'
+			],
+			"cflags": [
+				"-fpic"
+			],
+			'cflags_cc!': [
+				'-fno-exceptions',
+				'-fno-rtti',
+				'-std=gnu++0x'
+			],
+			'cflags_cc': [
+				'-std=c++11'
+			],
+			"direct_dependent_settings": {
+				"include_dirs": [
+					"<(root)/src"
+				]
+			},
+			"conditions": [
+				['OS=="win"', {
+					"msvs_settings": {
+						"VCCLCompilerTool": {
+							"AdditionalOptions": [
+								"/GR",
+								"/EHsc"
+							]
+						}
+					}
+				}]
+			]
 		}
 	]
 }

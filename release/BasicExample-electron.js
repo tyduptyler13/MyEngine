@@ -66,17 +66,26 @@ electron.app.on('ready', ()=>{
 
 	var geo = new lib.BoxGeometry(10, 10, 10, 8, 4, 2);
 
-	var mat = lib.GLES2CreateNormalMaterial();
+	var mat = new lib.GLES2NormalMaterial();
 
 	var box = new lib.Mesh(geo, mat);
-	box.position = new lib.Vector3(-10, 0, 0);
+	box.position = new lib.Vector3(-10, 10, 0);
 
 	scene.add(box);
 
-	var suzane = lib.GeometryImporter.ImportAsset("suzane.obj");
-	suzane.position = new lib.Vector3(10, 0, 0);
+	var geo2 = new lib.SphereGeometry(5);
+	var mat2 = new lib.GLES2NormalMaterial();
 
-	scene.add(suzane);
+	var sphere = new lib.Mesh(geo2, mat2);
+	sphere.position = new lib.Vector3(-10, -10, 0);
+
+	scene.add(sphere);
+
+	var suzane = lib.GeometryImporter.ImportAsset("suzane.obj");
+	if (suzane != null){
+		suzane.position = new lib.Vector3(10, 10, 0);
+		scene.add(suzane);
+	}
 
 	var clock = new Clock();
 
@@ -86,21 +95,10 @@ electron.app.on('ready', ()=>{
 		var delta = clock.getDelta();
 		var rot = delta * Math.PI * 0.5;
 		box.rotateY(rot);
-		suzane.rotateY(rot);
-
-/*
-		//console.log("Rendering.");
-
-		renderer.render(scene, camera);
-
-		//console.log("Rendered.");
-
-		if (!renderer.needsToClose()){
-			process.nextTick(render);
-		} else {
-			console.log("Window needs to close!");
+		sphere.rotateY(rot);
+		if (suzane != null){
+			suzane.rotateY(rot);
 		}
-*/
 
 		try {
 			renderer.renderAsync(scene, camera, ()=>{

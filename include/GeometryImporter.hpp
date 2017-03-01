@@ -20,8 +20,12 @@ namespace MyUPlay {
 			 */
 			static Object3D<float>* ImportAsset(std::string, bool raw = false, std::string ext = "");
 
-			static std::shared_ptr<Object3D<float>> ImportSharedAsset(std::string s, bool raw = false, std::string ext = "") {
+			static std::shared_ptr<Object3D<float>> ImportSharedAsset(std::string s, bool raw, std::string ext = "") {
 				return std::shared_ptr<Object3D<float>>(ImportAsset(s, raw, ext));
+			}
+
+			static std::shared_ptr<Object3D<float>> ImportSharedAsset(std::string s) {
+				return std::shared_ptr<Object3D<float>>(ImportAsset(s));
 			}
 
 		};

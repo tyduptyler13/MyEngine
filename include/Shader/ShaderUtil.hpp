@@ -32,9 +32,11 @@ namespace MyUPlay {
 			 * T - Type for conversion to some shading language.
 			 * @return A renderer specific type related to a c type.
 			 */
-			template <typename R, typename T>
+			template <class R, typename T>
 			const char* type;
 
+			//Only clang seems to properly support these, they aren't needed but supress warnings.
+#ifdef __clang__
 			//Specializations for shaders (Allows a renderer to work)
 			template<> extern const char* type<GLES2Renderer, bool>;
 			template<> extern const char* type<GLES2Renderer, int>;
@@ -52,13 +54,14 @@ namespace MyUPlay {
 			template<> extern const char* type<GLES2Renderer, Matrix3<float>>;
 			template<> extern const char* type<GLES2Renderer, Matrix4<float>>;
 			template<> extern const char* type<GLES2Renderer, Texture>;
+#endif
 
 			/**
 			 * R - Renderer
 			 * T - Type for conversion to some shading language.
 			 * @return A renderer specific type related to a c type.
 			 */
-			template <typename R, typename T>
+			template <class R, typename T>
 			std::string toString(const T& t){
 				return std::to_string(t); //Default fallback
 			}

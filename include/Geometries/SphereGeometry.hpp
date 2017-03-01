@@ -12,8 +12,8 @@ namespace MyUPlay {
 		template <typename T>
 		struct SphereGeometry : public BufferGeometry<T> {
 
-			SphereGeometry(T radius = 50, unsigned widthSegments = 8, unsigned heightSegments = 6,
-					T phiStart = 0, T phiLength = Math::PI * 2, T thetaStart = 0, T thetaLength = Math::PI){
+			SphereGeometry(T radius, unsigned widthSegments, unsigned heightSegments,
+					T phiStart, T phiLength = Math::PI * 2, T thetaStart = 0, T thetaLength = Math::PI){
 
 				widthSegments = Math::max(3, widthSegments);
 				heightSegments = Math::max(2, heightSegments);
@@ -70,7 +70,15 @@ namespace MyUPlay {
 					}
 				}
 
+				this->indicesNeedUpdate = true;
+
 			}
+
+			//Explicit constructors for js bindings.
+
+			SphereGeometry(T radius, unsigned widthSegments, unsigned heightSegments = 6) : SphereGeometry(radius, widthSegments, heightSegments, 0) {}
+
+			SphereGeometry(T radius) : SphereGeometry(radius, 8) {}
 
 			SphereGeometry(const SphereGeometry& s) : BufferGeometry<T>(s) {}
 
