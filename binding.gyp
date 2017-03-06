@@ -26,8 +26,15 @@
 			],
 			'dependencies': [ 'build.gyp:MyEngine' ],
 			'cflags': [
-				'-std=c++14',
 				'-fpic'
+			],
+			"cflags_cc": [
+				'-std=c++14'
+			],
+			'ldflags': [
+				'-Wl,-rpath,.',
+				'-Wl,-rpath,build/Debug',
+				'-Wl,-rpath,build/Release'
 			],
 			'cflags!': [
 				'-fno-exceptions',

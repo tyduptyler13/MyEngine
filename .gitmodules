@@ -7,9 +7,6 @@
 [submodule "deps/googletest"]
 	path = deps/googletest
 	url = https://github.com/google/googletest.git
-[submodule "deps/Simple-OpenGL-Image-Library"]
-	path = deps/Simple-OpenGL-Image-Library
-	url = https://github.com/kbranigan/Simple-OpenGL-Image-Library.git
 [submodule "deps/glsl-optimizer"]
 	path = deps/glsl-optimizer
 	url = https://github.com/bkaradzic/glsl-optimizer

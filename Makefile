@@ -4,12 +4,11 @@ export CC=clang
 export CXX=clang++
 
 ifndef NODEBUILD
-	ELECTRONFLAGS=--runtime=electron --target=1.4.15 --arch=x64 --dist-url=https://atom.io/download/electron
+	ELECTRONFLAGS=--runtime=electron --target=1.6.1 --arch=x64 --dist-url=https://atom.io/download/electron
 endif
 
 ifdef ASMJS
 	ASMJS=--asmjs=1
-	SOILCMAKEFLAGS=-DOPENGL_gl_LIBRARY=-lGL
 endif
 
 all: compile
@@ -38,7 +37,6 @@ clean:
 fullclean:
 	rm -rf build
 	cd deps/assimp/ && git clean -xdf
-	cd deps/Simple-OpenGL-Image-Library && git clean -xdf
 
 deps/assimp/Makefile: deps/assimp/CMakeLists.txt
 	cd deps/assimp && $(PRECMAKE) cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -DCMAKE_CXX_FLAGS="-fpic --std=c++11" -DCMAKE_C_FLAGS=-fpic $(ASSIMPCMAKEFLAGS)

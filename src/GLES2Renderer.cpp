@@ -42,6 +42,7 @@ GLES2Renderer::GLES2Renderer(unsigned antialias, GLFWmonitor* monitor, GLES2Rend
 
 	std::vector<std::pair<int, int>> hints = {{
 			std::make_pair(GLFW_CLIENT_API, GLFW_OPENGL_ES_API), //Hard constraint.
+			std::make_pair(GLFW_CONTEXT_CREATION_API, GLFW_NATIVE_CONTEXT_API),
 			std::make_pair(GLFW_CONTEXT_VERSION_MAJOR, 2),
 			std::make_pair(GLFW_CONTEXT_VERSION_MINOR, 0),
 			std::make_pair(GLFW_SAMPLES, antialias)
@@ -50,6 +51,18 @@ GLES2Renderer::GLES2Renderer(unsigned antialias, GLFWmonitor* monitor, GLES2Rend
 	glfw = new GLFWManager(hints, 800, 600, "MyEngine", monitor, share ? share->glfw : nullptr);
 
 	auto lock = GLFWManager::getLock();
+
+	glfw->makeContextCurrent();
+
+	try {
+		std::string version(reinterpret_cast<const char*>(glGetString(GL_VERSION)));
+		logger.log("GL VERSION: " + version);
+		std::string renderer(reinterpret_cast<const char*>(glGetString(GL_RENDERER)));
+		logger.log("GL RENDERER: " + renderer);
+	} catch (...) {
+		logger.log("GL Error" + std::to_string(glGetError()));
+		throw runtime_error("Failed to call basic Opengl function. Context problems!");
+	}
 
 	//Every window instance needs to be added.
 
@@ -699,23 +712,5 @@ bool GLES2Renderer::isSphereViewable(Spheref s) {
 	return true;
 
 }
-
-//Specializations for shaders (Allows a renderer to work)
-template <> const char* Shader::type<GLES2Renderer, bool> = "bool";
-template <> const char* Shader::type<GLES2Renderer, int> = "int";
-template <> const char* Shader::type<GLES2Renderer, unsigned> = "uint";
-template <> const char* Shader::type<GLES2Renderer, float> = "float";
-template <> const char* Shader::type<GLES2Renderer, Vector2<float>> = "vec2";
-template <> const char* Shader::type<GLES2Renderer, Vector3<float>> = "vec3";
-template <> const char* Shader::type<GLES2Renderer, Vector4<float>> = "vec4";
-template <> const char* Shader::type<GLES2Renderer, Vector2<int>> = "ivec2";
-template <> const char* Shader::type<GLES2Renderer, Vector3<int>> = "ivec3";
-template <> const char* Shader::type<GLES2Renderer, Vector4<int>> = "ivec3";
-template <> const char* Shader::type<GLES2Renderer, Vector2<unsigned>> = "uvec2";
-template <> const char* Shader::type<GLES2Renderer, Vector3<unsigned>> = "uvec3";
-template <> const char* Shader::type<GLES2Renderer, Vector4<unsigned>> = "uvec4";
-template <> const char* Shader::type<GLES2Renderer, Matrix3<float>> = "mat3";
-template <> const char* Shader::type<GLES2Renderer, Matrix4<float>> = "mat4";
-template <> const char* Shader::type<GLES2Renderer, Texture> = "sampler2D";
 
 //Other specializations left out for now.

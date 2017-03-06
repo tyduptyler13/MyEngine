@@ -4,6 +4,11 @@ var lib = require('nbind').init().lib;
 var Clock = require('../../lib/Clock.js');
 var electron = require('electron');
 
+process.on('uncaughtException', (err)=>{
+	console.error("FATAL", err);
+	process.exit();
+});
+
 electron.app.on('ready', ()=>{
 
 	var window = new electron.BrowserWindow({
@@ -101,6 +106,16 @@ electron.app.on('ready', ()=>{
 			suzane.rotateY(rot);
 		}
 
+		//Synchronous version
+		// renderer.render(scene, camera);
+		//
+		// if (!renderer.needsToClose()){
+		// 	process.nextTick(render);
+		// } else {
+		// 	electron.app.quit();
+		// }
+
+		//Async version
 		try {
 			renderer.renderAsync(scene, camera, ()=>{
 				if (!renderer.needsToClose()){

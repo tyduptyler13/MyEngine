@@ -81,6 +81,12 @@ void GLES2Shader::compile() {
 	glslopt_shader_delete(shader);
 
 	GLuint vertShader = glCreateShader(GL_VERTEX_SHADER);
+
+	if (vertShader == 0) {
+		shaderLog.error("Failed to create a shader handle!");
+		throw runtime_error("OpenGL error, likely an issue with the gl context.");
+	}
+
 	const char* cp = vertexCode.c_str(); //Getting an lvalue.
 	glShaderSource(vertShader, 1, &cp, 0);
 

@@ -26,21 +26,28 @@ namespace MyUPlay {
 
 		public:
 
-
-			GLFWManager(std::vector<std::pair<int, int>> hints, int width, int height,
+			GLFWManager(const std::vector<std::pair<int, int>>& hints, int width, int height,
 					const char* title, GLFWmonitor* mon = nullptr, const GLFWManager* manager = nullptr){
+
+				//glfwLog.level = Log::DebugLevel;
 
 				std::lock_guard<std::recursive_mutex> guard(lock);
 
 				if (instances == 0){
-					glfwInit();
+
+					if (!glfwInit()){
+						glfwSetErrorCallback(errorCallback);
+						glfwLog.error("Something went wrong!");
+						throw std::runtime_error("Failed to initialize GLFW!");
+					}
 					glfwLog.log("Initialized");
-					glfwSetErrorCallback(errorCallback);
+
 				}
 
 				instances++;
 
-				for (std::pair<int, int>& p : hints) {
+				for (const std::pair<int, int>& p : hints) {
+					glfwLog.debug("Setting: " + std::to_string(p.first) + " = " + std::to_string(p.second));
 					glfwWindowHint(p.first, p.second);
 				}
 
@@ -78,9 +85,9 @@ namespace MyUPlay {
 				return std::unique_lock<std::recursive_mutex>(lock);
 			}
 
-			void makeContextCurrent() {
+			void makeContextCurrent(bool force = false) {
 				std::lock_guard<std::recursive_mutex> guard(lock);
-				if (glfwGetCurrentContext() != window) {
+				if (glfwGetCurrentContext() != window || force) {
 					glfwMakeContextCurrent(window);
 				}
 			}

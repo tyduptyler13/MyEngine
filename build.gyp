@@ -2,7 +2,7 @@
 	"targets": [
 		{
 			"target_name": "MyEngine",
-			"type": "static_library",
+			"type": "<(library)",
 			"sources": [
 				"src/Material.cpp",
 				"src/Log.cpp",
@@ -14,29 +14,31 @@
 				"src/GLES2RenderTarget.cpp",
 				"src/Texture.cpp",
 				"src/GeometryImporter.cpp",
-				"src/GLFWManager.cpp"
+				"src/GLFWManager.cpp",
+				"src/SOIL/image_DXT.c",
+				"src/SOIL/image_helper.c",
+				"src/SOIL/SOIL.c",
+				"src/SOIL/stb_image_aug.c"
 			],
 			"include_dirs": [
 				"include",
-				"deps/Simple-OpenGL-Image-Library/src",
+				"include/SOIL",
 				"deps/assimp/include"
 				#glfw is expected to be installed on each system target
 			],
 			"dependencies": [
-				"glsl-optimizer",
-				"SOIL"
+				"glsl-optimizer"
 			],
 			"direct_dependent_settings": {
 				"include_dirs": [
 					"include",
-					"deps/Simple-OpenGL-Image-Library/src",
+					"include/SOIL",
 					"deps/assimp/include"
 				]
 			},
 			"link_dependent_settings": {
 				"dependencies": [
-					"glsl-optimizer",
-					"SOIL"
+					"glsl-optimizer"
 				]
 			},
 			"variables": {
@@ -107,8 +109,10 @@
 				"-Wall",
 				"-Wextra",
 				"-pedantic",
-				"-std=c++14",
 				"-fpic"
+			],
+			"cflags_cc": [
+				"-std=c++14"
 			],
 			'cflags!': [
 				'-fno-exceptions'
@@ -260,53 +264,6 @@
 			"direct_dependent_settings": {
 				"include_dirs": [
 					"deps/glsl-optimizer/src"
-				]
-			},
-			"conditions": [
-				['OS=="win"', {
-					"msvs_settings": {
-						"VCCLCompilerTool": {
-							"AdditionalOptions": [
-								"/GR",
-								"/EHsc"
-							]
-						}
-					}
-				}]
-			]
-		},
-		{
-			"target_name": "SOIL",
-			"type": "static_library",
-			"variables": {
-				"root": "deps/Simple-OpenGL-Image-Library"
-			},
-			"include_dirs": [
-				"<(root)/src"
-			],
-			"sources": [
-				"<(root)/src/image_DXT.c",
-				"<(root)/src/image_helper.c",
-				"<(root)/src/SOIL.c",
-				"<(root)/src/stb_image_aug.c"
-			],
-			"cflags!": [
-				'-fno-exceptions'
-			],
-			"cflags": [
-				"-fpic"
-			],
-			'cflags_cc!': [
-				'-fno-exceptions',
-				'-fno-rtti',
-				'-std=gnu++0x'
-			],
-			'cflags_cc': [
-				'-std=c++11'
-			],
-			"direct_dependent_settings": {
-				"include_dirs": [
-					"<(root)/src"
 				]
 			},
 			"conditions": [

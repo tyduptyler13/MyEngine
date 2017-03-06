@@ -33,28 +33,25 @@ namespace MyUPlay {
 			 * @return A renderer specific type related to a c type.
 			 */
 			template <class R, typename T>
-			const char* type;
+			constexpr const char* type = "";
 
-			//Only clang seems to properly support these, they aren't needed but supress warnings.
-#ifdef __clang__
 			//Specializations for shaders (Allows a renderer to work)
-			template<> extern const char* type<GLES2Renderer, bool>;
-			template<> extern const char* type<GLES2Renderer, int>;
-			template<> extern const char* type<GLES2Renderer, unsigned>;
-			template<> extern const char* type<GLES2Renderer, float>;
-			template<> extern const char* type<GLES2Renderer, Vector2<float>>;
-			template<> extern const char* type<GLES2Renderer, Vector3<float>>;
-			template<> extern const char* type<GLES2Renderer, Vector4<float>>;
-			template<> extern const char* type<GLES2Renderer, Vector2<int>>;
-			template<> extern const char* type<GLES2Renderer, Vector3<int>>;
-			template<> extern const char* type<GLES2Renderer, Vector4<int>>;
-			template<> extern const char* type<GLES2Renderer, Vector2<unsigned>>;
-			template<> extern const char* type<GLES2Renderer, Vector3<unsigned>>;
-			template<> extern const char* type<GLES2Renderer, Vector4<unsigned>>;
-			template<> extern const char* type<GLES2Renderer, Matrix3<float>>;
-			template<> extern const char* type<GLES2Renderer, Matrix4<float>>;
-			template<> extern const char* type<GLES2Renderer, Texture>;
-#endif
+			template <> constexpr const char* type<GLES2Renderer, bool> = "bool";
+			template <> constexpr const char* type<GLES2Renderer, int> = "int";
+			template <> constexpr const char* type<GLES2Renderer, unsigned> = "uint";
+			template <> constexpr const char* type<GLES2Renderer, float> = "float";
+			template <> constexpr const char* type<GLES2Renderer, Vector2<float>> = "vec2";
+			template <> constexpr const char* type<GLES2Renderer, Vector3<float>> = "vec3";
+			template <> constexpr const char* type<GLES2Renderer, Vector4<float>> = "vec4";
+			template <> constexpr const char* type<GLES2Renderer, Vector2<int>> = "ivec2";
+			template <> constexpr const char* type<GLES2Renderer, Vector3<int>> = "ivec3";
+			template <> constexpr const char* type<GLES2Renderer, Vector4<int>> = "ivec3";
+			template <> constexpr const char* type<GLES2Renderer, Vector2<unsigned>> = "uvec2";
+			template <> constexpr const char* type<GLES2Renderer, Vector3<unsigned>> = "uvec3";
+			template <> constexpr const char* type<GLES2Renderer, Vector4<unsigned>> = "uvec4";
+			template <> constexpr const char* type<GLES2Renderer, Matrix3<float>> = "mat3";
+			template <> constexpr const char* type<GLES2Renderer, Matrix4<float>> = "mat4";
+			template <> constexpr const char* type<GLES2Renderer, Texture> = "sampler2D";
 
 			/**
 			 * R - Renderer
