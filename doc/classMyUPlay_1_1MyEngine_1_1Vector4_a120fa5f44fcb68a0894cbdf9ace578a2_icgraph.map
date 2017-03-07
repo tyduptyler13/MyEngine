@@ -1,0 +1,5 @@
+<map id="MyUPlay::MyEngine::Vector4::add" name="MyUPlay::MyEngine::Vector4::add">
+<area shape="rect" id="node2" href="$classMyUPlay_1_1MyEngine_1_1Vector4.html#afb3696701f99537d953e0ac43b4b4675" title="MyUPlay::MyEngine::\lVector4::operator+=" alt="" coords="204,5,355,47"/>
+<area shape="rect" id="node3" href="$classMyUPlay_1_1MyEngine_1_1Vector4.html#aeeec02ea80b96a25371544d3e2c2f22f" title="MyUPlay::MyEngine::\lVector4::operator+" alt="" coords="204,71,355,112"/>
+<area shape="rect" id="node4" href="$classMyUPlay_1_1MyEngine_1_1Vector4.html#a2267649dce1745f770808e109b951d4e" title="MyUPlay::MyEngine::\lVector4::lerpVectors" alt="" coords="204,136,355,177"/>
+</map>

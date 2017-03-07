@@ -1,0 +1,6 @@
+<map id="MyUPlay::MyEngine::Quaternion::setFromRotationMatrix" name="MyUPlay::MyEngine::Quaternion::setFromRotationMatrix">
+<area shape="rect" id="node2" href="$classMyUPlay_1_1MyEngine_1_1Matrix4.html#adc2227bcbd36e35128695ea797fd4e91" title="MyUPlay::MyEngine::\lMatrix4\&lt; float \&gt;::decompose" alt="" coords="259,5,448,47"/>
+<area shape="rect" id="node3" href="$classMyUPlay_1_1MyEngine_1_1Object3D.html#ab22729f7fe1afecf7d2991a976f41268" title="MyUPlay::MyEngine::\lObject3D::setRotationFromMatrix" alt="" coords="244,71,463,112"/>
+<area shape="rect" id="node4" href="$classMyUPlay_1_1MyEngine_1_1Object3D.html#a06ba773b661941148b439bd047da8e60" title="MyUPlay::MyEngine::\lObject3D::lookAt" alt="" coords="278,136,429,177"/>
+<area shape="rect" id="node5" href="$structMyUPlay_1_1MyEngine_1_1IGeometry.html#a82b1d8759ef7e9ff08e9a0b80574c5b4" title="MyUPlay::MyEngine::\lIGeometry::lookAt" alt="" coords="511,136,661,177"/>
+</map>

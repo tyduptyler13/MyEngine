@@ -1,0 +1,8 @@
+<map id="MyUPlay::MyEngine::Object3D&lt; T &gt;" name="MyUPlay::MyEngine::Object3D&lt; T &gt;">
+<area shape="rect" id="node2" href="$classMyUPlay_1_1MyEngine_1_1Camera.html" title="MyUPlay::MyEngine::\lCamera\&lt; T \&gt;" alt="" coords="204,37,355,79"/>
+<area shape="rect" id="node5" href="$classMyUPlay_1_1MyEngine_1_1Light.html" title="MyUPlay::MyEngine::\lLight\&lt; T \&gt;" alt="" coords="204,103,355,144"/>
+<area shape="rect" id="node6" href="$structMyUPlay_1_1MyEngine_1_1Mesh.html" title="MyUPlay::MyEngine::\lMesh\&lt; T \&gt;" alt="" coords="204,168,355,209"/>
+<area shape="rect" id="node7" href="$classMyUPlay_1_1MyEngine_1_1Scene.html" title="MyUPlay::MyEngine::\lScene\&lt; T \&gt;" alt="" coords="204,233,355,275"/>
+<area shape="rect" id="node3" href="$classMyUPlay_1_1MyEngine_1_1OrthographicCamera.html" title="MyUPlay::MyEngine::\lOrthographicCamera\&lt; T \&gt;" alt="" coords="403,5,577,47"/>
+<area shape="rect" id="node4" href="$structMyUPlay_1_1MyEngine_1_1PerspectiveCamera.html" title="MyUPlay::MyEngine::\lPerspectiveCamera\&lt; T \&gt;" alt="" coords="405,71,575,112"/>
+</map>

@@ -1,0 +1,6 @@
+<map id="MyUPlay::MyEngine::Log::Log" name="MyUPlay::MyEngine::Log::Log">
+<area shape="rect" id="node2" href="$classMyUPlay_1_1MyEngine_1_1Log.html#a40556efde9126c7df3f8c83b1c36568c" title="MyUPlay::MyEngine::\lLog::debug" alt="" coords="204,5,355,47"/>
+<area shape="rect" id="node3" href="$classMyUPlay_1_1MyEngine_1_1Log.html#ac61c76082d7047d3b4b027722c3c15c8" title="MyUPlay::MyEngine::\lLog::log" alt="" coords="204,71,355,112"/>
+<area shape="rect" id="node4" href="$classMyUPlay_1_1MyEngine_1_1Log.html#a5a85b9b690315d522547bd32b3c34edc" title="MyUPlay::MyEngine::\lLog::error" alt="" coords="204,136,355,177"/>
+<area shape="rect" id="node5" href="$classMyUPlay_1_1MyEngine_1_1Log.html#a8e19eabf4b0c1f0944250b826fdc876f" title="MyUPlay::MyEngine::\lLog::warn" alt="" coords="204,201,355,243"/>
+</map>

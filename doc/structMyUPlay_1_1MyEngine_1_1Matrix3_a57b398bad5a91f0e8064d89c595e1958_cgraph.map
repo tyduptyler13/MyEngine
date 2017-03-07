@@ -1,0 +1,7 @@
+<map id="MyUPlay::MyEngine::Matrix3::getNormalMatrix" name="MyUPlay::MyEngine::Matrix3::getNormalMatrix">
+<area shape="rect" id="node2" href="$structMyUPlay_1_1MyEngine_1_1Matrix3.html#ac1986ec0a026ad6cd38fc1cbc3fa2c99" title="MyUPlay::MyEngine::\lMatrix3::getInverse" alt="" coords="223,71,373,112"/>
+<area shape="rect" id="node6" href="$structMyUPlay_1_1MyEngine_1_1Matrix3.html#af6ec394bf60c2db3726c425cafa75ca2" title="MyUPlay::MyEngine::\lMatrix3::transpose" alt="" coords="223,136,373,177"/>
+<area shape="rect" id="node3" href="$structMyUPlay_1_1MyEngine_1_1Matrix3.html#a7b22e6ed218f14399c34f03ccfce8586" title="MyUPlay::MyEngine::\lMatrix3::det" alt="" coords="421,5,572,47"/>
+<area shape="rect" id="node4" href="$structMyUPlay_1_1MyEngine_1_1Matrix3.html#a24818f4244890b6c4d748786daa111a2" title="MyUPlay::MyEngine::\lMatrix3::identity" alt="" coords="421,71,572,112"/>
+<area shape="rect" id="node5" href="$structMyUPlay_1_1MyEngine_1_1Matrix3.html#a615a0dd194d568f4da0b401f36640035" title="MyUPlay::MyEngine::\lMatrix3::multiply" alt="" coords="421,136,572,177"/>
+</map>

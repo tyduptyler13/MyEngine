@@ -1,0 +1,10 @@
+<map id="MyUPlay::MyEngine::IGeometry::normalize" name="MyUPlay::MyEngine::IGeometry::normalize">
+<area shape="rect" id="node2" href="$structMyUPlay_1_1MyEngine_1_1IGeometry.html#a689d593878668eadf61ca227fdaa250a" title="MyUPlay::MyEngine::\lIGeometry::computeBounding\lSphere" alt="" coords="204,55,399,111"/>
+<area shape="rect" id="node3" href="$structMyUPlay_1_1MyEngine_1_1IGeometry.html#a392e07d657691cbf0d89caa9a6927b59" title="MyUPlay::MyEngine::\lIGeometry::center" alt="" coords="226,136,377,177"/>
+<area shape="rect" id="node8" href="$structMyUPlay_1_1MyEngine_1_1IGeometry.html#a4c5620ccfa733acc6f97c447568b1588" title="MyUPlay::MyEngine::\lIGeometry::applyMatrix" alt="" coords="719,195,877,236"/>
+<area shape="rect" id="node9" href="$classMyUPlay_1_1MyEngine_1_1Matrix4.html#a85b5f263a94844d99480457390e6f4a2" title="MyUPlay::MyEngine::\lMatrix4::set" alt="" coords="226,253,377,295"/>
+<area shape="rect" id="node4" href="$structMyUPlay_1_1MyEngine_1_1IGeometry.html#adff30a21f5469e3c33f8da2f6428596c" title="MyUPlay::MyEngine::\lIGeometry::computeBoundingBox" alt="" coords="447,5,665,47"/>
+<area shape="rect" id="node5" href="$classMyUPlay_1_1MyEngine_1_1Vector3.html#a34dbb726da04dd606523bceff8de44b9" title="MyUPlay::MyEngine::\lVector3::negate" alt="" coords="481,71,631,112"/>
+<area shape="rect" id="node6" href="$structMyUPlay_1_1MyEngine_1_1IGeometry.html#ab21e583a43f9e1b8b6c6f73d2a4d11a2" title="MyUPlay::MyEngine::\lIGeometry::translate" alt="" coords="481,136,631,177"/>
+<area shape="rect" id="node7" href="$classMyUPlay_1_1MyEngine_1_1Matrix4.html#a7094816e505646a9dfe266b5f515f9c2" title="MyUPlay::MyEngine::\lMatrix4::makeTranslation" alt="" coords="713,129,883,171"/>
+</map>

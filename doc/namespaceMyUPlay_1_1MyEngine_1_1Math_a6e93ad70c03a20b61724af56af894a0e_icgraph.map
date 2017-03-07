@@ -1,0 +1,7 @@
+<map id="MyUPlay::MyEngine::Math::clamp" name="MyUPlay::MyEngine::Math::clamp">
+<area shape="rect" id="node2" href="$classMyUPlay_1_1MyEngine_1_1Box2.html#a6d6d3c23b701f81c91e0382d666e0f16" title="MyUPlay::MyEngine::\lBox2::distanceToPoint" alt="" coords="223,5,378,47"/>
+<area shape="rect" id="node3" href="$structMyUPlay_1_1MyEngine_1_1Euler.html#a084f825def21f6595a3e3fdfdf2f42ba" title="MyUPlay::MyEngine::\lEuler::setFromRotationMatrix" alt="" coords="204,71,397,112"/>
+<area shape="rect" id="node4" href="$structMyUPlay_1_1MyEngine_1_1Euler.html#aa02f213b148e60bf537fadb4ed01c29e" title="MyUPlay::MyEngine::\lEuler::setFromQuaternion" alt="" coords="445,71,616,112"/>
+<area shape="rect" id="node5" href="$structMyUPlay_1_1MyEngine_1_1Euler.html#abc937d439ca8a0d846b7381d3431b21c" title="MyUPlay::MyEngine::\lEuler::reorder" alt="" coords="682,37,833,79"/>
+<area shape="rect" id="node6" href="$classMyUPlay_1_1MyEngine_1_1Object3D.html#a8da2f76e5f6237891503dd93fe7c717a" title="MyUPlay::MyEngine::\lObject3D::getWorldRotation" alt="" coords="664,103,851,144"/>
+</map>

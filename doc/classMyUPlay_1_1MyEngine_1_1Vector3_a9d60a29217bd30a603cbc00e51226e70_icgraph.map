@@ -1,0 +1,11 @@
+<map id="MyUPlay::MyEngine::Vector3::copy" name="MyUPlay::MyEngine::Vector3::copy">
+<area shape="rect" id="node2" href="$classMyUPlay_1_1MyEngine_1_1Box3.html#aeadd1e9e59f4e918ff308fd4f77d4a8c" title="MyUPlay::MyEngine::\lBox3::clampPoint" alt="" coords="230,5,381,47"/>
+<area shape="rect" id="node3" href="$classMyUPlay_1_1MyEngine_1_1Plane.html#aec3d507ca2a40a99c1902a27d7611720" title="MyUPlay::MyEngine::\lPlane\&lt; float \&gt;::setFromNormal\lAndCoplanarPoint" alt="" coords="204,71,407,127"/>
+<area shape="rect" id="node4" href="$classMyUPlay_1_1MyEngine_1_1Plane.html#a09a82c0d7980da610aecfe7c12734bef" title="MyUPlay::MyEngine::\lPlane\&lt; float \&gt;::orthoPoint" alt="" coords="220,152,391,193"/>
+<area shape="rect" id="node5" href="$classMyUPlay_1_1MyEngine_1_1Plane.html#a21ab5dfb8912ace96a1ae787494e99fd" title="MyUPlay::MyEngine::\lPlane\&lt; float \&gt;::intersectLine" alt="" coords="212,217,399,259"/>
+<area shape="rect" id="node6" href="$classMyUPlay_1_1MyEngine_1_1Ray.html#a2170d69a17d6d48e26a3f7ed8af29f51" title="MyUPlay::MyEngine::\lRay::lookAt" alt="" coords="230,283,381,324"/>
+<area shape="rect" id="node7" href="$classMyUPlay_1_1MyEngine_1_1Ray.html#a38656b83e557ac098341087e533bb549" title="MyUPlay::MyEngine::\lRay::closestPointToPoint" alt="" coords="220,348,391,389"/>
+<area shape="rect" id="node8" href="$classMyUPlay_1_1MyEngine_1_1Ray.html#a1ad292fa19ddfffa02e15450d9f6b08a" title="MyUPlay::MyEngine::\lRay::distanceToSegment" alt="" coords="220,413,391,455"/>
+<area shape="rect" id="node9" href="$classMyUPlay_1_1MyEngine_1_1Vector3.html#a1b4537ec9f4c59f5194b487ca555c51c" title="MyUPlay::MyEngine::\lVector3\&lt; float \&gt;::operator=" alt="" coords="216,479,395,520"/>
+<area shape="rect" id="node10" href="$classMyUPlay_1_1MyEngine_1_1Vector3.html#ad6ec1b63206430e6dacb2ec83ef04fb2" title="MyUPlay::MyEngine::\lVector3\&lt; float \&gt;::projectOn\lVector" alt="" coords="215,545,395,601"/>
+</map>

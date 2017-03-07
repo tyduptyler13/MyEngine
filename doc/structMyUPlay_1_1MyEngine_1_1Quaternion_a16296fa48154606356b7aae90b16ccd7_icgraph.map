@@ -1,0 +1,5 @@
+<map id="MyUPlay::MyEngine::Quaternion::setFromEuler" name="MyUPlay::MyEngine::Quaternion::setFromEuler">
+<area shape="rect" id="node2" href="$structMyUPlay_1_1MyEngine_1_1Euler.html#abc937d439ca8a0d846b7381d3431b21c" title="MyUPlay::MyEngine::\lEuler::reorder" alt="" coords="255,5,405,47"/>
+<area shape="rect" id="node3" href="$classMyUPlay_1_1MyEngine_1_1Object3D.html#ad3ab52c3fa71eb005bcebddf030f06ad" title="MyUPlay::MyEngine::\lObject3D::setRotationFromEuler" alt="" coords="224,71,436,112"/>
+<area shape="rect" id="node4" href="$classMyUPlay_1_1MyEngine_1_1Vector3.html#acebfb60c8af9e24d55e55130e82ce87b" title="MyUPlay::MyEngine::\lVector3\&lt; float \&gt;::applyEuler" alt="" coords="237,136,423,177"/>
+</map>

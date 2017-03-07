@@ -1,0 +1,4 @@
+<map id="MyUPlay::MyEngine::IGeometry::rotateX" name="MyUPlay::MyEngine::IGeometry::rotateX">
+<area shape="rect" id="node2" href="$classMyUPlay_1_1MyEngine_1_1Matrix4.html#ab7874221a5f013a187aea03cd0df51f0" title="MyUPlay::MyEngine::\lMatrix4::makeRotationX" alt="" coords="204,5,367,47"/>
+<area shape="rect" id="node3" href="$structMyUPlay_1_1MyEngine_1_1IGeometry.html#a4c5620ccfa733acc6f97c447568b1588" title="MyUPlay::MyEngine::\lIGeometry::applyMatrix" alt="" coords="206,71,365,112"/>
+</map>

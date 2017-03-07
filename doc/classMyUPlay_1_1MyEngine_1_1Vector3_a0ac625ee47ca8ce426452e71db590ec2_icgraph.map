@@ -1,0 +1,8 @@
+<map id="MyUPlay::MyEngine::Vector3::applyQuaternion" name="MyUPlay::MyEngine::Vector3::applyQuaternion">
+<area shape="rect" id="node2" href="$classMyUPlay_1_1MyEngine_1_1Object3D.html#a13a90f0943591b40e96a88cbcdb87d65" title="MyUPlay::MyEngine::\lObject3D::translateOnAxis" alt="" coords="226,71,405,112"/>
+<area shape="rect" id="node6" href="$classMyUPlay_1_1MyEngine_1_1Vector3.html#acebfb60c8af9e24d55e55130e82ce87b" title="MyUPlay::MyEngine::\lVector3\&lt; float \&gt;::applyEuler" alt="" coords="223,136,408,177"/>
+<area shape="rect" id="node7" href="$classMyUPlay_1_1MyEngine_1_1Vector3.html#ac9a0fa40762b20941a3cfae2bb65734c" title="MyUPlay::MyEngine::\lVector3\&lt; float \&gt;::applyAxis\lAngle" alt="" coords="225,202,406,258"/>
+<area shape="rect" id="node3" href="$classMyUPlay_1_1MyEngine_1_1Object3D.html#ae6084430a8c694c05bc2edaede923d92" title="MyUPlay::MyEngine::\lObject3D::translateX" alt="" coords="456,5,607,47"/>
+<area shape="rect" id="node4" href="$classMyUPlay_1_1MyEngine_1_1Object3D.html#a0b61c48649b091db4800034c84c37da6" title="MyUPlay::MyEngine::\lObject3D::translateY" alt="" coords="456,71,607,112"/>
+<area shape="rect" id="node5" href="$classMyUPlay_1_1MyEngine_1_1Object3D.html#a4d61345a07263404f2b15c65bad53232" title="MyUPlay::MyEngine::\lObject3D::translateZ" alt="" coords="456,136,607,177"/>
+</map>

@@ -1,0 +1,7 @@
+<map id="MyUPlay::MyEngine::Vector3::subVectors" name="MyUPlay::MyEngine::Vector3::subVectors">
+<area shape="rect" id="node2" href="$classMyUPlay_1_1MyEngine_1_1Box3.html#affbda817cd6cf188d7d8c6cebad9a899" title="MyUPlay::MyEngine::\lBox3::size" alt="" coords="225,5,376,47"/>
+<area shape="rect" id="node3" href="$classMyUPlay_1_1MyEngine_1_1Line3.html#ae68013a2004ee861d3e676617a3da49e" title="MyUPlay::MyEngine::\lLine3::closestPointParameter" alt="" coords="204,71,397,112"/>
+<area shape="rect" id="node5" href="$classMyUPlay_1_1MyEngine_1_1Matrix4.html#acea1f9c10a22dafc04494999f11081f3" title="MyUPlay::MyEngine::\lMatrix4\&lt; float \&gt;::lookAt" alt="" coords="221,136,380,177"/>
+<area shape="rect" id="node6" href="$classMyUPlay_1_1MyEngine_1_1Vector3.html#a2654994a99f30c35dde36b220384e809" title="MyUPlay::MyEngine::\lVector3\&lt; float \&gt;::lerpVectors" alt="" coords="205,201,396,243"/>
+<area shape="rect" id="node4" href="$classMyUPlay_1_1MyEngine_1_1Line3.html#a352ece85a4bda982c0183253f3397a8d" title="MyUPlay::MyEngine::\lLine3::closestPointToPoint" alt="" coords="445,71,624,112"/>
+</map>

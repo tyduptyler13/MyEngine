@@ -1,0 +1,6 @@
+<map id="MyUPlay::MyEngine::Vector2::set" name="MyUPlay::MyEngine::Vector2::set">
+<area shape="rect" id="node2" href="$classMyUPlay_1_1MyEngine_1_1Box2.html#a0412088d481e3b8320dc2be2b6b65e3b" title="MyUPlay::MyEngine::\lBox2::makeEmpty" alt="" coords="204,5,355,47"/>
+<area shape="rect" id="node4" href="$classMyUPlay_1_1MyEngine_1_1Box2.html#a71001355ceb2219f8406c93d3598be4f" title="MyUPlay::MyEngine::\lBox2::getParameter" alt="" coords="204,71,355,112"/>
+<area shape="rect" id="node3" href="$classMyUPlay_1_1MyEngine_1_1Box2.html#a5bcfbd4431fabdeddf4f1554f66de22f" title="MyUPlay::MyEngine::\lBox2::setFromPoints" alt="" coords="403,5,553,47"/>
+<area shape="rect" id="node5" href="$classMyUPlay_1_1MyEngine_1_1Box2.html#a1ed92c76e87994661076f838ec4e3af1" title="MyUPlay::MyEngine::\lBox2::getParameter" alt="" coords="403,71,553,112"/>
+</map>

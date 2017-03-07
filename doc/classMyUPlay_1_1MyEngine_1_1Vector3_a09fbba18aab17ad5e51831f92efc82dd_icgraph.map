@@ -1,0 +1,5 @@
+<map id="MyUPlay::MyEngine::Vector3::distanceTo" name="MyUPlay::MyEngine::Vector3::distanceTo">
+<area shape="rect" id="node2" href="$classMyUPlay_1_1MyEngine_1_1Ray.html#a460bc7af4872425cb920059b92cd2080" title="MyUPlay::MyEngine::\lRay::distanceSqToSegment" alt="" coords="204,5,391,47"/>
+<area shape="rect" id="node3" href="$classMyUPlay_1_1MyEngine_1_1Ray.html#a1ad292fa19ddfffa02e15450d9f6b08a" title="MyUPlay::MyEngine::\lRay::distanceToSegment" alt="" coords="212,71,383,112"/>
+<area shape="rect" id="node4" href="$classMyUPlay_1_1MyEngine_1_1Sphere.html#a70fa26ad23466fbb6d8b189ea72eeac3" title="MyUPlay::MyEngine::\lSphere::distanceToPoint" alt="" coords="215,136,380,177"/>
+</map>

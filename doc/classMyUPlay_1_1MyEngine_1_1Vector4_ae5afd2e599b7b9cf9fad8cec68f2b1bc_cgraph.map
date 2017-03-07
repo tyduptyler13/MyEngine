@@ -1,0 +1,6 @@
+<map id="MyUPlay::MyEngine::Vector4::normalize" name="MyUPlay::MyEngine::Vector4::normalize">
+<area shape="rect" id="node2" href="$classMyUPlay_1_1MyEngine_1_1Vector4.html#a2817f36b78eae0b0a2a28315bc29a356" title="MyUPlay::MyEngine::\lVector4::divide" alt="" coords="204,5,355,47"/>
+<area shape="rect" id="node4" href="$classMyUPlay_1_1MyEngine_1_1Vector4.html#aba2586b22636bce55636df5a9f2921fc" title="MyUPlay::MyEngine::\lVector4::length" alt="" coords="204,71,355,112"/>
+<area shape="rect" id="node3" href="$classMyUPlay_1_1MyEngine_1_1Vector4.html#a28060298d98051bfa9571fca752d20a0" title="MyUPlay::MyEngine::\lVector4::multiply" alt="" coords="403,5,553,47"/>
+<area shape="rect" id="node5" href="$classMyUPlay_1_1MyEngine_1_1Vector4.html#a86ccc1e857f9c79f66c3d13848ff92ff" title="MyUPlay::MyEngine::\lVector4::lengthSq" alt="" coords="403,71,553,112"/>
+</map>

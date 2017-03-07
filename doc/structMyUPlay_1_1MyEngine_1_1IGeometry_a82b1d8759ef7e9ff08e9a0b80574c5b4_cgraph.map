@@ -1,0 +1,7 @@
+<map id="MyUPlay::MyEngine::IGeometry::lookAt" name="MyUPlay::MyEngine::IGeometry::lookAt">
+<area shape="rect" id="node2" href="$classMyUPlay_1_1MyEngine_1_1Object3D.html#a06ba773b661941148b439bd047da8e60" title="MyUPlay::MyEngine::\lObject3D::lookAt" alt="" coords="209,15,359,57"/>
+<area shape="rect" id="node4" href="$classMyUPlay_1_1MyEngine_1_1Object3D.html#ae2eb90a2a5ee3a8be810fe790240ae4c" title="MyUPlay::MyEngine::\lObject3D::updateMatrix" alt="" coords="204,82,364,123"/>
+<area shape="rect" id="node6" href="$structMyUPlay_1_1MyEngine_1_1IGeometry.html#a4c5620ccfa733acc6f97c447568b1588" title="MyUPlay::MyEngine::\lIGeometry::applyMatrix" alt="" coords="205,147,363,189"/>
+<area shape="rect" id="node3" href="$structMyUPlay_1_1MyEngine_1_1Quaternion.html#a52b0c8226b0923dd470c0d061693ba14" title="MyUPlay::MyEngine::\lQuaternion::setFromRotation\lMatrix" alt="" coords="412,5,603,61"/>
+<area shape="rect" id="node5" href="$classMyUPlay_1_1MyEngine_1_1Matrix4.html#a7036c620176bdc99413001169c592072" title="MyUPlay::MyEngine::\lMatrix4::compose" alt="" coords="432,86,583,127"/>
+</map>

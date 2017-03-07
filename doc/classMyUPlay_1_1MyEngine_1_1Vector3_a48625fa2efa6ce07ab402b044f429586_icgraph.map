@@ -1,0 +1,21 @@
+<map id="MyUPlay::MyEngine::Vector3::dot" name="MyUPlay::MyEngine::Vector3::dot">
+<area shape="rect" id="node2" href="$classMyUPlay_1_1MyEngine_1_1Line3.html#ae68013a2004ee861d3e676617a3da49e" title="MyUPlay::MyEngine::\lLine3::closestPointParameter" alt="" coords="209,5,402,47"/>
+<area shape="rect" id="node4" href="$classMyUPlay_1_1MyEngine_1_1Plane.html#aec3d507ca2a40a99c1902a27d7611720" title="MyUPlay::MyEngine::\lPlane\&lt; float \&gt;::setFromNormal\lAndCoplanarPoint" alt="" coords="204,71,407,127"/>
+<area shape="rect" id="node5" href="$classMyUPlay_1_1MyEngine_1_1Plane.html#aa3aa52274a33824a7bdf176c8863012a" title="MyUPlay::MyEngine::\lPlane\&lt; float \&gt;::translate" alt="" coords="224,152,387,193"/>
+<area shape="rect" id="node6" href="$structMyUPlay_1_1MyEngine_1_1Quaternion.html#ae98a15b9adff838bdbfaffc95c381d05" title="MyUPlay::MyEngine::\lQuaternion\&lt; float \&gt;\l::setFromUnitVectors" alt="" coords="230,218,381,274"/>
+<area shape="rect" id="node7" href="$classMyUPlay_1_1MyEngine_1_1Ray.html#a38656b83e557ac098341087e533bb549" title="MyUPlay::MyEngine::\lRay::closestPointToPoint" alt="" coords="220,299,391,340"/>
+<area shape="rect" id="node8" href="$classMyUPlay_1_1MyEngine_1_1Ray.html#a460bc7af4872425cb920059b92cd2080" title="MyUPlay::MyEngine::\lRay::distanceSqToSegment" alt="" coords="212,364,399,405"/>
+<area shape="rect" id="node9" href="$classMyUPlay_1_1MyEngine_1_1Ray.html#a6c2ebfad8ccd4d9f31bf486997543854" title="MyUPlay::MyEngine::\lRay::intersectSphere" alt="" coords="230,429,381,471"/>
+<area shape="rect" id="node11" href="$classMyUPlay_1_1MyEngine_1_1Ray.html#a5db705d0eb8bf8bf01fec27302046407" title="MyUPlay::MyEngine::\lRay::intersectTriangle" alt="" coords="230,495,381,536"/>
+<area shape="rect" id="node14" href="$classMyUPlay_1_1MyEngine_1_1Ray.html#a1ad292fa19ddfffa02e15450d9f6b08a" title="MyUPlay::MyEngine::\lRay::distanceToSegment" alt="" coords="220,560,391,601"/>
+<area shape="rect" id="node15" href="$classMyUPlay_1_1MyEngine_1_1Triangle.html#aa9ef72d4a19141bde7c990d3ba70c5df" title="MyUPlay::MyEngine::\lTriangle::barycoordFromPoint" alt="" coords="209,625,402,667"/>
+<area shape="rect" id="node18" href="$classMyUPlay_1_1MyEngine_1_1Vector3.html#ad6ec1b63206430e6dacb2ec83ef04fb2" title="MyUPlay::MyEngine::\lVector3\&lt; float \&gt;::projectOn\lVector" alt="" coords="215,691,395,747"/>
+<area shape="rect" id="node19" href="$classMyUPlay_1_1MyEngine_1_1Vector3.html#ad4e16c52f67b50fe106b943b91e4986c" title="MyUPlay::MyEngine::\lVector3\&lt; float \&gt;::reflect" alt="" coords="225,772,385,813"/>
+<area shape="rect" id="node20" href="$classMyUPlay_1_1MyEngine_1_1Vector3.html#ad5aaf2d19bf4eb68e0a7b411fd3f8bb4" title="MyUPlay::MyEngine::\lVector3\&lt; float \&gt;::angleTo" alt="" coords="220,837,391,879"/>
+<area shape="rect" id="node3" href="$classMyUPlay_1_1MyEngine_1_1Line3.html#a352ece85a4bda982c0183253f3397a8d" title="MyUPlay::MyEngine::\lLine3::closestPointToPoint" alt="" coords="462,5,641,47"/>
+<area shape="rect" id="node10" href="$structMyUPlay_1_1MyEngine_1_1Mesh.html#a7ce8ec6f092abdec287d2d03d92450b8" title="MyUPlay::MyEngine::\lMesh::raycast" alt="" coords="476,429,627,471"/>
+<area shape="rect" id="node12" href="$classMyUPlay_1_1MyEngine_1_1Raycaster.html#a4b3bc78d9f58749b2bc06f0739f3995f" title="MyUPlay::MyEngine::\lRaycaster::checkIntersection" alt="" coords="455,495,648,536"/>
+<area shape="rect" id="node13" href="$structMyUPlay_1_1MyEngine_1_1BufferGeometry.html#a338486e148de12e4b2b33047c1c521ba" title="MyUPlay::MyEngine::\lBufferGeometry::raycast" alt="" coords="696,528,861,569"/>
+<area shape="rect" id="node16" href="$classMyUPlay_1_1MyEngine_1_1Raycaster.html#ad4a190b158f6a2d2a89eec4af9b935b8" title="MyUPlay::MyEngine::\lRaycaster::uvIntersection" alt="" coords="465,560,637,601"/>
+<area shape="rect" id="node17" href="$classMyUPlay_1_1MyEngine_1_1Triangle.html#a9cefb2587ddeee3f80a6f1b56f051784" title="MyUPlay::MyEngine::\lTriangle::barycoordFromPoint" alt="" coords="455,625,648,667"/>
+</map>

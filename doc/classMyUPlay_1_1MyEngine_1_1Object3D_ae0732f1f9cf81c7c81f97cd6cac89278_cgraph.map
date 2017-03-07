@@ -1,0 +1,6 @@
+<map id="MyUPlay::MyEngine::Object3D::getWorldScale" name="MyUPlay::MyEngine::Object3D::getWorldScale">
+<area shape="rect" id="node2" href="$classMyUPlay_1_1MyEngine_1_1Object3D.html#af75ee93980790bf3a4e29b885b88ec8d" title="MyUPlay::MyEngine::\lObject3D::updateMatrixWorld" alt="" coords="224,5,419,47"/>
+<area shape="rect" id="node5" href="$classMyUPlay_1_1MyEngine_1_1Matrix4.html#adc2227bcbd36e35128695ea797fd4e91" title="MyUPlay::MyEngine::\lMatrix4::decompose" alt="" coords="246,71,397,112"/>
+<area shape="rect" id="node3" href="$classMyUPlay_1_1MyEngine_1_1Object3D.html#ae2eb90a2a5ee3a8be810fe790240ae4c" title="MyUPlay::MyEngine::\lObject3D::updateMatrix" alt="" coords="467,5,627,47"/>
+<area shape="rect" id="node4" href="$classMyUPlay_1_1MyEngine_1_1Matrix4.html#a7036c620176bdc99413001169c592072" title="MyUPlay::MyEngine::\lMatrix4::compose" alt="" coords="675,5,825,47"/>
+</map>

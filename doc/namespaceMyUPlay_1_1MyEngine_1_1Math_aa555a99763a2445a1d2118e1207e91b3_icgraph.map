@@ -1,0 +1,14 @@
+<map id="MyUPlay::MyEngine::Math::max" name="MyUPlay::MyEngine::Math::max">
+<area shape="rect" id="node2" href="$structMyUPlay_1_1MyEngine_1_1BufferGeometry.html#a8767b8bf376514fb2f5818350a59c28b" title="MyUPlay::MyEngine::\lBufferGeometry::computeBounding\lSphere" alt="" coords="204,5,431,61"/>
+<area shape="rect" id="node4" href="$classMyUPlay_1_1MyEngine_1_1Color.html#a2e3d8abb46e0b7f17519276985cd9ad2" title="MyUPlay::MyEngine::\lColor::getHSL" alt="" coords="242,86,393,127"/>
+<area shape="rect" id="node6" href="$namespaceMyUPlay_1_1MyEngine_1_1Math.html#af25f872abd386e4347a41dc41db5c5d0" title="MyUPlay::MyEngine::\lMath::clamp" alt="" coords="242,151,393,193"/>
+<area shape="rect" id="node12" href="$classMyUPlay_1_1MyEngine_1_1Vector4.html#ae04a1ae870db0f4c880ad320421c09b1" title="MyUPlay::MyEngine::\lVector4::max" alt="" coords="242,245,393,286"/>
+<area shape="rect" id="node3" href="$structMyUPlay_1_1MyEngine_1_1BufferGeometry.html#ab71059a1bd8193bc83f6174e38adbf10" title="MyUPlay::MyEngine::\lBufferGeometry::applyMatrix" alt="" coords="481,13,670,54"/>
+<area shape="rect" id="node5" href="$classMyUPlay_1_1MyEngine_1_1Color.html#a1f156303b0407713c08bea8edbeeb1ae" title="MyUPlay::MyEngine::\lColor::offsetHSL" alt="" coords="500,82,651,123"/>
+<area shape="rect" id="node7" href="$classMyUPlay_1_1MyEngine_1_1Box2.html#a6d6d3c23b701f81c91e0382d666e0f16" title="MyUPlay::MyEngine::\lBox2::distanceToPoint" alt="" coords="498,147,653,189"/>
+<area shape="rect" id="node8" href="$structMyUPlay_1_1MyEngine_1_1Euler.html#a084f825def21f6595a3e3fdfdf2f42ba" title="MyUPlay::MyEngine::\lEuler::setFromRotationMatrix" alt="" coords="479,213,672,254"/>
+<area shape="rect" id="node9" href="$structMyUPlay_1_1MyEngine_1_1Euler.html#aa02f213b148e60bf537fadb4ed01c29e" title="MyUPlay::MyEngine::\lEuler::setFromQuaternion" alt="" coords="720,213,891,254"/>
+<area shape="rect" id="node10" href="$structMyUPlay_1_1MyEngine_1_1Euler.html#abc937d439ca8a0d846b7381d3431b21c" title="MyUPlay::MyEngine::\lEuler::reorder" alt="" coords="957,179,1107,221"/>
+<area shape="rect" id="node11" href="$classMyUPlay_1_1MyEngine_1_1Object3D.html#a8da2f76e5f6237891503dd93fe7c717a" title="MyUPlay::MyEngine::\lObject3D::getWorldRotation" alt="" coords="939,245,1125,286"/>
+<area shape="rect" id="node13" href="$classMyUPlay_1_1MyEngine_1_1Vector4.html#a0d136928c0fa63851fc1bffb8d607f41" title="MyUPlay::MyEngine::\lVector4::clamp" alt="" coords="500,278,651,319"/>
+</map>

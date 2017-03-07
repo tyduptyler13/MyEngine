@@ -1,0 +1,7 @@
+<map id="MyUPlay::MyEngine::Euler::reorder" name="MyUPlay::MyEngine::Euler::reorder">
+<area shape="rect" id="node2" href="$structMyUPlay_1_1MyEngine_1_1Quaternion.html#a16296fa48154606356b7aae90b16ccd7" title="MyUPlay::MyEngine::\lQuaternion::setFromEuler" alt="" coords="204,5,375,47"/>
+<area shape="rect" id="node3" href="$structMyUPlay_1_1MyEngine_1_1Euler.html#aa02f213b148e60bf537fadb4ed01c29e" title="MyUPlay::MyEngine::\lEuler::setFromQuaternion" alt="" coords="204,71,375,112"/>
+<area shape="rect" id="node4" href="$classMyUPlay_1_1MyEngine_1_1Matrix4.html#a0800a7ac6a9913427dc43d3d378531a6" title="MyUPlay::MyEngine::\lMatrix4::makeRotationFromQuaternion" alt="" coords="423,37,669,79"/>
+<area shape="rect" id="node5" href="$structMyUPlay_1_1MyEngine_1_1Euler.html#a084f825def21f6595a3e3fdfdf2f42ba" title="MyUPlay::MyEngine::\lEuler::setFromRotationMatrix" alt="" coords="449,103,643,144"/>
+<area shape="rect" id="node6" href="$namespaceMyUPlay_1_1MyEngine_1_1Math.html#a6e93ad70c03a20b61724af56af894a0e" title="MyUPlay::MyEngine::\lMath::clamp" alt="" coords="717,103,868,144"/>
+</map>

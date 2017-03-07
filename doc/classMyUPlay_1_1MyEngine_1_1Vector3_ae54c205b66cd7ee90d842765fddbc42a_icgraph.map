@@ -1,0 +1,5 @@
+<map id="MyUPlay::MyEngine::Vector3::lengthSq" name="MyUPlay::MyEngine::Vector3::lengthSq">
+<area shape="rect" id="node2" href="$classMyUPlay_1_1MyEngine_1_1Ray.html#a460bc7af4872425cb920059b92cd2080" title="MyUPlay::MyEngine::\lRay::distanceSqToSegment" alt="" coords="204,5,391,47"/>
+<area shape="rect" id="node3" href="$classMyUPlay_1_1MyEngine_1_1Triangle.html#a50170369c6b5e6009b28868b0574d0b5" title="MyUPlay::MyEngine::\lTriangle::normal" alt="" coords="222,71,373,112"/>
+<area shape="rect" id="node4" href="$classMyUPlay_1_1MyEngine_1_1Vector3.html#ab077cd6e58ccf5e97d15c44fc20f7e47" title="MyUPlay::MyEngine::\lVector3\&lt; float \&gt;::length" alt="" coords="218,136,377,177"/>
+</map>

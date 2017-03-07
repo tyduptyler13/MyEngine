@@ -1,0 +1,7 @@
+<map id="MyUPlay::MyEngine::Vector3::normalize" name="MyUPlay::MyEngine::Vector3::normalize">
+<area shape="rect" id="node2" href="$classMyUPlay_1_1MyEngine_1_1Plane.html#a5d4eb51091ef391e4713fe2e903ea6b9" title="MyUPlay::MyEngine::\lPlane\&lt; float \&gt;::setFromCoplanar\lPoints" alt="" coords="204,5,416,61"/>
+<area shape="rect" id="node3" href="$classMyUPlay_1_1MyEngine_1_1Ray.html#a2f96c47d2236de7dd835c79c5c5c427a" title="MyUPlay::MyEngine::\lRay::applyMatrix4" alt="" coords="235,86,385,127"/>
+<area shape="rect" id="node5" href="$classMyUPlay_1_1MyEngine_1_1Vector3.html#a8d9d7faf3e3d750565f6d2e1c8951710" title="MyUPlay::MyEngine::\lVector3\&lt; float \&gt;::transform\lDirection" alt="" coords="221,152,399,208"/>
+<area shape="rect" id="node6" href="$classMyUPlay_1_1MyEngine_1_1Vector3.html#ad6ec1b63206430e6dacb2ec83ef04fb2" title="MyUPlay::MyEngine::\lVector3\&lt; float \&gt;::projectOn\lVector" alt="" coords="220,232,400,288"/>
+<area shape="rect" id="node4" href="$structMyUPlay_1_1MyEngine_1_1Mesh.html#a7ce8ec6f092abdec287d2d03d92450b8" title="MyUPlay::MyEngine::\lMesh::raycast" alt="" coords="464,86,615,127"/>
+</map>

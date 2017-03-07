@@ -1,0 +1,12 @@
+<map id="MyUPlay::MyEngine::BufferGeometry::applyMatrix" name="MyUPlay::MyEngine::BufferGeometry::applyMatrix">
+<area shape="rect" id="node2" href="$classMyUPlay_1_1MyEngine_1_1Matrix4.html#a35fac4d656685f0362a5732ac2daa58a" title="MyUPlay::MyEngine::\lMatrix4::applyToVector3Array" alt="" coords="259,71,453,112"/>
+<area shape="rect" id="node3" href="$structMyUPlay_1_1MyEngine_1_1Matrix3.html#a57b398bad5a91f0e8064d89c595e1958" title="MyUPlay::MyEngine::\lMatrix3::getNormalMatrix" alt="" coords="271,136,441,177"/>
+<area shape="rect" id="node9" href="$structMyUPlay_1_1MyEngine_1_1BufferGeometry.html#a93a5262ce435118524f5916024240971" title="MyUPlay::MyEngine::\lBufferGeometry::computeBoundingBox" alt="" coords="517,201,767,243"/>
+<area shape="rect" id="node10" href="$structMyUPlay_1_1MyEngine_1_1BufferGeometry.html#a8767b8bf376514fb2f5818350a59c28b" title="MyUPlay::MyEngine::\lBufferGeometry::computeBounding\lSphere" alt="" coords="243,253,469,309"/>
+<area shape="rect" id="node4" href="$structMyUPlay_1_1MyEngine_1_1Matrix3.html#ac1986ec0a026ad6cd38fc1cbc3fa2c99" title="MyUPlay::MyEngine::\lMatrix3::getInverse" alt="" coords="567,71,717,112"/>
+<area shape="rect" id="node8" href="$structMyUPlay_1_1MyEngine_1_1Matrix3.html#af6ec394bf60c2db3726c425cafa75ca2" title="MyUPlay::MyEngine::\lMatrix3::transpose" alt="" coords="567,136,717,177"/>
+<area shape="rect" id="node5" href="$structMyUPlay_1_1MyEngine_1_1Matrix3.html#a7b22e6ed218f14399c34f03ccfce8586" title="MyUPlay::MyEngine::\lMatrix3::det" alt="" coords="815,5,965,47"/>
+<area shape="rect" id="node6" href="$structMyUPlay_1_1MyEngine_1_1Matrix3.html#a24818f4244890b6c4d748786daa111a2" title="MyUPlay::MyEngine::\lMatrix3::identity" alt="" coords="815,71,965,112"/>
+<area shape="rect" id="node7" href="$structMyUPlay_1_1MyEngine_1_1Matrix3.html#a615a0dd194d568f4da0b401f36640035" title="MyUPlay::MyEngine::\lMatrix3::multiply" alt="" coords="815,136,965,177"/>
+<area shape="rect" id="node11" href="$classMyUPlay_1_1MyEngine_1_1Vector3.html#a022769e542f01380451a95ab7ea4e991" title="MyUPlay::MyEngine::\lVector3::fromArray" alt="" coords="567,267,717,308"/>
+</map>

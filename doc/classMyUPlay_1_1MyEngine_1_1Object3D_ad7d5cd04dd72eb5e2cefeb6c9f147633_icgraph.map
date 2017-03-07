@@ -1,0 +1,9 @@
+<map id="MyUPlay::MyEngine::Object3D::copy" name="MyUPlay::MyEngine::Object3D::copy">
+<area shape="rect" id="node2" href="$classMyUPlay_1_1MyEngine_1_1Camera.html#ac89035045d962f7a08e10603fba818a1" title="MyUPlay::MyEngine::\lCamera::copy" alt="" coords="204,37,355,79"/>
+<area shape="rect" id="node5" href="$classMyUPlay_1_1MyEngine_1_1Object3D.html#a3ecb55d0a89c014aa9aaf12cbcc746c1" title="MyUPlay::MyEngine::\lObject3D::Object3D" alt="" coords="204,103,355,144"/>
+<area shape="rect" id="node6" href="$classMyUPlay_1_1MyEngine_1_1Object3D.html#afd053d6b2903b41065108122c96e5029" title="MyUPlay::MyEngine::\lObject3D::operator=" alt="" coords="204,168,355,209"/>
+<area shape="rect" id="node7" href="$classMyUPlay_1_1MyEngine_1_1Scene.html#a1d63efe222a5a2959b61040ee80b3d35" title="MyUPlay::MyEngine::\lScene::copy" alt="" coords="204,233,355,275"/>
+<area shape="rect" id="node3" href="$classMyUPlay_1_1MyEngine_1_1OrthographicCamera.html#a75a823f14012d861f5faf69941bc364e" title="MyUPlay::MyEngine::\lOrthographicCamera::copy" alt="" coords="403,5,581,47"/>
+<area shape="rect" id="node4" href="$structMyUPlay_1_1MyEngine_1_1PerspectiveCamera.html#a4b5c179a7019c00a2d610a2e417305ab" title="MyUPlay::MyEngine::\lPerspectiveCamera::copy" alt="" coords="405,71,579,112"/>
+<area shape="rect" id="node8" href="$classMyUPlay_1_1MyEngine_1_1Scene.html#a20fd9deb556ec065f9085d56c8a2c991" title="MyUPlay::MyEngine::\lScene::operator=" alt="" coords="417,233,567,275"/>
+</map>

@@ -1,0 +1,5 @@
+<map id="MyUPlay::MyEngine::Vector2::max" name="MyUPlay::MyEngine::Vector2::max">
+<area shape="rect" id="node2" href="$classMyUPlay_1_1MyEngine_1_1Box2.html#a7ee88902962be6bd0ddab2bf78f66eef" title="MyUPlay::MyEngine::\lBox2::expandByPoint" alt="" coords="204,5,355,47"/>
+<area shape="rect" id="node4" href="$classMyUPlay_1_1MyEngine_1_1Box2.html#a4c159a3eb8ce2603e76408bdfe5e09eb" title="MyUPlay::MyEngine::\lBox2::boxUnion" alt="" coords="204,71,355,112"/>
+<area shape="rect" id="node3" href="$classMyUPlay_1_1MyEngine_1_1Box2.html#a5bcfbd4431fabdeddf4f1554f66de22f" title="MyUPlay::MyEngine::\lBox2::setFromPoints" alt="" coords="403,5,553,47"/>
+</map>

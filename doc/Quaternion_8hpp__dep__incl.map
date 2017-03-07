@@ -1,0 +1,32 @@
+<map id="include/Quaternion.hpp" name="include/Quaternion.hpp">
+<area shape="rect" id="node2" href="$Euler_8hpp.html" title="include/Euler.hpp" alt="" coords="747,80,869,107"/>
+<area shape="rect" id="node3" href="$Matrix4_8hpp.html" title="include/Matrix4.hpp" alt="" coords="249,379,383,405"/>
+<area shape="rect" id="node5" href="$Vector3_8hpp.html" title="include/Vector3.hpp" alt="" coords="850,304,987,331"/>
+<area shape="rect" id="node10" href="$Object3D_8hpp.html" title="include/Object3D.hpp" alt="" coords="1431,155,1577,181"/>
+<area shape="rect" id="node11" href="$Camera_8hpp.html" title="include/Camera.hpp" alt="" coords="1553,229,1692,256"/>
+<area shape="rect" id="node15" href="$Renderer_8hpp.html" title="include/Renderer.hpp" alt="" coords="1911,1051,2057,1077"/>
+<area shape="rect" id="node31" href="$Vector4_8hpp.html" title="include/Vector4.hpp" alt="" coords="94,453,231,480"/>
+<area shape="rect" id="node4" href="$Matrix3_8hpp.html" title="include/Matrix3.hpp" alt="" coords="606,453,741,480"/>
+<area shape="rect" id="node7" href="$Sphere_8hpp.html" title="include/Sphere.hpp" alt="" coords="917,453,1051,480"/>
+<area shape="rect" id="node8" href="$Ray_8hpp.html" title="include/Ray.hpp" alt="" coords="985,603,1101,629"/>
+<area shape="rect" id="node18" href="$Frustum_8hpp.html" title="include/Frustum.hpp" alt="" coords="98,827,238,853"/>
+<area shape="rect" id="node23" href="$Geometry_8hpp.html" title="include/Geometry.hpp" alt="" coords="872,752,1021,779"/>
+<area shape="rect" id="node25" href="$Plane_8hpp.html" title="include/Plane.hpp" alt="" coords="611,528,736,555"/>
+<area shape="rect" id="node26" href="$Line3_8hpp.html" title="include/Line3.hpp" alt="" coords="459,453,581,480"/>
+<area shape="rect" id="node6" href="$Box3_8hpp.html" title="include/Box3.hpp" alt="" coords="1077,379,1200,405"/>
+<area shape="rect" id="node9" href="$Raycaster_8hpp.html" title="include/Raycaster.hpp" alt="" coords="1449,677,1601,704"/>
+<area shape="rect" id="node24" href="$BufferGeometry_8hpp.html" title="include/BufferGeometry.hpp" alt="" coords="996,827,1180,853"/>
+<area shape="rect" id="node27" href="$Face3_8hpp.html" title="include/Face3.hpp" alt="" coords="1379,528,1507,555"/>
+<area shape="rect" id="node28" href="$Triangle_8hpp.html" title="include/Triangle.hpp" alt="" coords="1317,603,1456,629"/>
+<area shape="rect" id="node29" href="$BufferAttribute_8hpp.html" title="include/BufferAttribute.hpp" alt="" coords="635,379,811,405"/>
+<area shape="rect" id="node30" href="$SoundObject_8hpp.html" title="include/SoundObject.hpp" alt="" coords="835,379,1002,405"/>
+<area shape="rect" id="node21" href="$Mesh_8hpp.html" title="include/Mesh.hpp" alt="" coords="1559,827,1683,853"/>
+<area shape="rect" id="node19" href="$GeometryImporter_8hpp.html" title="include/GeometryImporter.hpp" alt="" coords="1767,229,1964,256"/>
+<area shape="rect" id="node20" href="$Scene_8hpp.html" title="include/Scene.hpp" alt="" coords="1798,901,1927,928"/>
+<area shape="rect" id="node22" href="$Light_8hpp.html" title="include/Light.hpp" alt="" coords="1803,827,1923,853"/>
+<area shape="rect" id="node12" href="$PerspectiveCamera_8hpp.html" title="include/PerspectiveCamera.hpp" alt="" coords="1659,528,1866,555"/>
+<area shape="rect" id="node13" href="$OrthographicCamera_8hpp.html" title="include/OrthographicCamera.hpp" alt="" coords="1605,603,1817,629"/>
+<area shape="rect" id="node14" href="$RenderPlugin_8hpp.html" title="include/RenderPlugin.hpp" alt="" coords="1899,976,2069,1003"/>
+<area shape="rect" id="node16" href="$GLES2Renderer_8hpp.html" title="include/GLES2Renderer.hpp" alt="" coords="1587,1125,1773,1152"/>
+<area shape="rect" id="node17" href="$GLES2OverlaySystem_8hpp.html" title="include/GLES2OverlaySystem.hpp" alt="" coords="1633,1200,1857,1227"/>
+</map>

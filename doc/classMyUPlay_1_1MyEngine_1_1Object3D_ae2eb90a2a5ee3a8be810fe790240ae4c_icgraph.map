@@ -1,0 +1,7 @@
+<map id="MyUPlay::MyEngine::Object3D::updateMatrix" name="MyUPlay::MyEngine::Object3D::updateMatrix">
+<area shape="rect" id="node2" href="$structMyUPlay_1_1MyEngine_1_1IGeometry.html#a82b1d8759ef7e9ff08e9a0b80574c5b4" title="MyUPlay::MyEngine::\lIGeometry::lookAt" alt="" coords="235,5,386,47"/>
+<area shape="rect" id="node3" href="$classMyUPlay_1_1MyEngine_1_1Object3D.html#af75ee93980790bf3a4e29b885b88ec8d" title="MyUPlay::MyEngine::\lObject3D::updateMatrixWorld" alt="" coords="213,71,408,112"/>
+<area shape="rect" id="node4" href="$classMyUPlay_1_1MyEngine_1_1Object3D.html#a680f1f0509c0845939650bb6a190a999" title="MyUPlay::MyEngine::\lObject3D::getWorldPosition" alt="" coords="464,5,648,47"/>
+<area shape="rect" id="node5" href="$classMyUPlay_1_1MyEngine_1_1Object3D.html#a1553b96d45a80144cf7cedb020aa2ac6" title="MyUPlay::MyEngine::\lObject3D::getWorldQuaternion" alt="" coords="456,71,656,112"/>
+<area shape="rect" id="node6" href="$classMyUPlay_1_1MyEngine_1_1Object3D.html#ae0732f1f9cf81c7c81f97cd6cac89278" title="MyUPlay::MyEngine::\lObject3D::getWorldScale" alt="" coords="471,136,641,177"/>
+</map>

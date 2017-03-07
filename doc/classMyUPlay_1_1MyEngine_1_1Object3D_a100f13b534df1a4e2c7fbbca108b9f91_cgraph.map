@@ -1,0 +1,4 @@
+<map id="MyUPlay::MyEngine::Object3D::rotateY" name="MyUPlay::MyEngine::Object3D::rotateY">
+<area shape="rect" id="node2" href="$classMyUPlay_1_1MyEngine_1_1Object3D.html#ab700a95ad0ab88f80ca7f0f0b9ee15c7" title="MyUPlay::MyEngine::\lObject3D::rotateOnAxis" alt="" coords="204,5,365,47"/>
+<area shape="rect" id="node3" href="$structMyUPlay_1_1MyEngine_1_1Quaternion.html#a757f97e7784de8fdce98ac632e311b0e" title="MyUPlay::MyEngine::\lQuaternion::setFromAxisAngle" alt="" coords="413,5,613,47"/>
+</map>

@@ -1,0 +1,6 @@
+<map id="MyUPlay::MyEngine::Vector3::add" name="MyUPlay::MyEngine::Vector3::add">
+<area shape="rect" id="node2" href="$classMyUPlay_1_1MyEngine_1_1Ray.html#a2f96c47d2236de7dd835c79c5c5c427a" title="MyUPlay::MyEngine::\lRay::applyMatrix4" alt="" coords="224,5,375,47"/>
+<area shape="rect" id="node4" href="$classMyUPlay_1_1MyEngine_1_1Vector3.html#a42ae545c40c87c7770a9eee62ea34efb" title="MyUPlay::MyEngine::\lVector3\&lt; float \&gt;::operator+=" alt="" coords="206,71,393,112"/>
+<area shape="rect" id="node5" href="$classMyUPlay_1_1MyEngine_1_1Vector3.html#a2654994a99f30c35dde36b220384e809" title="MyUPlay::MyEngine::\lVector3\&lt; float \&gt;::lerpVectors" alt="" coords="204,136,395,177"/>
+<area shape="rect" id="node3" href="$structMyUPlay_1_1MyEngine_1_1Mesh.html#a7ce8ec6f092abdec287d2d03d92450b8" title="MyUPlay::MyEngine::\lMesh::raycast" alt="" coords="443,5,593,47"/>
+</map>

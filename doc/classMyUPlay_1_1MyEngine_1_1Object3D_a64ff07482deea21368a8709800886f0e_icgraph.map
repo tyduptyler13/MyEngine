@@ -1,0 +1,5 @@
+<map id="MyUPlay::MyEngine::Object3D::getWorldQuaternion" name="MyUPlay::MyEngine::Object3D::getWorldQuaternion">
+<area shape="rect" id="node2" href="$classMyUPlay_1_1MyEngine_1_1Camera.html#a8df17fd0ccd843740835275507473582" title="MyUPlay::MyEngine::\lCamera::getWorldDirection" alt="" coords="258,5,438,47"/>
+<area shape="rect" id="node3" href="$classMyUPlay_1_1MyEngine_1_1Object3D.html#a8da2f76e5f6237891503dd93fe7c717a" title="MyUPlay::MyEngine::\lObject3D::getWorldRotation" alt="" coords="255,71,441,112"/>
+<area shape="rect" id="node4" href="$classMyUPlay_1_1MyEngine_1_1Object3D.html#ae2bc6e54605c76b9d117ecdd4bd26281" title="MyUPlay::MyEngine::\lObject3D::getWorldDirection" alt="" coords="253,136,443,177"/>
+</map>

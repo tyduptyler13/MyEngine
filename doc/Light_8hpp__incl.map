@@ -1,0 +1,24 @@
+<map id="include/Light.hpp" name="include/Light.hpp">
+<area shape="rect" id="node2" href="$Object3D_8hpp.html" title="Object3D.hpp" alt="" coords="522,80,625,107"/>
+<area shape="rect" id="node32" href="$Color_8hpp.html" title="Color.hpp" alt="" coords="2026,677,2105,704"/>
+<area shape="rect" id="node9" href="$Vector3_8hpp.html" title="Vector3.hpp" alt="" coords="1002,528,1094,555"/>
+<area shape="rect" id="node15" href="$Matrix4_8hpp.html" title="Matrix4.hpp" alt="" coords="1164,677,1255,704"/>
+<area shape="rect" id="node16" href="$Euler_8hpp.html" title="Euler.hpp" alt="" coords="1048,752,1125,779"/>
+<area shape="rect" id="node17" href="$Quaternion_8hpp.html" title="Quaternion.hpp" alt="" coords="913,827,1023,853"/>
+<area shape="rect" id="node18" href="$Math_8hpp.html" title="Math.hpp" alt="" coords="631,901,707,928"/>
+<area shape="rect" id="node19" href="$Log_8hpp.html" title="Log.hpp" alt="" coords="2249,752,2317,779"/>
+<area shape="rect" id="node21" href="$Raycaster_8hpp.html" title="Raycaster.hpp" alt="" coords="889,155,996,181"/>
+<area shape="rect" id="node11" href="$Matrix3_8hpp.html" title="Matrix3.hpp" alt="" coords="1449,603,1540,629"/>
+<area shape="rect" id="node20" href="$Camera_8hpp.html" title="Camera.hpp" alt="" coords="703,603,796,629"/>
+<area shape="rect" id="node23" href="$Ray_8hpp.html" title="Ray.hpp" alt="" coords="1009,229,1079,256"/>
+<area shape="rect" id="node28" href="$Vector2_8hpp.html" title="Vector2.hpp" alt="" coords="1757,677,1849,704"/>
+<area shape="rect" id="node29" href="$PerspectiveCamera_8hpp.html" title="PerspectiveCamera.hpp" alt="" coords="484,528,647,555"/>
+<area shape="rect" id="node30" href="$OrthographicCamera_8hpp.html" title="OrthographicCamera.hpp" alt="" coords="637,304,803,331"/>
+<area shape="rect" id="node31" href="$Face3_8hpp.html" title="Face3.hpp" alt="" coords="1817,453,1900,480"/>
+<area shape="rect" id="node35" href="$Triangle_8hpp.html" title="Triangle.hpp" alt="" coords="1599,453,1692,480"/>
+<area shape="rect" id="node36" href="$Constants_8hpp.html" title="Constants.hpp" alt="" coords="1753,229,1860,256"/>
+<area shape="rect" id="node24" href="$Sphere_8hpp.html" title="Sphere.hpp" alt="" coords="907,379,995,405"/>
+<area shape="rect" id="node25" href="$Box3_8hpp.html" title="Box3.hpp" alt="" coords="788,453,865,480"/>
+<area shape="rect" id="node26" href="$Plane_8hpp.html" title="Plane.hpp" alt="" coords="1093,304,1173,331"/>
+<area shape="rect" id="node27" href="$Line3_8hpp.html" title="Line3.hpp" alt="" coords="1093,453,1171,480"/>
+</map>

@@ -1,0 +1,5 @@
+<map id="MyUPlay::MyEngine::Triangle::barycoordFromPoint" name="MyUPlay::MyEngine::Triangle::barycoordFromPoint">
+<area shape="rect" id="node2" href="$classMyUPlay_1_1MyEngine_1_1Raycaster.html#ad4a190b158f6a2d2a89eec4af9b935b8" title="MyUPlay::MyEngine::\lRaycaster::uvIntersection" alt="" coords="257,5,429,47"/>
+<area shape="rect" id="node4" href="$classMyUPlay_1_1MyEngine_1_1Triangle.html#a9cefb2587ddeee3f80a6f1b56f051784" title="MyUPlay::MyEngine::\lTriangle::barycoordFromPoint" alt="" coords="247,71,440,112"/>
+<area shape="rect" id="node3" href="$structMyUPlay_1_1MyEngine_1_1BufferGeometry.html#a338486e148de12e4b2b33047c1c521ba" title="MyUPlay::MyEngine::\lBufferGeometry::raycast" alt="" coords="488,5,653,47"/>
+</map>

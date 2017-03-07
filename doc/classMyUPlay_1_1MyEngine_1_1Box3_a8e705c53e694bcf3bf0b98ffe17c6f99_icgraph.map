@@ -1,0 +1,5 @@
+<map id="MyUPlay::MyEngine::Box3::makeEmpty" name="MyUPlay::MyEngine::Box3::makeEmpty">
+<area shape="rect" id="node2" href="$classMyUPlay_1_1MyEngine_1_1Box3.html#afeddf4b24d52c5a96af43d589605c5d2" title="MyUPlay::MyEngine::\lBox3::setFromPoints" alt="" coords="204,5,355,47"/>
+<area shape="rect" id="node3" href="$classMyUPlay_1_1MyEngine_1_1Box3.html#a2ac28f95ee59688d6206b9beb73407bd" title="MyUPlay::MyEngine::\lBox3::applyMatrix4" alt="" coords="403,35,553,76"/>
+<area shape="rect" id="node4" href="$classMyUPlay_1_1MyEngine_1_1Box3.html#a6935a91726ab7982fa5c7ece715978cd" title="MyUPlay::MyEngine::\lBox3::setFromObject" alt="" coords="204,123,355,164"/>
+</map>

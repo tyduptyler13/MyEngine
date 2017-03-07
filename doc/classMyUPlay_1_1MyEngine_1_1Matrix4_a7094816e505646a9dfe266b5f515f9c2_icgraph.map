@@ -1,0 +1,5 @@
+<map id="MyUPlay::MyEngine::Matrix4::makeTranslation" name="MyUPlay::MyEngine::Matrix4::makeTranslation">
+<area shape="rect" id="node2" href="$structMyUPlay_1_1MyEngine_1_1IGeometry.html#ab21e583a43f9e1b8b6c6f73d2a4d11a2" title="MyUPlay::MyEngine::\lIGeometry::translate" alt="" coords="223,5,373,47"/>
+<area shape="rect" id="node3" href="$structMyUPlay_1_1MyEngine_1_1IGeometry.html#a392e07d657691cbf0d89caa9a6927b59" title="MyUPlay::MyEngine::\lIGeometry::center" alt="" coords="421,5,572,47"/>
+<area shape="rect" id="node4" href="$structMyUPlay_1_1MyEngine_1_1IGeometry.html#aab843a9cbff3d769dec03610d9fdd03d" title="MyUPlay::MyEngine::\lIGeometry::normalize" alt="" coords="620,5,771,47"/>
+</map>
