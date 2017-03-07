@@ -1,0 +1,19 @@
+PROJECT_NAME = "MyEngine"
+PROJECT_BRIEF = "A fast and easy to use game engine written in c++ and javascript"
+OUTPUT_DIRECTORY = "doc"
+INPUT = include
+FILE_PATTERNS = *.hpp
+
+MULTILINE_CPP_IS_BRIEF = YES
+EXTRACT_ALL            = YES
+EXTRACT_STATIC         = YES
+SHOW_DIRECTORIES       = YES
+SOURCE_BROWSER         = YES
+HTML_DYNAMIC_SECTIONS  = YES
+USE_MATHJAX            = YES
+PAPER_TYPE             = letter
+HIDE_UNDOC_RELATIONS   = NO
+HAVE_DOT               = YES
+CALL_GRAPH             = YES
+CALLER_GRAPH           = YES
+SORT_MEMBER_DOCS       = YES
