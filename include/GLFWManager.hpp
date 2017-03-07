@@ -26,8 +26,14 @@ namespace MyUPlay {
 
 		public:
 
+			const unsigned contextGroup;
+
+			//You are not allowed to default construct this.
+			GLFWManager() = delete;
+
 			GLFWManager(const std::vector<std::pair<int, int>>& hints, int width, int height,
-					const char* title, GLFWmonitor* mon = nullptr, const GLFWManager* manager = nullptr){
+					const char* title, GLFWmonitor* mon = nullptr, const GLFWManager* manager = nullptr)
+					: contextGroup(manager ? manager->contextGroup : contextGroups++ ) {
 
 				//glfwLog.level = Log::DebugLevel;
 
@@ -108,9 +114,8 @@ namespace MyUPlay {
 
 		private:
 
-			GLFWManager(){} //Default construction is not allowed
-
 			static unsigned instances;
+			static unsigned contextGroups;
 
 			static Log glfwLog;
 

@@ -37,7 +37,7 @@ namespace MyUPlay {
 				T maxRadiusSq = 0;
 
 				for (const Vector3<T>& point : points) {
-					maxRadiusSq = Math::max<T>(maxRadiusSq, center.distanceToSquared(point));
+					maxRadiusSq = std::max(maxRadiusSq, center.distanceToSquared(point));
 				}
 
 				radius = std::sqrt(maxRadiusSq);

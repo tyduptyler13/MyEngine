@@ -4,7 +4,7 @@ export CC=clang
 export CXX=clang++
 
 ifndef NODEBUILD
-	ELECTRONFLAGS=--runtime=electron --target=1.6.1 --arch=x64 --dist-url=https://atom.io/download/electron
+	ELECTRONFLAGS=--runtime=electron --target=1.4.15 --arch=x64 --dist-url=https://atom.io/download/electron
 endif
 
 ifdef ASMJS

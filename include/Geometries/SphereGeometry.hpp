@@ -15,8 +15,8 @@ namespace MyUPlay {
 			SphereGeometry(T radius, unsigned widthSegments, unsigned heightSegments,
 					T phiStart, T phiLength = Math::PI * 2, T thetaStart = 0, T thetaLength = Math::PI){
 
-				widthSegments = Math::max(3, widthSegments);
-				heightSegments = Math::max(2, heightSegments);
+				widthSegments = std::max<unsigned>(3, widthSegments);
+				heightSegments = std::max<unsigned>(2, heightSegments);
 
 				const T thetaEnd = thetaStart + thetaLength;
 

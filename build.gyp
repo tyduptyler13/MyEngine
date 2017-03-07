@@ -15,6 +15,7 @@
 				"src/Texture.cpp",
 				"src/GeometryImporter.cpp",
 				"src/GLFWManager.cpp",
+				"src/SoundObject.cpp",
 				"src/SOIL/image_DXT.c",
 				"src/SOIL/image_helper.c",
 				"src/SOIL/SOIL.c",

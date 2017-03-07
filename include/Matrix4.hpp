@@ -574,7 +574,7 @@ public:
 		T scaleYSq = te[ 4 ] * te[ 4 ] + te[ 5 ] * te[ 5 ] + te[ 6 ] * te[ 6 ];
 		T scaleZSq = te[ 8 ] * te[ 8 ] + te[ 9 ] * te[ 9 ] + te[ 10 ] * te[ 10 ];
 
-		return sqrt( Math::max<T>( scaleXSq, scaleYSq, scaleZSq ) );
+		return sqrt( std::max({ scaleXSq, scaleYSq, scaleZSq }) );
 
 	}
 

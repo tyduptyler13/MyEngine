@@ -1,7 +1,7 @@
 #ifndef MYUPLAY_MYENGINE_PERSPECTIVECAMERA
 #define MYUPLAY_MYENGINE_PERSPECTIVECAMERA
 
-#include <cmath>
+#include "Math.hpp"
 
 namespace MyUPlay {
 	namespace MyEngine {
@@ -98,11 +98,11 @@ struct MyUPlay::MyEngine::PerspectiveCamera : public Camera<T> {
 	}
 
 	T getFilmWidth() {
-		return filmGauge * Math::min<T>(aspect, 1);
+		return filmGauge * std::min<T>(aspect, 1.0);
 	}
 
 	T getFilmHeight() {
-		return filmGauge / Math::max<T>(aspect, 1);
+		return filmGauge / std::max<T>(aspect, 1.0);
 	}
 
 	void setViewOffset (T fullWidth, T fullHeight, T x, T y, T width, T height){

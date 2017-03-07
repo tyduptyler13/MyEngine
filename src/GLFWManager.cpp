@@ -40,6 +40,7 @@ static WindowSizer windowSizer;
 static FrameSizer frameSizer;
 
 unsigned GLFWManager::instances = 0;
+unsigned GLFWManager::contextGroups = 0;
 Log GLFWManager::glfwLog("GLFW");
 std::recursive_mutex GLFWManager::lock;
 

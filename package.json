@@ -1,12 +1,12 @@
 {
   "name": "MyEngine",
   "description": "A powerful mixture of nodejs, chrome, and a game engine.",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "license": "MIT",
   "repository": "https://github.com/MyUPlay/MyEngine",
   "main": "test/core/BasicExample-electron.js",
   "dependencies": {
-    "electron": "^1.4.10",
+    "electron": "1.4.15",
     "nbind": "^0.3.9"
   },
   "scripts": {

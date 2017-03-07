@@ -9,14 +9,15 @@ namespace MyUPlay {
 
 	namespace MyEngine {
 
-		template <typename T>
 		class Listener {
+
+			Listener();
 
 			static Listener* singleton;
 
 		public:
 
-			static Listener* getListenerInstance() {
+			static Listener* getInstance() {
 				return singleton;
 			}
 
@@ -27,25 +28,32 @@ namespace MyUPlay {
 			 * Velocity has no unit, so just keep it relative to other values in the
 			 * game. (See openal)
 			 */
-			Listener& setVelocity(T);
+			Listener& setVelocity(float);
 
 			/**
 			 * This sets the location/source of the sound. (Global position)
 			 */
-			Listener& setPosition(const Vector3<T>&);
+			Listener& setPosition(const Vector3<float>&);
 
 			/**
 			 * Sets the direction the object is casting the sound. (Global rotation normal)
 			 */
-			Listener& setDirection(const Vector3<T>&);
+			Listener& setDirection(const Vector3<float>&);
 
 
 		};
 
-		template <typename T>
 		struct SoundObject {
 
 			bool repeat = false;
+
+			inline bool& getRepeat() {
+				return repeat;
+			}
+
+			inline void setRepeat(bool val) {
+				repeat = val;
+			}
 
 
 			/**
@@ -75,22 +83,27 @@ namespace MyUPlay {
 			bool isPlaying() const;
 
 			/**
+			 * @return the length in seconds of the audio.
+			 */
+			float getLength() const;
+
+			/**
 			 * This enables hasVelocity and sets the velocity value.
 			 *
 			 * Velocity has no unit, so just keep it relative to other values in the
 			 * game. (See openal)
 			 */
-			SoundObject& setVelocity(T);
+			SoundObject& setVelocity(float);
 
 			/**
 			 * This sets the location/source of the sound. (Global position)
 			 */
-			SoundObject& setPosition(const Vector3<T>&);
+			SoundObject& setPosition(const Vector3<float>&);
 
 			/**
 			 * Sets the direction the object is casting the sound. (Global rotation normal)
 			 */
-			SoundObject& setDirection(const Vector3<T>&);
+			SoundObject& setDirection(const Vector3<float>&);
 
 		};
 

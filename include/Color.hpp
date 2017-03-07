@@ -163,8 +163,8 @@ namespace MyUPlay {
 
 			std::tuple<float, float, float> getHSL() const {
 
-				float max = Math::max<float>(r, g, b);
-				float min = Math::min<float>(r, g, b);
+				float max = std::max({r, g, b});
+				float min = std::min({r, g, b});
 
 				float hue = 0, saturation;
 				float lightness = (min + max) / 2.0;

@@ -124,31 +124,31 @@ public:
 					} else {
 						//region 1
 						s1 = segExtent;
-						s0 = Math::max<T>(0, -(a01 * s1 + b0));
+						s0 = std::max(0, -(a01 * s1 + b0));
 						sqrDist = - s0 * s0 + s1 * (s1 + 2 * b1) + c;
 					}
 				} else {
 					//region 5
 					s1 = -segExtent;
-					s0 = Math::max<T>(0, -(a01 * s1 + b0));
+					s0 = std::max(0, -(a01 * s1 + b0));
 					sqrDist = - s0 * b0 + s1 * (s1 + 2 * b1) + c;
 				}
 			} else {
 
 				if (s1 <= -extDet) {
 					//region 4
-					s0 = Math::max<T>(0, - (-a01 * segExtent + b0));
-					s1 = (s0 > 0) ? - segExtent : Math::min<T>(Math::max<T>(-segExtent, - b1), segExtent);
+					s0 = std::max(0, - (-a01 * segExtent + b0));
+					s1 = (s0 > 0) ? - segExtent : std::min(std::max(-segExtent, - b1), segExtent);
 					sqrDist = -s0 * s0 + s1 * (s1 + 2 * b1) + c;
 				} else if (s1 <= extDet) {
 					//region 3
 					s0 = 0;
-					s1 = Math::min<T>(Math::max<T>(-segExtent, -b1), segExtent);
+					s1 = std::min(std::max(-segExtent, -b1), segExtent);
 					sqrDist = s1 * (s1 + 2 * b1) + c;
 				} else {
 					//region 2
-					s0 = Math::max<T>(0, -(a01 * segExtent + b0));
-					s1 = (s0 > 0) ? segExtent : Math::min<T>(Math::max<T>(-segExtent, -b1), segExtent);
+					s0 = std::max(0, -(a01 * segExtent + b0));
+					s1 = (s0 > 0) ? segExtent : std::min(std::max(-segExtent, -b1), segExtent);
 					sqrDist = -s0 * s0 + s1 * (s1 + 2 * b1) + c;
 				}
 
@@ -156,7 +156,7 @@ public:
 		} else {
 			//Ray and segment are parallel
 			s1 = (a01 > 0)? -segExtent : segExtent;
-			s0 = Math::max<T>(0, -(a01 * s1 + b0));
+			s0 = std::max(0, -(a01 * s1 + b0));
 			sqrDist = -s0 * s0 + s1 * (s1 + 2 * b1) + c;
 		}
 
@@ -427,7 +427,7 @@ public:
 						// region 1
 
 						s1 = segExtent;
-						s0 = Math::max<T>( 0, - ( a01 * s1 + b0 ) );
+						s0 = std::max( 0, - ( a01 * s1 + b0 ) );
 						sqrDist = - s0 * s0 + s1 * ( s1 + 2 * b1 ) + c;
 
 					}
@@ -437,7 +437,7 @@ public:
 					// region 5
 
 					s1 = - segExtent;
-					s0 = Math::max<T>( 0, - ( a01 * s1 + b0 ) );
+					s0 = std::max( 0, - ( a01 * s1 + b0 ) );
 					sqrDist = - s0 * s0 + s1 * ( s1 + 2 * b1 ) + c;
 
 				}
@@ -448,8 +448,8 @@ public:
 
 					// region 4
 
-					s0 = Math::max<T>( 0, - ( - a01 * segExtent + b0 ) );
-					s1 = ( s0 > 0 ) ? - segExtent : Math::min<T>(Math::max<T>( - segExtent, - b1 ), segExtent );
+					s0 = std::max( 0, - ( - a01 * segExtent + b0 ) );
+					s1 = ( s0 > 0 ) ? - segExtent : std::min(std::max( - segExtent, - b1 ), segExtent );
 					sqrDist = - s0 * s0 + s1 * ( s1 + 2 * b1 ) + c;
 
 				} else if ( s1 <= extDet ) {
@@ -457,15 +457,15 @@ public:
 					// region 3
 
 					s0 = 0;
-					s1 = Math::min<T>(Math::max<T>( - segExtent, - b1 ), segExtent );
+					s1 = std::min(std::max( - segExtent, - b1 ), segExtent );
 					sqrDist = s1 * ( s1 + 2 * b1 ) + c;
 
 				} else {
 
 					// region 2
 
-					s0 = Math::max<T>( 0, - ( a01 * segExtent + b0 ) );
-					s1 = ( s0 > 0 ) ? segExtent : Math::min<T>( Math::max<T>( - segExtent, - b1 ), segExtent );
+					s0 = std::max( 0, - ( a01 * segExtent + b0 ) );
+					s1 = ( s0 > 0 ) ? segExtent : std::min( std::max( - segExtent, - b1 ), segExtent );
 					sqrDist = - s0 * s0 + s1 * ( s1 + 2 * b1 ) + c;
 
 				}
@@ -477,7 +477,7 @@ public:
 			// Ray and segment are parallel.
 
 			s1 = ( a01 > 0 ) ? - segExtent : segExtent;
-			s0 = Math::max<T>( 0, - ( a01 * s1 + b0 ) );
+			s0 = std::max( 0, - ( a01 * s1 + b0 ) );
 			sqrDist = - s0 * s0 + s1 * ( s1 + 2 * b1 ) + c;
 
 		}

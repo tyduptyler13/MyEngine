@@ -42,7 +42,6 @@ GLES2Renderer::GLES2Renderer(unsigned antialias, GLFWmonitor* monitor, GLES2Rend
 
 	std::vector<std::pair<int, int>> hints = {{
 			std::make_pair(GLFW_CLIENT_API, GLFW_OPENGL_ES_API), //Hard constraint.
-			std::make_pair(GLFW_CONTEXT_CREATION_API, GLFW_NATIVE_CONTEXT_API),
 			std::make_pair(GLFW_CONTEXT_VERSION_MAJOR, 2),
 			std::make_pair(GLFW_CONTEXT_VERSION_MINOR, 0),
 			std::make_pair(GLFW_SAMPLES, antialias)

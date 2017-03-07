@@ -33,17 +33,15 @@ namespace MyUPlay {
 
 			}
 
-			template <>
-			float euclideanModulo(float n, float m) {
-				return fmod(fmod(n,m) + m, m); //Needed specialization for float.
-			}
-
-			template <>
-			double euclideanModulo(double n, double m) {
-				return fmod(fmod(n,m) + m, m); //Needed specialization for double.
-			}
-
 			const double PI = std::acos( -1.0 );
+
+			double euclideanModulo(double n, double m) {
+				return std::fmod(std::fmod(n,m) + m, m); //Needed specialization for double.
+			}
+
+			float euclideanModulo(float n, float m) {
+				return std::fmod(std::fmod(n,m) + m, m);
+			}
 
 		}
 	}
