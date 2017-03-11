@@ -1,9 +1,11 @@
 
 #include <exception>
 #include <unordered_map>
+#include <unordered_set>
 
 #include "../include/Shader/GLES2Shader.hpp"
 #include "Log.hpp"
+#include "BufferGeometry.hpp"
 
 #include "glsl/glsl_optimizer.h"
 
@@ -179,20 +181,20 @@ void GLES2ForwardShader::prepare(unsigned contextID, Camera<float>* camera, Mesh
 static unordered_map<string, unsigned> knownBuffers;
 
 template <typename T1>
-static void setupBuffer(const string& scid, BufferAttribute<T1>& ba, unsigned int type) {
+static inline void setupBuffer(const string& scid, BufferAttribute<T1>& ba, unsigned int type) {
 	if (knownBuffers.find(scid + ba.getUUID()) == knownBuffers.end()) {
 
 		unsigned bufp;
 
 		glGenBuffers(1, &bufp);
 
-		ba.onUpdate([bufp](const BufferAttribute<T1>& ba, const std::vector<T1>& buf){
+		ba.onUpdate([bufp, type](const BufferAttribute<T1>& ba, const std::vector<T1>& buf){
 
 			glBindBuffer(type, bufp);
 
 			glBufferData(type, sizeof(unsigned int) * buf.size(), buf.data(), ba.dynamic ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
 
-		}).onDelete([bufp](const BufferAttribute<unsigned int>&){
+		}).onDelete([bufp](const BufferAttribute<T1>&){
 			glDeleteBuffers(1, &bufp);
 		});
 
@@ -209,6 +211,7 @@ void GLES2Vertex::prepare(unsigned contextID, Camera<float>* camera, Mesh<float>
 
 	IGeometry<float>* geometry = object->geometry.get();
 
+	//This will require knowing the renderer id. Probably will pass in the UUID of the renderer.
 	//Working on adding VAO support, might have to wait for GLES3 Renderer
 	/*if (geometry->vertexObject == 0) {
 		glGenVertexArraysOES(1, &geometry->vertexObject);
@@ -216,7 +219,10 @@ void GLES2Vertex::prepare(unsigned contextID, Camera<float>* camera, Mesh<float>
 
 	glBindVertexArrayOES(geometry->vertexObject);*/
 
-
+	//Use of an unsigned was intentional. Many hash algorithms only use the first few characters in a string
+	//This would be a problem if we appeneded two uuid's together, the second would always be ignored by the
+	//hash... even if this is incorrect behavior of a hash. If we can find a stable and fast hash, we will
+	//switch this to a UUID.
 	const string scid = to_string(contextID);
 
 	if (geometry->isBufferGeometry()){
@@ -224,6 +230,8 @@ void GLES2Vertex::prepare(unsigned contextID, Camera<float>* camera, Mesh<float>
 		BufferAttribute<unsigned int>& indices = dynamic_cast<BufferGeometry<float>*>(geometry)->getIndices();
 
 		setupBuffer<unsigned int>(scid, indices, GL_ELEMENT_ARRAY_BUFFER);
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, knownBuffers[scid + indices.getUUID()]);
 
 	}
 
@@ -237,47 +245,40 @@ void GLES2Vertex::prepare(unsigned contextID, Camera<float>* camera, Mesh<float>
 
 
 	GLint posLoc = shader->getAttribLoc("position");
-
 	if (posLoc != -1) {
-		glBindBuffer(GL_ARRAY_BUFFER, knownBuffers[scid + geometry->getPositions().getUUID()]);
+		glBindBuffer(GL_ARRAY_BUFFER, knownBuffers[scid + positions.getUUID()]);
 		glEnableVertexAttribArray(posLoc);
 		glVertexAttribPointer(posLoc, 3, GL_FLOAT, GL_FALSE, 0, 0);
 	}
 
 	GLint normLoc = shader->getAttribLoc("normal");
-
 	if (normLoc != -1) {
-		glBindBuffer(GL_ARRAY_BUFFER, knownBuffers[scid + geometry->getNormals().getUUID()]);
+		glBindBuffer(GL_ARRAY_BUFFER, knownBuffers[scid + normals.getUUID()]);
 		glEnableVertexAttribArray(normLoc);
 		glVertexAttribPointer(normLoc, 3, GL_FLOAT, GL_FALSE, 0, 0);
 	}
 
 	GLint cameraLoc = shader->getUniformLoc("cameraPosition");
-
 	if (cameraLoc != -1) {
 		glUniform3f(cameraLoc, camera->position.x, camera->position.y, camera->position.z);
 	}
 
 	GLint projectionMatrixLoc = shader->getUniformLoc("projectionMatrix");
-
 	if (projectionMatrixLoc != -1) {
 		glUniformMatrix4fv(projectionMatrixLoc, 1, GL_FALSE, camera->projectionMatrix.elements.data());
 	}
 
 	GLint viewMatrixLoc = shader->getUniformLoc("viewMatrix");
-
 	if (viewMatrixLoc != -1) {
 		glUniformMatrix4fv(viewMatrixLoc, 1, GL_FALSE, camera->matrixWorldInverse.elements.data());
 	}
 
 	GLint modelMatrixLoc = shader->getUniformLoc("modelMatrix");
-
 	if (modelMatrixLoc != -1) {
 		glUniformMatrix4fv(modelMatrixLoc, 1, GL_FALSE, object->matrixWorld.elements.data());
 	}
 
 	GLint modelViewLoc = shader->getUniformLoc("modelView");
-
 	if (modelViewLoc != -1) {
 		glUniformMatrix4fv(modelViewLoc, 1, GL_FALSE, object->modelViewMatrix.elements.data());
 	}

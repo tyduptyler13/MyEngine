@@ -62,9 +62,9 @@ struct MyUPlay::MyEngine::IGeometry {
 		return false;
 	}
 
-	virtual BufferAttribute<T>& getPositions() const = 0;
+	virtual BufferAttribute<T>& getPositions() = 0;
 
-	virtual BufferAttribute<T>& getNormals() const = 0;
+	virtual BufferAttribute<T>& getNormals() = 0;
 
 	/**
 	 * Returns the number elements in the Geometry.

@@ -26,6 +26,11 @@ namespace MyUPlay {
 				Vector3<T> vertex;
 				Vector3<T> normal;
 
+				std::vector<unsigned int> indices;
+				std::vector<T> vertices;
+				std::vector<T> normals;
+				std::vector<T> uvs;
+
 				for (unsigned iy = 0; iy <= heightSegments; ++iy){
 
 					std::vector<unsigned> verticesRow;
@@ -40,12 +45,12 @@ namespace MyUPlay {
 						vertex.y = radius * std::cos(thetaStart + v * thetaLength);
 						vertex.z = radius * std::sin(phiStart + u * phiLength) * std::sin(thetaStart + v * thetaLength);
 
-						this->vertices.insert(this->vertices.end(), {vertex.x, vertex.y, vertex.z});
+						vertices.insert(vertices.end(), {vertex.x, vertex.y, vertex.z});
 
 						normal.set(vertex.x, vertex.y, vertex.z).normalize();
-						this->normals.insert(this->normals.end(), {normal.x, normal.y, normal.z});
+						normals.insert(normals.end(), {normal.x, normal.y, normal.z});
 
-						this->uvs.insert(this->uvs.end(), {u, 1 - v});
+						uvs.insert(uvs.end(), {u, 1 - v});
 
 						verticesRow.push_back(index++);
 
@@ -64,13 +69,16 @@ namespace MyUPlay {
 								c = grid[iy+1][ix],
 								d = grid[iy+1][ix+1];
 
-						if (iy != 0 || thetaStart > 0) this->indices.insert(this->indices.end(), {a, b, d});
-						if (iy != heightSegments - 1 || thetaEnd < Math::PI) this->indices.insert(this->indices.end(), {b, c, d});
+						if (iy != 0 || thetaStart > 0) indices.insert(indices.end(), {a, b, d});
+						if (iy != heightSegments - 1 || thetaEnd < Math::PI) indices.insert(indices.end(), {b, c, d});
 
 					}
 				}
 
-				this->indicesNeedUpdate = true;
+				this->indices = indices;
+				this->positions = vertices;
+				this->normals = normals;
+				this->uvs = uvs;
 
 			}
 

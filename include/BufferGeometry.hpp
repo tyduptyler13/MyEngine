@@ -28,15 +28,15 @@ namespace MyUPlay {
 			BufferAttribute<T> normals;
 			BufferAttribute<T> uvs;
 
-			BufferAttribute<unsigned char> color;
+			BufferAttribute<unsigned char> colors;
 
 			//You will only get indexed performance gains by having a single index buffer
 			BufferAttribute<unsigned int> indices;
 
 			std::vector<Group> groups;
 
-			BufferGeometry() : positions(3), normals(3), uvs(2), color(4){
-				positions.onUpdate([this](){
+			BufferGeometry() : positions(3), normals(3), uvs(2), colors(4){
+				positions.onUpdate([this](const BufferAttribute<T>&, const std::vector<T>&){
 					this->boundingBoxDirty = true;
 					this->boundingSphereDirty = true;
 				});
@@ -150,7 +150,7 @@ namespace MyUPlay {
 
 					if (intersection) {
 						if (uvs.size() > 0) {
-							intersection->uvs = Raycaster<T>::uvIntersection(intersection->point, vA, vB, vC, uvA, uvB, uvC);
+							intersection->uv = Raycaster<T>::uvIntersection(intersection->point, vA, vB, vC, uvA, uvB, uvC);
 						}
 
 						//TODO Improve face constructor to have all of the data. (Color, uvs, verts, etc)

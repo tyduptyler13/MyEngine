@@ -268,6 +268,9 @@ void GLES2Renderer::renderBufferDirect(Camera<float>* camera, Fog<float>* fog, I
 
 	setMaterial(material);
 
+	/*
+	 * Assume that the last buffer bound is the index buffer if it exists.
+	 */
 	material->shader->prepare(glfw->contextGroup, camera, object, lights);
 
 	//TODO handle program caching
@@ -280,11 +283,9 @@ void GLES2Renderer::renderBufferDirect(Camera<float>* camera, Fog<float>* fog, I
 	//TODO Handle wireframe mode
 	//TODO Expand to points, lines, sprites
 
+	info.renderer.calls++;
+
 	if (object->geometry->isBufferGeometry()){
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, object->geometry->indexBuffer);
-
-		info.renderer.calls++;
-
 		if (group != -1) {
 			auto groups = object->geometry->getGroups();
 			glDrawElements(GL_TRIANGLES, groups[group].count, GL_UNSIGNED_INT, reinterpret_cast<void*>(groups[group].start * sizeof(unsigned short)));
@@ -296,8 +297,16 @@ void GLES2Renderer::renderBufferDirect(Camera<float>* camera, Fog<float>* fog, I
 			info.renderer.vertices += object->geometry->size();
 		}
 	} else {
-		logger.warn("TODO implement non indexed geometry");
-		//TODO Implement non indexed geometry.
+		if (group != -1){
+			auto groups = object->geometry->getGroups();
+			glDrawArrays(GL_TRIANGLES, groups[group].start, groups[group].count);
+			info.renderer.faces += groups[group].count / 3;
+			info.renderer.vertices += groups[group].count;
+		} else {
+			glDrawArrays(GL_TRIANGLES, 0, object->geometry->size());
+			info.renderer.faces += object->geometry->size() / 3;
+			info.renderer.vertices += object->geometry->size();
+		}
 	}
 
 
