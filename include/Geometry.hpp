@@ -25,6 +25,7 @@ namespace MyUPlay {
 #include "Matrix4.hpp"
 #include "Raycaster.hpp"
 #include "Constants.hpp"
+#include "BufferAttribute.hpp"
 
 /**
  * Geometry Interface, for pointers that don't care about the underlying geometry.
@@ -49,31 +50,21 @@ struct MyUPlay::MyEngine::IGeometry {
 
 	bool multiMaterial = false;
 
-	bool verticesNeedUpdate = true,
-			normalsNeedUpdate = true,
-			indicesNeedUpdate = false,
-			boundingBoxDirty = true, //Must be set to true for it to recalculate
-			boundingSphereDirty = true; //Must be set to true for it to recalculate
-
-	//These will later be added to a specialized class to manage their destruction and renderer type.
-	unsigned vertexObject = 0, vertexBuffer = 0, indexBuffer = 0, normalBuffer = 0; //Internal use
+	bool boundingBoxDirty = true, //Must be set to true for it to recalculate
+		boundingSphereDirty = true; //Must be set to true for it to recalculate
 
 	virtual void applyMatrix(const Matrix4<T>& matrix) = 0;
 
 	virtual void computeBoundingBox() = 0;
 	virtual void computeBoundingSphere() = 0;
 
-	virtual bool isIndexed() const {
+	virtual bool isBufferGeometry() const {
 		return false;
 	}
 
-	virtual std::vector<T> getVertices() const = 0;
+	virtual BufferAttribute<T>& getPositions() const = 0;
 
-	virtual std::vector<T> getNormals() const = 0;
-
-	virtual std::vector<unsigned int> getIndices() const {
-		return {};
-	}
+	virtual BufferAttribute<T>& getNormals() const = 0;
 
 	/**
 	 * Returns the number elements in the Geometry.

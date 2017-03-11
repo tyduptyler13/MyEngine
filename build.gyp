@@ -46,40 +46,6 @@
 				"asmjs%": "0"
 			},
 			"conditions": [
-				['OS=="win"', {
-					"direct_dependent_settings": {
-						"include_dirs": [
-							"include/Graphics",
-							"deps/glfw/include"
-						]
-					},
-					"include_dirs": [
-						"include/Graphics",
-						"deps/glfw/include"
-					],
-					"link_settings": {
-						"libraries": [
-							"../lib/assimp.lib",
-							"../lib/glfw3.lib",
-							"../lib/libGLESv2.lib",
-							"-lgdi32",
-							"-lopengl32"
-						],
-						"libraries!": [
-							"-lGLESv2",
-							"-lglfw3"
-						]
-					},
-					"msvs_settings": {
-						"VCCLCompilerTool": {
-							"AdditionalOptions": [
-								"/GR",
-								"/MD",
-								"/EHsc"
-							]
-						}
-					}
-				}],
 				['OS=="linux"', {
 					"conditions": [
 						['asmjs==1', {
@@ -266,19 +232,7 @@
 				"include_dirs": [
 					"deps/glsl-optimizer/src"
 				]
-			},
-			"conditions": [
-				['OS=="win"', {
-					"msvs_settings": {
-						"VCCLCompilerTool": {
-							"AdditionalOptions": [
-								"/GR",
-								"/EHsc"
-							]
-						}
-					}
-				}]
-			]
+			}
 		}
 	]
 }

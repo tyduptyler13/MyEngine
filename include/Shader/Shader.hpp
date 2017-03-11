@@ -28,7 +28,7 @@ struct MyUPlay::MyEngine::Shader::Shader {
 
 	virtual void bind() = 0;
 
-	virtual void prepare(Camera<float>* camera, Mesh<float>* o, const std::vector<Light<float>*>& lights) = 0;
+	virtual void prepare(unsigned contextID, Camera<float>* camera, Mesh<float>* o, const std::vector<Light<float>*>& lights) = 0;
 
 	virtual IShaderNode* getVertexRoot() = 0;
 	virtual IShaderNode* getFragmentRoot() = 0;

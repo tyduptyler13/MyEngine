@@ -5,9 +5,11 @@
 #include "Vector2.hpp"
 #include "Geometry.hpp"
 #include "Math.hpp"
+#include "BufferAttribute.hpp"
 
 #include <array>
 #include <vector>
+#include <unordered_map>
 #include <memory>
 
 namespace MyUPlay {
@@ -22,26 +24,22 @@ namespace MyUPlay {
 
 			typedef typename IGeometry<T>::Group Group;
 
-			std::vector<T> vertices;
-			std::vector<T> normals;
-			std::vector<T> uvs;
-			// Colors are not indexed. Doing so would result in a waste of memory space/bandwidth regardless of indexing
-			// This is because an index stores one set of each value, if a color is the only thing different, it still
-			// must be duplicated, even if 99% of everything else is the same.
-			std::vector<unsigned char> colors;
+			BufferAttribute<T> positions;
+			BufferAttribute<T> normals;
+			BufferAttribute<T> uvs;
+
+			BufferAttribute<unsigned char> color;
+
 			//You will only get indexed performance gains by having a single index buffer
-			std::vector<unsigned int> indices;
+			BufferAttribute<unsigned int> indices;
 
 			std::vector<Group> groups;
 
-			BufferGeometry(){}
-			BufferGeometry(const BufferGeometry& geo) : IGeometry<T>(geo) {
-				vertices = geo.vertices;
-				normals = geo.normals;
-				uvs = geo.uvs;
-				colors = geo.colors;
-				indices = geo.indices;
-				groups = geo.groups;
+			BufferGeometry() : positions(3), normals(3), uvs(2), color(4){
+				positions.onUpdate([this](){
+					this->boundingBoxDirty = true;
+					this->boundingSphereDirty = true;
+				});
 			}
 
 			//TODO Add optimization method
@@ -51,22 +49,18 @@ namespace MyUPlay {
 			}
 
 			void applyMatrix(const Matrix4<T>& matrix){
-				matrix.applyToVector3Array(vertices);
-				Matrix3<T> m3;
-				m3.getNormalMatrix(matrix).applyToVector3Array(normals);
+				positions.getBuffer([&](std::vector<T>& buf){
+					matrix.applyToVector3Array(buf);
+				});
+				normals.getBuffer([&](std::vector<T>& buf){
+					Matrix3<T> m3;
+					m3.getNormalMatrix(matrix).applyToVector3Array(buf);
+				});
 				this->computeBoundingBox();
 				this->computeBoundingSphere();
 			}
 
-			std::vector<T> getVertices() const {
-				return vertices;
-			}
-
-			std::vector<T> getNormals() const {
-				return normals;
-			}
-
-			std::vector<unsigned int> getIndices() const {
+			const BufferAttribute<unsigned int>& getIndexBuffer() const {
 				return indices;
 			}
 
@@ -78,7 +72,7 @@ namespace MyUPlay {
 					this->boundingBox = std::make_unique<Box3<T>>();
 				}
 
-				this->boundingBox->setFromArray(vertices);
+				this->boundingBox->setFromArray(positions);
 
 			}
 
@@ -100,9 +94,9 @@ namespace MyUPlay {
 
 				Vector3<T> vertex;
 
-				for (unsigned i = 0; i < vertices.size(); ++i){
+				for (unsigned i = 0; i < positions.size(); ++i){
 					//We thus check every vertex for the max distance from the center.
-					vertex.fromArray(vertices, i);
+					vertex.fromArray(positions, i);
 					maxRadiusSq = std::max(maxRadiusSq, this->boundingSphere->center.distanceToSquared(vertex));
 				}
 
@@ -118,6 +112,22 @@ namespace MyUPlay {
 				return groups;
 			}
 
+			bool isBufferGeometry() const {
+				return true;
+			}
+
+			BufferAttribute<T>& getPositions() {
+				return positions;
+			}
+
+			BufferAttribute<T>& getNormals() {
+				return normals;
+			}
+
+			BufferAttribute<unsigned int>& getIndices() {
+				return indices;
+			}
+
 			void raycast(std::shared_ptr<Object3D<T>>& obj, const Raycaster<T>& r, std::vector<Intersection<T>>& intersections, SideConstant s) const {
 
 				for (unsigned offset = 0; offset < indices.size(); offset +=3) {
@@ -126,9 +136,9 @@ namespace MyUPlay {
 
 					Vector3<T> vA, vB, vC;
 
-					vA.fromArray(vertices, a);
-					vB.fromArray(vertices, b);
-					vC.fromArray(vertices, c);
+					vA.fromArray(positions, a);
+					vB.fromArray(positions, b);
+					vC.fromArray(positions, c);
 
 					Vector2<T> uvA, uvB, uvC;
 
@@ -140,7 +150,7 @@ namespace MyUPlay {
 
 					if (intersection) {
 						if (uvs.size() > 0) {
-							intersection->uv = Raycaster<T>::uvIntersection(intersection->point, vA, vB, vC, uvA, uvB, uvC);
+							intersection->uvs = Raycaster<T>::uvIntersection(intersection->point, vA, vB, vC, uvA, uvB, uvC);
 						}
 
 						//TODO Improve face constructor to have all of the data. (Color, uvs, verts, etc)

@@ -54,18 +54,6 @@
 			],
 			'includes': [
 				'node_modules/nbind/src/nbind.gypi'
-			],
-			"conditions": [
-				['OS=="win"', {
-					"msvs_settings": {
-						"VCCLCompilerTool": {
-							"AdditionalOptions": [
-								"/GR",
-								"/EHsc"
-							]
-						}
-					}
-				}]
 			]
 		}
 	]

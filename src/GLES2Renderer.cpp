@@ -268,7 +268,7 @@ void GLES2Renderer::renderBufferDirect(Camera<float>* camera, Fog<float>* fog, I
 
 	setMaterial(material);
 
-	material->shader->prepare(camera, object, lights);
+	material->shader->prepare(glfw->contextGroup, camera, object, lights);
 
 	//TODO handle program caching
 	//TODO handle fog, probably change it to a shaderNode
@@ -280,20 +280,26 @@ void GLES2Renderer::renderBufferDirect(Camera<float>* camera, Fog<float>* fog, I
 	//TODO Handle wireframe mode
 	//TODO Expand to points, lines, sprites
 
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, object->geometry->indexBuffer);
+	if (object->geometry->isBufferGeometry()){
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, object->geometry->indexBuffer);
 
-	info.renderer.calls++;
+		info.renderer.calls++;
 
-	if (group != -1) {
-		auto groups = object->geometry->getGroups();
-		glDrawElements(GL_TRIANGLES, groups[group].count, GL_UNSIGNED_INT, reinterpret_cast<void*>(groups[group].start * sizeof(unsigned short)));
-		info.renderer.faces += groups[group].count / 3;
-		info.renderer.vertices += groups[group].count;
+		if (group != -1) {
+			auto groups = object->geometry->getGroups();
+			glDrawElements(GL_TRIANGLES, groups[group].count, GL_UNSIGNED_INT, reinterpret_cast<void*>(groups[group].start * sizeof(unsigned short)));
+			info.renderer.faces += groups[group].count / 3;
+			info.renderer.vertices += groups[group].count;
+		} else {
+			glDrawElements(GL_TRIANGLES, object->geometry->size(), GL_UNSIGNED_INT, nullptr);
+			info.renderer.faces += object->geometry->size() / 3;
+			info.renderer.vertices += object->geometry->size();
+		}
 	} else {
-		glDrawElements(GL_TRIANGLES, object->geometry->size(), GL_UNSIGNED_INT, nullptr);
-		info.renderer.faces += object->geometry->size() / 3;
-		info.renderer.vertices += object->geometry->size();
+		logger.warn("TODO implement non indexed geometry");
+		//TODO Implement non indexed geometry.
 	}
+
 
 }
 

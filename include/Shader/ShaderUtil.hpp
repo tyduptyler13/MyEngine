@@ -79,7 +79,7 @@ namespace MyUPlay {
 				 * Should the attribute get optimized out because it wasn't used, only then can
 				 * it be skipped. In opengl this is done when the position is not present in the shader.
 				 */
-				virtual void prepare(Camera<float>*, Mesh<float>*, const std::vector<Light<float>*>& lights) = 0;
+				virtual void prepare(unsigned contextID, Camera<float>*, Mesh<float>*, const std::vector<Light<float>*>& lights) = 0;
 
 			};
 

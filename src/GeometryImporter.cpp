@@ -68,29 +68,35 @@ Object3D<float>* GeometryImporter::ImportAsset(string s, bool raw, string ext) {
 
 		unsigned num = scene->mMeshes[i]->mNumVertices;
 
-		geo->vertices.reserve(num * 3);
-		geo->normals.reserve(num * 3);
+		std::vector<float> vertices;
+		vertices.reserve(num * 3);
+		std::vector<float> normals;
+		normals.reserve(num * 3);
 		//geo->uvs.reserve(num * 2); FIXME //UVs are broken for now
 
 		for (unsigned v = 0; v < scene->mMeshes[i]->mNumVertices; ++v) {
 			const aiVector3D& vert = scene->mMeshes[i]->mVertices[v];
 			const aiVector3D& norm = scene->mMeshes[i]->mNormals[v];
 			//const aiVector3D& uv = scene->mMeshes[i]->mTextureCoords[2][v]; FIXME
-			geo->vertices.insert(geo->vertices.end(), { vert.x, vert.y, vert.z });
-			geo->normals.insert(geo->normals.end(), { norm.x, norm.y, norm.z });
+			vertices.insert(vertices.end(), { vert.x, vert.y, vert.z });
+			normals.insert(normals.end(), { norm.x, norm.y, norm.z });
 			//geo->uvs.insert(geo->uvs.end(), { uv.x, uv.y } ); FIXME
 		}
 
-		geo->indices.reserve(scene->mMeshes[i]->mNumFaces);
+		geo->positions = vertices;
+		geo->normals = normals;
+
+		std::vector<unsigned int> indices;
+		indices.reserve(scene->mMeshes[i]->mNumFaces);
 
 		for (unsigned f = 0; f < scene->mMeshes[i]->mNumFaces; ++f) {
 			const aiFace& face = scene->mMeshes[i]->mFaces[f];
-			geo->indices.insert(geo->indices.end(), { face.mIndices[0], face.mIndices[1], face.mIndices[2] } );
+			indices.insert(indices.end(), { face.mIndices[0], face.mIndices[1], face.mIndices[2] } );
 		}
 
-		//TODO Bones
+		geo->indices = indices;
 
-		geo->indicesNeedUpdate = true;
+		//TODO Bones
 
 		obj->add(mesh);
 

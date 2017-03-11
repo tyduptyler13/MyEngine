@@ -69,7 +69,7 @@ namespace MyUPlay {
 					return &frag;
 				}
 
-				void prepare(Camera<float>*, Mesh<float>*, const std::vector<Light<float>*>&){
+				void prepare(unsigned, Camera<float>*, Mesh<float>*, const std::vector<Light<float>*>&){
 					if (this->dirty) compile();
 				}
 				void prepare(GLuint tex);
@@ -118,7 +118,7 @@ namespace MyUPlay {
 
 				Input<Vector4f> gl_Position; //Window coords
 
-				void prepare(Camera<float>* camera, Mesh<float>* object, const std::vector<Light<float>*>& lights) override;
+				void prepare(unsigned contextID, Camera<float>* camera, Mesh<float>* object, const std::vector<Light<float>*>& lights) override;
 
 				std::string getStatic() const override {
 					return "attribute vec3 position;\n"
@@ -186,7 +186,7 @@ namespace MyUPlay {
 				Output<Vector4f> gl_FragCoord;
 				Output<bool> gl_FrontFacing;
 
-				void prepare(Camera<float>* camera, Mesh<float>* object, const std::vector<Light<float>*>& lights) override;
+				void prepare(unsigned contextID, Camera<float>* camera, Mesh<float>* object, const std::vector<Light<float>*>& lights) override;
 
 				std::string getStatic() const override {
 					return "varying vec3 fPosition;\n"
@@ -221,7 +221,7 @@ namespace MyUPlay {
 					fragmentShaderRoot = std::make_unique<GLES2Fragment>(this);
 				}
 
-				void prepare(Camera<float>* camera, Mesh<float>* object, const std::vector<Light<float>*>& lights) override;
+				void prepare(unsigned contextID, Camera<float>* camera, Mesh<float>* object, const std::vector<Light<float>*>& lights) override;
 
 			};
 

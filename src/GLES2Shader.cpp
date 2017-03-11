@@ -1,6 +1,6 @@
 
 #include <exception>
-#include <unordered_set>
+#include <unordered_map>
 
 #include "../include/Shader/GLES2Shader.hpp"
 #include "Log.hpp"
@@ -171,12 +171,37 @@ void GLES2FlatShader::prepare(GLuint tex) {
 
 }
 
-void GLES2ForwardShader::prepare(Camera<float>* camera, Mesh<float>* object, const vector<Light<float>*>& lights){
-	this->vertexShaderRoot->prepare(camera, object, lights);
-	this->fragmentShaderRoot->prepare(camera, object, lights);
+void GLES2ForwardShader::prepare(unsigned contextID, Camera<float>* camera, Mesh<float>* object, const vector<Light<float>*>& lights){
+	this->vertexShaderRoot->prepare(contextID, camera, object, lights);
+	this->fragmentShaderRoot->prepare(contextID, camera, object, lights);
 }
 
-void GLES2Vertex::prepare(Camera<float>* camera, Mesh<float>* object, const std::vector<Light<float>*>& lights) {
+static unordered_map<string, unsigned> knownBuffers;
+
+template <typename T1>
+static void setupBuffer(const string& scid, BufferAttribute<T1>& ba, unsigned int type) {
+	if (knownBuffers.find(scid + ba.getUUID()) == knownBuffers.end()) {
+
+		unsigned bufp;
+
+		glGenBuffers(1, &bufp);
+
+		ba.onUpdate([bufp](const BufferAttribute<T1>& ba, const std::vector<T1>& buf){
+
+			glBindBuffer(type, bufp);
+
+			glBufferData(type, sizeof(unsigned int) * buf.size(), buf.data(), ba.dynamic ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
+
+		}).onDelete([bufp](const BufferAttribute<unsigned int>&){
+			glDeleteBuffers(1, &bufp);
+		});
+
+		knownBuffers[scid + ba.getUUID()] = bufp;
+
+	}
+}
+
+void GLES2Vertex::prepare(unsigned contextID, Camera<float>* camera, Mesh<float>* object, const std::vector<Light<float>*>& lights) {
 
 	if (shader->dirty) shader->compile(); //Check if the shader needs an update
 
@@ -191,50 +216,30 @@ void GLES2Vertex::prepare(Camera<float>* camera, Mesh<float>* object, const std:
 
 	glBindVertexArrayOES(geometry->vertexObject);*/
 
-	if (geometry->indicesNeedUpdate) {
 
-		if (geometry->indexBuffer == 0) {
-			glGenBuffers(1, &geometry->indexBuffer); //TODO Move this value somewhere we can manage its memory
-		}
+	const string scid = to_string(contextID);
 
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, geometry->indexBuffer);
-		//TODO look into if we should always static draw
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * geometry->getIndices().size(), geometry->getIndices().data(), GL_STATIC_DRAW);
+	if (geometry->isBufferGeometry()){
 
-		geometry->indicesNeedUpdate = false;
+		BufferAttribute<unsigned int>& indices = dynamic_cast<BufferGeometry<float>*>(geometry)->getIndices();
+
+		setupBuffer<unsigned int>(scid, indices, GL_ELEMENT_ARRAY_BUFFER);
 
 	}
 
-	if (geometry->verticesNeedUpdate) {
+	BufferAttribute<float>& positions = geometry->getPositions();
 
-		if (geometry->vertexBuffer == 0){
-			glGenBuffers(1, &geometry->vertexBuffer); //TODO Move this value somewhere we can manage its memory
-		}
+	setupBuffer<float>(scid, positions, GL_ARRAY_BUFFER);
 
-		glBindBuffer(GL_ARRAY_BUFFER, geometry->vertexBuffer);
-		//TODO look into if we should always static draw
-		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * geometry->getVertices().size(), geometry->getVertices().data(), GL_STATIC_DRAW);
+	BufferAttribute<float>& normals = geometry->getNormals();
 
-		geometry->verticesNeedUpdate = false;
+	setupBuffer<float>(scid, normals, GL_ARRAY_BUFFER);
 
-	}
-
-	if (geometry->normalsNeedUpdate) {
-		if (geometry->normalBuffer == 0){
-			glGenBuffers(1, &geometry->normalBuffer); //TODO Move this value somewhere we can manage its memory
-		}
-
-		glBindBuffer(GL_ARRAY_BUFFER, geometry->normalBuffer);
-		//TODO look into if we should always static draw
-		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * geometry->getNormals().size(), geometry->getNormals().data(), GL_STATIC_DRAW);
-
-		geometry->normalsNeedUpdate = false;
-	}
 
 	GLint posLoc = shader->getAttribLoc("position");
 
 	if (posLoc != -1) {
-		glBindBuffer(GL_ARRAY_BUFFER, geometry->vertexBuffer);
+		glBindBuffer(GL_ARRAY_BUFFER, knownBuffers[scid + geometry->getPositions().getUUID()]);
 		glEnableVertexAttribArray(posLoc);
 		glVertexAttribPointer(posLoc, 3, GL_FLOAT, GL_FALSE, 0, 0);
 	}
@@ -242,7 +247,7 @@ void GLES2Vertex::prepare(Camera<float>* camera, Mesh<float>* object, const std:
 	GLint normLoc = shader->getAttribLoc("normal");
 
 	if (normLoc != -1) {
-		glBindBuffer(GL_ARRAY_BUFFER, geometry->normalBuffer);
+		glBindBuffer(GL_ARRAY_BUFFER, knownBuffers[scid + geometry->getNormals().getUUID()]);
 		glEnableVertexAttribArray(normLoc);
 		glVertexAttribPointer(normLoc, 3, GL_FLOAT, GL_FALSE, 0, 0);
 	}
@@ -279,7 +284,7 @@ void GLES2Vertex::prepare(Camera<float>* camera, Mesh<float>* object, const std:
 
 }
 
-void GLES2Fragment::prepare(Camera<float>*, Mesh<float>*, const std::vector<Light<float>*>&) {
+void GLES2Fragment::prepare(unsigned, Camera<float>*, Mesh<float>*, const std::vector<Light<float>*>&) {
 
 	//TODO Handle custom attributes, otherwise we have 0 things to add by default.
 	//FIXME Custom attribute handling should be handled by a base class. (Is this the base class?)
