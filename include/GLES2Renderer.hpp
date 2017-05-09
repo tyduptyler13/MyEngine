@@ -4,8 +4,6 @@
 #include <string>
 #include <unordered_map>
 
-#define GLFW_INCLUDE_ES2
-
 #include "GLFWManager.hpp"
 #include "Renderer.hpp"
 #include "Frustum.hpp"
@@ -22,7 +20,7 @@ namespace MyUPlay {
 			 * Antialias should be set to a value 0 (off), or 2-4 for varying samples (on).
 			 */
 			GLES2Renderer(unsigned antialias = 0, GLFWmonitor* monitor = nullptr, GLES2Renderer* share = nullptr);
-			~GLES2Renderer();
+			virtual ~GLES2Renderer();
 
 			void setScissor(int x, int y, unsigned width, unsigned height);
 			void setScissorTest(bool enable = true);

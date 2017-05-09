@@ -5,6 +5,10 @@
 
 #include <SOIL.h>
 
+//Informs glfw to include some things automatically.
+#define GLFW_INCLUDE_ES2
+#define GLFW_INCLUDE_GLEXT
+
 #include "Log.hpp"
 #include "GLES2Renderer.hpp"
 #include "Vector4.hpp"
@@ -15,10 +19,6 @@
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
 #endif
-
-//Must come after GLES2Renderer aka GLFW3.h which includes GLES2/gl2.h
-#include <GLES2/gl2.h>
-#include <GLES2/gl2ext.h>
 
 //Emscriptens headers are missing these.
 #ifndef GLFW_FALSE
@@ -40,8 +40,11 @@ static Log logger("GLES2Renderer");
 
 GLES2Renderer::GLES2Renderer(unsigned antialias, GLFWmonitor* monitor, GLES2Renderer* share) : Renderer() {
 
+	logger.log("Preparing GLES2Renderer");
+
 	std::vector<std::pair<int, int>> hints = {{
 			std::make_pair(GLFW_CLIENT_API, GLFW_OPENGL_ES_API), //Hard constraint.
+			std::make_pair(GLFW_CONTEXT_CREATION_API, GLFW_EGL_CONTEXT_API),
 			std::make_pair(GLFW_CONTEXT_VERSION_MAJOR, 2),
 			std::make_pair(GLFW_CONTEXT_VERSION_MINOR, 0),
 			std::make_pair(GLFW_SAMPLES, antialias)

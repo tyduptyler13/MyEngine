@@ -23,7 +23,8 @@
 				'src/nbind/BufferGeometry.cpp',
 				'src/nbind/Geometry.cpp',
 				'src/nbind/Materials/GLES2NormalMaterial.cpp',
-				'src/nbind/SoundObject.cpp'
+				'src/nbind/SoundObject.cpp',
+				'src/nbind/GL32Renderer.cpp'
 			],
 			'dependencies': [ 'build.gyp:MyEngine' ],
 			'cflags': [

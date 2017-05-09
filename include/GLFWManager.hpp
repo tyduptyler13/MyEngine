@@ -42,10 +42,10 @@ namespace MyUPlay {
 				if (instances == 0){
 
 					if (!glfwInit()){
-						glfwSetErrorCallback(errorCallback);
-						glfwLog.error("Something went wrong!");
+						glfwLog.error("Something went wrong initializing GLFW!");
 						throw std::runtime_error("Failed to initialize GLFW!");
 					}
+					glfwSetErrorCallback(errorCallback);
 					glfwLog.log("Initialized");
 
 				}

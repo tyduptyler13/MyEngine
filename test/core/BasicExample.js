@@ -5,7 +5,17 @@ var Clock = require('../../lib/Clock.js');
 
 var scene = new lib.Scene();
 
-var renderer = new lib.GLES2Renderer(4);
+var renderer;
+try {
+	renderer = new lib.GLES2Renderer(4);
+} catch(e) {
+	console.log("GLES2 Renderer doesn't appear to be available. Trying OpenGL 3.2");
+	try {
+		renderer = new lib.GL32Renderer(4);
+	} catch (e) {
+		throw "Failed to load a renderer! GLES2 and GL3.2 are both unavailable.";
+	}
+}
 
 var camera = new lib.PerspectiveCamera(90, 800/600, 0.1, 2000);
 

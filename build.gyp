@@ -12,6 +12,7 @@
 				"src/GLES2Renderer.cpp",
 				"src/GLES2MaterialLib.cpp",
 				"src/GLES2RenderTarget.cpp",
+				"src/GL32Renderer.cpp",
 				"src/Texture.cpp",
 				"src/GeometryImporter.cpp",
 				"src/GLFWManager.cpp",
@@ -69,6 +70,59 @@
 							}
 						}]
 					]
+				}],
+				['OS=="win"', {
+					"variables": {
+						"LOCALROOT%": "<(module_root_dir)/local"
+					},
+					"direct_dependent_settings": {
+						"include_dirs": [
+							"include/Graphics",
+							"<(LOCALROOT)/include"
+						]
+					},
+					"link_settings": {
+						"libraries": [
+							"<(LOCALROOT)/lib/glfw3.lib",
+							"<(LOCALROOT)/lib/assimp-vc140-mt.lib",
+							"<(LOCALROOT)/lib/zlibstatic.lib",
+							"<(module_root_dir)/lib/libGLESv2.lib",
+							"-lgdi32",
+							"-lopengl32",
+							"-llegacy_stdio_definitions"
+						]
+					},
+					"include_dirs": [
+						"include/Graphics",
+						"<(LOCALROOT)/include",
+						"<(LOCALROOT)/include"
+					],
+					"copies": [
+						{
+							"destination": "<(module_root_dir)/build/Release",
+							"files": [
+								"<(module_root_dir)/local/bin/assimp-vc140-mt.dll",
+								"<(module_root_dir)/lib/libEGL.dll",
+								"<(module_root_dir)/lib/libGLESv2.dll"
+							]
+						},
+						{
+							"destination": "<(module_root_dir)/build/Debug",
+							"files": [
+								"<(module_root_dir)/local/bin/assimp-vc140-mt.dll",
+								"<(module_root_dir)/lib/libEGL.dll",
+								"<(module_root_dir)/lib/libGLESv2.dll"
+							]
+						}
+					],
+					"msvs_settings": {
+						"VCCLCompilerTool": {
+							"RuntimeLibrary": 2, #shared release
+							"RuntimeTypeInfo": 'true',
+							"AdditionalOptions": ["/GR", "/MD"]
+						}
+					},
+					"type": "static_library"
 				}]
 			],
 			"ldflags": [ "-L../lib" ],
@@ -232,7 +286,18 @@
 				"include_dirs": [
 					"deps/glsl-optimizer/src"
 				]
-			}
+			},
+			"conditions": [
+				['OS=="win"', {
+					"msvs_settings": {
+						"VCCLCompilerTool": {
+							"RuntimeLibrary": 2,
+							"RuntimeTypeInfo": 'true',
+							"AdditionalOptions": ["/GR", "/MD"]
+						}
+					}
+				}]
+			]
 		}
 	]
 }

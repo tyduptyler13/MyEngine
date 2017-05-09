@@ -59,12 +59,12 @@ namespace MyUPlay {
 			extern const double PI;
 
 			template <typename T>
-			constexpr T degToRad(T degrees){
+			T degToRad(T degrees){
 				return degrees * ( PI / 180.0 );
 			}
 
 			template <typename T>
-			constexpr T radToDeg(T radians){
+			T radToDeg(T radians){
 				return radians * ( 180.0 / PI );
 			}
 
