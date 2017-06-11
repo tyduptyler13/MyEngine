@@ -29,22 +29,12 @@ namespace MyUPlay {
 #include "Camera.hpp"
 #include "Material.hpp"
 #include "Texture.hpp"
-#include "Shader/Shader.hpp"
 #include "Quaternion.hpp"
 
 template <typename T = float>
-class MyUPlay::MyEngine::Renderer {
-	//protected:
-
-	//Removed, it is up to each renderer to define its own lock.
-	//std::recursive_mutex rendLock;
-
-public:
+struct MyUPlay::MyEngine::Renderer {
 
 	virtual ~Renderer(){}
-
-	T sortEpsilon = 0.1;
-	T frustumEpsilon = 0.1;
 
 	unsigned currentLineWidth;
 

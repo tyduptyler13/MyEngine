@@ -54,7 +54,8 @@ namespace MyUPlay {
 
 			float r = 1,
 			      g = 1,
-			      b = 1;
+			      b = 1,
+				  a = 1; //Always included but not always used.
 
 			Color(){}
 			Color(const Color& c) : r(c.r), g(c.g), b(c.b){}
