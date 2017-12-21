@@ -25,6 +25,17 @@ __Mod API/Scripting__: [Nodejs](https://nodejs.org/en/). All of our mods will be
 News
 ====
 
+End of 2017
+-----------
+Hi, I want to keep people posted, seeing as I have a couple stars and watchers. I haven't abandoned this project, I have just been busy with work and life. Since my last commit I have learned several useful coding techniques that I will probably integrate into the engine. Additionally, I have been experimenting with unreal engine and would like to take features I like and try to implement them here as well.
+
+My plans for the engine will be to use a better organization strategy for code and attempt to implement/use a dependency injection library to see if c++ is friendly to it. After that I will finish polishing the new renderer and get everything compiling again, then push hard to get some of the skeleton parts for writing an actual game. *Maybe a course on using the engine would be a good way to test the engine and teach people how to use it most effectively.*
+
+Anyways, I will be back to coding soon.
+
+Older
+-----
+
 We have finally released version Alpha-1 which includes the first working version of the GLES2Renderer and the Shader compiler.
 
 I am really proud of the shader compiler as it is node based, aka you can drag and drop nodes to create shaders without even having
