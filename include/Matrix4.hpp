@@ -6,6 +6,8 @@
 #include <stdexcept>
 #include <cmath>
 
+#include "Log.hpp"
+
 namespace MyUPlay {
 	namespace MyEngine {
 		template <typename T> class Matrix4;
@@ -25,7 +27,7 @@ class MyUPlay::MyEngine::Matrix4 {
 
 private:
 
-	Log console = Log("Matrix4");
+	std::shared_ptr<spdlog::logger> console = getLogger("Matrix4");
 
 public:
 
@@ -444,7 +446,12 @@ public:
 
 	}
 
-	std::vector<Vector3<T> > applyToVector3Array(std::vector<Vector3<T> >& array, unsigned offset = 0, unsigned length = 0) {
+	std::vector<Vector3 < T> >
+	applyToVector3Array(std::vector<Vector3 < T>>
+	& array,
+	unsigned offset = 0,
+	unsigned length = 0
+	) {
 
 		Vector3<T> v1;
 
@@ -519,7 +526,7 @@ public:
 
 			} else {
 
-				console.warn(msg);
+				console->warn(msg);
 
 			}
 

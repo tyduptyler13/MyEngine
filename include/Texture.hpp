@@ -6,8 +6,6 @@
 #include <functional>
 #include <vector>
 
-#include <SOIL.h>
-
 #include "Math.hpp"
 #include "Constants.hpp"
 #include "Vector2.hpp"
@@ -55,9 +53,9 @@ namespace MyUPlay {
 			std::unique_ptr<std::function<void(Texture*)> > onUpdate = NULL;
 
 			Texture(const std::string& image, MappingMode mapping = DEFAULT_MAPPING,
-					WrappingMode wrapS = ClampToEdgeWrapping, WrappingMode wrapT = ClampToEdgeWrapping,
-					FilterConstant magFilter = LinearFilter, FilterConstant minFilter = LinearMipMapLinearFilter,
-					short anisotropy = 1, int format = SOIL_LOAD_AUTO)
+			        WrappingMode wrapS = ClampToEdgeWrapping, WrappingMode wrapT = ClampToEdgeWrapping,
+			        FilterConstant magFilter = LinearFilter, FilterConstant minFilter = LinearMipMapLinearFilter,
+			        short anisotropy = 1, int format = 0)
 			: sourceFile(image), format(format), mapping(mapping), wrapS(wrapS), wrapT(wrapT),
 			  magFilter(magFilter), minFilter(minFilter), anisotropy(anisotropy) {
 				loadImage();

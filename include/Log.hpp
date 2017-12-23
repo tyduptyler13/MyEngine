@@ -1,13 +1,8 @@
-/*
- * Log.hpp
- *
- *  Created on: May 14, 2017
- *      Author: tyler
- */
-
-#ifndef INCLUDE_LOG_HPP_
-#define INCLUDE_LOG_HPP_
+#ifndef MYENGINE_LOG
+#define MYENGINE_LOG
 
 #include "spdlog/spdlog.h"
 
-#endif /* INCLUDE_LOG_HPP_ */
+std::shared_ptr<spdlog::logger> getLogger(const std::string& name);
+
+#endif //MYENGINE_LOG_HPP

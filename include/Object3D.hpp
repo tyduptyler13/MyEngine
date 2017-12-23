@@ -8,9 +8,12 @@
 #include <memory>
 #include <algorithm>
 
+#include "Log.hpp"
+
 namespace MyUPlay {
 	namespace MyEngine {
-		template <typename T> class Object3D;
+		template <typename T>
+		class Object3D;
 	}
 }
 
@@ -24,12 +27,12 @@ namespace MyUPlay {
 
 template <typename T = float>
 class MyUPlay::MyEngine::Object3D {
-private:
+	private:
 
-	Log logger = Log("Object3D");
+	std::shared_ptr<spdlog::logger> logger = getLogger("Object3D");
 	Euler<T> rotation;
 
-public:
+	public:
 
 	enum ObjectType { //The following are the supported types for objects. Each has different rendering properties.
 		BASIC, //A container, does not render
@@ -57,11 +60,11 @@ public:
 	 */
 	std::vector<std::shared_ptr<Object3D>> children;
 
-	Vector3<T> up = Vector3<T>(0, 1, 0);
+	Vector3 <T> up = Vector3<T>(0, 1, 0);
 
-	Vector3<T> position;
+	Vector3 <T> position;
 	Quaternion<T> quaternion;
-	Vector3<T> scale = Vector3<T>(1, 1, 1);
+	Vector3 <T> scale = Vector3<T>(1, 1, 1);
 
 	bool rotationAutoUpdate = true;
 	Matrix4<T> matrix;
@@ -82,9 +85,10 @@ public:
 	unsigned renderOrder = 0;
 
 	Object3D(ObjectType t = BASIC) : type(t) {}
-	virtual ~Object3D(){}
 
-	Object3D(const Object3D& o){
+	virtual ~Object3D() {}
+
+	Object3D(const Object3D& o) {
 		copy(o);
 	}
 
@@ -94,89 +98,99 @@ public:
 		return *this;
 	}
 
-	Object3D& setRotationAxisAngle(const Vector3<T>& axis, float angle){
+	Object3D& setRotationAxisAngle(const Vector3 <T>& axis, float angle) {
 		quaternion.setFromAxisAngle(axis, angle);
 		return *this;
 	}
-	Object3D& setRotationFromEuler(const Euler<T>& e){
+
+	Object3D& setRotationFromEuler(const Euler<T>& e) {
 		quaternion.setFromEuler(e, true);
 		return *this;
 	}
-	Object3D& setRotationFromMatrix(const Matrix4<T>& m){
+
+	Object3D& setRotationFromMatrix(const Matrix4<T>& m) {
 		quaternion.setFromRotationMatrix(m);
 		return *this;
 	}
-	Object3D& setRotationFromQuaternion(const Quaternion<T>& q){
+
+	Object3D& setRotationFromQuaternion(const Quaternion<T>& q) {
 		quaternion = q;
 		return *this;
 	}
 
-	Object3D& rotateOnAxis(Vector3<T> axis, float angle) {
+	Object3D& rotateOnAxis(Vector3 <T> axis, float angle) {
 		Quaternion<T> q1;
 		q1.setFromAxisAngle(axis, angle);
 		quaternion *= q1;
 		return *this;
 	}
+
 	Object3D& rotateX(float angle) {
-		const Vector3<T> v1(1, 0, 0);
-		rotateOnAxis(v1, angle);
-		return *this;
-	}
-	Object3D& rotateY(float angle){
-		const Vector3<T> v1(0, 1, 0);
-		rotateOnAxis(v1, angle);
-		return *this;
-	}
-	Object3D& rotateZ(float angle){
-		const Vector3<T> v1(0, 0, 1);
+		const Vector3 <T> v1(1, 0, 0);
 		rotateOnAxis(v1, angle);
 		return *this;
 	}
 
-	Object3D& translateOnAxis(Vector3<T> axis, float distance){
-		Vector3<T> v1(axis);
+	Object3D& rotateY(float angle) {
+		const Vector3 <T> v1(0, 1, 0);
+		rotateOnAxis(v1, angle);
+		return *this;
+	}
+
+	Object3D& rotateZ(float angle) {
+		const Vector3 <T> v1(0, 0, 1);
+		rotateOnAxis(v1, angle);
+		return *this;
+	}
+
+	Object3D& translateOnAxis(Vector3 <T> axis, float distance) {
+		Vector3 <T> v1(axis);
 		v1.applyQuaternion(quaternion);
 		position += v1 * distance;
 		return *this;
 	}
-	Object3D& translateX(float distance){
-		const Vector3<T> v1(1, 0, 0);
-		translateOnAxis(v1, distance);
-		return *this;
-	}
-	Object3D& translateY(float distance){
-		const Vector3<T> v1(0, 1, 0);
-		translateOnAxis(v1, distance);
-		return *this;
-	}
-	Object3D& translateZ(float distance){
-		const Vector3<T> v1(0, 0, 1);
+
+	Object3D& translateX(float distance) {
+		const Vector3 <T> v1(1, 0, 0);
 		translateOnAxis(v1, distance);
 		return *this;
 	}
 
-	Vector3<T>& localToWorld(Vector3<T>& vector) const {
+	Object3D& translateY(float distance) {
+		const Vector3 <T> v1(0, 1, 0);
+		translateOnAxis(v1, distance);
+		return *this;
+	}
+
+	Object3D& translateZ(float distance) {
+		const Vector3 <T> v1(0, 0, 1);
+		translateOnAxis(v1, distance);
+		return *this;
+	}
+
+	Vector3 <T>& localToWorld(Vector3 <T>& vector) const {
 		return vector.applyMatrix4(matrixWorld);
 	}
-	Vector3<T>& worldToLocal(Vector3<T>& vector) const {
+
+	Vector3 <T>& worldToLocal(Vector3 <T>& vector) const {
 		return vector.applyMatrix4(Matrix4<T>().getInverse(matrixWorld));
 	}
 
-	Object3D& lookAt(const Vector3<T>& vector){
+	Object3D& lookAt(const Vector3 <T>& vector) {
 		Matrix4<T> m1 = Matrix4<T>().lookAt(vector, position, up);
 		quaternion.setFromRotationMatrix(m1);
 		return *this;
 	}
 
-	Object3D& add(std::vector<Object3D*> objects){
-		for (Object3D* o : objects){
+	Object3D& add(std::vector<Object3D*> objects) {
+		for (Object3D* o : objects) {
 			add(o);
 		}
 		return *this;
 	}
 
-	Object3D& add(Object3D* object){
-		if (object->parent != nullptr){
+	Object3D& add(Object3D* object) {
+		if (object->parent != nullptr) {
 			object->parent->remove(object);
 		}
 
@@ -187,7 +201,7 @@ public:
 	}
 
 	Object3D& add(std::shared_ptr<Object3D> object) {
-		if (object->parent != nullptr){
+		if (object->parent != nullptr) {
 			object->parent->remove(object);
 		}
 
@@ -197,8 +211,8 @@ public:
 		return *this;
 	}
 
-	Object3D& remove(std::vector<Object3D*> objects){
-		for (Object3D* o : objects){
+	Object3D& remove(std::vector<Object3D*> objects) {
+		for (Object3D* o : objects) {
 			remove(o);
 		}
 		return *this;
@@ -212,13 +226,13 @@ public:
 	 * If you wish to keep the object after removal, be sure you have obtained a copy of the shared
 	 * pointer created either in the add function or passed to the add function.
 	 */
-	Object3D& remove(Object3D* object){
+	Object3D& remove(Object3D* object) {
 
-		auto loc = std::find_if(children.begin(), children.end(), [object](const std::shared_ptr<Object3D>& p){
+		auto loc = std::find_if(children.begin(), children.end(), [object](const std::shared_ptr<Object3D>& p) {
 			return p.get() == object;
 		});
 
-		if (loc != children.end()){
+		if (loc != children.end()) {
 			object->parent = nullptr; //Reset parent pointer to null;
 			children.erase(loc);
 		}
@@ -231,108 +245,120 @@ public:
 	 * This assumes that you still have a reference to the objects shared_ptr
 	 * and thus there is little risk of accidental memory freeing.
 	 */
-	Object3D& remove(std::shared_ptr<Object3D> obj){
+	Object3D& remove(std::shared_ptr<Object3D> obj) {
 		return remove(obj.get());
 	}
 
 	Object3D* getObjectById(const Math::UUID& id) const {
 		for (auto o : children) {
-			if (o->uuid == id){
+			if (o->uuid == id) {
 				return o;
 			}
 
 			auto o2 = o->getObjectById(id);
 
-			if (o2){
+			if (o2) {
 				return o2;
 			}
 		}
 		return nullptr;
 	}
+
 	inline Object3D* getObjectByName(std::string&& s) const { //Test move version.
 		return getObjectByName(s);
 	}
+
 	Object3D* getObjectByName(const std::string& name) const {
 		for (auto& o : children) {
-			if (o->name == name){
+			if (o->name == name) {
 				return o.get();
 			}
 
 			auto o2 = o->getObjectByName(name);
 
-			if (o2){
+			if (o2) {
 				return o2;
 			}
 		}
 		return nullptr;
 	}
 
-	Vector3<T> getWorldPosition() {
-		Vector3<T> v1;
+	Vector3 <T> getWorldPosition() {
+		Vector3 <T> v1;
 		return getWorldPosition(v1);
 	}
+
 	Quaternion<T> getWorldQuaternion() {
 		Quaternion<T> q;
 		return getWorldQuaternion(q);
 	}
+
 	Euler<T> getWorldRotation() {
 		Euler<T> e;
 		return getWorldRotation(e);
 	}
-	Vector3<T> getWorldScale() {
-		Vector3<T> v1;
+
+	Vector3 <T> getWorldScale() {
+		Vector3 <T> v1;
 		return getWorldScale(v1);
 	}
-	Vector3<T> getWorldDirection() {
-		Vector3<T> v1;
+
+	Vector3 <T> getWorldDirection() {
+		Vector3 <T> v1;
 		return getWorldDirection(v1);
 	}
 
-	Vector3<T>& getWorldPosition(Vector3<T>& target) {
+	Vector3 <T>& getWorldPosition(Vector3 <T>& target) {
 		updateMatrixWorld(true);
 		return target.setFromMatrixPosition(matrixWorld);
 	}
+
 	Quaternion<T>& getWorldQuaternion(Quaternion<T>& target) {
 		updateMatrixWorld(true);
-		Vector3<T> pos, scale;
+		Vector3 <T> pos, scale;
 		matrixWorld.decompose(pos, target, scale);
 		return target;
 	}
+
 	Euler<T>& getWorldRotation(Euler<T>& target) {
 		Quaternion<T> q = getWorldQuaternion();
 		return target.setFromQuaternion(q, rotation.order, false);
 	}
-	Vector3<T>& getWorldScale(Vector3<T>& target) {
+
+	Vector3 <T>& getWorldScale(Vector3 <T>& target) {
 		Quaternion<T> q;
-		Vector3<T> pos;
+		Vector3 <T> pos;
 		updateMatrixWorld(true);
 		matrixWorld.decompose(pos, q, target);
 		return target;
 	}
-	Vector3<T>& getWorldDirection(Vector3<T>& target) {
+
+	Vector3 <T>& getWorldDirection(Vector3 <T>& target) {
 		Quaternion<T> q = getWorldQuaternion();
 		return target.set(0, 0, 1).applyQuaternion(q);
 	}
 
-	Object3D& traverse(Object3D* self, std::function<void(Object3D*)> func){
+	Object3D& traverse(Object3D* self, std::function<void(Object3D * )> func) {
 		func(self);
-		for (auto o : children){
+		for (auto o : children) {
 			o->traverse(o, func);
 		}
 		return *this;
 	}
-	Object3D& traverseVisible(Object3D* self, std::function<void(Object3D*)> func){
-		if (visible){
+
+	Object3D& traverseVisible(Object3D* self, std::function<void(Object3D * )> func) {
+		if (visible) {
 			func(self);
-			for (auto o : children){
+			for (auto o : children) {
 				o->traverseVisible(o, func);
 			}
 		}
 		return *this;
 	}
-	Object3D& traverseAnsestors(Object3D* self, std::function<void(Object3D*)> func){
+
+	Object3D& traverseAnsestors(Object3D* self, std::function<void(Object3D * )> func) {
 		func(self);
-		for (auto o : children){
+		for (auto o : children) {
 			o->traverseAnsestors(o, func);
 		}
 		return *this;
@@ -396,8 +422,8 @@ public:
 		frustumCulled = o.frustumCulled;
 		renderOrder = o.renderOrder;
 
-		if (recursive){
-			for (auto& o : children){
+		if (recursive) {
+			for (auto& o : children) {
 				add(new Object3D(*o));
 			}
 		}
@@ -415,11 +441,11 @@ public:
 		this->visible = visible;
 	}
 
-	Vector3<T>& getPosition() {
+	Vector3 <T>& getPosition() {
 		return position;
 	}
 
-	void setPosition(const Vector3<T>& v) {
+	void setPosition(const Vector3 <T>& v) {
 		position = v;
 	}
 
@@ -439,11 +465,11 @@ public:
 		matrixWorldNeedsUpdate = b;
 	}
 
-	Vector3<T>& getScale() {
+	Vector3 <T>& getScale() {
 		return scale;
 	}
 
-	void setScale(const Vector3<T>& v) {
+	void setScale(const Vector3 <T>& v) {
 		scale = v;
 	}
 
@@ -463,15 +489,16 @@ public:
 		return uuid;
 	}
 
-	Object3D& operator=(const Object3D& o){
+	Object3D& operator=(const Object3D& o) {
 		return copy(o);
 	}
 
-	bool operator==(const Object3D& o){
+	bool operator==(const Object3D& o) {
 		return id == o.id;
 	}
 
-	virtual void raycast(std::shared_ptr<Object3D>&, const Raycaster<T>&, std::vector<Intersection<T> >&) const {} //TODO
+	virtual void
+	raycast(std::shared_ptr<Object3D>&, const Raycaster<T>&, std::vector<Intersection<T> >&) const {} //TODO
 
 };
 

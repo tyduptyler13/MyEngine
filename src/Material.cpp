@@ -1,5 +1,4 @@
 #include "Material.hpp"
-#include "Shader/Shader.hpp"
 
 using namespace MyUPlay::MyEngine;
 

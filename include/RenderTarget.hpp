@@ -6,13 +6,11 @@
 #include "Math.hpp"
 #include "Texture.hpp"
 
-#include "Shader/Attribute.hpp"
-
 namespace MyUPlay {
 
 	namespace MyEngine {
 
-		struct IRenderTarget : public Shader::IAttribute {
+		struct IRenderTarget {
 
 			Math::UUID uuid = Math::generateUUID();
 

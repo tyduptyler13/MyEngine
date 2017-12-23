@@ -1,11 +1,10 @@
 #include "SoundObject.hpp"
-#include "Log.hpp"
 
 using namespace MyUPlay::MyEngine;
 using namespace std;
 
 Listener* Listener::singleton = new Listener();
-static Log soundLog("Sound");
+static auto soundLog = getLogger("Sound");
 
 Listener::Listener(){
 	//TODO
