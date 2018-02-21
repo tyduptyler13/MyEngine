@@ -4,11 +4,20 @@ project(MyEngine)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+SET(CMAKE_VERBOSE_MAKEFILE ON)
+
+include(node_modules/node-cmake/NodeJS.cmake)
+nodejs_init()
+
 add_subdirectory(deps/spdlog)
+add_subdirectory(deps/bgfx.cmake)
 
 set(MYENGINE_INCLUDE_DIR include)
+set(BGFX_INCLUDES
+        deps/bgfx.cmake/bx/include
+        deps/bgfx.cmake/bgfx/include)
 
-include_directories(${MYENGINE_INCLUDE_DIR})
+include_directories(${MYENGINE_INCLUDE_DIR} ${BGFX_INCLUDES})
 
 add_library(MyEngine
         src/DefaultRenderer.cpp
@@ -18,12 +27,12 @@ add_library(MyEngine
         src/Texture.cpp
         src/Log.cpp)
 
-add_dependencies(MyEngine spdlog)
+add_dependencies(MyEngine spdlog bgfx)
 target_link_libraries(MyEngine spdlog)
 
 file(GLOB NBIND_SOURCE_FILES node_modules/nbind/src/*.cc node_modules/nbind/src/v8/*.cc)
 
-add_library(MyEngine.node SHARED
+add_nodejs_module(MyEngine_node
         ${NBIND_SOURCE_FILES}
         src/nbind/Geometries/BoxGeometry.cpp
         src/nbind/Geometries/SphereGeometry.cpp
@@ -46,15 +55,9 @@ add_library(MyEngine.node SHARED
         src/nbind/Vector3.cpp
         src/nbind/Vector4.cpp)
 
-set_target_properties(MyEngine.node PROPERTIES PREFIX "" SUFFIX "")
-target_compile_definitions(MyEngine.node PUBLIC -DBUILDING_NODE_EXTENSION)
-target_compile_definitions(MyEngine.node PUBLIC -DUSING_V8_SHARED)
-target_compile_definitions(MyEngine.node PUBLIC -DUSING_UV_SHARED)
-target_compile_definitions(MyEngine.node PUBLIC -DV8_DEPRECATION_WARNINGS)
+target_include_directories(MyEngine_node BEFORE PUBLIC node_modules/nbind/include)
 
-target_include_directories(MyEngine.node PUBLIC ${CMAKE_JS_INC} node_modules/nbind/include)
-
-target_link_libraries(MyEngine.node
+target_link_libraries(MyEngine_node
         MyEngine
         ${CMAKE_JS_LIB})
 

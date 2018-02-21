@@ -18,11 +18,6 @@ namespace MyUPlay {
 			DefaultRenderer(bgfx::RendererType type, uint16_t vendorId = BGFX_PCI_ID_NONE);
 			~DefaultRenderer();
 
-
-
-
-			virtual void createWindow();
-
 		};
 	}
 }

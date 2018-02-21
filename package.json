@@ -7,9 +7,8 @@
   "main": "test/core/BasicExample-electron.js",
   "dependencies": {
     "electron": "1.4.15",
-    "nbind": "^0.3.9"
+    "nbind": "^0.3.9",
+    "node-cmake": "^2.5.1"
   },
-  "scripts": {
-    "install": "make"
-  }
+  "scripts": {}
 }
