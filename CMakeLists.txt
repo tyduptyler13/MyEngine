@@ -4,7 +4,7 @@ project(MyEngine)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-SET(CMAKE_VERBOSE_MAKEFILE ON)
+#SET(CMAKE_VERBOSE_MAKEFILE ON)
 
 include(node_modules/node-cmake/NodeJS.cmake)
 nodejs_init()
@@ -36,14 +36,9 @@ add_nodejs_module(MyEngine_node
         ${NBIND_SOURCE_FILES}
         src/nbind/Geometries/BoxGeometry.cpp
         src/nbind/Geometries/SphereGeometry.cpp
-        src/nbind/Materials/GLES2NormalMaterial.cpp
         src/nbind/BufferGeometry.cpp
         src/nbind/Camera.cpp
         src/nbind/Geometry.cpp
-        src/nbind/GeometryImporter.cpp
-        src/nbind/GLES2MaterialLib.cpp
-        src/nbind/GLES2OverlaySystem.cpp
-        src/nbind/GLES2Renderer.cpp
         src/nbind/Material.cpp
         src/nbind/Mesh.cpp
         src/nbind/Object3D.cpp
@@ -56,6 +51,13 @@ add_nodejs_module(MyEngine_node
         src/nbind/Vector4.cpp)
 
 target_include_directories(MyEngine_node BEFORE PUBLIC node_modules/nbind/include)
+set_property(TARGET MyEngine_node PROPERTY CXX_STANDARD 14)
+
+if (CMAKE_CXX_COMPILER MATCHES "/em\\+\\+(-[a-zA-Z0-9.])?$")
+    message(" * C++ compiler: Emscripten")
+else ()
+    target_compile_definitions(MyEngine_node PRIVATE BUILDING_NODE_EXTENSION)
+endif ()
 
 target_link_libraries(MyEngine_node
         MyEngine

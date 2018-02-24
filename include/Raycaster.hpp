@@ -64,7 +64,7 @@ private:
 
 		o->raycast(r, intersects);
 
-		if (recursive == true) {
+		if (recursive) {
 
 			for (const std::shared_ptr<Object3D<T>>& child : o->children) {
 				intersectObject(child, r, intersects, true);
