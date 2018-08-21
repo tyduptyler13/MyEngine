@@ -17,8 +17,6 @@ set(BGFX_INCLUDES
         deps/bgfx.cmake/bx/include
         deps/bgfx.cmake/bgfx/include)
 
-include_directories(${MYENGINE_INCLUDE_DIR} ${BGFX_INCLUDES})
-
 add_library(MyEngine
         src/DefaultRenderer.cpp
         src/Material.cpp
@@ -26,6 +24,8 @@ add_library(MyEngine
         src/SoundObject.cpp
         src/Texture.cpp
         src/Log.cpp)
+
+target_include_directories(MyEngine PUBLIC ${MYENGINE_INCLUDE_DIR} ${BGFX_INCLUDES})
 
 add_dependencies(MyEngine spdlog bgfx)
 target_link_libraries(MyEngine spdlog)

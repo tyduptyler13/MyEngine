@@ -3,12 +3,9 @@
 *.log
 
 build
-deps/gyp
+cmake-build*
 
 node_modules
-
-src/ShaderChunk.cpp
-include/ShaderChunk/ShaderChunk.hpp
 
 *.so
 

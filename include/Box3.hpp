@@ -101,29 +101,17 @@ namespace MyUPlay {
 
 			bool containsPoint(const Vector3<T>& point)  {
 
-				if (point.x < min.x || point.x > max.x ||
-				    point.y < min.y || point.y > max.y ||
-				    point.z < min.z || point.z > max.z) {
-
-					return false;
-
-				}
-
-				return true;
+				return !(point.x < min.x || point.x > max.x ||
+						 point.y < min.y || point.y > max.y ||
+						 point.z < min.z || point.z > max.z);
 
 			}
 
 			bool containsBox(const Box3& box)  {
 
-				if (( min.x <= box.min.x ) && ( box.max.x <= max.x ) &&
-				    ( min.y <= box.min.y ) && ( box.max.y <= max.y ) &&
-				    ( min.z <= box.min.z ) && ( box.max.z <= max.z )) {
-
-					return true;
-
-				}
-
-				return false;
+				return (min.x <= box.min.x) && (box.max.x <= max.x) &&
+					   (min.y <= box.min.y) && (box.max.y <= max.y) &&
+					   (min.z <= box.min.z) && (box.max.z <= max.z);
 
 			}
 
@@ -138,15 +126,9 @@ namespace MyUPlay {
 
 			bool isIntersectionBox(const Box3& box)  {
 
-				if ( box.max.x < min.x || box.min.x > max.x ||
-				     box.max.y < min.y || box.min.y > max.y ||
-				     box.max.z < min.z || box.min.z > max.z ) {
-
-					return false;
-
-				}
-
-				return true;
+				return !(box.max.x < min.x || box.min.x > max.x ||
+						 box.max.y < min.y || box.min.y > max.y ||
+						 box.max.z < min.z || box.min.z > max.z);
 
 			}
 

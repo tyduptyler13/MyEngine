@@ -1,5 +1,4 @@
 #include "Scene.hpp"
-#include "PerspectiveCamera.hpp"
 #include "GLES2Renderer.hpp"
 
 #include "Geometries/BoxGeometry.hpp"
@@ -9,11 +8,11 @@
 using namespace std;
 using namespace MyUPlay::MyEngine;
 
-int main(){
+int main() {
 
 	Scene<> scene;
 
-	PerspectiveCamera<float>* camera = new PerspectiveCamera<float>(90, 800.0 / 600.0);
+	auto* camera = new PerspectiveCamera<float>(90, 800.0f / 600.0f);
 
 	scene.add(camera);
 
@@ -22,7 +21,7 @@ int main(){
 
 	GLES2Renderer renderer(4);
 
-	renderer.onResize([&camera](int width, int height){
+	renderer.onResize([&camera](int width, int height) {
 		camera->aspect = float(width) / float(height);
 		camera->updateProjectionMatrix();
 		//The renderer automatically manages its internal size. No need to set it like three.js
@@ -42,8 +41,8 @@ int main(){
 
 	scene.add(suzane);
 
-	renderer.loop([&](double delta){
-		float rotation = delta * Math::PI * 0.5;
+	renderer.loop([&](double delta) {
+		float rotation = static_cast<float>(delta * Math::PI * 0.5f);
 		box->rotateY(rotation);
 		suzane->rotateY(rotation);
 
@@ -54,6 +53,5 @@ int main(){
 	});
 
 	return 0;
-
 }
 

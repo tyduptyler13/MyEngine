@@ -65,27 +65,15 @@ namespace MyUPlay {
 
 			bool containsPoint(const Vector2<T>& point){
 
-				if (point.x < min.x || point.x > max.x ||
-						point.y < min.y || point.y > max.y) {
-
-					return false;
-
-				}
-
-				return true;
+				return !(point.x < min.x || point.x > max.x ||
+				         point.y < min.y || point.y > max.y);
 
 			}
 
 			bool containsBox(const Box2& box){
 
-				if (min.x <= box.min.x && box.max.x <= max.x &&
-						min.y <= box.min.y && box.max.y <= max.y) {
-
-					return true;
-
-				}
-
-				return false;
+				return min.x <= box.min.x && box.max.x <= max.x &&
+				       min.y <= box.min.y && box.max.y <= max.y;
 
 			}
 
@@ -98,11 +86,8 @@ namespace MyUPlay {
 
 			bool isIntersectionBox(const Box2& box) const {
 
-				if (box.max.x < min.x || box.min.x > max.x ||
-						box.max.y < min.y || box.min.y > max.y) {
-					return false;
-				}
-				return true;
+				return !(box.max.x < min.x || box.min.x > max.x ||
+				         box.max.y < min.y || box.min.y > max.y);
 
 			}
 

@@ -3,8 +3,8 @@
 
 #include "Renderer.hpp"
 
-#include <bgfx/bgfx.h>
-#include <bgfx/defines.h>
+#include "bgfx/bgfx.h"
+#include "bgfx/defines.h"
 
 namespace MyUPlay {
 	namespace MyEngine {
@@ -16,6 +16,7 @@ namespace MyUPlay {
 		struct DefaultRenderer : public Renderer<float> {
 
 			DefaultRenderer(bgfx::RendererType type, uint16_t vendorId = BGFX_PCI_ID_NONE);
+
 			~DefaultRenderer();
 
 		};
