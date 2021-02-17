@@ -1,98 +1,98 @@
-#ifndef MYUPLAY_MYENGINE_SPHEREGEOMETRY
-#define MYUPLAY_MYENGINE_SPHEREGEOMETRY
+#pragma once
 
 #include <vector>
 
 #include "BufferGeometry.hpp"
 #include "Math.hpp"
 
-namespace MyUPlay {
-	namespace MyEngine {
 
-		template <typename T>
-		struct SphereGeometry : public BufferGeometry<T> {
+namespace MyEngine {
 
-			SphereGeometry(T radius, unsigned widthSegments, unsigned heightSegments,
-					T phiStart, T phiLength = Math::PI * 2, T thetaStart = 0, T thetaLength = Math::PI){
+	template<typename T>
+	struct SphereGeometry : public BufferGeometry<T> {
 
-				widthSegments = std::max<unsigned>(3, widthSegments);
-				heightSegments = std::max<unsigned>(2, heightSegments);
+		SphereGeometry(T radius, unsigned widthSegments, unsigned heightSegments,
+		               T phiStart, T phiLength = Math::PI * 2, T thetaStart = 0, T thetaLength = Math::PI) {
 
-				const T thetaEnd = thetaStart + thetaLength;
+			widthSegments = std::max<unsigned>(3, widthSegments);
+			heightSegments = std::max<unsigned>(2, heightSegments);
 
-				unsigned index = 0;
-				std::vector<std::vector<unsigned>> grid;
+			const T thetaEnd = thetaStart + thetaLength;
 
-				Vector3<T> vertex;
-				Vector3<T> normal;
+			unsigned index = 0;
+			std::vector<std::vector<unsigned>> grid;
 
-				std::vector<unsigned int> indices;
-				std::vector<T> vertices;
-				std::vector<T> normals;
-				std::vector<T> uvs;
+			Vector3<T> vertex;
+			Vector3<T> normal;
 
-				for (unsigned iy = 0; iy <= heightSegments; ++iy){
+			std::vector<unsigned int> indices;
+			std::vector<T> vertices;
+			std::vector<T> normals;
+			std::vector<T> uvs;
 
-					std::vector<unsigned> verticesRow;
+			for (unsigned iy = 0; iy <= heightSegments; ++iy) {
 
-					T v = (T) iy / heightSegments;
+				std::vector<unsigned> verticesRow;
 
-					for (unsigned ix = 0; ix <= widthSegments; ++ix){
+				T v = (T) iy / heightSegments;
 
-						T u = (T) ix / widthSegments;
+				for (unsigned ix = 0; ix <= widthSegments; ++ix) {
 
-						vertex.x = -radius * std::cos(phiStart + u * phiLength) * std::sin(thetaStart + v * thetaLength);
-						vertex.y = radius * std::cos(thetaStart + v * thetaLength);
-						vertex.z = radius * std::sin(phiStart + u * phiLength) * std::sin(thetaStart + v * thetaLength);
+					T u = (T) ix / widthSegments;
 
-						vertices.insert(vertices.end(), {vertex.x, vertex.y, vertex.z});
+					vertex.x = -radius * std::cos(phiStart + u * phiLength) * std::sin(thetaStart + v * thetaLength);
+					vertex.y = radius * std::cos(thetaStart + v * thetaLength);
+					vertex.z = radius * std::sin(phiStart + u * phiLength) * std::sin(thetaStart + v * thetaLength);
 
-						normal.set(vertex.x, vertex.y, vertex.z).normalize();
-						normals.insert(normals.end(), {normal.x, normal.y, normal.z});
+					vertices.insert(vertices.end(), {vertex.x, vertex.y, vertex.z});
 
-						uvs.insert(uvs.end(), {u, 1 - v});
+					normal.set(vertex.x, vertex.y, vertex.z).normalize();
+					normals.insert(normals.end(), {normal.x, normal.y, normal.z});
 
-						verticesRow.push_back(index++);
+					uvs.insert(uvs.end(), {u, 1 - v});
 
-					}
-
-					grid.push_back(verticesRow);
+					verticesRow.push_back(index++);
 
 				}
 
-				//Indices
-
-				for (unsigned iy = 0; iy < heightSegments; ++iy){
-					for (unsigned ix = 0; ix < widthSegments; ++ix){
-						unsigned a = grid[iy][ix+1],
-								b = grid[iy][ix],
-								c = grid[iy+1][ix],
-								d = grid[iy+1][ix+1];
-
-						if (iy != 0 || thetaStart > 0) indices.insert(indices.end(), {a, b, d});
-						if (iy != heightSegments - 1 || thetaEnd < Math::PI) indices.insert(indices.end(), {b, c, d});
-
-					}
-				}
-
-				this->indices = indices;
-				this->positions = vertices;
-				this->normals = normals;
-				this->uvs = uvs;
+				grid.push_back(verticesRow);
 
 			}
 
-			//Explicit constructors for js bindings.
+			//Indices
 
-			SphereGeometry(T radius, unsigned widthSegments, unsigned heightSegments = 6) : SphereGeometry(radius, widthSegments, heightSegments, 0) {}
+			for (unsigned iy = 0; iy < heightSegments; ++iy) {
+				for (unsigned ix = 0; ix < widthSegments; ++ix) {
+					unsigned a = grid[iy][ix + 1],
+							b = grid[iy][ix],
+							c = grid[iy + 1][ix],
+							d = grid[iy + 1][ix + 1];
 
-			SphereGeometry(T radius) : SphereGeometry(radius, 8) {}
+					if (iy != 0 || thetaStart > 0) indices.insert(indices.end(), {a, b, d});
+					if (iy != heightSegments - 1 || thetaEnd < Math::PI) indices.insert(indices.end(), {b, c, d});
 
-			SphereGeometry(const SphereGeometry& s) : BufferGeometry<T>(s) {}
+				}
+			}
 
-		};
+			this->indices = indices;
+			this->positions = vertices;
+			this->normals = normals;
+			this->uvs = uvs;
 
-	}
+		}
+
+		//Explicit constructors for js bindings.
+
+		SphereGeometry(T radius, unsigned widthSegments, unsigned heightSegments = 6) : SphereGeometry(radius,
+		                                                                                               widthSegments,
+		                                                                                               heightSegments, 0) {}
+
+		SphereGeometry(T radius) : SphereGeometry(radius, 8) {}
+
+		SphereGeometry(const SphereGeometry& s) : BufferGeometry<T>(s) {}
+
+	};
+
 }
 
-#endif
+

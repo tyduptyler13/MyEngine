@@ -1,14 +1,14 @@
-#ifndef MYUPLAY_MYENGINE_RAY
-#define MYUPLAY_MYENGINE_RAY
+#pragma once
 
 #include <cmath>
 #include <memory>
 
-namespace MyUPlay {
-	namespace MyEngine {
-		template <typename T> class Ray;
-	}
+
+namespace MyEngine {
+	template<typename T>
+	class Ray;
 }
+
 
 #include "Vector3.hpp"
 #include "Sphere.hpp"
@@ -18,33 +18,35 @@ namespace MyUPlay {
 #include "Math.hpp"
 
 
-template <typename T>
-class MyUPlay::MyEngine::Ray {
+template<typename T>
+class MyEngine::Ray {
 
 public:
 	Vector3<T> origin, direction;
 
-	Ray(){}
-	Ray(const Vector3<T>& origin, const Vector3<T>& direction)
-	: origin(origin), direction(direction) {}
-	template <typename T2>
-	Ray(const Ray<T2>& ray) : origin(ray.origin), direction(direction) {}
+	Ray() {}
 
-	Ray& set(const Vector3<T>& origin, const Vector3<T>& direction){
+	Ray(const Vector3<T>& origin, const Vector3<T>& direction)
+			: origin(origin), direction(direction) {}
+
+	template<typename T2>
+	Ray(const Ray <T2>& ray) : origin(ray.origin), direction(direction) {}
+
+	Ray& set(const Vector3<T>& origin, const Vector3<T>& direction) {
 		this->origin = origin;
 		this->direction = direction;
 		return *this;
 	}
 
-	template <typename T2>
-	Ray& copy(const Ray<T2>& ray){
+	template<typename T2>
+	Ray& copy(const Ray <T2>& ray) {
 		origin = ray.origin;
 		direction = ray.direction;
 		return *this;
 	}
 
-	template <typename T2>
-	inline Ray& operator=(const Ray<T2>& ray){
+	template<typename T2>
+	inline Ray& operator=(const Ray <T2>& ray) {
 		return copy(ray);
 	}
 
@@ -91,7 +93,8 @@ public:
 	}
 
 	T distanceSqToSegment(const Vector3<T>& v0, const Vector3<T>& v1,
-			std::shared_ptr<Vector3<T>> optionalPointOnRay = nullptr, std::shared_ptr<Vector3<T>> optionalPointOnSegment = nullptr) const {
+	                      std::shared_ptr<Vector3<T>> optionalPointOnRay = nullptr,
+	                      std::shared_ptr<Vector3<T>> optionalPointOnSegment = nullptr) const {
 
 		Vector3<T> segCenter = (v0 + v1) * 0.5;
 
@@ -100,9 +103,9 @@ public:
 		Vector3<T> diff = origin - segCenter;
 
 		T segExtent = v0.distanceTo(v1) * 0.5;
-		T a01 = - direction.dot(segDir);
+		T a01 = -direction.dot(segDir);
 		T b0 = diff.dot(direction);
-		T b1 = - diff.dot(segDir);
+		T b1 = -diff.dot(segDir);
 		T c = diff.lengthSq();
 		T det = std::abs(1 - a01 * a01);
 		T s0, s1, sqrDist, extDet;
@@ -112,9 +115,9 @@ public:
 			s1 = a01 * b0 - b1;
 			extDet = segExtent * det;
 
-			if (s0 >= 0){
-				if (s1 >= -extDet){
-					if (s1 <= extDet){
+			if (s0 >= 0) {
+				if (s1 >= -extDet) {
+					if (s1 <= extDet) {
 						//region 0
 						//minimum at interior points of ray and segment.
 						T invDet = 1 / det;
@@ -125,20 +128,20 @@ public:
 						//region 1
 						s1 = segExtent;
 						s0 = std::max(0, -(a01 * s1 + b0));
-						sqrDist = - s0 * s0 + s1 * (s1 + 2 * b1) + c;
+						sqrDist = -s0 * s0 + s1 * (s1 + 2 * b1) + c;
 					}
 				} else {
 					//region 5
 					s1 = -segExtent;
 					s0 = std::max(0, -(a01 * s1 + b0));
-					sqrDist = - s0 * b0 + s1 * (s1 + 2 * b1) + c;
+					sqrDist = -s0 * b0 + s1 * (s1 + 2 * b1) + c;
 				}
 			} else {
 
 				if (s1 <= -extDet) {
 					//region 4
-					s0 = std::max(0, - (-a01 * segExtent + b0));
-					s1 = (s0 > 0) ? - segExtent : std::min(std::max(-segExtent, - b1), segExtent);
+					s0 = std::max(0, -(-a01 * segExtent + b0));
+					s1 = (s0 > 0) ? -segExtent : std::min(std::max(-segExtent, -b1), segExtent);
 					sqrDist = -s0 * s0 + s1 * (s1 + 2 * b1) + c;
 				} else if (s1 <= extDet) {
 					//region 3
@@ -155,7 +158,7 @@ public:
 			}
 		} else {
 			//Ray and segment are parallel
-			s1 = (a01 > 0)? -segExtent : segExtent;
+			s1 = (a01 > 0) ? -segExtent : segExtent;
 			s0 = std::max(0, -(a01 * s1 + b0));
 			sqrDist = -s0 * s0 + s1 * (s1 + 2 * b1) + c;
 		}
@@ -176,7 +179,8 @@ public:
 		return distanceToPoint(sphere.center) <= sphere.radius;
 	}
 
-	std::shared_ptr<Vector3<T>> intersectSphere(const Sphere<T>& sphere, std::shared_ptr<Vector3<T>> optionalTarget = nullptr) const {
+	std::shared_ptr<Vector3<T>> intersectSphere(const Sphere<T>& sphere,
+	                                            std::shared_ptr<Vector3<T>> optionalTarget = nullptr) const {
 
 		Vector3<T> v1 = sphere.center - origin;
 
@@ -202,7 +206,7 @@ public:
 
 	}
 
-	bool isIntersectionPlane(const Plane<T>& plane) const {
+	bool isIntersectionPlane(const Plane <T>& plane) const {
 
 		T distToPoint = plane.distanceToPoint(origin);
 
@@ -212,7 +216,7 @@ public:
 
 		T denominator = plane.normal.dot(direction);
 
-		if (denominator * distToPoint < 0){
+		if (denominator * distToPoint < 0) {
 			return true;
 		}
 
@@ -223,24 +227,24 @@ public:
 	/**
 	 * If distance is impossible to find then -1 will be returned.
 	 */
-	T distanceToPlane(const Plane<T>& plane) const {
+	T distanceToPlane(const Plane <T>& plane) const {
 
 		T denominator = plane.normal.dot(direction);
 
-		if (denominator == 0){
-			if (plane.distanceToPoint(origin) == 0){
+		if (denominator == 0) {
+			if (plane.distanceToPoint(origin) == 0) {
 				return 0;
 			}
 			return -1;
 		}
 
-		T t = - (origin.dot(plane.normal) + plane.constant) / denominator;
+		T t = -(origin.dot(plane.normal) + plane.constant) / denominator;
 
 		return t >= 0 ? t : -1;
 
 	}
 
-	std::shared_ptr<Vector3<T>> intersectPlane(const Plane<T>& plane, std::shared_ptr<Vector3<T>> optionalTarget) const {
+	std::shared_ptr<Vector3<T>> intersectPlane(const Plane <T>& plane, std::shared_ptr<Vector3<T>> optionalTarget) const {
 
 		T t = distanceToPlane(plane);
 
@@ -252,13 +256,14 @@ public:
 
 	}
 
-	bool isIntersectionBox(const Box3<T>& box) const {
+	bool isIntersectionBox(const Box3 <T>& box) const {
 
 		return intersectBox(box);
 
 	}
 
-	std::shared_ptr<Vector3<T>> intersectBox(const Box3<T>& box, std::shared_ptr<Vector3<T>> optionalTarget = nullptr) const {
+	std::shared_ptr<Vector3<T>> intersectBox(const Box3 <T>& box,
+	                                         std::shared_ptr<Vector3<T>> optionalTarget = nullptr) const {
 
 		T tmin, tmax, tymax, tymin, tzmin, tzmax;
 
@@ -266,66 +271,68 @@ public:
 				invdiry = 1 / direction.y,
 				invdirz = 1 / direction.z;
 
-		if ( invdirx >= 0 ) {
+		if (invdirx >= 0) {
 
-			tmin = ( box.min.x - origin.x ) * invdirx;
-			tmax = ( box.max.x - origin.x ) * invdirx;
-
-		} else {
-
-			tmin = ( box.max.x - origin.x ) * invdirx;
-			tmax = ( box.min.x - origin.x ) * invdirx;
-
-		}
-
-		if ( invdiry >= 0 ) {
-
-			tymin = ( box.min.y - origin.y ) * invdiry;
-			tymax = ( box.max.y - origin.y ) * invdiry;
+			tmin = (box.min.x - origin.x) * invdirx;
+			tmax = (box.max.x - origin.x) * invdirx;
 
 		} else {
 
-			tymin = ( box.max.y - origin.y ) * invdiry;
-			tymax = ( box.min.y - origin.y ) * invdiry;
+			tmin = (box.max.x - origin.x) * invdirx;
+			tmax = (box.min.x - origin.x) * invdirx;
 
 		}
 
-		if ( ( tmin > tymax ) || ( tymin > tmax ) ) return nullptr;
+		if (invdiry >= 0) {
+
+			tymin = (box.min.y - origin.y) * invdiry;
+			tymax = (box.max.y - origin.y) * invdiry;
+
+		} else {
+
+			tymin = (box.max.y - origin.y) * invdiry;
+			tymax = (box.min.y - origin.y) * invdiry;
+
+		}
+
+		if ((tmin > tymax) || (tymin > tmax)) return nullptr;
 
 		// These lines also handle the case where tmin or tmax is NaN
 		// (result of 0 * Infinity). x !== x returns true if x is NaN
 
-		if ( tymin > tmin || tmin != tmin ) tmin = tymin;
+		if (tymin > tmin || tmin != tmin) tmin = tymin;
 
-		if ( tymax < tmax || tmax != tmax ) tmax = tymax;
+		if (tymax < tmax || tmax != tmax) tmax = tymax;
 
-		if ( invdirz >= 0 ) {
+		if (invdirz >= 0) {
 
-			tzmin = ( box.min.z - origin.z ) * invdirz;
-			tzmax = ( box.max.z - origin.z ) * invdirz;
+			tzmin = (box.min.z - origin.z) * invdirz;
+			tzmax = (box.max.z - origin.z) * invdirz;
 
 		} else {
 
-			tzmin = ( box.max.z - origin.z ) * invdirz;
-			tzmax = ( box.min.z - origin.z ) * invdirz;
+			tzmin = (box.max.z - origin.z) * invdirz;
+			tzmax = (box.min.z - origin.z) * invdirz;
 
 		}
 
-		if ( ( tmin > tzmax ) || ( tzmin > tmax ) ) return nullptr;
+		if ((tmin > tzmax) || (tzmin > tmax)) return nullptr;
 
-		if ( tzmin > tmin || tmin != tmin ) tmin = tzmin;
+		if (tzmin > tmin || tmin != tmin) tmin = tzmin;
 
-		if ( tzmax < tmax || tmax != tmax ) tmax = tzmax;
+		if (tzmax < tmax || tmax != tmax) tmax = tzmax;
 
 		//return point closest to the ray (positive side)
 
-		if ( tmax < 0 ) return nullptr;
+		if (tmax < 0) return nullptr;
 
 		return optionalTarget = std::make_shared<Vector3<T>>(at(tmin >= 0 ? tmin : tmax));
 
 	}
 
-	std::shared_ptr<Vector3<T>> intersectTriangle(const Vector3<T>& a, const Vector3<T>& b, const Vector3<T>& c, bool backfaceCulling = false, std::shared_ptr<Vector3<T>> optionalTarget = nullptr) const {
+	std::shared_ptr<Vector3<T>> intersectTriangle(const Vector3<T>& a, const Vector3<T>& b, const Vector3<T>& c,
+	                                              bool backfaceCulling = false,
+	                                              std::shared_ptr<Vector3<T>> optionalTarget = nullptr) const {
 
 		Vector3<T> edge1 = b - a;
 		Vector3<T> edge2 = c - a;
@@ -360,7 +367,7 @@ public:
 
 		T dde1xq = sign * direction.dot(edge1.cross(diff));
 
-		if (dde1xq < 0){
+		if (dde1xq < 0) {
 			return nullptr;
 		}
 
@@ -368,13 +375,13 @@ public:
 			return nullptr;
 		}
 
-		T qdn = - sign * diff.dot(normal);
+		T qdn = -sign * diff.dot(normal);
 
-		if (qdn < 0){
+		if (qdn < 0) {
 			return nullptr;
 		}
 
-		return optionalTarget = std::make_shared<Vector3<T>>(at(qdn/ddn));
+		return optionalTarget = std::make_shared<Vector3<T>>(at(qdn / ddn));
 
 	}
 
@@ -386,21 +393,22 @@ public:
 		return *this;
 	}
 
-	T distanceToSegment(const Vector3<T>& v0, const Vector3<T>& v1, Vector3<T>* optionalPointOnRay, Vector3<T>* optionalPointOnSegment) const {
+	T distanceToSegment(const Vector3<T>& v0, const Vector3<T>& v1, Vector3<T>* optionalPointOnRay,
+	                    Vector3<T>* optionalPointOnSegment) const {
 
 		Vector3<T> segCenter = (v0 + v1) * 0.5;
 		Vector3<T> segDir = (v1 - v0).normalize();
 		Vector3<T> diff = origin - segCenter;
 
 		T segExtent = v0.distanceTo(v1) * 0.5;
-		T a01 = - direction.dot(segDir);
+		T a01 = -direction.dot(segDir);
 		T b0 = diff.dot(direction);
-		T b1 = - diff.dot(segDir);
+		T b1 = -diff.dot(segDir);
 		T c = diff.lenghtSq();
 		T det = std::abs(1 - a01 * a01);
 		T s0, s1, sqrDist, extDet;
 
-		if ( det > 0 ) {
+		if (det > 0) {
 
 			// The ray and segment are not parallel.
 
@@ -408,11 +416,11 @@ public:
 			s1 = a01 * b0 - b1;
 			extDet = segExtent * det;
 
-			if ( s0 >= 0 ) {
+			if (s0 >= 0) {
 
-				if ( s1 >= - extDet ) {
+				if (s1 >= -extDet) {
 
-					if ( s1 <= extDet ) {
+					if (s1 <= extDet) {
 
 						// region 0
 						// Minimum at interior points of ray and segment.
@@ -420,15 +428,15 @@ public:
 						T invDet = 1 / det;
 						s0 *= invDet;
 						s1 *= invDet;
-						sqrDist = s0 * ( s0 + a01 * s1 + 2 * b0 ) + s1 * ( a01 * s0 + s1 + 2 * b1 ) + c;
+						sqrDist = s0 * (s0 + a01 * s1 + 2 * b0) + s1 * (a01 * s0 + s1 + 2 * b1) + c;
 
 					} else {
 
 						// region 1
 
 						s1 = segExtent;
-						s0 = std::max( 0, - ( a01 * s1 + b0 ) );
-						sqrDist = - s0 * s0 + s1 * ( s1 + 2 * b1 ) + c;
+						s0 = std::max(0, -(a01 * s1 + b0));
+						sqrDist = -s0 * s0 + s1 * (s1 + 2 * b1) + c;
 
 					}
 
@@ -436,37 +444,37 @@ public:
 
 					// region 5
 
-					s1 = - segExtent;
-					s0 = std::max( 0, - ( a01 * s1 + b0 ) );
-					sqrDist = - s0 * s0 + s1 * ( s1 + 2 * b1 ) + c;
+					s1 = -segExtent;
+					s0 = std::max(0, -(a01 * s1 + b0));
+					sqrDist = -s0 * s0 + s1 * (s1 + 2 * b1) + c;
 
 				}
 
 			} else {
 
-				if ( s1 <= - extDet ) {
+				if (s1 <= -extDet) {
 
 					// region 4
 
-					s0 = std::max( 0, - ( - a01 * segExtent + b0 ) );
-					s1 = ( s0 > 0 ) ? - segExtent : std::min(std::max( - segExtent, - b1 ), segExtent );
-					sqrDist = - s0 * s0 + s1 * ( s1 + 2 * b1 ) + c;
+					s0 = std::max(0, -(-a01 * segExtent + b0));
+					s1 = (s0 > 0) ? -segExtent : std::min(std::max(-segExtent, -b1), segExtent);
+					sqrDist = -s0 * s0 + s1 * (s1 + 2 * b1) + c;
 
-				} else if ( s1 <= extDet ) {
+				} else if (s1 <= extDet) {
 
 					// region 3
 
 					s0 = 0;
-					s1 = std::min(std::max( - segExtent, - b1 ), segExtent );
-					sqrDist = s1 * ( s1 + 2 * b1 ) + c;
+					s1 = std::min(std::max(-segExtent, -b1), segExtent);
+					sqrDist = s1 * (s1 + 2 * b1) + c;
 
 				} else {
 
 					// region 2
 
-					s0 = std::max( 0, - ( a01 * segExtent + b0 ) );
-					s1 = ( s0 > 0 ) ? segExtent : std::min( std::max( - segExtent, - b1 ), segExtent );
-					sqrDist = - s0 * s0 + s1 * ( s1 + 2 * b1 ) + c;
+					s0 = std::max(0, -(a01 * segExtent + b0));
+					s1 = (s0 > 0) ? segExtent : std::min(std::max(-segExtent, -b1), segExtent);
+					sqrDist = -s0 * s0 + s1 * (s1 + 2 * b1) + c;
 
 				}
 
@@ -476,9 +484,9 @@ public:
 
 			// Ray and segment are parallel.
 
-			s1 = ( a01 > 0 ) ? - segExtent : segExtent;
-			s0 = std::max( 0, - ( a01 * s1 + b0 ) );
-			sqrDist = - s0 * s0 + s1 * ( s1 + 2 * b1 ) + c;
+			s1 = (a01 > 0) ? -segExtent : segExtent;
+			s0 = std::max(0, -(a01 * s1 + b0));
+			sqrDist = -s0 * s0 + s1 * (s1 + 2 * b1) + c;
 
 		}
 
@@ -504,4 +512,3 @@ public:
 
 };
 
-#endif

@@ -2,7 +2,7 @@
 
 #include "nbind/nbind.h"
 
-using namespace MyUPlay::MyEngine;
+using namespace MyEngine;
 
 NBIND_CLASS(Camera<float>, Camera) {
 	inherit(Object3D<float>);

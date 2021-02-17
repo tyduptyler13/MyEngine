@@ -1,24 +1,21 @@
-#ifndef MyUPlay_MyEngine_Light
-#define MyUPlay_MyEngine_Light
+#pragma once
 
 #include "Object3D.hpp"
 #include "Color.hpp"
 
-namespace MyUPlay {
 
-	namespace MyEngine {
+namespace MyEngine {
 
-		template <typename T>
-		class Light : public Object3D<T> {
+	template<typename T>
+	class Light : public Object3D<T> {
 
-		public:
+	public:
 
-			Color color;
+		Color color;
 
-		};
-
-	}
+	};
 
 }
 
-#endif
+
+

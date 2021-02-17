@@ -1,6 +1,6 @@
 #include "SoundObject.hpp"
 
-using namespace MyUPlay::MyEngine;
+using namespace MyEngine;
 using namespace std;
 
 Listener* Listener::singleton = new Listener();

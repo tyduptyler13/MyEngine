@@ -1,6 +1,6 @@
 
 #include "Texture.hpp"
 
-using namespace MyUPlay::MyEngine;
+using namespace MyEngine;
 
 const MappingMode Texture::DEFAULT_MAPPING = UVMapping;

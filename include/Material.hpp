@@ -1,22 +1,21 @@
-#ifndef MYUPLAY_MYENGINE_MATERIAL
-#define MYUPLAY_MYENGINE_MATERIAL
+#pragma once
 
 #include <string>
 #include <memory>
 
-namespace MyUPlay {
-	namespace MyEngine {
-		namespace Shader {
-			struct Shader;
-		}
-		struct IMaterial;
+
+namespace MyEngine {
+	namespace Shader {
+		struct Shader;
 	}
+	struct IMaterial;
 }
+
 
 #include "Constants.hpp"
 #include "Math.hpp"
 
-struct MyUPlay::MyEngine::IMaterial {
+struct MyEngine::IMaterial {
 
 	static unsigned materialIdCounter;
 
@@ -70,9 +69,9 @@ struct MyUPlay::MyEngine::IMaterial {
 			lights = false,
 			morphTargets = false;
 
-	virtual ~IMaterial(){}
+	virtual ~IMaterial() {}
 
-	IMaterial(){}
+	IMaterial() {}
 
 	IMaterial(std::string name) : name(name) {}
 
@@ -87,6 +86,4 @@ struct MyUPlay::MyEngine::IMaterial {
 	}
 
 };
-
-#endif
 

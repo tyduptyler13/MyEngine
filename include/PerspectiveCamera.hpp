@@ -1,20 +1,21 @@
-#ifndef MYUPLAY_MYENGINE_PERSPECTIVECAMERA
-#define MYUPLAY_MYENGINE_PERSPECTIVECAMERA
+#pragma once
 
 #include "Math.hpp"
 
-namespace MyUPlay {
-	namespace MyEngine {
-		template <typename T> struct PerspectiveCamera;
-		template <typename T> struct View;
-	}
+
+namespace MyEngine {
+	template<typename T>
+	struct PerspectiveCamera;
+	template<typename T>
+	struct View;
 }
+
 
 #include "Math.hpp"
 #include "Camera.hpp"
 
-template <typename T>
-struct MyUPlay::MyEngine::View {
+template<typename T>
+struct MyEngine::View {
 	T fullWidth;
 	T fullHeight;
 	T x;
@@ -23,15 +24,15 @@ struct MyUPlay::MyEngine::View {
 	T height;
 
 	View(T fullWidth, T fullHeight, T x, T y, T width, T height) :
-		fullWidth(fullWidth), fullHeight(fullHeight), x(x), y(y), width(width), height(height) {}
+			fullWidth(fullWidth), fullHeight(fullHeight), x(x), y(y), width(width), height(height) {}
 
 	View(const View& v) :
-		fullWidth(v.fullWidth), fullHeight(v.fullHeight), x(v.x), y(v.y), width(v.width), height(v.height) {}
+			fullWidth(v.fullWidth), fullHeight(v.fullHeight), x(v.x), y(v.y), width(v.width), height(v.height) {}
 
 };
 
-template <typename T = float>
-struct MyUPlay::MyEngine::PerspectiveCamera : public Camera<T> {
+template<typename T = float>
+struct MyEngine::PerspectiveCamera : public Camera<T> {
 
 	T zoom = 1;
 
@@ -45,10 +46,11 @@ struct MyUPlay::MyEngine::PerspectiveCamera : public Camera<T> {
 	T filmGauge = 35;
 	T filmOffset = 0;
 
-	std::unique_ptr<View<T>> view;
+	std::unique_ptr<View < T>> view;
 
 	PerspectiveCamera(T fov = 50, T aspect = 1, T near = 0.1, T far = 2000) : Camera<T>(),
-			fov(fov), aspect(aspect), near(near), far(far) {
+	                                                                          fov(fov), aspect(aspect), near(near),
+	                                                                          far(far) {
 		updateProjectionMatrix();
 	}
 
@@ -105,7 +107,7 @@ struct MyUPlay::MyEngine::PerspectiveCamera : public Camera<T> {
 		return filmGauge / std::max<T>(aspect, 1.0);
 	}
 
-	void setViewOffset (T fullWidth, T fullHeight, T x, T y, T width, T height){
+	void setViewOffset(T fullWidth, T fullHeight, T x, T y, T width, T height) {
 
 		aspect = fullWidth / fullHeight;
 
@@ -115,20 +117,20 @@ struct MyUPlay::MyEngine::PerspectiveCamera : public Camera<T> {
 
 	}
 
-	void clearViewOffset () {
+	void clearViewOffset() {
 		view = nullptr;
 		updateProjectionMatrix();
 	}
 
-	void updateProjectionMatrix(){
+	void updateProjectionMatrix() {
 
 		T near = this->near,
-				top = near * std::tan(Math::degToRad<T>( 0.5 * fov )) / zoom,
+				top = near * std::tan(Math::degToRad<T>(0.5 * fov)) / zoom,
 				height = 2 * top,
 				width = aspect * height,
-				left = - 0.5 * width;
+				left = -0.5 * width;
 
-		if ( view != nullptr ) {
+		if (view != nullptr) {
 
 			T& fullWidth = view->fullWidth,
 					fullHeight = view->fullHeight;
@@ -141,9 +143,9 @@ struct MyUPlay::MyEngine::PerspectiveCamera : public Camera<T> {
 		}
 
 		T skew = filmOffset;
-		if ( skew != 0 ) left += near * skew / getFilmWidth();
+		if (skew != 0) left += near * skew / getFilmWidth();
 
-		this->projectionMatrix.makePerspective( left, left + width, top, top - height, near, far );
+		this->projectionMatrix.makePerspective(left, left + width, top, top - height, near, far);
 
 	}
 
@@ -169,7 +171,7 @@ struct MyUPlay::MyEngine::PerspectiveCamera : public Camera<T> {
 
 	}
 
-	inline PerspectiveCamera& operator=(const PerspectiveCamera& c){
+	inline PerspectiveCamera& operator=(const PerspectiveCamera& c) {
 		return copy(c);
 	}
 
@@ -177,7 +179,7 @@ struct MyUPlay::MyEngine::PerspectiveCamera : public Camera<T> {
 		return aspect;
 	}
 
-	void setAspect(T v){
+	void setAspect(T v) {
 		aspect = v;
 	}
 
@@ -201,10 +203,9 @@ struct MyUPlay::MyEngine::PerspectiveCamera : public Camera<T> {
 		return far;
 	}
 
-	void setFar(T v){
+	void setFar(T v) {
 		far = v;
 	}
 
 };
 
-#endif

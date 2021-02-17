@@ -3,12 +3,18 @@
   "description": "A powerful mixture of nodejs, chrome, and a game engine.",
   "version": "0.0.7",
   "license": "MIT",
-  "repository": "https://github.com/MyUPlay/MyEngine",
+  "repository": "https://github.com/tyduptyler13/MyEngine",
   "main": "test/core/BasicExample-electron.js",
-  "dependencies": {
-    "electron": "^2.0.7",
-    "nbind": "^0.3.15",
-    "node-cmake": "^2.5.1"
+  "dependencies": {},
+  "scripts": {},
+  "devDependencies": {
+    "cmake-js": "^6.1.0",
+    "electron": "^10.1.5",
+    "nbind": "^0.3.15"
   },
-  "scripts": {}
+  "cmake-js": {
+    "runtime": "electron",
+    "runtimeVersion": "10.1.5",
+    "arch": "x64"
+  }
 }

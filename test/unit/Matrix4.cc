@@ -10,7 +10,7 @@
 #include <stdexcept>
 
 using namespace std;
-using namespace MyUPlay::MyEngine;
+using namespace MyEngine;
 using namespace Test;
 
 template <typename T = float>

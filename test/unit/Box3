@@ -2,7 +2,7 @@
 #include "constants.hpp"
 #include "gtest/gtest.h"
 
-using namespace MyUPlay::MyEngine;
+using namespace MyEngine;
 
 TEST( "constructor", function() {
     Box3 a = THREE.Box3();

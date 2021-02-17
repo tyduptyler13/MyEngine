@@ -1,7 +1,7 @@
 
 #include "Renderer.hpp"
 
-using namespace MyUPlay::MyEngine;
+using namespace MyEngine;
 
 #ifdef BUILDING_NODE_EXTENSION
 

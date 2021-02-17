@@ -1,5 +1,4 @@
-#ifndef MYUPLAY_MYENGINE_THREADPOOL
-#define MYUPLAY_MYENGINE_THREADPOOL
+#pragma once
 
 #include <thread>
 #include <vector>
@@ -10,76 +9,73 @@
 
 #include "Log.hpp"
 
-namespace MyUPlay {
 
-	namespace MyEngine {
+namespace MyEngine {
 
-		class ThreadPool {
+	class ThreadPool {
 
-		public:
-			typedef std::function<void()> Task;
+	public:
+		typedef std::function<void()> Task;
 
-		private:
-			std::vector<std::thread> pool;
-			std::queue<Task> tasks;
+	private:
+		std::vector<std::thread> pool;
+		std::queue<Task> tasks;
 
-			std::mutex taskLock;
+		std::mutex taskLock;
 
-			std::atomic<bool> running;
+		std::atomic<bool> running;
 
-			Task& getTask(){
+		Task& getTask() {
 
-				taskLock.lock();
+			taskLock.lock();
 
-				Task& t = tasks.front();
-				tasks.pop();
+			Task& t = tasks.front();
+			tasks.pop();
 
-				taskLock.unlock();
+			taskLock.unlock();
 
-				return t;
+			return t;
 
+		}
+
+	public:
+
+		ThreadPool(unsigned size = std::thread::hardware_concurrency() * 1.5) {
+			running.store(true);
+			pool.reserve(size);
+			for (unsigned i = 0; i < size; ++i) {
+				pool.push_back(
+						std::thread(
+								[this, i]() {
+									Log log("Thread [" + std::to_string(i) + "]");
+									while (running.load()) {
+										Task& t = getTask();
+										try {
+											t();
+										} catch (...) {
+											log.warn("Uncaught exception!");
+										}
+									}
+								}));
 			}
+		}
 
-		public:
+		void stop() {
+			running.store(false);
+		}
 
-			ThreadPool(unsigned size = std::thread::hardware_concurrency() * 1.5) {
-				running.store(true);
-				pool.reserve(size);
-				for (unsigned i = 0; i < size; ++i){
-					pool.push_back(
-							std::thread(
-									[this, i](){
-						Log log("Thread [" + std::to_string(i) + "]");
-						while(running.load()){
-							Task& t = getTask();
-							try {
-								t();
-							} catch (...) {
-								log.warn("Uncaught exception!");
-							}
-						}
-					}));
-				}
-			}
+		void addTask(Task t) {
 
-			void stop(){
-				running.store(false);
-			}
+			taskLock.lock();
+			tasks.push(t);
+			taskLock.unlock();
 
-			void addTask(Task t){
-
-				taskLock.lock();
-				tasks.push(t);
-				taskLock.unlock();
-
-			}
+		}
 
 
-		};
-
-	}
+	};
 
 }
 
-#endif
+
 

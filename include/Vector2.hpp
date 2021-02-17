@@ -1,42 +1,42 @@
-#ifndef MYUPLAY_MYENGINE_VECTOR2
-#define MYUPLAY_MYENGINE_VECTOR2
+#pragma once
 
 #include <cmath>
 #include <vector>
 
 #include "Math.hpp"
 
-namespace MyUPlay {
 
-	namespace MyEngine {
+namespace MyEngine {
 
-		template <typename T>
-		struct Vector2;
+	template<typename T>
+	struct Vector2;
 
-		typedef Vector2<float> Vector2f;
-		typedef Vector2<double> Vector2d;
-	}
+	typedef Vector2<float> Vector2f;
+	typedef Vector2<double> Vector2d;
 }
+
 
 /**
  * This class supports any numeric type or class that supports
  * all of the standard operator for floats or doubles
  */
-template <typename T = float>
-struct MyUPlay::MyEngine::Vector2 {
+template<typename T = float>
+struct MyEngine::Vector2 {
 	T x, y;
 
 	Vector2() : x(0), y(0) {}
+
 	Vector2(T x, T y) : x(x), y(y) {}
+
 	Vector2(const Vector2& v) : x(v.x), y(v.y) {}
 
-	Vector2& set(T x, T y){
+	Vector2& set(T x, T y) {
 		this->x = x;
 		this->y = y;
 		return *this;
 	}
 
-	Vector2& set(T s){
+	Vector2& set(T s) {
 		this->x = s;
 		this->y = s;
 		return *this;
@@ -46,7 +46,7 @@ struct MyUPlay::MyEngine::Vector2 {
 		return x;
 	}
 
-	Vector2& setX(T x){
+	Vector2& setX(T x) {
 		this->x = x;
 		return *this;
 	}
@@ -55,84 +55,83 @@ struct MyUPlay::MyEngine::Vector2 {
 		return y;
 	}
 
-	Vector2& setY(T y){
+	Vector2& setY(T y) {
 		this->y = y;
 		return *this;
 	}
 
-	Vector2& copy(const Vector2& v){
+	Vector2& copy(const Vector2& v) {
 		x = v.x;
 		y = v.y;
 		return *this;
 	}
 
-	Vector2& add(const Vector2& v){
+	Vector2& add(const Vector2& v) {
 		x += v.x;
 		y += v.y;
 		return *this;
 	}
 
-	Vector2& addVectors(const Vector2& a, const Vector2& b){
+	Vector2& addVectors(const Vector2& a, const Vector2& b) {
 		x = a.x + b.x;
 		y = a.y + a.y;
 		return *this;
 	}
 
-	Vector2& add(T scalar){
+	Vector2& add(T scalar) {
 		x += scalar;
 		y += scalar;
 		return *this;
 	}
 
-	Vector2& sub(const Vector2& v){
+	Vector2& sub(const Vector2& v) {
 		x -= v.x;
 		y -= v.y;
 		return *this;
 	}
 
-	Vector2& subVectors(const Vector2& a, const Vector2& b){
+	Vector2& subVectors(const Vector2& a, const Vector2& b) {
 		x = a.x - b.x;
 		y = a.y - b.y;
 		return *this;
 	}
 
-	Vector2& sub(T scalar){
+	Vector2& sub(T scalar) {
 		x -= scalar;
 		y -= scalar;
 		return *this;
 	}
 
-	Vector2& multiply(const Vector2& v){
+	Vector2& multiply(const Vector2& v) {
 		x *= v.x;
 		y *= v.y;
 		return *this;
 	}
 
-	Vector2& multiply(T scalar){
+	Vector2& multiply(T scalar) {
 		x *= scalar;
 		y *= scalar;
 		return *this;
 	}
 
-	Vector2& divideScalar(T scalar){
-		if (scalar == 0.0){
+	Vector2& divideScalar(T scalar) {
+		if (scalar == 0.0) {
 			x = 0;
 			y = 0;
-		}
-		else {
+		} else {
 			x /= scalar;
 			y /= scalar;
 		}
 		return *this;
 	}
 
-	Vector2& negate(){
+	Vector2& negate() {
 		x = -x;
 		y = -y;
 		return *this;
 	}
 
-	Vector2& floor(){
+	Vector2& floor() {
 
 		x = std::floor(x);
 		y = std::floor(y);
@@ -141,7 +140,7 @@ struct MyUPlay::MyEngine::Vector2 {
 
 	}
 
-	Vector2& ceil(){
+	Vector2& ceil() {
 
 		x = std::ceil(x);
 		y = std::ceil(y);
@@ -150,7 +149,7 @@ struct MyUPlay::MyEngine::Vector2 {
 
 	}
 
-	Vector2& round(){
+	Vector2& round() {
 
 		x = std::round(x);
 		y = std::round(y);
@@ -176,30 +175,30 @@ struct MyUPlay::MyEngine::Vector2 {
 		return Vector2(*this).add(scalar);
 	}
 
-	inline Vector2& operator=(const Vector2& v){
+	inline Vector2& operator=(const Vector2& v) {
 		return copy(v);
 	}
 
-	inline Vector2& operator+=(const Vector2& v){
+	inline Vector2& operator+=(const Vector2& v) {
 		return add(v);
 	}
 
-	inline Vector2& operator +=(T scalar){
+	inline Vector2& operator+=(T scalar) {
 		return add(scalar);
 	}
 
-	Vector2 operator+(const Vector2& b) const{
+	Vector2 operator+(const Vector2& b) const {
 		Vector2 v;
 		v.x = x + b.x;
 		v.y = y + b.y;
 		return v;
 	}
 
-	inline Vector2& operator-=(const Vector2& v){
+	inline Vector2& operator-=(const Vector2& v) {
 		return sub(v);
 	}
 
-	inline Vector2& operator-=(T scalar){
+	inline Vector2& operator-=(T scalar) {
 		return sub(scalar);
 	}
 
@@ -219,42 +218,42 @@ struct MyUPlay::MyEngine::Vector2 {
 		return Vector2(*this).multiply(v);
 	}
 
-	Vector2 operator*(T s) const{
+	Vector2 operator*(T s) const {
 		Vector2 v;
 		v.x = x * s;
 		v.y = y * s;
 		return v;
 	}
 
-	Vector2 operator*(const Vector2& b) const{
+	Vector2 operator*(const Vector2& b) const {
 		Vector2 v;
 		v.x = x * b.x;
 		v.y = y * b.y;
 		return v;
 	}
 
-	Vector2& divide(T scalar){
+	Vector2& divide(T scalar) {
 		x /= scalar;
 		y /= scalar;
 		return *this;
 	}
 
-	inline Vector2& operator/=(const Vector2& v){
+	inline Vector2& operator/=(const Vector2& v) {
 		return divide(v);
 	}
 
-	inline Vector2& operator/=(T scalar){
+	inline Vector2& operator/=(T scalar) {
 		return divide(scalar);
 	}
 
-	Vector2 operator/(const Vector2& v) const{
+	Vector2 operator/(const Vector2& v) const {
 		Vector2 b;
 		b.x = x / v.x;
 		b.y = y / v.y;
 		return b;
 	}
 
-	Vector2 operator/(T s) const{
+	Vector2 operator/(T s) const {
 		Vector2 v;
 		v.x = x / s;
 		v.y = y / s;
@@ -262,13 +261,13 @@ struct MyUPlay::MyEngine::Vector2 {
 	}
 
 
-	Vector2& min(const Vector2& v){
+	Vector2& min(const Vector2& v) {
 
-		if (x > v.x){
+		if (x > v.x) {
 			x = v.x;
 		}
 
-		if (y > v.y){
+		if (y > v.y) {
 			y = v.y;
 		}
 
@@ -276,13 +275,13 @@ struct MyUPlay::MyEngine::Vector2 {
 
 	}
 
-	Vector2& max(const Vector2& v){
+	Vector2& max(const Vector2& v) {
 
-		if (x < v.x){
+		if (x < v.x) {
 			x = v.x;
 		}
 
-		if (y < v.y){
+		if (y < v.y) {
 			y = v.y;
 		}
 
@@ -290,7 +289,7 @@ struct MyUPlay::MyEngine::Vector2 {
 
 	}
 
-	Vector2& clamp(const Vector2& min, const Vector2& max){
+	Vector2& clamp(const Vector2& min, const Vector2& max) {
 
 		if (x < min.x) {
 			x = min.x;
@@ -307,7 +306,7 @@ struct MyUPlay::MyEngine::Vector2 {
 
 	}
 
-	Vector2& clampScalar(T min, T max){
+	Vector2& clampScalar(T min, T max) {
 
 		Vector2 low(min, min), high(max, max);
 
@@ -320,14 +319,16 @@ struct MyUPlay::MyEngine::Vector2 {
 		return sqrt(x * x + y * y);
 
 	}
+
 	T lengthSq() const {
 		return x * x + y * y;
 	}
+
 	T lengthManhattan() const {
 		return std::abs(x) + std::abs(y);
 	}
 
-	Vector2& normalize(){
+	Vector2& normalize() {
 		return divideScalar(length());
 	}
 
@@ -340,26 +341,27 @@ struct MyUPlay::MyEngine::Vector2 {
 	T distanceTo(const Vector2& v) const {
 		return sqrt(distanceToSquared(v));
 	}
+
 	T distanceToSquared(const Vector2& v) const {
 		T dx = x - v.x, dy = y - v.y;
 		return dx * dx + dy * dy;
 	}
 
-	Vector2& setLength(T length){
+	Vector2& setLength(T length) {
 		return multiply(length / this->length());
 	}
 
-	Vector2& lerp(const Vector2& v, T alpha){
+	Vector2& lerp(const Vector2& v, T alpha) {
 		x += (v.x - x) * alpha;
 		y += (v.y - y) * alpha;
 		return *this;
 	}
 
-	Vector2& lerpVectors(const Vector2& v1, const Vector2& v2, T alpha){
+	Vector2& lerpVectors(const Vector2& v1, const Vector2& v2, T alpha) {
 		return subVectors(v2, v1).multiply(alpha).add(v1);
 	}
 
-	Vector2& rotateAround(const Vector2& center, T angle){
+	Vector2& rotateAround(const Vector2& center, T angle) {
 
 		T c = cos(angle), s = sin(angle);
 
@@ -394,12 +396,10 @@ struct MyUPlay::MyEngine::Vector2 {
 		array[offset + 1] = y;
 	}
 
-	Vector2& fromArray(const std::vector<T>& array, unsigned offset){
+	Vector2& fromArray(const std::vector<T>& array, unsigned offset) {
 		x = array[offset];
 		y = array[offset + 1];
 		return *this;
 	}
 
 };
-
-#endif

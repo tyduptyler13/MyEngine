@@ -5,7 +5,7 @@
 #include "Log.hpp"
 
 using namespace std;
-using namespace MyUPlay::MyEngine;
+using namespace MyEngine;
 using namespace Test;
 
 TEST(Log, constructor){

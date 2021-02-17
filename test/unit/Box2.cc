@@ -5,7 +5,7 @@
 #include <cmath>
 
 using namespace std;
-using namespace MyUPlay::MyEngine;
+using namespace MyEngine;
 using namespace Test;
 
 TEST(Box2, constructor){

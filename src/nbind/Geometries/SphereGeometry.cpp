@@ -1,7 +1,7 @@
 #include "Geometries/SphereGeometry.hpp"
 #include "nbind/nbind.h"
 
-using namespace MyUPlay::MyEngine;
+using namespace MyEngine;
 
 NBIND_CLASS(SphereGeometry<float>, SphereGeometry) {
 

@@ -6,9 +6,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 #SET(CMAKE_VERBOSE_MAKEFILE ON)
 
-include(node_modules/node-cmake/NodeJS.cmake)
-nodejs_init()
-
 add_subdirectory(deps/spdlog)
 add_subdirectory(deps/bgfx.cmake)
 
@@ -32,36 +29,36 @@ target_link_libraries(MyEngine spdlog)
 
 file(GLOB NBIND_SOURCE_FILES node_modules/nbind/src/*.cc node_modules/nbind/src/v8/*.cc)
 
-add_nodejs_module(MyEngine_node
-        ${NBIND_SOURCE_FILES}
-        src/nbind/Geometries/BoxGeometry.cpp
-        src/nbind/Geometries/SphereGeometry.cpp
-        src/nbind/BufferGeometry.cpp
-        src/nbind/Camera.cpp
-        src/nbind/Geometry.cpp
-        src/nbind/Material.cpp
-        src/nbind/Mesh.cpp
-        src/nbind/Object3D.cpp
-        src/nbind/PerspectiveCamera.cpp
-        src/nbind/Renderer.cpp
-        src/nbind/Scene.cpp
-        src/nbind/SoundObject.cpp
-        src/nbind/Vector2.cpp
-        src/nbind/Vector3.cpp
-        src/nbind/Vector4.cpp)
+#add_nodejs_module(MyEngine_node
+#        ${NBIND_SOURCE_FILES}
+#        src/nbind/Geometries/BoxGeometry.cpp
+#        src/nbind/Geometries/SphereGeometry.cpp
+#        src/nbind/BufferGeometry.cpp
+#        src/nbind/Camera.cpp
+#        src/nbind/Geometry.cpp
+#        src/nbind/Material.cpp
+#        src/nbind/Mesh.cpp
+#        src/nbind/Object3D.cpp
+#        src/nbind/PerspectiveCamera.cpp
+#        src/nbind/Renderer.cpp
+#        src/nbind/Scene.cpp
+#        src/nbind/SoundObject.cpp
+#        src/nbind/Vector2.cpp
+#        src/nbind/Vector3.cpp
+#        src/nbind/Vector4.cpp)
 
-target_include_directories(MyEngine_node BEFORE PUBLIC node_modules/nbind/include)
-set_property(TARGET MyEngine_node PROPERTY CXX_STANDARD 14)
+#target_include_directories(MyEngine_node BEFORE PUBLIC node_modules/nbind/include)
+#set_property(TARGET MyEngine_node PROPERTY CXX_STANDARD 14)
 
-if (CMAKE_CXX_COMPILER MATCHES "/em\\+\\+(-[a-zA-Z0-9.])?$")
-    message(" * C++ compiler: Emscripten")
-else ()
-    target_compile_definitions(MyEngine_node PRIVATE BUILDING_NODE_EXTENSION)
-endif ()
+#if (CMAKE_CXX_COMPILER MATCHES "/em\\+\\+(-[a-zA-Z0-9.])?$")
+#    message(" * C++ compiler: Emscripten")
+#else ()
+#    target_compile_definitions(MyEngine_node PRIVATE BUILDING_NODE_EXTENSION)
+#endif ()
 
-target_link_libraries(MyEngine_node
-        MyEngine
-        ${CMAKE_JS_LIB})
+#target_link_libraries(MyEngine_node
+#        MyEngine
+#        ${CMAKE_JS_LIB})
 
 add_executable(BasicExample
         test/core/BasicExample.cpp)

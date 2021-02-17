@@ -2,7 +2,7 @@
 
 #include "nbind/nbind.h"
 
-using namespace MyUPlay::MyEngine;
+using namespace MyEngine;
 NBIND_CLASS(Vector2f, Vector2) {
 	construct<>();
 	construct<float, float>();

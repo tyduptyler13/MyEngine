@@ -1,28 +1,28 @@
-#ifndef MYUPLAY_MYENGINE_VECTOR3
-#define MYUPLAY_MYENGINE_VECTOR3
+#pragma once
 
 #include <vector>
 #include <cmath>
 
-namespace MyUPlay {
-	namespace MyEngine {
 
-		template <typename T = float> class Vector3;
+namespace MyEngine {
 
-		template<typename T>
-		Vector3<T> operator+(const T scalar, Vector3<T> rhs){
-			return rhs + scalar;
-		}
+	template<typename T = float>
+	class Vector3;
 
-		template<typename T>
-		Vector3<T> operator*(const T scalar, Vector3<T> rhs){
-			return rhs * scalar;
-		}
-
-		typedef Vector3<float> Vector3f;
-		typedef Vector3<double> Vector3d;
+	template<typename T>
+	Vector3<T> operator+(const T scalar, Vector3<T> rhs) {
+		return rhs + scalar;
 	}
+
+	template<typename T>
+	Vector3<T> operator*(const T scalar, Vector3<T> rhs) {
+		return rhs * scalar;
+	}
+
+	typedef Vector3<float> Vector3f;
+	typedef Vector3<double> Vector3d;
 }
+
 
 #include "Matrix3.hpp"
 #include "Matrix4.hpp"
@@ -35,39 +35,41 @@ namespace MyUPlay {
  * This class supports any numeric type or class that supports
  * all of the standard opperators for floats or doubles.
  */
-template <typename T>
-class MyUPlay::MyEngine::Vector3 {
+template<typename T>
+class MyEngine::Vector3 {
 
 public:
 
 	T x, y, z;
 
 	Vector3(T x = 0, T y = 0, T z = 0) : x(x), y(y), z(z) {}
+
 	Vector3(const Vector3& v) : x(v.x), y(v.y), z(v.z) {}
+
 	Vector3(Vector3&& v) : x(v.x), y(v.y), z(v.z) {} //Move constructor;
 
-	Vector3& set(T x, T y, T z){
+	Vector3& set(T x, T y, T z) {
 		this->x = x;
 		this->y = y;
 		this->z = z;
 		return *this;
 	}
 
-	inline Vector3& operator=(const Vector3& v){
+	inline Vector3& operator=(const Vector3& v) {
 		return copy(v);
 	}
 
-	Vector3& setX(T x){
+	Vector3& setX(T x) {
 		this->x = x;
 		return *this;
 	}
 
-	Vector3& setY(T y){
+	Vector3& setY(T y) {
 		this->y = y;
 		return *this;
 	}
 
-	Vector3& setZ(T z){
+	Vector3& setZ(T z) {
 		this->z = z;
 		return *this;
 	}
@@ -86,8 +88,9 @@ public:
 
 	//Removed set and get component
 
-	template<typename T2> //Allows conversion from other template types.
-	Vector3& copy(const Vector3<T2>& v){
+	template<typename T2>
+	//Allows conversion from other template types.
+	Vector3& copy(const Vector3 <T2>& v) {
 		x = v.x;
 		y = v.y;
 		z = v.z;
@@ -95,29 +98,29 @@ public:
 		return *this;
 	}
 
-	Vector3& add(const Vector3& v){
+	Vector3& add(const Vector3& v) {
 		x += v.x;
 		y += v.y;
 		z += v.z;
 		return *this;
 	}
 
-	inline Vector3& operator+=(const Vector3& v){
+	inline Vector3& operator+=(const Vector3& v) {
 		return add(v);
 	}
 
-	Vector3& add(T scalar){
+	Vector3& add(T scalar) {
 		x += scalar;
 		y += scalar;
 		z += scalar;
 		return *this;
 	}
 
-	inline Vector3& operator+=(T scalar){
+	inline Vector3& operator+=(T scalar) {
 		return add(scalar);
 	}
 
-	Vector3& addVectors(const Vector3& a, const Vector3& b){
+	Vector3& addVectors(const Vector3& a, const Vector3& b) {
 		x = a.x + b.x;
 		y = a.y + b.y;
 		z = a.z + b.z;
@@ -137,7 +140,7 @@ public:
 		return Vector3(x + s, y + s, z + s);
 	}
 
-	Vector3& sub(const Vector3& v){
+	Vector3& sub(const Vector3& v) {
 		x -= v.x;
 		y -= v.y;
 		z -= v.z;
@@ -145,22 +148,22 @@ public:
 		return *this;
 	}
 
-	inline Vector3& operator-=(const Vector3& v){
+	inline Vector3& operator-=(const Vector3& v) {
 		return sub(v);
 	}
 
-	Vector3& sub(T scalar){
+	Vector3& sub(T scalar) {
 		x -= scalar;
 		y -= scalar;
 		z -= scalar;
 		return *this;
 	}
 
-	inline Vector3& operator-=(T scalar){
+	inline Vector3& operator-=(T scalar) {
 		return sub(scalar);
 	}
 
-	Vector3& subVectors(const Vector3& a, const Vector3& b){
+	Vector3& subVectors(const Vector3& a, const Vector3& b) {
 		x = a.x - b.x;
 		y = a.y - b.y;
 		z = a.z - b.z;
@@ -183,29 +186,29 @@ public:
 		return v;
 	}
 
-	Vector3& multiply(const Vector3& v){
+	Vector3& multiply(const Vector3& v) {
 		x *= v.x;
 		y *= v.y;
 		z *= v.z;
 		return *this;
 	}
 
-	inline Vector3& operator*=(const Vector3& v){
+	inline Vector3& operator*=(const Vector3& v) {
 		return multiply(v);
 	}
 
-	Vector3& multiply(T scalar){
+	Vector3& multiply(T scalar) {
 		x *= scalar;
 		y *= scalar;
 		z *= scalar;
 		return *this;
 	}
 
-	inline Vector3& operator*=(T scalar){
+	inline Vector3& operator*=(T scalar) {
 		return multiply(scalar);
 	}
 
-	Vector3& multiplyVectors(const Vector3& a, const Vector3& b){
+	Vector3& multiplyVectors(const Vector3& a, const Vector3& b) {
 		x = a.x * b.x;
 		y = a.y * b.y;
 		z = a.x * b.z;
@@ -229,7 +232,7 @@ public:
 		return v;
 	}
 
-	Vector3& applyEuler(const Euler<T>& e){
+	Vector3& applyEuler(const Euler<T>& e) {
 
 		Quaternion<T> q;
 
@@ -239,7 +242,7 @@ public:
 
 	}
 
-	Vector3& applyAxisAngle(const Vector3& axis, T angle){
+	Vector3& applyAxisAngle(const Vector3& axis, T angle) {
 
 		Quaternion<T> q;
 
@@ -249,7 +252,7 @@ public:
 
 	}
 
-	Vector3& applyMatrix3(const Matrix3<T>& m){
+	Vector3& applyMatrix3(const Matrix3<T>& m) {
 
 		T x = this->x, y = this->y, z = this->z;
 
@@ -263,36 +266,36 @@ public:
 
 	}
 
-	Vector3& applyMatrix4(const Matrix4<T>& m){
+	Vector3& applyMatrix4(const Matrix4<T>& m) {
 
 		T x = this->x, y = this->y, z = this->z;
 
 		auto& e = m.elements;
 
-		this->x = e[ 0 ] * x + e[ 4 ] * y + e[ 8 ]  * z + e[ 12 ];
-		this->y = e[ 1 ] * x + e[ 5 ] * y + e[ 9 ]  * z + e[ 13 ];
-		this->z = e[ 2 ] * x + e[ 6 ] * y + e[ 10 ] * z + e[ 14 ];
+		this->x = e[0] * x + e[4] * y + e[8] * z + e[12];
+		this->y = e[1] * x + e[5] * y + e[9] * z + e[13];
+		this->z = e[2] * x + e[6] * y + e[10] * z + e[14];
 
 		return *this;
 
 	}
 
-	Vector3& applyProjection(const Matrix4<T>& m){
+	Vector3& applyProjection(const Matrix4<T>& m) {
 
 		T x = this->x, y = this->y, z = this->z;
 
 		auto& e = m.elements;
-		T d = 1 / ( e[ 3 ] * x + e[ 7 ] * y + e[ 11 ] * z + e[ 15 ] ); // perspective divide
+		T d = 1 / (e[3] * x + e[7] * y + e[11] * z + e[15]); // perspective divide
 
-		this->x = ( e[ 0 ] * x + e[ 4 ] * y + e[ 8 ]  * z + e[ 12 ] ) * d;
-		this->y = ( e[ 1 ] * x + e[ 5 ] * y + e[ 9 ]  * z + e[ 13 ] ) * d;
-		this->z = ( e[ 2 ] * x + e[ 6 ] * y + e[ 10 ] * z + e[ 14 ] ) * d;
+		this->x = (e[0] * x + e[4] * y + e[8] * z + e[12]) * d;
+		this->y = (e[1] * x + e[5] * y + e[9] * z + e[13]) * d;
+		this->z = (e[2] * x + e[6] * y + e[10] * z + e[14]) * d;
 
 		return *this;
 
 	}
 
-	Vector3& applyQuaternion(const Quaternion<T>& q){
+	Vector3& applyQuaternion(const Quaternion<T>& q) {
 
 		T x = this->x, y = this->y, z = this->z;
 
@@ -303,48 +306,48 @@ public:
 
 		// calculate quat * vector
 
-		T ix =  qw * x + qy * z - qz * y;
-		T iy =  qw * y + qz * x - qx * z;
-		T iz =  qw * z + qx * y - qy * x;
-		T iw = - qx * x - qy * y - qz * z;
+		T ix = qw * x + qy * z - qz * y;
+		T iy = qw * y + qz * x - qx * z;
+		T iz = qw * z + qx * y - qy * x;
+		T iw = -qx * x - qy * y - qz * z;
 
 		// calculate result * inverse quat
 
-		this->x = ix * qw + iw * - qx + iy * - qz - iz * - qy;
-		this->y = iy * qw + iw * - qy + iz * - qx - ix * - qz;
-		this->z = iz * qw + iw * - qz + ix * - qy - iy * - qx;
+		this->x = ix * qw + iw * -qx + iy * -qz - iz * -qy;
+		this->y = iy * qw + iw * -qy + iz * -qx - ix * -qz;
+		this->z = iz * qw + iw * -qz + ix * -qy - iy * -qx;
 
 		return *this;
 
 	}
 
-	Vector3& project(const Camera<T>& camera){
+	Vector3& project(const Camera<T>& camera) {
 
-		Matrix4<T> matrix;
+		Matrix4 <T> matrix;
 
-		matrix.multiplyMatricies(camera.matrixWorld, matrix.getInverse( camera.projectionMatrix ) );
+		matrix.multiplyMatricies(camera.matrixWorld, matrix.getInverse(camera.projectionMatrix));
 		return applyProjection(matrix);
 
 	}
 
-	Vector3& unproject(const Camera<T>& camera){
+	Vector3& unproject(const Camera<T>& camera) {
 
-		Matrix4<T> matrix;
+		Matrix4 <T> matrix;
 
-		matrix.multiplyMatricies(camera.matrixWorld, matrix.getInverse( camera.projectionMatrix ) );
+		matrix.multiplyMatricies(camera.matrixWorld, matrix.getInverse(camera.projectionMatrix));
 		return applyProjection(matrix);
 
 	}
 
-	Vector3& transformDirection(const Matrix4<T>& m){
+	Vector3& transformDirection(const Matrix4<T>& m) {
 
 		T x = this->x, y = this->y, z = this->z;
 
 		auto& e = m.elements;
 
-		this->x = e[ 0 ] * x + e[ 4 ] * y + e[ 8 ]  * z;
-		this->y = e[ 1 ] * x + e[ 5 ] * y + e[ 9 ]  * z;
-		this->z = e[ 2 ] * x + e[ 6 ] * y + e[ 10 ] * z;
+		this->x = e[0] * x + e[4] * y + e[8] * z;
+		this->y = e[1] * x + e[5] * y + e[9] * z;
+		this->z = e[2] * x + e[6] * y + e[10] * z;
 
 		normalize();
 
@@ -352,25 +355,25 @@ public:
 
 	}
 
-	Vector3& divide(const Vector3& v){
+	Vector3& divide(const Vector3& v) {
 		x /= v.x;
 		y /= v.y;
 		z /= v.z;
 		return *this;
 	}
 
-	inline Vector3& operator/=(const Vector3& v){
+	inline Vector3& operator/=(const Vector3& v) {
 		return divide(v);
 	}
 
-	Vector3& divide(T scalar){
+	Vector3& divide(T scalar) {
 		x /= scalar;
 		y /= scalar;
 		z /= scalar;
 		return *this;
 	}
 
-	inline Vector3& operator/=(T scalar){
+	inline Vector3& operator/=(T scalar) {
 		return divide(scalar);
 	}
 
@@ -390,17 +393,17 @@ public:
 		return v;
 	}
 
-	Vector3& min(const Vector3& v){
+	Vector3& min(const Vector3& v) {
 
-		if (x > v.x){
+		if (x > v.x) {
 			x = v.x;
 		}
 
-		if (y > v.y){
+		if (y > v.y) {
 			y = v.y;
 		}
 
-		if (z > v.z){
+		if (z > v.z) {
 			z = v.z;
 		}
 
@@ -408,17 +411,17 @@ public:
 
 	}
 
-	Vector3& max(const Vector3& v){
+	Vector3& max(const Vector3& v) {
 
-		if (x < v.x){
+		if (x < v.x) {
 			x = v.x;
 		}
 
-		if (y < v.y){
+		if (y < v.y) {
 			y = v.y;
 		}
 
-		if (z < v.z){
+		if (z < v.z) {
 			z = v.z;
 		}
 
@@ -426,7 +429,7 @@ public:
 
 	}
 
-	Vector3& clamp(const Vector3& min, const Vector3& max){
+	Vector3& clamp(const Vector3& min, const Vector3& max) {
 
 		if (x < min.x) {
 			x = min.x;
@@ -450,7 +453,7 @@ public:
 
 	}
 
-	Vector3& clampScalar(T min, T max){
+	Vector3& clampScalar(T min, T max) {
 
 		Vector3 low(min, min, min), high(max, max, max);
 
@@ -458,7 +461,7 @@ public:
 
 	}
 
-	Vector3& floor(){
+	Vector3& floor() {
 
 		x = std::floor(x);
 		y = std::floor(y);
@@ -468,7 +471,7 @@ public:
 
 	}
 
-	Vector3& ceil(){
+	Vector3& ceil() {
 
 		x = std::ceil(x);
 		y = std::ceil(y);
@@ -478,7 +481,7 @@ public:
 
 	}
 
-	Vector3& round(){
+	Vector3& round() {
 
 		x = std::round(x);
 		y = std::round(y);
@@ -498,7 +501,7 @@ public:
 
 	}
 
-	Vector3& negate(){
+	Vector3& negate() {
 		x = -x;
 		y = -y;
 		z = -z;
@@ -526,21 +529,21 @@ public:
 		return std::abs(x) + std::abs(y) + std::abs(z);
 	}
 
-	Vector3& normalize(){
+	Vector3& normalize() {
 		return divide(length());
 	}
 
-	Vector3& setLength(T l){
+	Vector3& setLength(T l) {
 		T oldLength = length();
 
-		if (oldLength != 0 && l != oldLength){
+		if (oldLength != 0 && l != oldLength) {
 			multiply(l / oldLength);
 		}
 
 		return *this;
 	}
 
-	Vector3& lerp(const Vector3& v, T alpha){
+	Vector3& lerp(const Vector3& v, T alpha) {
 		x += (v.x - x) * alpha;
 		y += (v.y - y) * alpha;
 		z += (v.z - z) * alpha;
@@ -548,13 +551,13 @@ public:
 		return *this;
 	}
 
-	Vector3& lerpVectors(const Vector3& v1, const Vector3& v2, T alpha){
+	Vector3& lerpVectors(const Vector3& v1, const Vector3& v2, T alpha) {
 		subVectors(v2, v1).multiply(alpha).add(v1);
 
 		return *this;
 	}
 
-	Vector3& cross(const Vector3& v){
+	Vector3& cross(const Vector3& v) {
 		T x = this->x, y = this->y, z = this->z;
 		this->x = y * v.z - z * v.y;
 		this->y = z * v.x - x * v.z;
@@ -563,7 +566,7 @@ public:
 		return *this;
 	}
 
-	Vector3& cross(const Vector3& a, const Vector3& b){
+	Vector3& cross(const Vector3& a, const Vector3& b) {
 
 		x = a.y * b.z - a.z * b.y;
 		y = a.z * b.x - a.x * b.z;
@@ -573,7 +576,7 @@ public:
 
 	}
 
-	Vector3& projectOnVector(const Vector3& vector){
+	Vector3& projectOnVector(const Vector3& vector) {
 
 		Vector3 v1(vector);
 
@@ -585,7 +588,7 @@ public:
 
 	}
 
-	Vector3& projectOnPlane(const Vector3& normal){
+	Vector3& projectOnPlane(const Vector3& normal) {
 
 		Vector3 v1(*this);
 
@@ -595,7 +598,7 @@ public:
 
 	}
 
-	Vector3& reflect(const Vector3& normal){
+	Vector3& reflect(const Vector3& normal) {
 
 		Vector3 v1(normal);
 
@@ -623,7 +626,7 @@ public:
 		return dx * dx + dy * dy + dz * dz;
 	}
 
-	Vector3& setFromMatrixPosition(const Matrix4<T>& m){
+	Vector3& setFromMatrixPosition(const Matrix4<T>& m) {
 		x = m.elements[12];
 		y = m.elements[13];
 		z = m.elements[14];
@@ -631,7 +634,7 @@ public:
 		return *this;
 	}
 
-	Vector3& setFromMatrixScale(const Matrix4<T>& m){
+	Vector3& setFromMatrixScale(const Matrix4<T>& m) {
 
 		T e[] = m.elements;
 
@@ -675,7 +678,8 @@ public:
 		array[offset + 1] = y;
 		array[offset + 2] = z;
 	}
-	Vector3& fromArray(const std::vector<T>& array, unsigned offset){
+
+	Vector3& fromArray(const std::vector<T>& array, unsigned offset) {
 		x = array[offset];
 		y = array[offset + 1];
 		z = array[offset + 2];
@@ -684,4 +688,3 @@ public:
 
 };
 
-#endif

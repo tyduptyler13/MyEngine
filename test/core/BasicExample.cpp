@@ -6,7 +6,7 @@
 #include "GeometryImporter.hpp"
 
 using namespace std;
-using namespace MyUPlay::MyEngine;
+using namespace MyEngine;
 
 int main() {
 
@@ -27,16 +27,16 @@ int main() {
 		//The renderer automatically manages its internal size. No need to set it like three.js
 	});
 
-	BoxGeometry<float>* geo = new BoxGeometry<float>(10, 10, 10, 8, 4, 2);
+	auto* geo = new BoxGeometry<float>(10, 10, 10, 8, 4, 2);
 
 	IMaterial* mat = createNormalMaterial<GLES2Renderer>();
 
-	Mesh<float>* box = new Mesh<float>(geo, mat);
+	auto* box = new Mesh<float>(geo, mat);
 	box->position.set(-10, 0, 0);
 
 	scene.add(box);
 
-	Object3D<float>* suzane = GeometryImporter::ImportAsset("suzane.obj");
+	auto* suzane = GeometryImporter::ImportAsset("suzane.obj");
 	suzane->position.set(10, 0, 0);
 
 	scene.add(suzane);

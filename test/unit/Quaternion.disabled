@@ -9,7 +9,7 @@
 #include <vector>
 
 using namespace std;
-using namespace MyUPlay::MyEngine;
+using namespace MyEngine;
 using namespace Test;
 
 const vector<Order> orders = { { Order::XYZ, Order::YXZ, Order::ZXY, Order::ZYX, Order::YZX, Order::XZY } };

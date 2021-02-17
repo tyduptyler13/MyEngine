@@ -2,7 +2,7 @@
 
 #include "nbind/nbind.h"
 
-using namespace MyUPlay::MyEngine;
+using namespace MyEngine;
 NBIND_CLASS(Object3D<float>, Object3D) {
 	construct<>();
 	construct<Object3D<float>>();

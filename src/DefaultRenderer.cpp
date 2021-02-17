@@ -1,10 +1,19 @@
 #include "DefaultRenderer.hpp"
 
 using namespace std;
-using namespace MyUPlay::MyEngine;
+using namespace MyEngine;
 
-DefaultRenderer::DefaultRenderer(bgfx::RendererType type, uint16_t vendorId) {
+DefaultRenderer::DefaultRenderer(bgfx::RendererType::Enum type, uint16_t vendorId) {
 
-	bgfx::init();
+	bgfx::Init init;
+	init.type = type;
+	init.resolution.height = this->windowHeight;
+	init.resolution.width = this->windowWidth;
+	init.debug = true;
+	bgfx::init(init);
 
+}
+
+DefaultRenderer::~DefaultRenderer() {
+	bgfx::shutdown();
 }

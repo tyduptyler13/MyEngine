@@ -1,5 +1,4 @@
-#ifndef MYUPLAY_MYENGINE_OBJECT3D
-#define MYUPLAY_MYENGINE_OBJECT3D
+#pragma once
 
 #include <string>
 #include <vector>
@@ -10,12 +9,12 @@
 
 #include "Log.hpp"
 
-namespace MyUPlay {
-	namespace MyEngine {
-		template <typename T>
-		class Object3D;
-	}
+
+namespace MyEngine {
+	template<typename T>
+	class Object3D;
 }
+
 
 #include "Vector3.hpp"
 #include "Euler.hpp"
@@ -25,14 +24,14 @@ namespace MyUPlay {
 #include "Raycaster.hpp"
 #include "Log.hpp"
 
-template <typename T = float>
-class MyUPlay::MyEngine::Object3D {
-	private:
+template<typename T = float>
+class MyEngine::Object3D {
+private:
 
 	std::shared_ptr<spdlog::logger> logger = getLogger("Object3D");
 	Euler<T> rotation;
 
-	public:
+public:
 
 	enum ObjectType { //The following are the supported types for objects. Each has different rendering properties.
 		BASIC, //A container, does not render
@@ -60,11 +59,11 @@ class MyUPlay::MyEngine::Object3D {
 	 */
 	std::vector<std::shared_ptr<Object3D>> children;
 
-	Vector3 <T> up = Vector3<T>(0, 1, 0);
+	Vector3<T> up = Vector3<T>(0, 1, 0);
 
-	Vector3 <T> position;
+	Vector3<T> position;
 	Quaternion<T> quaternion;
-	Vector3 <T> scale = Vector3<T>(1, 1, 1);
+	Vector3<T> scale = Vector3<T>(1, 1, 1);
 
 	bool rotationAutoUpdate = true;
 	Matrix4<T> matrix;
@@ -98,7 +97,7 @@ class MyUPlay::MyEngine::Object3D {
 		return *this;
 	}
 
-	Object3D& setRotationAxisAngle(const Vector3 <T>& axis, float angle) {
+	Object3D& setRotationAxisAngle(const Vector3<T>& axis, float angle) {
 		quaternion.setFromAxisAngle(axis, angle);
 		return *this;
 	}
@@ -118,7 +117,7 @@ class MyUPlay::MyEngine::Object3D {
 		return *this;
 	}
 
-	Object3D& rotateOnAxis(Vector3 <T> axis, float angle) {
+	Object3D& rotateOnAxis(Vector3<T> axis, float angle) {
 		Quaternion<T> q1;
 		q1.setFromAxisAngle(axis, angle);
 		quaternion *= q1;
@@ -126,57 +125,57 @@ class MyUPlay::MyEngine::Object3D {
 	}
 
 	Object3D& rotateX(float angle) {
-		const Vector3 <T> v1(1, 0, 0);
+		const Vector3<T> v1(1, 0, 0);
 		rotateOnAxis(v1, angle);
 		return *this;
 	}
 
 	Object3D& rotateY(float angle) {
-		const Vector3 <T> v1(0, 1, 0);
+		const Vector3<T> v1(0, 1, 0);
 		rotateOnAxis(v1, angle);
 		return *this;
 	}
 
 	Object3D& rotateZ(float angle) {
-		const Vector3 <T> v1(0, 0, 1);
+		const Vector3<T> v1(0, 0, 1);
 		rotateOnAxis(v1, angle);
 		return *this;
 	}
 
-	Object3D& translateOnAxis(Vector3 <T> axis, float distance) {
-		Vector3 <T> v1(axis);
+	Object3D& translateOnAxis(Vector3<T> axis, float distance) {
+		Vector3<T> v1(axis);
 		v1.applyQuaternion(quaternion);
 		position += v1 * distance;
 		return *this;
 	}
 
 	Object3D& translateX(float distance) {
-		const Vector3 <T> v1(1, 0, 0);
+		const Vector3<T> v1(1, 0, 0);
 		translateOnAxis(v1, distance);
 		return *this;
 	}
 
 	Object3D& translateY(float distance) {
-		const Vector3 <T> v1(0, 1, 0);
+		const Vector3<T> v1(0, 1, 0);
 		translateOnAxis(v1, distance);
 		return *this;
 	}
 
 	Object3D& translateZ(float distance) {
-		const Vector3 <T> v1(0, 0, 1);
+		const Vector3<T> v1(0, 0, 1);
 		translateOnAxis(v1, distance);
 		return *this;
 	}
 
-	Vector3 <T>& localToWorld(Vector3 <T>& vector) const {
+	Vector3<T>& localToWorld(Vector3<T>& vector) const {
 		return vector.applyMatrix4(matrixWorld);
 	}
 
-	Vector3 <T>& worldToLocal(Vector3 <T>& vector) const {
+	Vector3<T>& worldToLocal(Vector3<T>& vector) const {
 		return vector.applyMatrix4(Matrix4<T>().getInverse(matrixWorld));
 	}
 
-	Object3D& lookAt(const Vector3 <T>& vector) {
+	Object3D& lookAt(const Vector3<T>& vector) {
 		Matrix4<T> m1 = Matrix4<T>().lookAt(vector, position, up);
 		quaternion.setFromRotationMatrix(m1);
 		return *this;
@@ -283,8 +282,8 @@ class MyUPlay::MyEngine::Object3D {
 		return nullptr;
 	}
 
-	Vector3 <T> getWorldPosition() {
-		Vector3 <T> v1;
+	Vector3<T> getWorldPosition() {
+		Vector3<T> v1;
 		return getWorldPosition(v1);
 	}
 
@@ -298,24 +297,24 @@ class MyUPlay::MyEngine::Object3D {
 		return getWorldRotation(e);
 	}
 
-	Vector3 <T> getWorldScale() {
-		Vector3 <T> v1;
+	Vector3<T> getWorldScale() {
+		Vector3<T> v1;
 		return getWorldScale(v1);
 	}
 
-	Vector3 <T> getWorldDirection() {
-		Vector3 <T> v1;
+	Vector3<T> getWorldDirection() {
+		Vector3<T> v1;
 		return getWorldDirection(v1);
 	}
 
-	Vector3 <T>& getWorldPosition(Vector3 <T>& target) {
+	Vector3<T>& getWorldPosition(Vector3<T>& target) {
 		updateMatrixWorld(true);
 		return target.setFromMatrixPosition(matrixWorld);
 	}
 
 	Quaternion<T>& getWorldQuaternion(Quaternion<T>& target) {
 		updateMatrixWorld(true);
-		Vector3 <T> pos, scale;
+		Vector3<T> pos, scale;
 		matrixWorld.decompose(pos, target, scale);
 		return target;
 	}
@@ -325,15 +324,15 @@ class MyUPlay::MyEngine::Object3D {
 		return target.setFromQuaternion(q, rotation.order, false);
 	}
 
-	Vector3 <T>& getWorldScale(Vector3 <T>& target) {
+	Vector3<T>& getWorldScale(Vector3<T>& target) {
 		Quaternion<T> q;
-		Vector3 <T> pos;
+		Vector3<T> pos;
 		updateMatrixWorld(true);
 		matrixWorld.decompose(pos, q, target);
 		return target;
 	}
 
-	Vector3 <T>& getWorldDirection(Vector3 <T>& target) {
+	Vector3<T>& getWorldDirection(Vector3<T>& target) {
 		Quaternion<T> q = getWorldQuaternion();
 		return target.set(0, 0, 1).applyQuaternion(q);
 	}
@@ -441,11 +440,11 @@ class MyUPlay::MyEngine::Object3D {
 		this->visible = visible;
 	}
 
-	Vector3 <T>& getPosition() {
+	Vector3<T>& getPosition() {
 		return position;
 	}
 
-	void setPosition(const Vector3 <T>& v) {
+	void setPosition(const Vector3<T>& v) {
 		position = v;
 	}
 
@@ -465,11 +464,11 @@ class MyUPlay::MyEngine::Object3D {
 		matrixWorldNeedsUpdate = b;
 	}
 
-	Vector3 <T>& getScale() {
+	Vector3<T>& getScale() {
 		return scale;
 	}
 
-	void setScale(const Vector3 <T>& v) {
+	void setScale(const Vector3<T>& v) {
 		scale = v;
 	}
 
@@ -502,7 +501,6 @@ class MyUPlay::MyEngine::Object3D {
 
 };
 
-template <typename T>
-unsigned MyUPlay::MyEngine::Object3D<T>::object3DIdCounter = 0;
+template<typename T>
+unsigned MyEngine::Object3D<T>::object3DIdCounter = 0;
 
-#endif

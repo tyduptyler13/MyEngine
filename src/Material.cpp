@@ -1,6 +1,6 @@
 #include "Material.hpp"
 
-using namespace MyUPlay::MyEngine;
+using namespace MyEngine;
 
 unsigned IMaterial::materialIdCounter = 0;
 
