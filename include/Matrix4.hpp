@@ -7,7 +7,6 @@
 
 #include "Log.hpp"
 
-
 namespace MyEngine {
 	template<typename T>
 	class Matrix4;
@@ -28,7 +27,7 @@ class MyEngine::Matrix4 {
 
 private:
 
-	std::shared_ptr<spdlog::logger> console = getLogger("Matrix4");
+	std::unique_ptr<spdlog::logger> console = Log::getLogger("Matrix4");
 
 public:
 
@@ -134,7 +133,7 @@ public:
 
 	Matrix4& extractRotation(const Matrix4& m) {
 
-		Vector3 <T> v1;
+		Vector3<T> v1;
 
 		auto& te = elements;
 		auto& me = m.elements;
@@ -320,7 +319,7 @@ public:
 
 	Matrix4& lookAt(const Vector3<T>& eye, const Vector3<T>& target, const Vector3<T>& up) {
 
-		Vector3 <T> x, y, z;
+		Vector3<T> x, y, z;
 		auto& te = elements;
 
 		z.subVectors(eye, target).normalize();
@@ -485,7 +484,7 @@ public:
 	                    unsigned length = 0
 	) {
 
-		Vector3 <T> v1;
+		Vector3<T> v1;
 
 		if (length == 0) length = array.size();
 
@@ -761,7 +760,7 @@ public:
 
 	const Matrix4& decompose(Vector3<T>& position, Quaternion<T>& quaternion, Vector3<T>& scale) const {
 
-		Vector3 <T> vector;
+		Vector3<T> vector;
 		Matrix4<T> matrix;
 
 		auto& te = elements;
@@ -975,7 +974,7 @@ public:
 			length = array.size();
 		}
 
-		Vector3 <T> v1;
+		Vector3<T> v1;
 
 		for (unsigned i = offset; i < length; i += 3) {
 			v1.fromArray(array, i);

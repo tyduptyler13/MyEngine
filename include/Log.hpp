@@ -1,5 +1,9 @@
 #pragma once
 
+#include <memory>
+
 #include "spdlog/spdlog.h"
 
-std::shared_ptr<spdlog::logger> getLogger(const std::string& name);
+namespace MyEngine::Log {
+	std::unique_ptr<spdlog::logger> getLogger(const std::string& name);
+}

@@ -177,7 +177,7 @@ struct MyEngine::Euler {
 	}
 
 	Euler& setFromQuaternion(const Quaternion<T>& q, Order order, bool update = false) {
-		Matrix4 <T> matrix;
+		Matrix4<T> matrix;
 		matrix.makeRotationFromQuaternion(q);
 		setFromRotationMatrix(matrix, order, update);
 
@@ -209,7 +209,7 @@ struct MyEngine::Euler {
 	}
 
 	Vector3<T> toVector3() const {
-		Vector3 <T> v;
+		Vector3<T> v;
 		return toVector3(v);
 	}
 

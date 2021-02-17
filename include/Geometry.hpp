@@ -45,17 +45,15 @@ struct MyEngine::IGeometry {
 
 	std::string name;
 
-	std::unique_ptr<Box3 < T> >
-	boundingBox;
-	std::unique_ptr<Sphere < T> >
-	boundingSphere;
+	std::unique_ptr<Box3<T>> boundingBox;
+	std::unique_ptr<Sphere<T>> boundingSphere;
 
 	bool multiMaterial = false;
 
 	bool boundingBoxDirty = true, //Must be set to true for it to recalculate
 	boundingSphereDirty = true; //Must be set to true for it to recalculate
 
-	virtual void applyMatrix(const Matrix4 <T>& matrix) = 0;
+	virtual void applyMatrix(const Matrix4<T>& matrix) = 0;
 
 	virtual void computeBoundingBox() = 0;
 
@@ -65,9 +63,9 @@ struct MyEngine::IGeometry {
 		return false;
 	}
 
-	virtual BufferAttribute <T>& getPositions() = 0;
+	virtual BufferAttribute<T>& getPositions() = 0;
 
-	virtual BufferAttribute <T>& getNormals() = 0;
+	virtual BufferAttribute<T>& getNormals() = 0;
 
 	/**
 	 * Returns the number elements in the Geometry.
@@ -86,12 +84,11 @@ struct MyEngine::IGeometry {
 		return {};
 	}
 
-	virtual void raycast(std::shared_ptr<Object3D < T>>
-
-	& obj,
-	const Raycaster <T>& r, std::vector<Intersection < T>>
-	& intersections,
-	SideConstant s
+	virtual void raycast(
+		std::shared_ptr<Object3D<T>>& obj,
+		const Raycaster<T>& r,
+		std::vector<Intersection<T>>& intersections,
+		SideConstant s
 	) const = 0;
 
 	virtual ~IGeometry() {}
@@ -102,9 +99,9 @@ protected:
 
 	IGeometry(std::string name) : name(name) {}
 
-	IGeometry(const IGeometry <T>& g) : name(g.name) {}
+	IGeometry(const IGeometry<T>& g) : name(g.name) {}
 
-	IGeometry(IGeometry <T>&& g) : name(std::move(g.name)) {}
+	IGeometry(IGeometry<T>&& g) : name(std::move(g.name)) {}
 
 public:
 
@@ -148,7 +145,7 @@ public:
 		return this;
 	}
 
-	IGeometry* lookAt(const Vector3 <T>& v) {
+	IGeometry* lookAt(const Vector3<T>& v) {
 		Object3D<T> obj;
 		obj.lookAt(v);
 		obj.updateMatrix();
@@ -156,7 +153,7 @@ public:
 		return this;
 	}
 
-	Vector3 <T> center() {
+	Vector3<T> center() {
 		this->computeBoundingBox();
 		Vector3<T> offset = this->boundingBox->center().negate();
 		translate(offset.x, offset.y, offset.z);

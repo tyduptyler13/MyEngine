@@ -46,7 +46,7 @@ struct MyEngine::PerspectiveCamera : public Camera<T> {
 	T filmGauge = 35;
 	T filmOffset = 0;
 
-	std::unique_ptr<View < T>> view;
+	std::unique_ptr<View<T>> view;
 
 	PerspectiveCamera(T fov = 50, T aspect = 1, T near = 0.1, T far = 2000) : Camera<T>(),
 	                                                                          fov(fov), aspect(aspect), near(near),

@@ -85,7 +85,7 @@ struct MyEngine::Quaternion {
 		return Quaternion(*this);
 	}
 
-	Quaternion& setFromEuler(const Euler <T>& euler) {
+	Quaternion& setFromEuler(const Euler<T>& euler) {
 		T c1 = cos(euler.x / 2);
 		T c2 = cos(euler.y / 2);
 		T c3 = cos(euler.z / 2);
@@ -143,7 +143,7 @@ struct MyEngine::Quaternion {
 
 	}
 
-	Quaternion& setFromAxisAngle(const Vector3 <T>& axis, T angle) {
+	Quaternion& setFromAxisAngle(const Vector3<T>& axis, T angle) {
 		T halfAngle = angle / 2;
 		T s = sin(halfAngle);
 
@@ -156,7 +156,7 @@ struct MyEngine::Quaternion {
 
 	}
 
-	Quaternion& setFromRotationMatrix(const Matrix4 <T>& m) {
+	Quaternion& setFromRotationMatrix(const Matrix4<T>& m) {
 		const auto& te = m.elements;
 		const T& m11 = te[0], m12 = te[4], m13 = te[8],
 				m21 = te[1], m22 = te[5], m23 = te[9],
@@ -207,9 +207,9 @@ struct MyEngine::Quaternion {
 
 	}
 
-	Quaternion& setFromUnitVectors(const Vector3 <T>& from, const Vector3 <T>& to) {
+	Quaternion& setFromUnitVectors(const Vector3<T>& from, const Vector3<T>& to) {
 
-		Vector3 <T> v1;
+		Vector3<T> v1;
 		const T EPS = 0.000001;
 
 		T r = from.dot(to) + 1;

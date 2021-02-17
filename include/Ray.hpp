@@ -30,7 +30,7 @@ public:
 			: origin(origin), direction(direction) {}
 
 	template<typename T2>
-	Ray(const Ray <T2>& ray) : origin(ray.origin), direction(direction) {}
+	Ray(const Ray<T2>& ray) : origin(ray.origin), direction(direction) {}
 
 	Ray& set(const Vector3<T>& origin, const Vector3<T>& direction) {
 		this->origin = origin;
@@ -39,14 +39,14 @@ public:
 	}
 
 	template<typename T2>
-	Ray& copy(const Ray <T2>& ray) {
+	Ray& copy(const Ray<T2>& ray) {
 		origin = ray.origin;
 		direction = ray.direction;
 		return *this;
 	}
 
 	template<typename T2>
-	inline Ray& operator=(const Ray <T2>& ray) {
+	inline Ray& operator=(const Ray<T2>& ray) {
 		return copy(ray);
 	}
 
@@ -206,7 +206,7 @@ public:
 
 	}
 
-	bool isIntersectionPlane(const Plane <T>& plane) const {
+	bool isIntersectionPlane(const Plane<T>& plane) const {
 
 		T distToPoint = plane.distanceToPoint(origin);
 
@@ -227,7 +227,7 @@ public:
 	/**
 	 * If distance is impossible to find then -1 will be returned.
 	 */
-	T distanceToPlane(const Plane <T>& plane) const {
+	T distanceToPlane(const Plane<T>& plane) const {
 
 		T denominator = plane.normal.dot(direction);
 
@@ -244,7 +244,7 @@ public:
 
 	}
 
-	std::shared_ptr<Vector3<T>> intersectPlane(const Plane <T>& plane, std::shared_ptr<Vector3<T>> optionalTarget) const {
+	std::shared_ptr<Vector3<T>> intersectPlane(const Plane<T>& plane, std::shared_ptr<Vector3<T>> optionalTarget) const {
 
 		T t = distanceToPlane(plane);
 
@@ -256,13 +256,13 @@ public:
 
 	}
 
-	bool isIntersectionBox(const Box3 <T>& box) const {
+	bool isIntersectionBox(const Box3<T>& box) const {
 
 		return intersectBox(box);
 
 	}
 
-	std::shared_ptr<Vector3<T>> intersectBox(const Box3 <T>& box,
+	std::shared_ptr<Vector3<T>> intersectBox(const Box3<T>& box,
 	                                         std::shared_ptr<Vector3<T>> optionalTarget = nullptr) const {
 
 		T tmin, tmax, tymax, tymin, tzmin, tzmax;

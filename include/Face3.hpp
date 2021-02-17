@@ -25,8 +25,7 @@ namespace MyEngine {
 
 		std::array<Vector3<T>, 3> vertices;
 		std::array<Vector3<T>, 3> normals;
-		std::array<Vector2 < T>, 3>
-		uvs;
+		std::array<Vector2<T>, 3> uvs;
 		std::array<Color, 3> colors;
 
 		unsigned materialIndex = 0;

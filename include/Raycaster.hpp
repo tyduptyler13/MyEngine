@@ -29,9 +29,9 @@ template<typename T>
 struct MyEngine::Intersection {
 	T distance;
 	Vector3<T> point;
-	std::shared_ptr<Object3D < T>> object;
+	std::shared_ptr<Object3D<T>> object;
 	Vector2<T> uv;
-	Face3 <T> face;
+	Face3<T> face;
 	unsigned faceIndex = 0;
 
 	Intersection() {}
@@ -52,26 +52,22 @@ class MyEngine::Raycaster {
 
 private:
 
-	static T ascSort(Intersection <T>& a, Intersection <T>& b) {
+	static T ascSort(Intersection<T>& a, Intersection<T>& b) {
 		return a.distance - b.distance;
 	}
 
-	static void intersectObject(const std::shared_ptr<Object3D < T>>
-
-	& o,
-	const Raycaster <T>& r, std::vector<Intersection < T>>
-	& intersects,
-	bool recursive
-	){
-
+	static void intersectObject(
+		const std::shared_ptr<Object3D<T>>& o,
+    const Raycaster<T>& r, std::vector<Intersection<T>>& intersects,
+    bool recursive
+	) {
 		if (o->visible == false) return;
 
 		o->raycast(r, intersects);
 
 		if (recursive) {
 
-			for (const std::shared_ptr<Object3D < T>>
-			&child : o->children) {
+			for (const std::shared_ptr<Object3D<T>>& child : o->children) {
 				intersectObject(child, r, intersects, true);
 			}
 
@@ -98,19 +94,19 @@ public:
 
 	}
 
-	void setFromCamera(Vector2<T> coords, const OrthographicCamera <T>& camera) {
+	void setFromCamera(Vector2<T> coords, const OrthographicCamera<T>& camera) {
 
 		ray.origin.set(coords.x, coords.y, (camera.near + camera.far) / (camera.near - camera.far)).unproject(camera);
 		ray.direction.set(0, 0, -1).transformDirection(camera.matrixWorld);
 
 	}
 
-	std::vector<Intersection < T>> intersectObject(const std::shared_ptr<Object3D < T>>& o,
-	bool recursive = false
+	std::vector<Intersection<T>> intersectObject(
+		const std::shared_ptr<Object3D<T>>& o,
+		bool recursive = false
 	) const {
 
-		std::vector<Intersection < T>>
-		intersects;
+		std::vector<Intersection<T>> intersects;
 
 		intersectObject(o, this, intersects, recursive);
 
@@ -135,11 +131,12 @@ public:
 
 	}
 
-	std::unique_ptr<Intersection < T>> checkIntersection(std::shared_ptr<Object3D < T>>& o,
-	SideConstant side,
-	const Vector3<T>& pA,
-	const Vector3<T>& pB,
-	const Vector3<T>& pC
+	std::unique_ptr<Intersection<T>> checkIntersection(
+		std::shared_ptr<Object3D<T>>& o,
+		SideConstant side,
+		const Vector3<T>& pA,
+		const Vector3<T>& pB,
+		const Vector3<T>& pC
 	) const {
 
 		std::shared_ptr<Vector3<T>> intersect;
@@ -158,8 +155,7 @@ public:
 
 		if (distance < near || distance > far) return nullptr;
 
-		auto intersection = std::make_unique<Intersection < T>>
-		();
+		auto intersection = std::make_unique<Intersection<T>>();
 
 		intersection->distance = distance;
 		intersection->point = *intersect;

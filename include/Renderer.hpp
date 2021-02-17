@@ -123,7 +123,7 @@ struct MyEngine::Renderer {
 
 	virtual void renderBufferImmediate(Mesh<T>* object, std::shared_ptr<Shader::Shader> shader, IMaterial* material) = 0;
 
-	virtual void renderBufferDirect(Camera<T>*, Fog <T>*, IGeometry<T>*, IMaterial*, Mesh<T>* object, int group) = 0;
+	virtual void renderBufferDirect(Camera<T>*, Fog<T>*, IGeometry<T>*, IMaterial*, Mesh<T>* object, int group) = 0;
 
 	virtual void render(Scene<T>& scene, Camera<T>* camera) = 0;
 

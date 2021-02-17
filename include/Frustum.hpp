@@ -13,7 +13,7 @@ namespace MyEngine {
 
 	public:
 
-		Plane <T> planes[6];
+		Plane<T> planes[6];
 
 		Frustum() {
 
@@ -39,7 +39,7 @@ namespace MyEngine {
 
 		}
 
-		Frustum& setFromMatrix(const Matrix4 <T>& matrix) {
+		Frustum& setFromMatrix(const Matrix4<T>& matrix) {
 
 			const auto& me = matrix.elements;
 			const T& me0 = me[0], me1 = me[1], me2 = me[2], me3 = me[3];

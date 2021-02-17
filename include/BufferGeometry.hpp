@@ -127,9 +127,9 @@ namespace MyEngine {
 		}
 
 		void raycast(
-				std::shared_ptr<Object3D<T> >& obj,
+				std::shared_ptr<Object3D<T>>& obj,
 				const Raycaster <T>& r,
-			  std::vector<Intersection<T> >& intersections,
+				std::vector<Intersection<T>>& intersections,
 				SideConstant s
 		) const {
 

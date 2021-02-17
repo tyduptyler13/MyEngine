@@ -4,7 +4,7 @@ using namespace MyEngine;
 using namespace std;
 
 Listener* Listener::singleton = new Listener();
-static auto soundLog = getLogger("Sound");
+static auto soundLog = Log::getLogger("Sound");
 
 Listener::Listener(){
 	//TODO

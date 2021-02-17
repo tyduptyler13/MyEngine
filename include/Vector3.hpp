@@ -90,7 +90,7 @@ public:
 
 	template<typename T2>
 	//Allows conversion from other template types.
-	Vector3& copy(const Vector3 <T2>& v) {
+	Vector3& copy(const Vector3<T2>& v) {
 		x = v.x;
 		y = v.y;
 		z = v.z;

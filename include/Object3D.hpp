@@ -28,7 +28,7 @@ template<typename T = float>
 class MyEngine::Object3D {
 private:
 
-	std::shared_ptr<spdlog::logger> logger = getLogger("Object3D");
+	std::shared_ptr<spdlog::logger> logger = Log::getLogger("Object3D");
 	Euler<T> rotation;
 
 public:
@@ -52,7 +52,7 @@ public:
 	const Math::UUID uuid = Math::generateUUID();
 	std::string name;
 
-	Object3D* parent = nullptr; //We don't want to keep a ref count on something that also owns us.
+	std::weak_ptr<Object3D> parent = nullptr; //We don't want to keep a ref count on something that also owns us.
 
 	/**
 	 * All children are unique. Copies may be made, but no copies of pointers.
@@ -181,25 +181,14 @@ public:
 		return *this;
 	}
 
-	Object3D& add(std::vector<Object3D*> objects) {
-		for (Object3D* o : objects) {
+	Object3D& add(std::vector<std::shared_ptr<Object3D>>& objects) {
+		for (auto o : objects) {
 			add(o);
 		}
 		return *this;
 	}
 
-	Object3D& add(Object3D* object) {
-		if (object->parent != nullptr) {
-			object->parent->remove(object);
-		}
-
-		object->parent = this;
-		children.emplace_back(std::shared_ptr<Object3D>(object));
-
-		return *this;
-	}
-
-	Object3D& add(std::shared_ptr<Object3D> object) {
+	Object3D& add(std::shared_ptr<Object3D>& object) {
 		if (object->parent != nullptr) {
 			object->parent->remove(object);
 		}
@@ -210,8 +199,8 @@ public:
 		return *this;
 	}
 
-	Object3D& remove(std::vector<Object3D*> objects) {
-		for (Object3D* o : objects) {
+	Object3D& remove(std::vector<std::shared_ptr<Object3D>>& objects) {
+		for (auto o : objects) {
 			remove(o);
 		}
 		return *this;
@@ -225,8 +214,7 @@ public:
 	 * If you wish to keep the object after removal, be sure you have obtained a copy of the shared
 	 * pointer created either in the add function or passed to the add function.
 	 */
-	Object3D& remove(Object3D* object) {
-
+	Object3D& remove(std::shared_ptr<Object3D>& object) {
 		auto loc = std::find_if(children.begin(), children.end(), [object](const std::shared_ptr<Object3D>& p) {
 			return p.get() == object;
 		});
@@ -248,7 +236,7 @@ public:
 		return remove(obj.get());
 	}
 
-	Object3D* getObjectById(const Math::UUID& id) const {
+	std::shared_ptr<Object3D> getObjectById(const Math::UUID& id) const {
 		for (auto o : children) {
 			if (o->uuid == id) {
 				return o;
@@ -263,11 +251,11 @@ public:
 		return nullptr;
 	}
 
-	inline Object3D* getObjectByName(std::string&& s) const { //Test move version.
+	inline std::shared_ptr<Object3D> getObjectByName(std::string&& s) const { //Test move version.
 		return getObjectByName(s);
 	}
 
-	Object3D* getObjectByName(const std::string& name) const {
+	std::shared_ptr<Object3D> getObjectByName(const std::string& name) const {
 		for (auto& o : children) {
 			if (o->name == name) {
 				return o.get();
@@ -337,7 +325,7 @@ public:
 		return target.set(0, 0, 1).applyQuaternion(q);
 	}
 
-	Object3D& traverse(Object3D* self, std::function<void(Object3D * )> func) {
+	Object3D& traverse(std::shared_ptr<Object3D>& self, std::function<void(std::shared_ptr<Object3D>&)> func) {
 		func(self);
 		for (auto o : children) {
 			o->traverse(o, func);
@@ -345,7 +333,7 @@ public:
 		return *this;
 	}
 
-	Object3D& traverseVisible(Object3D* self, std::function<void(Object3D * )> func) {
+	Object3D& traverseVisible(std::shared_ptr<Object3D>& self, std::function<void(std::shared_ptr<Object3D>&)> func) {
 		if (visible) {
 			func(self);
 			for (auto o : children) {
@@ -355,7 +343,7 @@ public:
 		return *this;
 	}
 
-	Object3D& traverseAnsestors(Object3D* self, std::function<void(Object3D * )> func) {
+	Object3D& traverseAnsestors(std::shared_ptr<Object3D>& self, std::function<void(std::shared_ptr<Object3D>&)> func) {
 		func(self);
 		for (auto o : children) {
 			o->traverseAnsestors(o, func);

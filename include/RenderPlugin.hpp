@@ -10,7 +10,7 @@ namespace MyEngine {
 
 		~RenderPlugin() {}
 
-		virtual void render(const Scene <T>& scene, const Camera<T>& camera, unsigned viewportwidth,
+		virtual void render(const Scene<T>& scene, const Camera<T>& camera, unsigned viewportwidth,
 		                    unsigned viewportHeight) = 0;
 
 	};

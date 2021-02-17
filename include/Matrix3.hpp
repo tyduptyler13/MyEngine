@@ -77,7 +77,7 @@ struct MyEngine::Matrix3 {
 	std::vector<Vector3<T> >& applyToVector3Array(std::vector<Vector3<T> >& array, unsigned offset = 0,
 	                                              unsigned length = 0) const {
 
-		Vector3 <T> v1;
+		Vector3<T> v1;
 
 		if (length == 0) length = array.size();
 
@@ -220,7 +220,7 @@ struct MyEngine::Matrix3 {
 			length = array.size();
 		}
 
-		Vector3 <T> v1;
+		Vector3<T> v1;
 
 		for (unsigned i = offset; i < length; i += 3) {
 			v1.fromArray(array, i);

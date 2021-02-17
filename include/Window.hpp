@@ -163,15 +163,15 @@ namespace MyEngine {
 		};
 	};
 
-	typedef std::function<void(MouseButton, EventType, unsigned x, unsigned y,
-	                           unsigned dx, unsigned dy)>
-			MouseEvent;
+	typedef std::function<void(MouseButton, EventType,
+														 unsigned x, unsigned y,
+	                           unsigned dx, unsigned dy)> MouseEvent;
 	typedef std::function<void(KeyboardKey, EventType)> KeyboardEvent;
 	// Missing scrolling
 	// Missing file drops? Do we even want them?
 	typedef std::function<void(unsigned gamepadId, unsigned gamepadAxis,
-	                           float x, float y)>
-			GamepadAxisEvent;
+	                           float x, float y)> GamepadAxisEvent;
+
 	/**
 	 * A function that handles joystick specific buttons.
 	 *
@@ -181,8 +181,7 @@ namespace MyEngine {
 	 * buttons that don't have force sensitivity.)
 	 */
 	typedef std::function<void(unsigned gamepadId, unsigned button,
-	                           float intensity)>
-			GamepadButtonEvent;
+	                           float intensity)> GamepadButtonEvent;
 
 	/**
 	 * An interface for dealing with windows and their contexts.
@@ -236,5 +235,3 @@ namespace MyEngine {
 		virtual Renderer<float>* getRenderer() = 0;
 	};
 }
-
-
