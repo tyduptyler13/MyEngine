@@ -1,18 +1,8 @@
 cmake_minimum_required(VERSION 3.9)
 project(MyEngine)
 
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-#SET(CMAKE_VERBOSE_MAKEFILE ON)
-
 add_subdirectory(deps/spdlog)
-add_subdirectory(deps/bgfx.cmake)
-
-set(MYENGINE_INCLUDE_DIR include)
-set(BGFX_INCLUDES
-        deps/bgfx.cmake/bx/include
-        deps/bgfx.cmake/bgfx/include)
+add_subdirectory(deps/DiligentEngine/DiligentCore)
 
 add_library(MyEngine
         src/DefaultRenderer.cpp
@@ -20,14 +10,23 @@ add_library(MyEngine
         src/Math.cpp
         src/SoundObject.cpp
         src/Texture.cpp
-        src/Log.cpp)
+        src/PlatformUtil-SDL.cpp)
 
-target_include_directories(MyEngine PUBLIC ${MYENGINE_INCLUDE_DIR} ${BGFX_INCLUDES})
+set(MYENGINE_INCLUDES "include" "DiligentCore")
 
-add_dependencies(MyEngine spdlog bgfx)
-target_link_libraries(MyEngine spdlog)
+target_include_directories(MyEngine PUBLIC "include" PRIVATE "DiligentCore")
+set_target_properties(MyEngine PROPERTIES
+        CXX_STANDARD 17
+        CXX_STANDARD_REQUIRED ON)
 
-file(GLOB NBIND_SOURCE_FILES node_modules/nbind/src/*.cc node_modules/nbind/src/v8/*.cc)
+add_dependencies(MyEngine spdlog)
+target_link_libraries(MyEngine
+        PRIVATE
+        spdlog
+        # TODO add diligent libs (platform dependent)
+        )
+
+#file(GLOB NBIND_SOURCE_FILES node_modules/nbind/src/*.cc node_modules/nbind/src/v8/*.cc)
 
 #add_nodejs_module(MyEngine_node
 #        ${NBIND_SOURCE_FILES}
@@ -60,11 +59,11 @@ file(GLOB NBIND_SOURCE_FILES node_modules/nbind/src/*.cc node_modules/nbind/src/
 #        MyEngine
 #        ${CMAKE_JS_LIB})
 
-add_executable(BasicExample
-        test/core/BasicExample.cpp)
+#add_executable(BasicExample
+#        test/core/BasicExample.cpp)
 
-target_link_libraries(BasicExample
-        MyEngine)
+#target_link_libraries(BasicExample
+#        MyEngine)
 
 add_executable(unitTests
         test/unit/Box2.cc

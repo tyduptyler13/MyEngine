@@ -3,9 +3,6 @@
 #include <functional>
 #include <string>
 
-#include "Renderer.hpp"
-
-
 namespace MyEngine {
 
 	struct Modifier {
@@ -192,7 +189,7 @@ namespace MyEngine {
 		 */
 		Window() = delete;
 
-		virtual ~Window() = 0;
+		virtual ~Window() = default;
 
 		virtual Window* create(unsigned width = 800, unsigned height = 600,
 		                       unsigned posX = 0, unsigned posY = 0) = 0;
@@ -220,7 +217,9 @@ namespace MyEngine {
 		/**
 		 * Give time to the window to process any events.
 		 */
-		virtual Window* processEvents() = 0;
+		virtual Window* processEvents() {
+			// Defaults to doing nothing (just in case the window isn't providing the events)
+		};
 
 		virtual Window* addMouseHandler(MouseEvent) = 0;
 
@@ -231,7 +230,5 @@ namespace MyEngine {
 		virtual Window* addButtonHandler(KeyboardEvent) = 0;
 
 		virtual unsigned getModifiers() = 0;
-
-		virtual Renderer<float>* getRenderer() = 0;
 	};
 }

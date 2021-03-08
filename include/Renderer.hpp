@@ -10,12 +10,9 @@
 
 
 namespace MyEngine {
-
 	template<typename>
 	class Renderer;
-
 }
-
 
 #include "Color.hpp"
 #include "Constants.hpp"
@@ -28,11 +25,12 @@ namespace MyEngine {
 #include "Material.hpp"
 #include "Texture.hpp"
 #include "Quaternion.hpp"
+#include "Window.hpp"
 
 template<typename T = float>
 struct MyEngine::Renderer {
 
-	virtual ~Renderer() {}
+	virtual ~Renderer() = default;
 
 	unsigned currentLineWidth;
 
@@ -74,6 +72,8 @@ struct MyEngine::Renderer {
 		} renderer;
 	} info;
 
+	std::unique_ptr<Window> window;
+
 	virtual void setScissor(int x, int y, unsigned width, unsigned height) = 0;
 
 	virtual void setScissorTest(bool enable = true) = 0;
@@ -92,18 +92,11 @@ struct MyEngine::Renderer {
 
 	virtual void clearStencil() = 0;
 
-	virtual void clearTarget(std::shared_ptr<IRenderTarget> target, bool color = true, bool depth = true,
-	                         bool stencil = true) = 0;
+	virtual void clearTarget(std::shared_ptr<RenderTarget> target, bool color = true, bool depth = true, bool stencil = true) = 0;
 
 	virtual unsigned getMaxAnisotripy() const = 0;
 
 	virtual std::tuple<unsigned, unsigned> getSize() const = 0;
-
-	std::array<unsigned, 2> getSizeArray() const {
-		std::array<unsigned, 2> array;
-		std::tie(array[0], array[1]) = getSize();
-		return array;
-	}
 
 	virtual void setSize(unsigned width, unsigned height) = 0;
 
@@ -113,40 +106,27 @@ struct MyEngine::Renderer {
 
 	virtual std::tuple<int, int, unsigned, unsigned> getViewport() const = 0;
 
-	std::array<int, 4> getViewportArray() const { //Used in node.
-		std::array<int, 4> array{};
-		std::tie(array[0], array[1], array[2], array[3]) = getViewport();
-		return array;
-	}
-
 	virtual void setDefaultViewport() = 0;
 
 	virtual void renderBufferImmediate(Mesh<T>* object, std::shared_ptr<Shader::Shader> shader, IMaterial* material) = 0;
 
 	virtual void renderBufferDirect(Camera<T>*, Fog<T>*, IGeometry<T>*, IMaterial*, Mesh<T>* object, int group) = 0;
 
-	virtual void render(Scene<T>& scene, Camera<T>* camera) = 0;
+	virtual void render(Scene<T>& scene, Camera<T>& camera) = 0;
 
 	void render(std::shared_ptr<Scene<T>> scene, std::shared_ptr<Camera<T>> camera) {
 		render(*scene, camera.get());
-	}
-
-	template<typename CB>
-	void renderAsync(std::shared_ptr<Scene<T>> scene, std::shared_ptr<Camera<T>> camera, CB& cb) {
-		// Fallback behavior of just executing right away. Callback will be called as if async.
-		render(scene, camera);
-		cb();
 	}
 
 	virtual void setFaceCulling(CullConstant cullFace, CullDirection frontFaceDirection) = 0;
 
 	virtual void setTexture(std::shared_ptr<Texture> texture, unsigned slot = 0) = 0;
 
-	virtual void setRenderTarget(std::shared_ptr<IRenderTarget> target) = 0;
+	virtual void setRenderTarget(std::shared_ptr<RenderTarget> target) = 0;
 
-	virtual std::shared_ptr<IRenderTarget> getRenderTarget() = 0;
+	virtual std::shared_ptr<RenderTarget> getRenderTarget() = 0;
 
-	virtual std::vector<unsigned char> readRenderTargetPixels(std::shared_ptr<IRenderTarget> target, int x, int y,
+	virtual std::vector<unsigned char> readRenderTargetPixels(std::shared_ptr<RenderTarget> target, int x, int y,
 	                                                          unsigned width, unsigned height) = 0;
 
 	/**
@@ -170,25 +150,11 @@ struct MyEngine::Renderer {
 
 	virtual bool needsToClose() = 0;
 
-	virtual void onResize(std::function<void(int, int)>) = 0;
-
-	template<typename T2>
-	void onResize(T2& func) {
-		//We have to create a pointer because the lambda will make the function const.
-		T2* pfunc = new T2(func); //We don't actually own the memory! Node will clean it up.
-		onResize([pfunc](int width, int height) { //Func will be copied and stored with this lambda.
-			(*pfunc)(width, height);
-		});
-	}
+	virtual void onResize(std::function<void(unsigned, unsigned)>) = 0;
 
 protected:
 
 	int maxTextures;
-
-	int windowX = 0,
-			windowY = 0;
-	int windowWidth,
-			windowHeight;
 
 	int opaqueObjectsLastIndex = -1, transparentObjectsLastIndex = -1;
 
@@ -216,6 +182,5 @@ protected:
 	 * objects that have left/entered the frustum. Sorting stays the same.
 	 */
 	Quaternionf lastSortedRot;
-
 };
 

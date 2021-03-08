@@ -7,14 +7,5 @@
   "main": "test/core/BasicExample-electron.js",
   "dependencies": {},
   "scripts": {},
-  "devDependencies": {
-    "cmake-js": "^6.1.0",
-    "electron": "^10.1.5",
-    "nbind": "^0.3.15"
-  },
-  "cmake-js": {
-    "runtime": "electron",
-    "runtimeVersion": "10.1.5",
-    "arch": "x64"
-  }
+  "devDependencies": {}
 }

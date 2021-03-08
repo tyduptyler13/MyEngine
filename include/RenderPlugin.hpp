@@ -6,13 +6,8 @@
 namespace MyEngine {
 
 	template<typename T>
-	class RenderPlugin {
-
-		~RenderPlugin() {}
-
-		virtual void render(const Scene<T>& scene, const Camera<T>& camera, unsigned viewportwidth,
-		                    unsigned viewportHeight) = 0;
-
+	struct RenderPlugin {
+		virtual void render(const Renderer<T>& renderer, const Scene<T>& scene, const Camera<T>& camera) = 0;
 	};
 
 }

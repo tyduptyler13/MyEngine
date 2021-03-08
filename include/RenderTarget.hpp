@@ -8,26 +8,13 @@
 
 namespace MyEngine {
 
-	struct IRenderTarget {
+	struct RenderTarget {
+		const Math::UUID uuid = Math::generateUUID();
 
-		Math::UUID uuid = Math::generateUUID();
-
-		unsigned width, height;
-
-		bool depthBuffer = true,
-				stencilBuffer = true;
-
-		//We also need to clean up the depth buffer if it is deleted.
-		virtual ~IRenderTarget() {};
-
-		//Bind the framebuffer in the context.
-		virtual void bind() = 0;
+		const unsigned width, height;
 
 	protected:
-
-		IRenderTarget(unsigned width, unsigned height, bool depthBuffer, bool stencilBuffer)
-				: width(width), height(height), depthBuffer(depthBuffer), stencilBuffer(stencilBuffer) {}
-
+		RenderTarget(unsigned width, unsigned height)
+				: width(width), height(height) {}
 	};
-
 }
