@@ -184,50 +184,47 @@ namespace MyEngine {
 	 * An interface for dealing with windows and their contexts.
 	 */
 	struct Window {
-		/**
-		 * This is not an implementation!
-		 */
-		Window() = delete;
+		virtual Window& show() = 0;
 
-		virtual ~Window() = default;
+		virtual Window& hide() = 0;
 
-		virtual Window* create(unsigned width = 800, unsigned height = 600,
-		                       unsigned posX = 0, unsigned posY = 0) = 0;
+		virtual Window& close() = 0;
 
-		virtual Window* close() = 0;
+		virtual Window& setPos(unsigned x, unsigned y) = 0;
 
-		virtual Window* setPos(unsigned x, unsigned y) = 0;
+		virtual Window& resize(unsigned width, unsigned height) = 0;
 
-		virtual Window* resize(unsigned width, unsigned height) = 0;
-
-		virtual Window* setTitle(const std::string& title) = 0;
+		virtual Window& setTitle(const std::string& title) = 0;
 
 		/**
 		 * Removes window border
 		 */
-		virtual Window* toggleBorder() = 0;
-
-		virtual Window* toggleFullscreen() = 0;
+		virtual Window& toggleBorder() = 0;
+		virtual Window& toggleFullscreen() = 0;
+		virtual bool hasBorder() = 0;
+		virtual bool isFullScreen() = 0;
 
 		/**
 		 * Hides the default mouse cursor.
 		 */
-		virtual Window* setMouseLock() = 0;
+		virtual Window& setMouseLock() = 0;
 
 		/**
 		 * Give time to the window to process any events.
 		 */
-		virtual Window* processEvents() {
+		virtual Window& processEvents() {
 			// Defaults to doing nothing (just in case the window isn't providing the events)
 		};
 
-		virtual Window* addMouseHandler(MouseEvent) = 0;
+		virtual Window& addMouseHandler(MouseEvent) = 0;
+		virtual Window& addGamepadButtonHandler(GamepadButtonEvent) = 0;
+		virtual Window& addGamepadAxisHandler(GamepadAxisEvent) = 0;
+		virtual Window& addButtonHandler(KeyboardEvent) = 0;
 
-		virtual Window* addGamepadButtonHandler(GamepadButtonEvent) = 0;
-
-		virtual Window* addGamepadAxisHandler(GamepadAxisEvent) = 0;
-
-		virtual Window* addButtonHandler(KeyboardEvent) = 0;
+		virtual bool removeMouseHandler(MouseEvent) = 0;
+		virtual bool removeGamepadButtonHandler(GamepadButtonEvent) = 0;
+		virtual bool removeGamepadAxisHandler(GamepadAxisEvent) = 0;
+		virtual bool removeButtonHandler(KeyboardEvent) = 0;
 
 		virtual unsigned getModifiers() = 0;
 	};

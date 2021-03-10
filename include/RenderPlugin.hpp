@@ -7,7 +7,7 @@ namespace MyEngine {
 
 	template<typename T>
 	struct RenderPlugin {
-		virtual void render(const Renderer<T>& renderer, const Scene<T>& scene, const Camera<T>& camera) = 0;
+		virtual void render(const IRenderer<T>& renderer, const Scene<T>& scene, const Camera<T>& camera) = 0;
 	};
 
 }

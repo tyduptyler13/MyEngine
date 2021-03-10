@@ -11,15 +11,13 @@
 
 namespace MyEngine {
 	template<typename>
-	class Renderer;
+	class IRenderer;
 }
 
 #include "Color.hpp"
 #include "Constants.hpp"
 #include "RenderPlugin.hpp"
 #include "RenderTarget.hpp"
-#include "Light.hpp"
-#include "Object3D.hpp"
 #include "Scene.hpp"
 #include "Camera.hpp"
 #include "Material.hpp"
@@ -28,37 +26,28 @@ namespace MyEngine {
 #include "Window.hpp"
 
 template<typename T = float>
-struct MyEngine::Renderer {
+struct MyEngine::IRenderer {
+	enum AutoClearFlag {
+		CLEAR_COLOR = 0x1,
+		CLEAR_DEPTH = 0x2,
+		CLEAR_STENCIL = 0x4,
+	};
 
-	virtual ~Renderer() = default;
+	static constexpr unsigned char DefaultAutoClear = CLEAR_COLOR | CLEAR_DEPTH | CLEAR_STENCIL;
 
-	unsigned currentLineWidth;
+	virtual void enableAutoClear(bool enable = true) = 0;
+	virtual void isAutoClearEnabled() const = 0;
 
-	bool autoClear = true,
-			autoClearColor = true,
-			autoClearDepth = true,
-			autoClearStencil = true;
+	virtual void setAutoClearFlags(unsigned char flags) = 0;
+	virtual unsigned char getAutoClearFlags() const = 0;
 
-	bool alpha = false,
-			depth = true,
-			stencil = true,
-			antialias = false,
-			premultipliedAlpha = true,
-			preserveDrawingBuffer = false;
+	virtual void enableAlpha(bool enable = true) = 0;
+	virtual bool isAlphaEnabled() const = 0;
 
-	T gammaFactor = 2.0;
-	bool gammaInput = false,
-			gammaOutput = false;
+	virtual void enableDepth(bool enable = true) = 0;
+	virtual bool isDepthEnabled() const = 0;
 
-	bool shadowMapEnabled = false;
-	ShadowMapType shadowMapType = PCFShadowMap;
-	CullConstant shadowMapCullFace = CullFaceFront;
-	bool shadowMapDebug = false,
-			shadowMapCascade = false;
-
-	bool autoScaleCubeMaps = true;
-
-	struct {
+	struct Stats {
 		struct {
 			unsigned programs = 0,
 					geometries = 0,
@@ -70,9 +59,11 @@ struct MyEngine::Renderer {
 					faces = 0,
 					points = 0;
 		} renderer;
-	} info;
+	};
 
-	std::unique_ptr<Window> window;
+	virtual Stats getStats() const = 0;
+
+	virtual std::shared_ptr<Window> getWindow() = 0;
 
 	virtual void setScissor(int x, int y, unsigned width, unsigned height) = 0;
 
@@ -151,36 +142,6 @@ struct MyEngine::Renderer {
 	virtual bool needsToClose() = 0;
 
 	virtual void onResize(std::function<void(unsigned, unsigned)>) = 0;
-
-protected:
-
-	int maxTextures;
-
-	int opaqueObjectsLastIndex = -1, transparentObjectsLastIndex = -1;
-
-	Color clearColorv;
-	T clearAlpha;
-
-	//TODO type? currentBlending;
-	BlendingEquation currentBlendEquation;
-	BlendingFunc currentBlendSrc;
-	BlendingFunc currentBlendDst;
-	BlendingEquation currentBlendEquationAlpha;
-	BlendingFunc currentBlendSrcAlpha;
-	BlendingFunc currentBlendDstAlpha;
-
-	/**
-	 * This variable is for tracking the last known good sorting of objects for the camera.
-	 * As long as the camera doesn't move beyond some epsilon and the scene doesn't have
-	 * any new changes then we can skip sorting and use previous sortings. Rotation won't
-	 * matter because it is distance sorted anyways. Frustum will use lastSortedRotation.
-	 */
-	Vector3f lastSortedPos;
-
-	/**
-	 * This is the same type of variable as above except it triggers a new check for
-	 * objects that have left/entered the frustum. Sorting stays the same.
-	 */
-	Quaternionf lastSortedRot;
 };
+
 

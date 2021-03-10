@@ -1,6 +1,5 @@
 #include <stdexcept>
 
-
 #include "DefaultRenderer.hpp"
 
 #ifdef __EMSCRIPTEN__
@@ -10,46 +9,43 @@
 using namespace std;
 using namespace MyEngine;
 
-DefaultRenderer::DefaultRenderer() : Renderer() {
 
-}
+#if ENABLE_X11
+extern std::unique_ptr<Window> createX11Window(const InitHints&);
+#endif
 
-DefaultRenderer::~DefaultRenderer() {
-
-}
-
-void DefaultRenderer::init(const InitHints& hints) {
-	// Try each in order of preference and fall through if its not implemented/compiled in
-
+std::unique_ptr<Window> createWindow(const InitHints& hints) {
 	if (hints.windowSystemHint == WindowSystemHint::ANY) {
-#if WAYLAND_ENABLED
-		// TODO setup wayland window + renderer
-	  createWaylandWindow();
-		return;
+		try {
+#if ENABLE_X11
+			return createX11Window(hints);
 #endif
-#if X11_ENABLED
-		// TODO setup x11 window + renderer
-		createX11Window();
-		return;
-#endif
-		throw std::runtime_error("No viable render systems were found!");
+		} catch (...) {}
+
 	} else {
-		if (hints.windowSystemHint == WindowSystemHint::WAYLAND) {
-
-		} else if (hints.windowSystemHint == WindowSystemHint::X11) {
-
-		} else {
-			throw std::runtime_error("The requested render system was either unavailable or unimplemented!");
-		}
+		try {
+			switch (hints.windowSystemHint) {
+				case WindowSystemHint::X11:
+#if ENABLE_X11
+					return createX11Window(hints);
+#endif
+			}
+		} catch(...) {}
 	}
+	throw runtime_error("No window system could be found that supports this system!");
 }
+
+IRenderer<float> MyEngine::createDefaultRenderer(InitHints hints) {
+ // TODO
+}
+
 
 #if 0
 
 // TODO reimplement all of the following via bgfx
 // TODO implement a window factory that works on every platform (gross but required for vulkan/etc)
 
-GLES2Renderer::GLES2Renderer(unsigned antialias, GLFWmonitor* monitor, GLES2Renderer* share) : Renderer() {
+GLES2Renderer::GLES2Renderer(unsigned antialias, GLFWmonitor* monitor, GLES2Renderer* share) : IRenderer() {
 
 	std::vector<std::pair<int, int>> hints = {{
 			                                          std::make_pair(GLFW_CLIENT_API, GLFW_OPENGL_ES_API), //Hard constraint.

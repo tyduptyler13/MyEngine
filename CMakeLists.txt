@@ -26,44 +26,18 @@ target_link_libraries(MyEngine
         # TODO add diligent libs (platform dependent)
         )
 
-#file(GLOB NBIND_SOURCE_FILES node_modules/nbind/src/*.cc node_modules/nbind/src/v8/*.cc)
+set(X11_AVAILABLE FALSE CACHE INTERNAL "")
 
-#add_nodejs_module(MyEngine_node
-#        ${NBIND_SOURCE_FILES}
-#        src/nbind/Geometries/BoxGeometry.cpp
-#        src/nbind/Geometries/SphereGeometry.cpp
-#        src/nbind/BufferGeometry.cpp
-#        src/nbind/Camera.cpp
-#        src/nbind/Geometry.cpp
-#        src/nbind/Material.cpp
-#        src/nbind/Mesh.cpp
-#        src/nbind/Object3D.cpp
-#        src/nbind/PerspectiveCamera.cpp
-#        src/nbind/Renderer.cpp
-#        src/nbind/Scene.cpp
-#        src/nbind/SoundObject.cpp
-#        src/nbind/Vector2.cpp
-#        src/nbind/Vector3.cpp
-#        src/nbind/Vector4.cpp)
+if (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+    set(X11_AVAILABLE TRUE CACHE INTERNAL "")
+    option(ENABLE_X11 "Enables use of the X11 Window system" ON)
+endif()
 
-#target_include_directories(MyEngine_node BEFORE PUBLIC node_modules/nbind/include)
-#set_property(TARGET MyEngine_node PROPERTY CXX_STANDARD 14)
-
-#if (CMAKE_CXX_COMPILER MATCHES "/em\\+\\+(-[a-zA-Z0-9.])?$")
-#    message(" * C++ compiler: Emscripten")
-#else ()
-#    target_compile_definitions(MyEngine_node PRIVATE BUILDING_NODE_EXTENSION)
-#endif ()
-
-#target_link_libraries(MyEngine_node
-#        MyEngine
-#        ${CMAKE_JS_LIB})
-
-#add_executable(BasicExample
-#        test/core/BasicExample.cpp)
-
-#target_link_libraries(BasicExample
-#        MyEngine)
+# TODO All the other platforms
+if (X11_AVAILABLE AND ENABLE_X11)
+    target_link_libraries(MyEngine PRIVATE X11)
+    target_compile_definitions(MyEngine PRIVATE ENABLE_X11)
+endif()
 
 add_executable(unitTests
         test/unit/Box2.cc
