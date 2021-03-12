@@ -2,7 +2,8 @@ cmake_minimum_required(VERSION 3.9)
 project(MyEngine)
 
 add_subdirectory(deps/spdlog)
-add_subdirectory(deps/DiligentEngine/DiligentCore)
+#add_subdirectory(deps/DiligentEngine/DiligentCore)
+#add_subdirectory(deps/fruit)
 
 add_library(MyEngine
         src/DefaultRenderer.cpp
@@ -10,18 +11,23 @@ add_library(MyEngine
         src/Math.cpp
         src/SoundObject.cpp
         src/Texture.cpp
-        src/PlatformUtil-SDL.cpp)
+        )
 
-set(MYENGINE_INCLUDES "include" "DiligentCore")
+set(MYENGINE_INCLUDES
+        include
+        )
 
-target_include_directories(MyEngine PUBLIC "include" PRIVATE "DiligentCore")
+target_include_directories(MyEngine PUBLIC ${MYENGINE_INCLUDES})
 set_target_properties(MyEngine PROPERTIES
         CXX_STANDARD 17
-        CXX_STANDARD_REQUIRED ON)
+        CXX_STANDARD_REQUIRED ON
+        )
 
-add_dependencies(MyEngine spdlog)
+add_dependencies(MyEngine
+        spdlog
+        )
 target_link_libraries(MyEngine
-        PRIVATE
+        PUBLIC
         spdlog
         # TODO add diligent libs (platform dependent)
         )

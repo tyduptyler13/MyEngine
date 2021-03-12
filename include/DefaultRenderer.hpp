@@ -1,9 +1,11 @@
 #pragma once
 
+#include <unordered_map>
+#include <functional>
+
 #include "IRenderer.hpp"
 
-namespace MyEngine {
-
+namespace MyEngine::DefaultRenderer {
 	enum struct WindowSystemHint {
 		ANY, // Let us pick our preference (default)
 		X11, // older linux (nearly always supported)
@@ -13,12 +15,22 @@ namespace MyEngine {
 		ANDROID,
 		Win32, // older windows
 		UWP, // universal windows platform
+		HTML, // Specific to html environments
+	};
+	constexpr WindowSystemHint windowSystemPriority[] = {
+			WindowSystemHint::X11,
+			WindowSystemHint::WAYLAND,
+			WindowSystemHint::COCOA,
+			WindowSystemHint::UIKIT,
+			WindowSystemHint::ANDROID,
+			WindowSystemHint::Win32,
+			WindowSystemHint::UWP,
+			WindowSystemHint::HTML,
 	};
 
 	/**
 	 * A list of graphics apis we support in order of default preference.
 	 */
-
 	enum struct GraphicsAPIHint {
 		ANY,
 		VULKAN,
@@ -26,6 +38,15 @@ namespace MyEngine {
 		D3D11,
 		OPENGL,
 		GLES,
+		WEBGL,
+	};
+	constexpr GraphicsAPIHint graphicsApiPriority[] = {
+			GraphicsAPIHint::VULKAN,
+			GraphicsAPIHint::D3D12,
+			GraphicsAPIHint::D3D11,
+			GraphicsAPIHint::OPENGL,
+			GraphicsAPIHint::GLES,
+			GraphicsAPIHint::WEBGL,
 	};
 
 	/**
@@ -50,5 +71,8 @@ namespace MyEngine {
 	 * @param hints
 	 * @return
 	 */
-	IRenderer<float> createDefaultRenderer(InitHints hints = InitHints());
+	IRenderer<float> createRenderer(InitHints hints = InitHints());
+
+	std::unordered_multimap<WindowSystemHint, std::function<std::unique_ptr<Window>()>> dynamicWindowFactories;
+	std::unordered_multimap<GraphicsAPIHint, std::function<std::unique_ptr<IRenderer<float>>()>> dynamicRendererFactories;
 }

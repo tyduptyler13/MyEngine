@@ -1,6 +1,8 @@
+#include <memory>
 #include <stdexcept>
 
 #include "DefaultRenderer.hpp"
+#include "spdlog/spdlog.h"
 
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
@@ -8,37 +10,39 @@
 
 using namespace std;
 using namespace MyEngine;
+using namespace MyEngine::DefaultRenderer;
 
-
-#if ENABLE_X11
-extern std::unique_ptr<Window> createX11Window(const InitHints&);
-#endif
-
-std::unique_ptr<Window> createWindow(const InitHints& hints) {
+static inline std::unique_ptr<Window> createWindow(const InitHints& hints) {
 	if (hints.windowSystemHint == WindowSystemHint::ANY) {
-		try {
-#if ENABLE_X11
-			return createX11Window(hints);
-#endif
-		} catch (...) {}
-
-	} else {
-		try {
-			switch (hints.windowSystemHint) {
-				case WindowSystemHint::X11:
-#if ENABLE_X11
-					return createX11Window(hints);
-#endif
+		for (WindowSystemHint windowType : windowSystemPriority) {
+			for (auto it = dynamicWindowFactories.find(windowType); it != dynamicWindowFactories.end(); it++) {
+				try {
+					return it->second();
+				} catch (...) {
+					SPDLOG_DEBUG("Failed to instantiate a window!");
+				}
 			}
-		} catch(...) {}
+		}
+		SPDLOG_DEBUG("Ran out of windows to try for ANY type");
+	} else {
+
+		for (auto it = dynamicWindowFactories.find(hints.windowSystemHint); it != dynamicWindowFactories.end(); it++) {
+			try {
+				return it->second();
+			} catch (...) {
+				SPDLOG_DEBUG("Failed to instantiate a window!");
+			}
+		}
+		SPDLOG_DEBUG("Ran out of windows to try for {}", hints.windowSystemHint);
 	}
 	throw runtime_error("No window system could be found that supports this system!");
 }
 
-IRenderer<float> MyEngine::createDefaultRenderer(InitHints hints) {
- // TODO
-}
+IRenderer<float> DefaultRenderer::createRenderer(InitHints hints) {
+	std::unique_ptr<Window> window = createWindow(hints);
 
+  // TODO
+}
 
 #if 0
 
