@@ -73,6 +73,8 @@ namespace MyEngine::DefaultRenderer {
 	 */
 	IRenderer<float> createRenderer(InitHints hints = InitHints());
 
-	std::unordered_multimap<WindowSystemHint, std::function<std::unique_ptr<Window>()>> dynamicWindowFactories;
-	std::unordered_multimap<GraphicsAPIHint, std::function<std::unique_ptr<IRenderer<float>>()>> dynamicRendererFactories;
+	typedef std::unordered_multimap<WindowSystemHint, std::function<std::unique_ptr<Window>()>> WindowFactoriesContainer;
+	typedef std::unordered_multimap<GraphicsAPIHint, std::function<std::unique_ptr<IRenderer<float>>()>> RenderFactoriesContainer;
+	WindowFactoriesContainer dynamicWindowFactories;
+	RenderFactoriesContainer dynamicRendererFactories;
 }

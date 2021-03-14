@@ -4,6 +4,7 @@ project(MyEngine)
 add_subdirectory(deps/spdlog)
 #add_subdirectory(deps/DiligentEngine/DiligentCore)
 #add_subdirectory(deps/fruit)
+add_subdirectory(src/platforms/linux)
 
 add_library(MyEngine
         src/DefaultRenderer.cpp
@@ -11,6 +12,8 @@ add_library(MyEngine
         src/Math.cpp
         src/SoundObject.cpp
         src/Texture.cpp
+        src/PluginLoader.cpp
+        src/BasicWindowEventHandler.cpp
         )
 
 set(MYENGINE_INCLUDES
@@ -18,9 +21,9 @@ set(MYENGINE_INCLUDES
         )
 
 target_include_directories(MyEngine PUBLIC ${MYENGINE_INCLUDES})
-set_target_properties(MyEngine PROPERTIES
-        CXX_STANDARD 17
-        CXX_STANDARD_REQUIRED ON
+target_compile_features(MyEngine
+        PUBLIC
+        cxx_std_17
         )
 
 add_dependencies(MyEngine
@@ -30,20 +33,8 @@ target_link_libraries(MyEngine
         PUBLIC
         spdlog
         # TODO add diligent libs (platform dependent)
+        linux
         )
-
-set(X11_AVAILABLE FALSE CACHE INTERNAL "")
-
-if (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
-    set(X11_AVAILABLE TRUE CACHE INTERNAL "")
-    option(ENABLE_X11 "Enables use of the X11 Window system" ON)
-endif()
-
-# TODO All the other platforms
-if (X11_AVAILABLE AND ENABLE_X11)
-    target_link_libraries(MyEngine PRIVATE X11)
-    target_compile_definitions(MyEngine PRIVATE ENABLE_X11)
-endif()
 
 add_executable(unitTests
         test/unit/Box2.cc
@@ -55,4 +46,5 @@ add_executable(unitTests
         test/unit/Vector3.cc)
 
 target_link_libraries(unitTests
-        MyEngine)
+        MyEngine
+        )

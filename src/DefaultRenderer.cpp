@@ -12,7 +12,7 @@ using namespace std;
 using namespace MyEngine;
 using namespace MyEngine::DefaultRenderer;
 
-static inline std::unique_ptr<Window> createWindow(const InitHints& hints) {
+static std::unique_ptr<Window> createWindow(const InitHints& hints) {
 	if (hints.windowSystemHint == WindowSystemHint::ANY) {
 		for (WindowSystemHint windowType : windowSystemPriority) {
 			for (auto it = dynamicWindowFactories.find(windowType); it != dynamicWindowFactories.end(); it++) {
@@ -25,7 +25,6 @@ static inline std::unique_ptr<Window> createWindow(const InitHints& hints) {
 		}
 		SPDLOG_DEBUG("Ran out of windows to try for ANY type");
 	} else {
-
 		for (auto it = dynamicWindowFactories.find(hints.windowSystemHint); it != dynamicWindowFactories.end(); it++) {
 			try {
 				return it->second();

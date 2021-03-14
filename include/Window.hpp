@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <functional>
 #include <string>
 
@@ -162,12 +163,12 @@ namespace MyEngine {
 
 	typedef std::function<void(MouseButton, EventType,
 														 unsigned x, unsigned y,
-	                           unsigned dx, unsigned dy)> MouseEvent;
-	typedef std::function<void(KeyboardKey, EventType)> KeyboardEvent;
+	                           unsigned dx, unsigned dy)> MouseEventHandler;
+	typedef std::function<void(KeyboardKey, EventType)> KeyboardEventHandler;
 	// Missing scrolling
 	// Missing file drops? Do we even want them?
 	typedef std::function<void(unsigned gamepadId, unsigned gamepadAxis,
-	                           float x, float y)> GamepadAxisEvent;
+	                           float x, float y)> GamepadAxisEventHandler;
 
 	/**
 	 * A function that handles joystick specific buttons.
@@ -178,54 +179,53 @@ namespace MyEngine {
 	 * buttons that don't have force sensitivity.)
 	 */
 	typedef std::function<void(unsigned gamepadId, unsigned button,
-	                           float intensity)> GamepadButtonEvent;
+	                           float intensity)> GamepadButtonEventHandler;
 
 	/**
 	 * An interface for dealing with windows and their contexts.
 	 */
 	struct Window {
-		virtual Window& show() = 0;
+		virtual Window* show() = 0;
 
-		virtual Window& hide() = 0;
+		virtual Window* hide() = 0;
 
-		virtual Window& close() = 0;
+		virtual Window* close() = 0;
 
-		virtual Window& setPos(unsigned x, unsigned y) = 0;
+		virtual Window* setPos(unsigned x, unsigned y) = 0;
 
-		virtual Window& resize(unsigned width, unsigned height) = 0;
+		virtual Window* resize(unsigned width, unsigned height) = 0;
 
-		virtual Window& setTitle(const std::string& title) = 0;
+		virtual Window* setTitle(const std::string& title) = 0;
 
 		/**
 		 * Removes window border
 		 */
-		virtual Window& toggleBorder() = 0;
-		virtual Window& toggleFullscreen() = 0;
+		virtual Window* toggleBorder() = 0;
+		virtual Window* toggleFullscreen() = 0;
 		virtual bool hasBorder() = 0;
 		virtual bool isFullScreen() = 0;
 
 		/**
 		 * Hides the default mouse cursor.
 		 */
-		virtual Window& setMouseLock() = 0;
+		virtual Window* setMouseLock() = 0;
 
 		/**
 		 * Give time to the window to process any events.
 		 */
-		virtual Window& processEvents() {
+		virtual Window* processEvents() {
 			// Defaults to doing nothing (just in case the window isn't providing the events)
+			return this;
 		};
 
-		virtual Window& addMouseHandler(MouseEvent) = 0;
-		virtual Window& addGamepadButtonHandler(GamepadButtonEvent) = 0;
-		virtual Window& addGamepadAxisHandler(GamepadAxisEvent) = 0;
-		virtual Window& addButtonHandler(KeyboardEvent) = 0;
+		virtual Window* addMouseHandler(const std::shared_ptr<MouseEventHandler>& eventHandler) = 0;
+		virtual Window* addGamepadButtonHandler(const std::shared_ptr<GamepadButtonEventHandler>& eventHandler) = 0;
+		virtual Window* addGamepadAxisHandler(const std::shared_ptr<GamepadAxisEventHandler>& eventHandler) = 0;
+		virtual Window* addButtonHandler(const std::shared_ptr<KeyboardEventHandler>& eventHandler) = 0;
 
-		virtual bool removeMouseHandler(MouseEvent) = 0;
-		virtual bool removeGamepadButtonHandler(GamepadButtonEvent) = 0;
-		virtual bool removeGamepadAxisHandler(GamepadAxisEvent) = 0;
-		virtual bool removeButtonHandler(KeyboardEvent) = 0;
-
-		virtual unsigned getModifiers() = 0;
+		virtual bool removeMouseHandler(const std::shared_ptr<MouseEventHandler>& eventHandler) = 0;
+		virtual bool removeGamepadButtonHandler(const std::shared_ptr<GamepadButtonEventHandler>& eventHandler) = 0;
+		virtual bool removeGamepadAxisHandler(const std::shared_ptr<GamepadAxisEventHandler>& eventHandler) = 0;
+		virtual bool removeButtonHandler(const std::shared_ptr<KeyboardEventHandler>& eventHandler) = 0;
 	};
 }
