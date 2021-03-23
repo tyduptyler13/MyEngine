@@ -17,7 +17,7 @@ static std::unique_ptr<Window> createWindow(const InitHints& hints) {
 		for (WindowSystemHint windowType : windowSystemPriority) {
 			for (auto it = dynamicWindowFactories.find(windowType); it != dynamicWindowFactories.end(); it++) {
 				try {
-					return it->second();
+					return it->second(hints);
 				} catch (...) {
 					SPDLOG_DEBUG("Failed to instantiate a window!");
 				}
@@ -27,7 +27,7 @@ static std::unique_ptr<Window> createWindow(const InitHints& hints) {
 	} else {
 		for (auto it = dynamicWindowFactories.find(hints.windowSystemHint); it != dynamicWindowFactories.end(); it++) {
 			try {
-				return it->second();
+				return it->second(hints);
 			} catch (...) {
 				SPDLOG_DEBUG("Failed to instantiate a window!");
 			}

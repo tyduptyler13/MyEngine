@@ -2,9 +2,13 @@ cmake_minimum_required(VERSION 3.9)
 project(MyEngine)
 
 add_subdirectory(deps/spdlog)
-#add_subdirectory(deps/DiligentEngine/DiligentCore)
-#add_subdirectory(deps/fruit)
-add_subdirectory(src/platforms/linux)
+
+option(ENABLE_GLFW_WINDOW "Enables use of GLFW for window creation" ON)
+#option(ENABLE_X11_WINDOW "Enables X11 as the window system" OFF)
+
+if(ENABLE_GLFW_WINDOW)
+    add_subdirectory(plugins/glfw)
+endif()
 
 add_library(MyEngine
         src/DefaultRenderer.cpp

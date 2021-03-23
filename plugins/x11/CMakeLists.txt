@@ -1,5 +1,4 @@
-
-project(MyEngineX11)
+project(MyEnginePlugin_X11)
 
 set(X11_AVAILABLE FALSE CACHE INTERNAL "")
 
@@ -11,16 +10,23 @@ endif()
 # TODO All the other platforms
 if (X11_AVAILABLE AND ENABLE_X11)
 
-    add_library(MyEngineX11 STATIC
+    find_library(SPDLOG spdlog)
+
+    add_library(MyEnginePlugin_X11 STATIC
             X11WindowPlugin.cpp
             )
+    add_dependencies(MyEngineX11 spdlog)
     target_compile_features(MyEngineX11
             PUBLIC
             cxx_std_17
             )
-    target_link_libraries(MyEngineX11 PRIVATE X11)
+    target_link_libraries(MyEngineX11
+            PRIVATE
+            X11
+            ${SPDLOG}
+            )
     target_include_directories(MyEngineX11
             PRIVATE
-            ../../../include
+            ../include
             )
 endif()

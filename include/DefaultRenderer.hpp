@@ -16,8 +16,10 @@ namespace MyEngine::DefaultRenderer {
 		Win32, // older windows
 		UWP, // universal windows platform
 		HTML, // Specific to html environments
+		GLFW, // Cross platform meta windowing system
+		SDL, // Cross platform meta window/render system
 	};
-	constexpr WindowSystemHint windowSystemPriority[] = {
+	WindowSystemHint windowSystemPriority[] = {
 			WindowSystemHint::X11,
 			WindowSystemHint::WAYLAND,
 			WindowSystemHint::COCOA,
@@ -26,6 +28,8 @@ namespace MyEngine::DefaultRenderer {
 			WindowSystemHint::Win32,
 			WindowSystemHint::UWP,
 			WindowSystemHint::HTML,
+			WindowSystemHint::GLFW,
+			WindowSystemHint::SDL,
 	};
 
 	/**
@@ -40,7 +44,7 @@ namespace MyEngine::DefaultRenderer {
 		GLES,
 		WEBGL,
 	};
-	constexpr GraphicsAPIHint graphicsApiPriority[] = {
+	GraphicsAPIHint graphicsApiPriority[] = {
 			GraphicsAPIHint::VULKAN,
 			GraphicsAPIHint::D3D12,
 			GraphicsAPIHint::D3D11,
@@ -61,6 +65,10 @@ namespace MyEngine::DefaultRenderer {
 		bool fullScreen = false;
 		unsigned int widthHint = 800;
 		unsigned int heightHint = 600;
+		int minWidthHint = -1; // The smallest allowed size of the window (-1 for any size)
+		int minHeightHint = -1; // The smallest allowed size of the window (-1 for any size)
+		int maxWidthHint = -1; // The largest allowed window size (-1 for any size)
+		int maxHeightHint = -1; // The largest allwoed window size (-1 for any size)
 		unsigned int xPosHint; // Defaults to the default position for the window system unless specified
 		unsigned int yPosHint; // Defaults to the default position for the window system unless specified
 		std::string windowTitleHint = "MyEngine";
@@ -73,8 +81,10 @@ namespace MyEngine::DefaultRenderer {
 	 */
 	IRenderer<float> createRenderer(InitHints hints = InitHints());
 
-	typedef std::unordered_multimap<WindowSystemHint, std::function<std::unique_ptr<Window>()>> WindowFactoriesContainer;
-	typedef std::unordered_multimap<GraphicsAPIHint, std::function<std::unique_ptr<IRenderer<float>>()>> RenderFactoriesContainer;
+	typedef std::unordered_multimap<WindowSystemHint, std::function<std::unique_ptr<Window>(
+			const InitHints& hints)>> WindowFactoriesContainer;
+	typedef std::unordered_multimap<GraphicsAPIHint, std::function<std::unique_ptr<IRenderer<float>>(
+			const InitHints& hints)>> RenderFactoriesContainer;
 	WindowFactoriesContainer dynamicWindowFactories;
 	RenderFactoriesContainer dynamicRendererFactories;
 }
